@@ -1,0 +1,7 @@
+﻿  Math.cpp
+D:\Projects\Games\DirectXTest\MathLib\Source\Math.h(11,41): warning C4305: 'initializing': truncation from 'double' to 'float'
+  MathPCH.cpp
+  MathTests.cpp
+  Matrix.cpp
+  Vector.cpp
+  MathLib.vcxproj -> D:\Projects\Games\DirectXTest\DirectXTestProject\Debug\MathLib.lib

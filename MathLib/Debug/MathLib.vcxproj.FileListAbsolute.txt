@@ -1,0 +1,2 @@
+D:\Projects\Games\DirectXTest\DirectXTestProject\Debug\MathLib.pdb
+D:\Projects\Games\DirectXTest\MathLib\Debug\MathLib.pdb
