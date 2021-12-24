@@ -1,7 +1,7 @@
 // DirectXTestProject.cpp : Defines the entry point for the application.
 //
 
-#include "DirectXTestPCH.h"
+#include "SandboxProjectPCH.h"
 #include "Game.h"
 #include "framework.h"
 #include "resource.h"
@@ -32,7 +32,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_DIRECTXTESTPROJECT, szWindowClass, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_SANDBOXPROJECT, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     // Perform application initialization:
@@ -43,7 +43,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     HACCEL hAccelTable = LoadAccelerators(
-        hInstance, MAKEINTRESOURCE(IDC_DIRECTXTESTPROJECT));
+        hInstance, MAKEINTRESOURCE(IDC_SANDBOXPROJECT));
     return GameLoop(hInstance, window, hAccelTable);
 }
 
@@ -111,10 +111,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DIRECTXTESTPROJECT));
+    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_SANDBOXPROJECT));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_DIRECTXTESTPROJECT);
+    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_SANDBOXPROJECT);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
