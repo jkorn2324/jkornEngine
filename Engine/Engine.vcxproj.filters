@@ -8,13 +8,10 @@
     <Filter Include="Source Files\PreCompiledHeader">
       <UniqueIdentifier>{a7ffaae7-1f89-4d12-82d7-f2e9e67e46cb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Components">
-      <UniqueIdentifier>{77e61a87-4737-4d93-81d1-552ffb41e29d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{91730092-2e5e-4de3-8697-f7bc443efaa6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Entities">
+    <Filter Include="Source Files\Scene">
       <UniqueIdentifier>{0a44fafa-f5f8-4298-aa53-062508ef7314}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -24,9 +21,6 @@
     </ClCompile>
     <ClCompile Include="Source\DebugAssert.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Components\Component.cpp">
-      <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Rendering\GraphicsRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -46,14 +40,17 @@
     <ClCompile Include="Source\Rendering\BufferLayout.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Entities\Entity.cpp">
-      <Filter>Source Files\Entities</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Rendering\ConstantBuffer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Components\CameraComponent.cpp">
-      <Filter>Source Files\Components</Filter>
+    <ClCompile Include="Source\Scene\Entity.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Scene.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Components.cpp">
+      <Filter>Source Files\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,9 +59,6 @@
     </ClInclude>
     <ClInclude Include="Source\DebugAssert.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Components\Component.h">
-      <Filter>Source Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Rendering\GraphicsRenderer.h">
       <Filter>Source Files\Rendering</Filter>
@@ -84,14 +78,17 @@
     <ClInclude Include="Source\Rendering\BufferLayout.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Entities\Entity.h">
-      <Filter>Source Files\Entities</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Rendering\ConstantBuffer.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Components\CameraComponent.h">
-      <Filter>Source Files\Components</Filter>
+    <ClInclude Include="Source\Scene\Entity.h">
+      <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Scene.h">
+      <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Components.h">
+      <Filter>Source Files\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

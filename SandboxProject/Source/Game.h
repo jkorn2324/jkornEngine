@@ -10,8 +10,8 @@ namespace Engine
 	class VertexBuffer;
 	class IndexBuffer;
 	class ConstantBuffer;
+	class Scene;
 	class Entity;
-	class CameraComponent;
 }
 
 struct VertexPositionColor
@@ -44,5 +44,6 @@ namespace DirectXTestProject
 		Engine::Shader* m_shader;
 
 		Engine::Entity* m_cameraEntity;
+		Engine::Scene* m_scene;
 	};
 }

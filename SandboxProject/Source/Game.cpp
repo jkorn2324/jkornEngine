@@ -1,5 +1,6 @@
 #include "SandboxProjectPCH.h"
 #include "Game.h"
+
 #include "Source\Rendering\Shader.h"
 #include "Source\Rendering\VertexBuffer.h"
 #include "Source\Rendering\IndexBuffer.h"
@@ -7,8 +8,9 @@
 #include "Source\Rendering\BufferLayout.h"
 #include "Source\Rendering\ConstantBuffer.h"
 
-#include "Source\Entities\Entity.h"
-#include "Source\Components\CameraComponent.h"
+#include "Source\Scene\Scene.h"
+#include "Source\Scene\Entity.h"
+#include "Source\Scene\Components.h"
 
 namespace DirectXTestProject
 {
@@ -18,6 +20,7 @@ namespace DirectXTestProject
 		m_vertexBuffer(nullptr),
 		m_shader(nullptr),
 		m_graphicsRenderer(nullptr),
+		m_scene(nullptr),
 		m_cameraEntity(nullptr)
 	{
 		m_graphicsRenderer = new Engine::GraphicsRenderer();
@@ -26,6 +29,7 @@ namespace DirectXTestProject
 	Game::~Game()
 	{
 		delete m_cameraEntity;
+		delete m_scene;
 		delete m_shader;
 		delete m_vertexBuffer;
 		delete m_indexBuffer;
@@ -41,16 +45,19 @@ namespace DirectXTestProject
 		}
 		InitializeRenderBuffers();
 
-		// Creates an entity with a camera component.
-		m_cameraEntity = new Engine::Entity();
-		Engine::CameraComponent* camera = new Engine::CameraComponent(m_cameraEntity);
+		m_scene = new Engine::Scene();
+		m_cameraEntity = new Engine::Entity(m_scene->CreateEntity());
+		m_cameraEntity->AddComponent<Engine::Transform3DComponent>();
 
 		return true;
 	}
 
 	void Game::Update(float deltaTime)
 	{
-		m_cameraEntity->Update(deltaTime);
+		if (m_scene != nullptr)
+		{
+			m_scene->Update(deltaTime);
+		}
 	}
 
 	void Game::Render()
@@ -62,12 +69,6 @@ namespace DirectXTestProject
 		m_graphicsRenderer->SetActiveIndexBuffer(m_indexBuffer);
 		m_graphicsRenderer->SetActiveVertexBuffer(m_vertexBuffer);
 
-		// Sets the camera component.
-		Engine::CameraComponent* cameraComponent = m_cameraEntity->GetComponent<
-			Engine::CameraComponent>();
-		m_graphicsRenderer->SetConstantBuffer(0, cameraComponent->m_constantBuffer,
-			Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
-	
 		m_graphicsRenderer->DrawActiveElements();
 
 		m_graphicsRenderer->EndFrame();

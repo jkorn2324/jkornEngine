@@ -63,7 +63,9 @@
     <FxCompile Include="Shaders\TriangleShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\CameraConstants.hlsl" />
+    <FxCompile Include="Shaders\CameraConstants.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Source\SandboxProject.rc">

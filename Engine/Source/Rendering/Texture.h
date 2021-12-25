@@ -13,8 +13,11 @@ namespace Engine
 		explicit Texture();
 		~Texture();
 
+		bool Load(const wchar_t* texturePath);
+
 	private:
-		void Bind() const;
+		void Free();
+		void Bind(std::uint32_t slot) const;
 
 	private:
 		ID3D11Resource* m_texture;

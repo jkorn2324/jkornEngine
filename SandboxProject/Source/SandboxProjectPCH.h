@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 
+#define NOMINMAX
 #include <Windows.h>
 
 #include "Source\DebugAssert.h"

@@ -53,6 +53,8 @@ namespace Engine
 		ID3D11DeviceContext* m_deviceContext;
 		ID3D11Device* m_device;
 
+		// TODO: Need to set the depth texture + sampler state shennanigans
+
 		ID3D11RenderTargetView* m_backBufferRenderTarget;
 		ID3D11RenderTargetView* m_currentRenderTarget;
 
@@ -79,5 +81,6 @@ namespace Engine
 		friend class IndexBuffer;
 		friend class Shader;
 		friend class ConstantBuffer;
+		friend class Texture;
 	};
 }
