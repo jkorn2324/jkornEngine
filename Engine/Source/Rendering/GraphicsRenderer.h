@@ -23,7 +23,7 @@ namespace Engine
 		void BeginFrame();
 		void EndFrame();
 
-		void SetRenderTarget(ID3D11RenderTargetView* currentRenderTarget);
+		void SetRenderTarget(ID3D11RenderTargetView* currentRenderTarget, ID3D11DepthStencilView* depthStencilView);
 		void SetViewport(float x, float y, float width, float height);
 
 		void SetShader(class Shader* shader);
@@ -41,6 +41,8 @@ namespace Engine
 		// Draws the active elements.
 		void DrawActiveElements();
 
+		// TODO: Draw a sprite component
+
 	private:
 		void ClearRenderTarget(const MathLib::Vector4& color);
 
@@ -53,11 +55,12 @@ namespace Engine
 		ID3D11DeviceContext* m_deviceContext;
 		ID3D11Device* m_device;
 
-		// TODO: Need to set the depth texture + sampler state shennanigans
-
 		ID3D11RenderTargetView* m_backBufferRenderTarget;
 		ID3D11RenderTargetView* m_currentRenderTarget;
+		
+		ID3D11SamplerState* m_samplerState;
 
+		class FrameBuffer* m_frameBuffer;
 		class VertexBuffer* m_activeVertexBuffer;
 		class IndexBuffer* m_activeIndexBuffer;
 		class Shader* m_activeShader;
@@ -82,5 +85,6 @@ namespace Engine
 		friend class Shader;
 		friend class ConstantBuffer;
 		friend class Texture;
+		friend class FrameBuffer;
 	};
 }

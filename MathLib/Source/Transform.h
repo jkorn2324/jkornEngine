@@ -21,13 +21,15 @@ namespace MathLib
 		void SetScale(float scale);
 		void SetScale(float x, float y);
 		void SetScale(const Vector2& scale);
+		const Vector2& GetScale() const;
 
 		void SetRotation(float rotation, bool inDegrees = true);
 		float GetRotation() const;
 
 		void LookAt(const MathLib::Vector2& position);
 
-		const Mat3x3& GetTransformMatrix() const;
+		Matrix4x4 GetTransformMatrix4x4() const;
+		const Mat3x3& GetTransformMatrix3x3() const;
 
 	private:
 		void RecalculateMatrix();

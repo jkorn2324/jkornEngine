@@ -50,6 +50,11 @@ namespace MathLib
 		SetScale(scale.x, scale.y);
 	}
 
+	const Vector2& Transform2D::GetScale() const
+	{
+		return m_scale;
+	}
+
 	void Transform2D::SetRotation(float rotation, bool inDegrees)
 	{
 		m_rotation = inDegrees ? MathLib::DEG2RAD * rotation : rotation;
@@ -61,9 +66,16 @@ namespace MathLib
 		return m_rotation;
 	}
 
-	const Mat3x3& Transform2D::GetTransformMatrix() const
+	const Mat3x3& Transform2D::GetTransformMatrix3x3() const
 	{
 		return m_transformMatrix;
+	}
+
+	Mat4x4 Transform2D::GetTransformMatrix4x4() const
+	{
+		return Matrix4x4::CreateScale(m_scale.x, m_scale.y, 1.0f)
+			* Matrix4x4::CreateRotationX(m_rotation)
+			* Matrix4x4::CreateTranslation(m_position.x, m_position.y, 0.0f);
 	}
 
 	void Transform2D::LookAt(const MathLib::Vector2& position)

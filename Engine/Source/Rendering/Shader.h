@@ -16,15 +16,17 @@ namespace Engine
 		~Shader();
 
 		bool IsValid() const;
-		bool Load(const wchar_t* fileName, const BufferLayout& bufferLayout);
+
+		static Shader* StaticLoad(const std::wstring& fileName, const BufferLayout& bufferLayout);
 
 	private:
+		bool Load(const std::wstring& fileName, const BufferLayout& bufferLayout);
 		void Bind() const;
 
 	private:
-		ID3D11VertexShader* m_vertexShader;
-		ID3D11PixelShader* m_pixelShader;
-		ID3D11InputLayout* m_inputLayout;
+		ID3D11VertexShader* m_vertexShader = nullptr;
+		ID3D11PixelShader* m_pixelShader = nullptr;
+		ID3D11InputLayout* m_inputLayout = nullptr;
 
 		friend class GraphicsRenderer;
 	};

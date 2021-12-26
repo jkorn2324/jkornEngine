@@ -102,7 +102,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>SandboxProjectPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -122,7 +122,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>SandboxProjectPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -142,7 +142,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>SandboxProjectPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -162,7 +162,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>SandboxProjectPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -204,6 +204,18 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\CameraConstants.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\ObjectConstants.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\SpriteShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

@@ -38,6 +38,18 @@ namespace Engine
 		m_height = 0;
 	}
 
+	Texture* Texture::StaticLoad(const std::wstring& texturePath)
+	{
+		Texture* texture = new Texture();
+		const wchar_t* cstrPath = texturePath.c_str();
+		if (!texture->Load(cstrPath))
+		{
+			delete texture;
+			return nullptr;
+		}
+		return texture;
+	}
+
 	bool Texture::Load(const wchar_t* texturePath)
 	{
 		Free();

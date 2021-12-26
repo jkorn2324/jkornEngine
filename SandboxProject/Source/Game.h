@@ -41,7 +41,6 @@ namespace DirectXTestProject
 		Engine::GraphicsRenderer* m_graphicsRenderer;
 		Engine::VertexBuffer* m_vertexBuffer;
 		Engine::IndexBuffer* m_indexBuffer;
-		Engine::Shader* m_shader;
 
 		Engine::Entity* m_cameraEntity;
 		Engine::Scene* m_scene;

@@ -7,6 +7,10 @@
 #include "Source\Rendering\GraphicsRenderer.h"
 #include "Source\Rendering\BufferLayout.h"
 #include "Source\Rendering\ConstantBuffer.h"
+#include "Source\Rendering\Texture.h"
+
+#include "Source\Assets\AssetManager.h";
+#include "Source\Assets\AssetCache.h";
 
 #include "Source\Scene\Scene.h"
 #include "Source\Scene\Entity.h"
@@ -18,7 +22,6 @@ namespace DirectXTestProject
 	Game::Game()
 		: m_indexBuffer(nullptr), 
 		m_vertexBuffer(nullptr),
-		m_shader(nullptr),
 		m_graphicsRenderer(nullptr),
 		m_scene(nullptr),
 		m_cameraEntity(nullptr)
@@ -30,7 +33,6 @@ namespace DirectXTestProject
 	{
 		delete m_cameraEntity;
 		delete m_scene;
-		delete m_shader;
 		delete m_vertexBuffer;
 		delete m_indexBuffer;
 
@@ -65,7 +67,11 @@ namespace DirectXTestProject
 		// Clear back buffer, draw viewport.
 		m_graphicsRenderer->BeginFrame();
 
-		m_graphicsRenderer->SetShader(m_shader);
+		// Gets the shader.
+		Engine::AssetCache<Engine::Shader>& shaders = Engine::AssetManager::GetShaders();
+		Engine::Shader* shader = shaders.Get(L"Shaders/TriangleShader.hlsl");
+
+		m_graphicsRenderer->SetShader(shader);
 		m_graphicsRenderer->SetActiveIndexBuffer(m_indexBuffer);
 		m_graphicsRenderer->SetActiveVertexBuffer(m_vertexBuffer);
 
@@ -110,7 +116,14 @@ namespace DirectXTestProject
 				sizeof(MathLib::Vector4), Engine::BufferLayoutType::FLOAT4 }
 		});
 
-		m_shader = new Engine::Shader();
-		m_shader->Load(L"Shaders/TriangleShader.hlsl", bufferLayout);
+		Engine::AssetCache<Engine::Shader>& shaderAssetCache =
+			Engine::AssetManager::GetShaders();
+		Engine::Shader* shader = shaderAssetCache.Load<const Engine::BufferLayout&>(
+			L"Shaders/TriangleShader.hlsl", bufferLayout);
+
+		Engine::AssetCache<Engine::Texture>& textureAssetCache =
+			Engine::AssetManager::GetTextures();
+		Engine::Texture* texture = textureAssetCache.Load(
+			L"Assets/Textures/happy-face.png");
 	}
 }

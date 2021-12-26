@@ -51,10 +51,11 @@ namespace Engine
 	}
 
 	Shader::Shader()
-		: m_pixelShader(nullptr),
-		m_vertexShader(nullptr),
+		: m_vertexShader(nullptr),
+		m_pixelShader(nullptr),
 		m_inputLayout(nullptr)
 	{
+
 	}
 
 	Shader::~Shader()
@@ -80,13 +81,15 @@ namespace Engine
 			&& m_inputLayout != nullptr;
 	}
 
-	bool Shader::Load(const wchar_t* fileName, const BufferLayout& bufferLayout)
+	bool Shader::Load(const std::wstring& fileName, const BufferLayout& bufferLayout)
 	{
 		ID3DBlob* vertexShader = nullptr;
-		if (LoadShader(fileName, "VS", "vs_4_0", vertexShader))
+		const wchar_t* cstrFileName = fileName.c_str();
+
+		if (LoadShader(cstrFileName, "VS", "vs_4_0", vertexShader))
 		{
 			ID3DBlob* pixelShader = nullptr;
-			if (LoadShader(fileName, "PS", "ps_4_0", pixelShader))
+			if (LoadShader(cstrFileName, "PS", "ps_4_0", pixelShader))
 			{
 				GraphicsRenderer* graphics = GraphicsRenderer::Get();
 				HRESULT result = graphics->m_device->CreateVertexShader(
@@ -108,6 +111,17 @@ namespace Engine
 		}
 		DebugAssert(false, "Failed to create Shader.");
 		return false;
+	}
+
+	Shader* Shader::StaticLoad(const std::wstring& fileName, const BufferLayout& bufferLayout)
+	{
+		Shader* shader = new Shader();
+		if (!shader->Load(fileName, bufferLayout))
+		{
+			delete shader;
+			return nullptr;
+		}
+		return shader;
 	}
 
 	void Shader::Bind() const

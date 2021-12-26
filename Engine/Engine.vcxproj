@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -140,7 +140,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -162,7 +162,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -179,6 +179,10 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Engine.h" />
+    <ClInclude Include="Source\Assets\AssetCache.h" />
+    <ClInclude Include="Source\Assets\AssetManager.h" />
+    <ClInclude Include="Source\Rendering\FrameBuffer.h" />
     <ClInclude Include="Source\Scene\Components.h" />
     <ClInclude Include="Source\Scene\Entity.h" />
     <ClInclude Include="Source\Rendering\BufferLayout.h" />
@@ -193,6 +197,8 @@
     <ClInclude Include="Source\Scene\Scene.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Assets\AssetManager.cpp" />
+    <ClCompile Include="Source\Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Source\Scene\Components.cpp" />
     <ClCompile Include="Source\Scene\Entity.cpp" />
     <ClCompile Include="Source\Rendering\BufferLayout.cpp" />

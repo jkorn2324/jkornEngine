@@ -5,6 +5,7 @@
 #include "Rendering\VertexBuffer.h"
 #include "Rendering\ConstantBuffer.h"
 #include "Rendering\Shader.h"
+#include "Rendering\FrameBuffer.h"
 
 #include "Source\Vector.h"
 
@@ -29,7 +30,9 @@ namespace Engine
 		m_currentRenderTarget(nullptr),
 		m_activeIndexBuffer(nullptr),
 		m_activeVertexBuffer(nullptr),
-		m_activeShader(nullptr)
+		m_activeShader(nullptr),
+		m_frameBuffer(nullptr),
+		m_samplerState(nullptr)
 	{
 		s_graphicsRenderer = this;
 	}
@@ -45,6 +48,8 @@ namespace Engine
 		{
 			m_backBufferRenderTarget->Release();
 		}
+
+		delete m_frameBuffer;
 
 		if (m_deviceContext != nullptr)
 		{
@@ -78,6 +83,31 @@ namespace Engine
 			return false;
 		}
 
+		FrameBufferSpecification frameBufferSpecification({
+			{ FrameBufferTextureType::DEPTH_STENCIL }
+		});
+		frameBufferSpecification.width = m_screenWidth;
+		frameBufferSpecification.height = m_screenHeight;
+		m_frameBuffer = new FrameBuffer(frameBufferSpecification);
+
+		// Creates the texture sampler.
+		{
+			D3D11_SAMPLER_DESC samplerDesc;
+			ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+			samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+			samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+			samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+			samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+			samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+			samplerDesc.MinLOD = 0;
+			samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+			HRESULT output = m_device->CreateSamplerState(
+				&samplerDesc, &m_samplerState);
+			DebugAssert(output == S_OK, "Something went wrong with creating sampler.");
+			m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+		}
+
 		// Sets the primitive topology.
 		m_deviceContext->IASetPrimitiveTopology(
 			D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -87,13 +117,14 @@ namespace Engine
 	void GraphicsRenderer::BeginFrame()
 	{
 		// Sets the render target to the back buffer.
-		SetRenderTarget(m_backBufferRenderTarget);
+		SetRenderTarget(m_backBufferRenderTarget, m_frameBuffer->GetDepthStencilView());
 		
 		{
 			// Clears the render target color.
 			MathLib::Vector4 color = 
 				MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 			ClearRenderTarget(color);
+			m_frameBuffer->ClearDepthBuffer();
 		}
 	}
 
@@ -102,10 +133,10 @@ namespace Engine
 		m_swapChain->Present(1, 0);
 	}
 
-	void GraphicsRenderer::SetRenderTarget(ID3D11RenderTargetView* currentRenderTarget)
+	void GraphicsRenderer::SetRenderTarget(ID3D11RenderTargetView* currentRenderTarget, ID3D11DepthStencilView* stencilView)
 	{
 		m_currentRenderTarget = currentRenderTarget;
-		m_deviceContext->OMSetRenderTargets(1, &currentRenderTarget, nullptr);
+		m_deviceContext->OMSetRenderTargets(1, &currentRenderTarget, stencilView);
 	}
 
 	void GraphicsRenderer::ClearRenderTarget(const MathLib::Vector4& color)
@@ -259,7 +290,7 @@ namespace Engine
 			backBuffer->Release();
 			return false;
 		}
-		SetRenderTarget(m_backBufferRenderTarget);
+		SetRenderTarget(m_backBufferRenderTarget, nullptr);
 		backBuffer->Release();
 		return true;
 	}
