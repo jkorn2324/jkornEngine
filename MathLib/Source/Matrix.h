@@ -89,6 +89,7 @@ namespace MathLib
 		static Matrix4x4 CreateTranslation(float x, float y, float z);
 
 		static Matrix4x4 CreateOrtho(float left, float right, float top, float bottom, float nearPlane, float farPlane);
+		static Matrix4x4 CreateOrtho(float width, float height, float nearPlane, float farPlane);
 
 		static Matrix4x4 CreatePersp(float left, float right, float top, float bottom, float nearPlane, float farPlane);
 		static Matrix4x4 CreatePersp(float fov, float width, float height, float nearPlane, float farPlane);

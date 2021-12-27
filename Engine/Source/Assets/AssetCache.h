@@ -55,7 +55,7 @@ namespace Engine
 	template<typename TAsset>
 	inline void AssetCache<TAsset>::Clear()
 	{
-		for (const auto& pair : m_cachedAssets)
+		for (auto pair : m_cachedAssets)
 		{
 			delete pair.second;
 		}

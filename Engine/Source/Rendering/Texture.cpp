@@ -84,10 +84,20 @@ namespace Engine
 		return true;
 	}
 
+	std::uint32_t Texture::GetWidth() const
+	{
+		return m_width;
+	}
+
+	std::uint32_t Texture::GetHeight() const
+	{
+		return m_height;
+	}
+
 	void Texture::Bind(std::uint32_t slot) const
 	{
-		if (m_texture != nullptr
-			&& m_shaderResourceView != nullptr)
+		if (m_texture == nullptr
+			|| m_shaderResourceView == nullptr)
 		{
 			return;
 		}

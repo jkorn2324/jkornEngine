@@ -9,7 +9,7 @@ namespace MathLib
 	const float PI = 3.14159265358979323846f;
 	const float RAD2DEG = 180.0f / PI;
 	const float DEG2RAD = PI / 180.0f;
-
+	const float PIOVER2 = PI / 2.0f;
 
 	static float Sqrt(float input)
 	{

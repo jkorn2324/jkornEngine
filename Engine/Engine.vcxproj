@@ -179,6 +179,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Rendering\Camera.h" />
+    <ClInclude Include="Source\Scene\SceneCamera.h" />
     <ClInclude Include="Source\Engine.h" />
     <ClInclude Include="Source\Assets\AssetCache.h" />
     <ClInclude Include="Source\Assets\AssetManager.h" />
@@ -197,6 +199,8 @@
     <ClInclude Include="Source\Scene\Scene.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Rendering\Camera.cpp" />
+    <ClCompile Include="Source\Scene\SceneCamera.cpp" />
     <ClCompile Include="Source\Assets\AssetManager.cpp" />
     <ClCompile Include="Source\Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Source\Scene\Components.cpp" />

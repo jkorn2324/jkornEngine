@@ -7,10 +7,10 @@ namespace Engine
 
 	enum ConstantBufferFlags
 	{
-		VERTEX_SHADER = 1 << 1,
-		PIXEL_SHADER = 1 << 2,
-		HULL_SHADER = 1 << 3,
-		COMPUTE_SHADER = 1 << 4
+		VERTEX_SHADER = 1 << 0,
+		PIXEL_SHADER = 1 << 1,
+		HULL_SHADER = 1 << 2,
+		COMPUTE_SHADER = 1 << 3
 
 	};
 

@@ -364,10 +364,15 @@ namespace MathLib
 		{
 			2.0f / (right - left), 0.0f, 0.0f, 0.0f,
 			0.0f, 2.0f / (top - bottom), 0.0f, 0.0f,
-			0.0f, 0.0f, 2.0f / (farPlane - nearPlane), 0.0f,
+			0.0f, 0.0f, -2.0f / (farPlane - nearPlane), 0.0f,
 			-((right + left) / (right - left)), -((top + bottom) / (top - bottom)), -((farPlane + nearPlane) / (farPlane - nearPlane)), 1.0f
 		};
 		return Matrix4x4(orthoProj);
+	}
+
+	Matrix4x4 Matrix4x4::CreateOrtho(float width, float height, float nearPlane, float farPlane)
+	{
+		return CreateOrtho(-width * 0.5f, height * 0.5f, height * 0.5f, -height * 0.5f, nearPlane, farPlane);
 	}
 
 	Matrix4x4 Matrix4x4::CreatePersp(float left, float right, float top, float bottom, float nearPlane, float farPlane)
@@ -377,7 +382,7 @@ namespace MathLib
 			(2.0f * nearPlane) / (right - left), 0.0f, 0.0f, 0.0f,
 			0.0f, (2.0f * nearPlane) / (right - left), 0.0f, 0.0f,
 			(right + left) / (right - left), (top + bottom) / (top - bottom), -(farPlane + nearPlane) / (farPlane - nearPlane), -1.0f,
-			0.0f, 0.0f, -((2.0f * farPlane * nearPlane) / (farPlane - nearPlane)), 0.0f
+			0.0f, 0.0f, -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane), 0.0f
 		};
 		return Matrix4x4();
 	}

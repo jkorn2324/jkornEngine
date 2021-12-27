@@ -24,6 +24,8 @@ namespace Engine
 		subresourceData.SysMemSlicePitch = 0;
 
 		GraphicsRenderer* renderer = GraphicsRenderer::Get();
+		DebugAssert(renderer != nullptr, "Graphics renderer doesn't exist.");
+
 		HRESULT result = renderer->m_device->CreateBuffer(&bufferDesc,
 			&subresourceData, &m_constantBuffer);
 		DebugAssert(result == S_OK, "Failed to create constant buffer.");

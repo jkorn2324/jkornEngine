@@ -6,6 +6,7 @@
 #include "Rendering\ConstantBuffer.h"
 #include "Rendering\Shader.h"
 #include "Rendering\FrameBuffer.h"
+#include "Rendering\Texture.h"
 
 #include "Source\Vector.h"
 
@@ -44,25 +45,18 @@ namespace Engine
 			s_graphicsRenderer = nullptr;
 		}
 
-		if (m_backBufferRenderTarget != nullptr)
-		{
-			m_backBufferRenderTarget->Release();
-		}
-
 		delete m_frameBuffer;
 
-		if (m_deviceContext != nullptr)
-		{
-			m_deviceContext->Release();
-		}
-		if (m_device != nullptr)
-		{
-			m_device->Release();
-		}
-		if (m_swapChain != nullptr)
-		{
-			m_swapChain->Release();
-		}
+		m_samplerState->Release();
+		m_swapChain->Release();
+		m_backBufferRenderTarget->Release();
+		m_device->Release();
+		m_deviceContext->Release();
+		
+#ifdef _DEBUG
+		m_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL);
+		m_debug->Release();
+#endif
 	}
 
 	bool GraphicsRenderer::Initialize(const HWND& window)
@@ -76,7 +70,7 @@ namespace Engine
 			return false;
 		}
 
-		SetViewport(0.0f, 0.0f, WIDTH, HEIGHT);
+		SetViewport(0.0f, 0.0f, (float)m_screenWidth, (float)m_screenHeight);
 
 		if (!CreateBackBuffer())
 		{
@@ -90,10 +84,18 @@ namespace Engine
 		frameBufferSpecification.height = m_screenHeight;
 		m_frameBuffer = new FrameBuffer(frameBufferSpecification);
 
+#if _DEBUG
+		{
+			HRESULT result = m_device->QueryInterface(__uuidof(ID3D11Debug),
+				reinterpret_cast<void**>(&m_debug));
+			DebugAssert(result == S_OK, "Unable to create debug device.");
+		}
+#endif
+
 		// Creates the texture sampler.
 		{
 			D3D11_SAMPLER_DESC samplerDesc;
-			ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+			ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
 			samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 			samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 			samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -148,6 +150,7 @@ namespace Engine
 	void GraphicsRenderer::SetViewport(float x, float y, float width, float height)
 	{
 		D3D11_VIEWPORT viewport;
+		ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
 		viewport.Width = width;
 		viewport.Height = height;
 		viewport.MinDepth = 0.0f;
@@ -157,29 +160,29 @@ namespace Engine
 		m_deviceContext->RSSetViewports(1, &viewport);
 	}
 
+	void GraphicsRenderer::SetTexture(std::uint32_t slot, Texture* texture)
+	{
+		if (texture != nullptr)
+		{
+			texture->Bind(slot);
+		}
+	}
+
 	void GraphicsRenderer::SetActiveIndexBuffer(IndexBuffer* indexBuffer)
 	{
-		if (m_activeIndexBuffer != indexBuffer)
+		m_activeIndexBuffer = indexBuffer;
+		if (m_activeIndexBuffer != nullptr)
 		{
-			m_activeIndexBuffer = indexBuffer;
-
-			if (m_activeIndexBuffer != nullptr)
-			{
-				m_activeIndexBuffer->Bind();
-			}
+			m_activeIndexBuffer->Bind();
 		}
 	}
 
 	void GraphicsRenderer::SetActiveVertexBuffer(VertexBuffer* vertexBuffer)
 	{
-		if (m_activeVertexBuffer != vertexBuffer)
+		m_activeVertexBuffer = vertexBuffer;
+		if (m_activeVertexBuffer != nullptr)
 		{
-			m_activeVertexBuffer = vertexBuffer;
-
-			if (m_activeVertexBuffer != nullptr)
-			{
-				m_activeVertexBuffer->Bind();
-			}
+			m_activeVertexBuffer->Bind();
 		}
 	}
 
@@ -200,14 +203,10 @@ namespace Engine
 
 	void GraphicsRenderer::SetShader(class Shader* shader)
 	{
-		if (m_activeShader != shader)
+		m_activeShader = shader;
+		if (m_activeShader != nullptr)
 		{
-			m_activeShader = shader;
-
-			if (m_activeShader != nullptr)
-			{
-				m_activeShader->Bind();
-			}
+			m_activeShader->Bind();
 		}
 	}
 
@@ -240,8 +239,8 @@ namespace Engine
 		DXGI_SWAP_CHAIN_DESC swapChainDesc;
 		ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 		swapChainDesc.BufferCount = 2;
-		swapChainDesc.BufferDesc.Width = resolutionWidth;
-		swapChainDesc.BufferDesc.Height = resolutionHeight;
+		swapChainDesc.BufferDesc.Width = static_cast<UINT>(resolutionWidth);
+		swapChainDesc.BufferDesc.Height = static_cast<UINT>(resolutionHeight);
 		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
 		swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
@@ -258,7 +257,11 @@ namespace Engine
 			nullptr,
 			D3D_DRIVER_TYPE_HARDWARE,
 			nullptr,
+#ifdef _DEBUG
+			D3D11_CREATE_DEVICE_DEBUG,
+#else
 			0,
+#endif
 			&inFeatureLevels,
 			1,
 			D3D11_SDK_VERSION,
@@ -276,21 +279,11 @@ namespace Engine
 	{
 		ID3D11Texture2D* backBuffer;
 		HRESULT result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-			(void**)&backBuffer);
+			(LPVOID*)&backBuffer);
 		DebugAssert(result == S_OK, "Failed to create the back buffer.");
-		if (result != S_OK)
-		{
-			return false;
-		}
-		result = m_device->CreateRenderTargetView((ID3D11Resource*)backBuffer,
+		result = m_device->CreateRenderTargetView(backBuffer,
 			nullptr, &m_backBufferRenderTarget);
 		DebugAssert(result == S_OK, "Failed to set the render target view.");
-		if (result != S_OK)
-		{
-			backBuffer->Release();
-			return false;
-		}
-		SetRenderTarget(m_backBufferRenderTarget, nullptr);
 		backBuffer->Release();
 		return true;
 	}

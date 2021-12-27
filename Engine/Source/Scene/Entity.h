@@ -38,7 +38,6 @@ namespace Engine
 	template<typename T>
 	T& Entity::GetComponent() const
 	{
-		DebugAssert(HasComponent<T>(), "Entity doesn't have the component.");
 		return m_scene->m_entityRegistry.get<T>(m_entity);
 	}
 

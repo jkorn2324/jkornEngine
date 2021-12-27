@@ -16,4 +16,10 @@ namespace Engine
 	{
 		return s_textureAssets;
 	}
+
+	void AssetManager::UncacheAssets()
+	{
+		s_shaderAssets.Clear();
+		s_textureAssets.Clear();
+	}
 }

@@ -8,7 +8,7 @@ namespace Engine
 #pragma region d3d11_funcs
 
 	static ID3D11DepthStencilState* CreateDepthStencilState(D3D11_COMPARISON_FUNC func,
-		ID3D11Device* device)
+		ID3D11Device*& device)
 	{
 		D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 		ZeroMemory(&depthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
@@ -35,7 +35,7 @@ namespace Engine
 		return outDepthStencilState;
 	}
 
-	static bool CreateDepthStencil(std::uint32_t width, std::uint32_t height, ID3D11Device* device,
+	static bool CreateDepthStencil(std::uint32_t width, std::uint32_t height, ID3D11Device*& device,
 		ID3D11Texture2D** depthTexture, ID3D11DepthStencilView** depthStencilView)
 	{
 		D3D11_TEXTURE2D_DESC depthTextureDesc;
@@ -59,7 +59,7 @@ namespace Engine
 		}
 
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilDesc;
-		ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+		ZeroMemory(&depthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		depthStencilDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		depthStencilDesc.Texture2D.MipSlice = 0;
@@ -115,18 +115,27 @@ namespace Engine
 	void FrameBuffer::CreateBuffers()
 	{
 		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
+		DebugAssert(graphicsRenderer != nullptr, "Graphics Renderer doesn't exist.");
+		
+		if (graphicsRenderer == nullptr)
+		{
+			return;
+		}
 
 		// Creates the depth stencil buffer.
 		if (m_depthStencilSpecification.textureType != FrameBufferTextureType::TYPE_NONE)
 		{
-			ID3D11DepthStencilState* depthStencilState = CreateDepthStencilState(
-				D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS, graphicsRenderer->m_device);
-			graphicsRenderer->m_deviceContext->OMSetDepthStencilState(depthStencilState, 0);
-			depthStencilState->Release();
-
-			bool result = CreateDepthStencil(m_frameBufferSpecification.width, m_frameBufferSpecification.height,
-				graphicsRenderer->m_device, &m_depthTexture, &m_depthStencilView);
-			DebugAssert(result, "Depth Stencil Failed to be created.");
+			{
+				ID3D11DepthStencilState* depthStencilState = CreateDepthStencilState(
+					D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS, graphicsRenderer->m_device);
+				graphicsRenderer->m_deviceContext->OMSetDepthStencilState(depthStencilState, 0);
+				depthStencilState->Release();
+			}
+			{
+				bool result = CreateDepthStencil(m_frameBufferSpecification.width, m_frameBufferSpecification.height,
+					graphicsRenderer->m_device, &m_depthTexture, &m_depthStencilView);
+				DebugAssert(result, "Depth Stencil Failed to be created.");
+			}
 		}
 	}
 

@@ -81,17 +81,17 @@ namespace Engine
 			&& m_inputLayout != nullptr;
 	}
 
-	bool Shader::Load(const std::wstring& fileName, const BufferLayout& bufferLayout)
+	bool Shader::Load(const wchar_t* fileName, const BufferLayout& bufferLayout)
 	{
 		ID3DBlob* vertexShader = nullptr;
-		const wchar_t* cstrFileName = fileName.c_str();
-
-		if (LoadShader(cstrFileName, "VS", "vs_4_0", vertexShader))
+		if (LoadShader(fileName, "VS", "vs_4_0", vertexShader))
 		{
 			ID3DBlob* pixelShader = nullptr;
-			if (LoadShader(cstrFileName, "PS", "ps_4_0", pixelShader))
+			if (LoadShader(fileName, "PS", "ps_4_0", pixelShader))
 			{
 				GraphicsRenderer* graphics = GraphicsRenderer::Get();
+				DebugAssert(graphics != nullptr, "Graphics Renderer doesn't exist.");
+
 				HRESULT result = graphics->m_device->CreateVertexShader(
 					vertexShader->GetBufferPointer(), vertexShader->GetBufferSize(), nullptr, &m_vertexShader);
 				DebugAssert(result == S_OK, "Failed to load vertex shader.");
@@ -105,8 +105,12 @@ namespace Engine
 						bufferLayout.GetD3D11InputElementDesc(), bufferLayout.GetNumElements(),
 						vertexShader->GetBufferPointer(), vertexShader->GetBufferSize(), &m_inputLayout);
 					DebugAssert(result == S_OK, "Failed to load input layout.");
+					if (result == S_OK)
+					{
+						return true;
+					}
 				}
-				return result == S_OK;
+				return false;
 			}
 		}
 		DebugAssert(false, "Failed to create Shader.");
@@ -116,7 +120,8 @@ namespace Engine
 	Shader* Shader::StaticLoad(const std::wstring& fileName, const BufferLayout& bufferLayout)
 	{
 		Shader* shader = new Shader();
-		if (!shader->Load(fileName, bufferLayout))
+		const wchar_t* cstrFileName = fileName.c_str();
+		if (!shader->Load(cstrFileName, bufferLayout))
 		{
 			delete shader;
 			return nullptr;

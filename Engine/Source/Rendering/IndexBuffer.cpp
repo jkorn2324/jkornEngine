@@ -22,6 +22,7 @@ namespace Engine
 		initializationData.SysMemPitch = 0;
 		initializationData.SysMemSlicePitch = 0;
 
+		DebugAssert(graphicsRenderer != nullptr, "Graphics Renderer doesn't exist.");
 		HRESULT result = graphicsRenderer->m_device
 			->CreateBuffer(&bufferDesc, &initializationData, &m_indexBuffer);
 		DebugAssert(result == S_OK, "Failed to create index buffer.");

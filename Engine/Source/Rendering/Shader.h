@@ -20,7 +20,7 @@ namespace Engine
 		static Shader* StaticLoad(const std::wstring& fileName, const BufferLayout& bufferLayout);
 
 	private:
-		bool Load(const std::wstring& fileName, const BufferLayout& bufferLayout);
+		bool Load(const wchar_t* fileName, const BufferLayout& bufferLayout);
 		void Bind() const;
 
 	private:

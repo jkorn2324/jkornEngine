@@ -3,24 +3,24 @@
 #include "Entity.h"
 
 #include "Components.h"
+#include "Camera.h"
 
 namespace Engine
 {
 
 	Scene::Scene()
 		: m_entityRegistry(),
-		m_markedForDestroyEntities()
+		m_markedForDestroyEntities(),
+		m_camera(nullptr)
 	{
 	}
 
 	Scene::~Scene()
 	{
-		// TODO: 
 	}
 
 	void Scene::Update(float deltaTime)
 	{
-
 		// Destroys the entities if they are marked for destroy.
 		{
 			std::int32_t sizeOfVec = m_markedForDestroyEntities.size() - 1;
@@ -30,6 +30,29 @@ namespace Engine
 				sizeOfVec--;
 			}
 		}
+
+		// Selects the view cameras based on a set of camera components.
+		{
+			auto entityView = m_entityRegistry.view<SceneCameraComponent, Transform3DComponent>();
+			for (auto entity : entityView)
+			{
+				auto [cameraComponent, transformComponent]
+					= entityView.get<SceneCameraComponent, Transform3DComponent>(entity);
+				m_camera = &cameraComponent.camera;
+				// Sets the projection matrix.
+				m_camera->SetProjectionMatrix(transformComponent.GetTransformMatrix());
+
+				if (cameraComponent.mainCamera)
+				{
+					break;
+				}
+			}
+		}
+	}
+
+	Camera* Scene::GetCamera() const
+	{
+		return m_camera;
 	}
 
 	Entity Scene::CreateEntity()
