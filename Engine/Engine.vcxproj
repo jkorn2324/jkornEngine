@@ -199,7 +199,6 @@
     <ClInclude Include="Source\Scene\Scene.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Rendering\Camera.cpp" />
     <ClCompile Include="Source\Scene\SceneCamera.cpp" />
     <ClCompile Include="Source\Assets\AssetManager.cpp" />
     <ClCompile Include="Source\Rendering\FrameBuffer.cpp" />

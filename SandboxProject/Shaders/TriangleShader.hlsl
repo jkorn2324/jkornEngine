@@ -1,6 +1,6 @@
 struct VertexShaderIn
 {
-	float4 position : POSITION0;
+	float3 position : POSITION0;
 	float4 color : COLOR0;
 };
 
@@ -13,7 +13,7 @@ struct VertexShaderOut
 VertexShaderOut VS(VertexShaderIn input)
 {
 	VertexShaderOut output;
-    output.position = input.position;
+    output.position = float4(input.position, 1.0);
 	output.color = input.color;
 	return output;
 }

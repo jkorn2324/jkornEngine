@@ -57,10 +57,6 @@ namespace Engine
 		ID3D11DeviceContext* m_deviceContext;
 		ID3D11Device* m_device;
 
-#if _DEBUG
-		ID3D11Debug* m_debug = nullptr;
-#endif
-
 		ID3D11RenderTargetView* m_backBufferRenderTarget;
 		ID3D11RenderTargetView* m_currentRenderTarget;
 		

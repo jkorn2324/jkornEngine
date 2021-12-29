@@ -40,6 +40,14 @@ namespace Engine
 
 	GraphicsRenderer::~GraphicsRenderer()
 	{
+#if _DEBUG
+		ID3D11Debug* debug = nullptr;
+		{
+			HRESULT result = m_device->QueryInterface(__uuidof(ID3D11Debug),
+				reinterpret_cast<void**>(&debug));
+			DebugAssert(result == S_OK, "Unable to create debug device.");
+		}
+#endif
 		if (s_graphicsRenderer == this)
 		{
 			s_graphicsRenderer = nullptr;
@@ -48,14 +56,14 @@ namespace Engine
 		delete m_frameBuffer;
 
 		m_samplerState->Release();
-		m_swapChain->Release();
 		m_backBufferRenderTarget->Release();
-		m_device->Release();
+		m_swapChain->Release();
 		m_deviceContext->Release();
-		
+		ULONG ref = m_device->Release();
+
 #ifdef _DEBUG
-		m_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL);
-		m_debug->Release();
+		debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL);
+		debug->Release();
 #endif
 	}
 
@@ -78,19 +86,11 @@ namespace Engine
 		}
 
 		FrameBufferSpecification frameBufferSpecification({
-			{ FrameBufferTextureType::DEPTH_STENCIL }
+			{ FrameBufferAttachmentType::DEPTH_STENCIL }
 		});
 		frameBufferSpecification.width = m_screenWidth;
 		frameBufferSpecification.height = m_screenHeight;
 		m_frameBuffer = new FrameBuffer(frameBufferSpecification);
-
-#if _DEBUG
-		{
-			HRESULT result = m_device->QueryInterface(__uuidof(ID3D11Debug),
-				reinterpret_cast<void**>(&m_debug));
-			DebugAssert(result == S_OK, "Unable to create debug device.");
-		}
-#endif
 
 		// Creates the texture sampler.
 		{
@@ -101,7 +101,7 @@ namespace Engine
 			samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 			samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 			samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-			samplerDesc.MinLOD = 0;
+			samplerDesc.MinLOD = 0.0f;
 			samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 			HRESULT output = m_device->CreateSamplerState(
@@ -111,8 +111,7 @@ namespace Engine
 		}
 
 		// Sets the primitive topology.
-		m_deviceContext->IASetPrimitiveTopology(
-			D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return true;
 	}
 
@@ -170,19 +169,25 @@ namespace Engine
 
 	void GraphicsRenderer::SetActiveIndexBuffer(IndexBuffer* indexBuffer)
 	{
-		m_activeIndexBuffer = indexBuffer;
-		if (m_activeIndexBuffer != nullptr)
+		if (m_activeIndexBuffer != indexBuffer)
 		{
-			m_activeIndexBuffer->Bind();
+			m_activeIndexBuffer = indexBuffer;
+			if (m_activeIndexBuffer != nullptr)
+			{
+				m_activeIndexBuffer->Bind();
+			}
 		}
 	}
 
 	void GraphicsRenderer::SetActiveVertexBuffer(VertexBuffer* vertexBuffer)
 	{
-		m_activeVertexBuffer = vertexBuffer;
-		if (m_activeVertexBuffer != nullptr)
+		if (m_activeVertexBuffer != vertexBuffer)
 		{
-			m_activeVertexBuffer->Bind();
+			m_activeVertexBuffer = vertexBuffer;
+			if (m_activeVertexBuffer != nullptr)
+			{
+				m_activeVertexBuffer->Bind();
+			}
 		}
 	}
 
@@ -203,10 +208,14 @@ namespace Engine
 
 	void GraphicsRenderer::SetShader(class Shader* shader)
 	{
-		m_activeShader = shader;
-		if (m_activeShader != nullptr)
+		if (m_activeShader != shader)
 		{
-			m_activeShader->Bind();
+			m_activeShader = shader;
+			
+			if (m_activeShader != nullptr)
+			{
+				m_activeShader->Bind();
+			}
 		}
 	}
 

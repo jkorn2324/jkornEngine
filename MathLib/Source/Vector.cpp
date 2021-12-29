@@ -399,6 +399,8 @@ namespace MathLib
 	const Vector4 Vector4::UnitY = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 	const Vector4 Vector4::UnitZ = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 	const Vector4 Vector4::UnitW = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+	const Vector4 Vector4::One = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	const Vector4 Vector4::Zero = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	Vector4::Vector4()
 		: x(0.0f), y(0.0f), z(0.0f), w(0.0f) { }

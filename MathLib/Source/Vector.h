@@ -192,6 +192,9 @@ namespace MathLib
 		static const Vector4 UnitY;
 		static const Vector4 UnitZ;
 		static const Vector4 UnitW;
+
+		static const Vector4 One;
+		static const Vector4 Zero;
 	};
 
 	// Optimized version of a Vector4, utilizes SIMD.

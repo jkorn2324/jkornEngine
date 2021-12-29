@@ -123,7 +123,7 @@ namespace Engine
 		}
 
 		// Creates the depth stencil buffer.
-		if (m_depthStencilSpecification.textureType != FrameBufferTextureType::TYPE_NONE)
+		if (m_depthStencilSpecification.textureType != FrameBufferAttachmentType::TYPE_NONE)
 		{
 			{
 				ID3D11DepthStencilState* depthStencilState = CreateDepthStencilState(

@@ -8,7 +8,7 @@
 namespace Engine
 {
 
-	enum FrameBufferTextureType
+	enum FrameBufferAttachmentType
 	{
 		TYPE_NONE,
 		
@@ -17,29 +17,29 @@ namespace Engine
 		DEPTH_STENCIL = TYPE_DEPTH24_STENCIL8
 	};
 
-	struct FrameBufferTextureSpecification
+	struct FrameBufferAttachment
 	{
-		FrameBufferTextureType textureType;
+		FrameBufferAttachmentType textureType;
 
-		FrameBufferTextureSpecification() = default;
-		FrameBufferTextureSpecification(FrameBufferTextureType textureType)
+		FrameBufferAttachment() = default;
+		FrameBufferAttachment(FrameBufferAttachmentType textureType)
 			: textureType(textureType) { }
 	};
 
 	struct FrameBufferSpecificationAttachmentList
 	{
-		std::vector<FrameBufferTextureSpecification> attachments;
+		std::vector<FrameBufferAttachment> attachments;
 
 		FrameBufferSpecificationAttachmentList() = default;
-		FrameBufferSpecificationAttachmentList(const std::initializer_list<FrameBufferTextureSpecification>& attachments)
+		FrameBufferSpecificationAttachmentList(const std::initializer_list<FrameBufferAttachment>& attachments)
 			: attachments(attachments) { }
 
-		std::vector<FrameBufferTextureSpecification>::const_iterator begin() const
+		std::vector<FrameBufferAttachment>::const_iterator begin() const
 		{
 			return attachments.begin();
 		}
 
-		std::vector<FrameBufferTextureSpecification>::const_iterator end() const
+		std::vector<FrameBufferAttachment>::const_iterator end() const
 		{
 			return attachments.end();
 		}
@@ -53,6 +53,8 @@ namespace Engine
 
 		// Sampler Parameters.
 		std::uint32_t samples = 1;
+
+		// Rasterization
 
 		FrameBufferSpecificationAttachmentList attachments;
 
@@ -84,6 +86,6 @@ namespace Engine
 		ID3D11Texture2D* m_depthTexture;
 
 		FrameBufferSpecification m_frameBufferSpecification;
-		FrameBufferTextureSpecification m_depthStencilSpecification = FrameBufferTextureType::TYPE_NONE;
+		FrameBufferAttachment m_depthStencilSpecification = FrameBufferAttachmentType::TYPE_NONE;
 	};
 }

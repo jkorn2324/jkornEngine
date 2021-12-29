@@ -18,13 +18,18 @@ Texture2D SpriteTexture : register(t0);
 #include "CameraConstants.hlsl"
 #include "ObjectConstants.hlsl"
 
+cbuffer SpriteConstants : register(b2)
+{
+    float4 c_spriteColor;
+};
+
 VertexShaderOut VS(VertexShaderIn input)
 {
     VertexShaderOut output;
     
-    float4 worldPosition = mul(float4(input.position, 1.0), c_objectToWorld);
-    output.worldPosition = worldPosition.xyz;
-    output.position = mul(worldPosition, c_viewProjection);
+    float4 worldPos = mul(float4(input.position, 1.0), c_objectToWorld);
+    output.worldPosition = worldPos.xyz;
+    output.position = mul(worldPos, c_viewProjection);
     output.uv = input.uv;
     
     return output;
@@ -32,5 +37,5 @@ VertexShaderOut VS(VertexShaderIn input)
 
 float4 PS(VertexShaderOut input) : SV_TARGET
 {
-    return SpriteTexture.Sample(DefaultSampler, input.uv);
+    return SpriteTexture.Sample(DefaultSampler, input.uv) * c_spriteColor;
 }

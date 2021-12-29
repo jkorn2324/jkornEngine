@@ -17,24 +17,19 @@ namespace Engine
 	public:
 		explicit SceneCamera();
 		explicit SceneCamera(const SceneCameraType& type);
-		explicit SceneCamera(const MathLib::Matrix4x4& mat);
-		explicit SceneCamera(const SceneCameraType& type, const MathLib::Matrix4x4& mat);
 		~SceneCamera() = default;
 
-		MathLib::Matrix4x4 GetViewProjectionMatrix() const override;
+		void SetViewMatrix(const MathLib::Matrix4x4& mat);
 
 	private:
-		void UpdateViewMatrix();
+		void UpdateProjectionMatrix();
 
 	private:
-		MathLib::Matrix4x4 m_viewMatrix;
 		float m_nearPlane, m_farPlane;
 
 		float m_perspFOV, m_perspAspectRatio;
 		float m_orthoWidth, m_orthoHeight;
 
 		SceneCameraType m_sceneCameraType;
-
-		friend class Scene;
 	};
 }

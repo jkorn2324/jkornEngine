@@ -10,7 +10,6 @@ namespace Engine
 
 	SceneCamera::SceneCamera()
 		: Camera(),
-		m_viewMatrix(MathLib::Matrix4x4::Identity),
 		m_nearPlane(1000.0f),
 		m_farPlane(-1000.0f),
 		m_perspFOV(MathLib::DEG2RAD * 50.0f), 
@@ -19,12 +18,11 @@ namespace Engine
 		m_orthoHeight(DEFAULT_HEIGHT),
 		m_sceneCameraType(SceneCameraType::TYPE_ORTHOGRAPHIC)
 	{
-		UpdateViewMatrix();
+		UpdateProjectionMatrix();
 	}
 
 	SceneCamera::SceneCamera(const SceneCameraType& type)
 		: Camera(),
-		m_viewMatrix(MathLib::Matrix4x4::Identity),
 		m_nearPlane(1000.0f),
 		m_farPlane(-1000.0f),
 		m_perspFOV(MathLib::DEG2RAD * 50.0f),
@@ -33,43 +31,15 @@ namespace Engine
 		m_orthoHeight(DEFAULT_HEIGHT),
 		m_sceneCameraType(type)
 	{
-		UpdateViewMatrix();
+		UpdateProjectionMatrix();
 	}
 
-	SceneCamera::SceneCamera(const MathLib::Matrix4x4& mat)
-		: Camera(mat),
-		m_viewMatrix(MathLib::Matrix4x4::Identity),
-		m_nearPlane(1000.0f),
-		m_farPlane(-1000.0f),
-		m_perspFOV(MathLib::DEG2RAD * 50.0f),
-		m_perspAspectRatio(DEFAULT_WIDTH / DEFAULT_HEIGHT),
-		m_orthoWidth(DEFAULT_WIDTH),
-		m_orthoHeight(DEFAULT_HEIGHT),
-		m_sceneCameraType(SceneCameraType::TYPE_ORTHOGRAPHIC)
+	void SceneCamera::SetViewMatrix(const MathLib::Matrix4x4& mat)
 	{
-		UpdateViewMatrix();
+		m_viewMatrix = mat;
 	}
 
-	SceneCamera::SceneCamera(const SceneCameraType& type, const MathLib::Matrix4x4& mat)
-		: Camera(mat),
-		m_viewMatrix(MathLib::Matrix4x4::Identity),
-		m_nearPlane(1000.0f),
-		m_farPlane(-1000.0f),
-		m_perspFOV(MathLib::DEG2RAD * 50.0f),
-		m_perspAspectRatio(DEFAULT_WIDTH / DEFAULT_HEIGHT),
-		m_orthoWidth(DEFAULT_WIDTH),
-		m_orthoHeight(DEFAULT_HEIGHT),
-		m_sceneCameraType(type)
-	{
-		UpdateViewMatrix();
-	}
-
-	MathLib::Matrix4x4 SceneCamera::GetViewProjectionMatrix() const
-	{
-		return m_projectionMatrix * m_viewMatrix;
-	}
-
-	void SceneCamera::UpdateViewMatrix()
+	void SceneCamera::UpdateProjectionMatrix()
 	{
 		MathLib::Matrix4x4 rotationMat = MathLib::Matrix4x4::Identity;
 			// MathLib::Matrix4x4::CreateRotationX(-MathLib::PIOVER2)
@@ -79,13 +49,13 @@ namespace Engine
 		{
 			case TYPE_ORTHOGRAPHIC:
 			{
-				m_viewMatrix = rotationMat * MathLib::Matrix4x4::CreateOrtho(
+				m_projectionMatrix = rotationMat * MathLib::Matrix4x4::CreateOrtho(
 						m_orthoWidth, m_orthoHeight, m_nearPlane, m_farPlane);
 				break;
 			}
 			case TYPE_PERSPECTIVE:
 			{
-				m_viewMatrix = rotationMat * MathLib::Matrix4x4::CreatePersp(
+				m_projectionMatrix = rotationMat * MathLib::Matrix4x4::CreatePersp(
 					m_perspFOV, m_perspAspectRatio, m_nearPlane, m_farPlane);
 				break;
 			}

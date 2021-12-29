@@ -30,6 +30,7 @@ namespace DirectXTestProject
 		m_spriteVertexBuffer(nullptr),
 		m_spriteIndexBuffer(nullptr),
 		m_cameraConstantBuffer(nullptr),
+		m_spriteConstantBuffer(nullptr),
 		m_cameraConstants(),
 		m_entityConstantBuffer(nullptr),
 		m_entityConstants()
@@ -53,6 +54,7 @@ namespace DirectXTestProject
 
 		delete m_cameraConstantBuffer;
 		delete m_entityConstantBuffer;
+		delete m_spriteConstantBuffer;
 
 		delete m_graphicsRenderer;
 	}
@@ -66,11 +68,13 @@ namespace DirectXTestProject
 		InitializeRenderBuffers();
 
 		m_scene = new Engine::Scene();
+
 		m_cameraEntity = new Engine::Entity(m_scene->CreateEntity());
 		{
 			Engine::Transform3DComponent& camComponentTransform
 				= m_cameraEntity->AddComponent<Engine::Transform3DComponent>();
-			camComponentTransform.SetPosition(MathLib::Vector3(0.0f, 0.0f, 0.0f));
+			camComponentTransform.SetPosition(MathLib::Vector3(0.0f, 0.0f, -20.0f));
+			camComponentTransform.LookAt(MathLib::Vector3(0.0f, 0.0f, 0.0f));
 			m_cameraEntity->AddComponent<Engine::SceneCameraComponent>();
 		}
 
@@ -78,12 +82,9 @@ namespace DirectXTestProject
 		{
 			Engine::Transform3DComponent& component
 				= m_spriteEntity->AddComponent<Engine::Transform3DComponent>();
-			component.SetPosition(0.0f, 0.0f, 0.0f);
-			MathLib::Vector3 scale = component.GetScale();
-			component.SetScale(scale.x * 0.1f, scale.y * 0.1f, 1.0f);
+			component.SetScale(0.1f, 0.1f, 0.1f);
 			m_spriteEntity->AddComponent<Engine::SpriteComponent>(
-				Engine::AssetManager::GetTextures().Get(L"Assets/Textures/happy-face.png"),
-				MathLib::Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+				Engine::AssetManager::GetTextures().Get(L"Assets/Textures/happy-face.png"));
 		}
 		return true;
 	}
@@ -110,10 +111,10 @@ namespace DirectXTestProject
 			Engine::Camera* camera = m_scene->GetCamera();
 			if (camera != nullptr)
 			{
-				MathLib::Matrix4x4 projectionMatrix = camera->GetProjectionMatrix();
-				projectionMatrix.Invert();
+				auto mat = camera->GetViewMatrix();
+				mat.Invert();
 
-				m_cameraConstants.c_cameraPosition = projectionMatrix.GetTranslation();
+				m_cameraConstants.c_cameraPosition = mat.GetTranslation();
 				m_cameraConstants.c_viewProjection =
 					camera->GetViewProjectionMatrix();
 
@@ -124,36 +125,43 @@ namespace DirectXTestProject
 					Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
 			}
 		}
-		
-		Engine::Shader* shader =
-			shaders.Get(L"Shaders/SpriteShader.hlsl");
-		m_graphicsRenderer->SetShader(shader);
-
-		Engine::SpriteComponent& spriteComponent =
-			m_spriteEntity->GetComponent<Engine::SpriteComponent>();
-		m_graphicsRenderer->SetTexture(0, spriteComponent.texture);
 
 		{
+			Engine::Shader* shader =
+				shaders.Get(L"Shaders/SpriteShader.hlsl");
+			m_graphicsRenderer->SetShader(shader);
+
 			Engine::SpriteComponent& sprite =
 				m_spriteEntity->GetComponent<Engine::SpriteComponent>();
+			m_graphicsRenderer->SetTexture(0, sprite.texture);
+			Engine::Transform3DComponent& transform =
+				m_spriteEntity->GetComponent<Engine::Transform3DComponent>();
+			m_entityConstants.c_objectToWorld = transform.GetTransformMatrix();
+
 			if (sprite.texture != nullptr)
 			{
-				Engine::Transform3DComponent& transform =
-					m_spriteEntity->GetComponent<Engine::Transform3DComponent>();
 				m_entityConstants.c_objectToWorld = MathLib::Matrix4x4::CreateScale(
 					(float)sprite.texture->GetWidth(), (float)sprite.texture->GetHeight(), 1.0f)
-					* transform.GetTransformMatrix();
-				m_entityConstantBuffer->Update(&m_entityConstants,
-					sizeof(m_entityConstants));
-				m_graphicsRenderer->SetConstantBuffer(1,
-					m_entityConstantBuffer,
-					Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
+					* m_entityConstants.c_objectToWorld;
 			}
-		}
 
-		m_graphicsRenderer->SetActiveVertexBuffer(m_spriteVertexBuffer);
-		m_graphicsRenderer->SetActiveIndexBuffer(m_spriteIndexBuffer);
-		m_graphicsRenderer->DrawActiveElements();
+			m_entityConstantBuffer->Update(&m_entityConstants,
+				sizeof(m_entityConstants));
+			m_graphicsRenderer->SetConstantBuffer(1,
+				m_entityConstantBuffer,
+				Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
+
+			m_spriteConstants.c_spriteColor = sprite.color;
+			m_spriteConstantBuffer->Update(
+				&m_spriteConstants, sizeof(m_spriteConstants));
+			m_graphicsRenderer->SetConstantBuffer(2,
+				m_spriteConstantBuffer,
+				Engine::ConstantBufferFlags::PIXEL_SHADER);
+
+			m_graphicsRenderer->SetActiveVertexBuffer(m_spriteVertexBuffer);
+			m_graphicsRenderer->SetActiveIndexBuffer(m_spriteIndexBuffer);
+			m_graphicsRenderer->DrawActiveElements();
+		}
 
 		m_graphicsRenderer->EndFrame();
 	}
@@ -204,16 +212,17 @@ namespace DirectXTestProject
 		{
 			SpriteShaderVertex vertices[4] =
 			{
-				{ MathLib::Vector3(-0.5f, -0.5f, 0.0f), MathLib::Vector2(0.0f, 0.0f) },
-				{ MathLib::Vector3(0.5f, -0.5f, 0.0f), MathLib::Vector2(1.0f, 0.0f) },
-				{ MathLib::Vector3(0.5f, 0.5f, 0.0f), MathLib::Vector2(1.0f, 1.0f) },
-				{ MathLib::Vector3(-0.5f, 0.5f, 0.0f), MathLib::Vector2(0.0f, 1.0f) }
+				{ MathLib::Vector3(-0.5f, -0.5f, 0.0f), MathLib::Vector2(0.0f, 1.0f) },
+				{ MathLib::Vector3(0.5f, -0.5f, 0.0f), MathLib::Vector2(1.0f, 1.0f) },
+				{ MathLib::Vector3(0.5f, 0.5f, 0.0f), MathLib::Vector2(1.0f, 0.0f) },
+				{ MathLib::Vector3(-0.5f, 0.5f, 0.0f), MathLib::Vector2(0.0f, 0.0f) }
 			};
 
+			// Vertices are constructed in clockwise-order.
 			std::uint16_t indices[6] =
 			{
-				0, 1, 2,
-				2, 3, 0
+				2, 1, 0,
+				0, 3, 2
 			};
 
 			m_spriteVertexBuffer = new Engine::VertexBuffer(
@@ -243,5 +252,7 @@ namespace DirectXTestProject
 			&m_cameraConstants, sizeof(m_cameraConstants));
 		m_entityConstantBuffer = new Engine::ConstantBuffer(
 			&m_entityConstants, sizeof(m_entityConstants));
+		m_spriteConstantBuffer = new Engine::ConstantBuffer(
+			&m_spriteConstants, sizeof(m_spriteConstants));
 	}
 }

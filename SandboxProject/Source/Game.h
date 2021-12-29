@@ -29,6 +29,11 @@ private:
 	float pad;
 };
 
+struct SpriteConstants
+{
+	MathLib::Vector4 c_spriteColor;
+};
+
 
 struct VertexPositionColor
 {
@@ -68,9 +73,9 @@ namespace DirectXTestProject
 		Engine::VertexBuffer* m_spriteVertexBuffer;
 		Engine::IndexBuffer* m_spriteIndexBuffer;
 
-
 		Engine::Entity* m_cameraEntity;
 		Engine::Entity* m_spriteEntity;
+
 		Engine::Scene* m_scene;
 
 		Engine::ConstantBuffer* m_cameraConstantBuffer;
@@ -78,5 +83,8 @@ namespace DirectXTestProject
 
 		Engine::ConstantBuffer* m_entityConstantBuffer;
 		EntityConstants m_entityConstants;
+
+		Engine::ConstantBuffer* m_spriteConstantBuffer;
+		SpriteConstants m_spriteConstants;
 	};
 }

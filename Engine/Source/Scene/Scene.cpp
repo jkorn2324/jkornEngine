@@ -38,12 +38,17 @@ namespace Engine
 			{
 				auto [cameraComponent, transformComponent]
 					= entityView.get<SceneCameraComponent, Transform3DComponent>(entity);
-				m_camera = &cameraComponent.camera;
-				// Sets the projection matrix.
-				m_camera->SetProjectionMatrix(transformComponent.GetTransformMatrix());
+				SceneCamera& sceneCam = cameraComponent.camera;
+
+				// The camera's view matrix is from world to camera,
+				// but the transform matrix is from object to world.
+				auto matrix = transformComponent.GetTransformMatrix();
+				matrix.Invert();
+				sceneCam.SetViewMatrix(matrix);
 
 				if (cameraComponent.mainCamera)
 				{
+					m_camera = &cameraComponent.camera;
 					break;
 				}
 			}
