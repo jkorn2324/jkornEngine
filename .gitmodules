@@ -1,3 +1,6 @@
 [submodule "Engine/Libraries/DirectXTK"]
 	path = Engine/Libraries/DirectXTK
 	url = https://github.com/microsoft/DirectXTK.git
+[submodule "Engine/Libraries/glfw"]
+	path = Engine/Libraries/glfw
+	url = https://github.com/glfw/glfw

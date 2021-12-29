@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Window\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -105,7 +105,7 @@
       <AdditionalDependencies>libfbxsdk.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\lib\vs2019\$(PlatformTarget)\$(Configuration)\;Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\lib\vs2019\$(PlatformTarget)\$(Configuration)\;Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Window\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -131,7 +131,7 @@
       <AdditionalDependencies>libfbxsdk.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\lib\vs2019\$(PlatformTarget)\$(Configuration)\;Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\lib\vs2019\$(PlatformTarget)\$(Configuration)\;Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -140,7 +140,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Window\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -151,7 +151,7 @@
       <AdditionalDependencies>libfbxsdk.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\lib\vs2019\$(PlatformTarget)\$(Configuration)\;Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\lib\vs2019\$(PlatformTarget)\$(Configuration)\;Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -162,7 +162,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Window\;Source\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -175,7 +175,7 @@
       <AdditionalDependencies>libfbxsdk.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\lib\vs2019\$(PlatformTarget)\$(Configuration)\;Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\lib\vs2019\$(PlatformTarget)\$(Configuration)\;Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -197,6 +197,7 @@
     <ClInclude Include="Source\Rendering\VertexBuffer.h" />
     <ClInclude Include="Source\Rendering\Texture.h" />
     <ClInclude Include="Source\Scene\Scene.h" />
+    <ClInclude Include="Source\Windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Scene\SceneCamera.cpp" />
@@ -214,6 +215,7 @@
     <ClCompile Include="Source\Rendering\VertexBuffer.cpp" />
     <ClCompile Include="Source\Rendering\Texture.cpp" />
     <ClCompile Include="Source\Scene\Scene.cpp" />
+    <ClCompile Include="Source\Windows\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MathLib\MathLib.vcxproj">

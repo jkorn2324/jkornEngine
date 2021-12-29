@@ -17,6 +17,9 @@
     <Filter Include="Source Files\Assets">
       <UniqueIdentifier>{7e22de8d-9315-4142-8cf8-28a353b7ca66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Windows">
+      <UniqueIdentifier>{30c923a7-243b-4c78-9e3a-3ad13663675c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\EnginePCH.cpp">
@@ -63,6 +66,9 @@
     </ClCompile>
     <ClCompile Include="Source\Scene\SceneCamera.cpp">
       <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Windows\Window.cpp">
+      <Filter>Source Files\Windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +125,9 @@
     </ClInclude>
     <ClInclude Include="Source\Rendering\Camera.h">
       <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Windows\Window.h">
+      <Filter>Source Files\Windows</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
