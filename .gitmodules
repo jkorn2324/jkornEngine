@@ -1,0 +1,3 @@
+[submodule "Engine/Libraries/DirectXTK"]
+	path = Engine/Libraries/DirectXTK
+	url = https://github.com/microsoft/DirectXTK.git
