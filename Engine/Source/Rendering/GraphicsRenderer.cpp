@@ -146,6 +146,22 @@ namespace Engine
 			reinterpret_cast<const float*>(&color));
 	}
 
+	void GraphicsRenderer::SetResolution(std::uint32_t width, std::uint32_t height)
+	{
+		m_screenWidth = width;
+		m_screenHeight = height;
+
+		DXGI_SWAP_CHAIN_DESC scDesc;
+		HRESULT res = m_swapChain->GetDesc(&scDesc);
+		DebugAssert(res == S_OK, "Failed to get the descriptor flags.");
+
+		DXGI_MODE_DESC desc;
+		std::memcpy(&desc, &(scDesc.BufferDesc), sizeof(DXGI_MODE_DESC));
+		desc.Width = width;
+		desc.Height = height;
+		m_swapChain->ResizeTarget(&desc);
+	}
+
 	void GraphicsRenderer::SetViewport(float x, float y, float width, float height)
 	{
 		D3D11_VIEWPORT viewport;

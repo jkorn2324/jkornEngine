@@ -1,0 +1,1 @@
+#define EVENT_TYPE_CLASS(type) static EventType GetStaticEventType() { return EventType::type; } \ virtual EventType GetEventType() const override { return EventType::type; } \ virtual const char* GetName() const override { return #type; }

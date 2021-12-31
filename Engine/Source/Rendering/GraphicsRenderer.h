@@ -24,6 +24,7 @@ namespace Engine
 		void EndFrame();
 
 		void SetRenderTarget(ID3D11RenderTargetView* currentRenderTarget, ID3D11DepthStencilView* depthStencilView);
+		void SetResolution(std::uint32_t width, std::uint32_t height);
 		void SetViewport(float x, float y, float width, float height);
 
 		void SetTexture(std::uint32_t slot, class Texture* texture);

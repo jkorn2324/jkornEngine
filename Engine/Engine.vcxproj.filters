@@ -17,8 +17,11 @@
     <Filter Include="Source Files\Assets">
       <UniqueIdentifier>{7e22de8d-9315-4142-8cf8-28a353b7ca66}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Windows">
+    <Filter Include="Source Files\Core">
       <UniqueIdentifier>{30c923a7-243b-4c78-9e3a-3ad13663675c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Events">
+      <UniqueIdentifier>{b085575f-f29d-453c-b9bf-9ea6a466b55d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -67,8 +70,17 @@
     <ClCompile Include="Source\Scene\SceneCamera.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Windows\Window.cpp">
-      <Filter>Source Files\Windows</Filter>
+    <ClCompile Include="Source\Core\Window.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Application.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Layer.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\LayerStack.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -117,17 +129,33 @@
     <ClInclude Include="Source\Assets\AssetManager.h">
       <Filter>Source Files\Assets</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Scene\SceneCamera.h">
       <Filter>Source Files\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Rendering\Camera.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Windows\Window.h">
-      <Filter>Source Files\Windows</Filter>
+    <ClInclude Include="Source\Core\Window.h">
+      <Filter>Source Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\Application.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Events\ApplicationEvent.h">
+      <Filter>Source Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Events\Event.h">
+      <Filter>Source Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Layer.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\LayerStack.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Timestep.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlatformDetector.h" />
   </ItemGroup>
 </Project>

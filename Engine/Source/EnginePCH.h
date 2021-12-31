@@ -1,5 +1,13 @@
 #pragma once
 
+#include "PlatformDetector.h"
+
+#ifdef PLATFORM_WINDOWS 
+	#ifndef NOMINMAX
+		#define NOMINMAX
+	#endif
+#endif
+
 #include <iostream>
 #include <algorithm>
 #include <memory>

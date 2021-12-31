@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Timestep.h"
+
 #include <entt.hpp>
 #include <vector>
 
@@ -13,7 +15,7 @@ namespace Engine
 		explicit Scene();
 		~Scene();
 
-		void Update(float deltaTime);
+		void Update(const Timestep& ts);
 
 		Entity CreateEntity();
 		void DestroyEntity(const Entity& entity);

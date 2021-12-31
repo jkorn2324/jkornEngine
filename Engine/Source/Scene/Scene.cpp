@@ -19,7 +19,7 @@ namespace Engine
 	{
 	}
 
-	void Scene::Update(float deltaTime)
+	void Scene::Update(const Timestep& ts)
 	{
 		// Destroys the entities if they are marked for destroy.
 		{

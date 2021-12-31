@@ -102,7 +102,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>SandboxProjectPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Window\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Core\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -122,7 +122,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>SandboxProjectPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Window\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Core\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -142,7 +142,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>SandboxProjectPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Window\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Core\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -162,7 +162,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>SandboxProjectPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Window\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Core\;..\Engine\Libraries\entt\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
