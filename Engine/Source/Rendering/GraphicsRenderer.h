@@ -48,6 +48,8 @@ namespace Engine
 		class IndexBuffer* m_activeIndexBuffer;
 		class Shader* m_activeShader;
 
+		friend class ConstantBuffer;
+
 #pragma endregion
 
 #pragma region statics
@@ -59,10 +61,5 @@ namespace Engine
 		static GraphicsRenderer* s_graphicsRenderer;
 
 #pragma endregion
-
-		friend class ConstantBuffer;
-
-		friend class DirectX11Texture;
-		friend class DirectX11Shader;
 	};
 }

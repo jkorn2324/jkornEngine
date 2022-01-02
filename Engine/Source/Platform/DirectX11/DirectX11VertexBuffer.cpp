@@ -65,12 +65,9 @@ namespace Engine
 		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
 		DirectX11RenderingAPI* api = dynamic_cast<DirectX11RenderingAPI*>(
 			graphicsRenderer->GetRenderingAPI());
-		if (api != nullptr)
-		{
-			unsigned int offsets = 0;
-			std::uint32_t stride = GetStride();
-			api->m_deviceContext->IASetVertexBuffers(0, 1,
-				&m_vertexBuffer, &stride, &offsets);
-		}
+		unsigned int offsets = 0;
+		std::uint32_t stride = GetStride();
+		api->m_deviceContext->IASetVertexBuffers(0, 1,
+			&m_vertexBuffer, &stride, &offsets);
 	}
 }
