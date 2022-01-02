@@ -1,33 +1,30 @@
 #pragma once
 
-struct ID3D11Resource;
-struct ID3D11ShaderResourceView;
-
 namespace Engine
 {
 
 	class Texture
 	{
-
 	public:
 		explicit Texture();
-		~Texture();
-
-		static Texture* StaticLoad(const std::wstring& texturePath);
+		virtual ~Texture() { }
 
 		std::uint32_t GetWidth() const;
 		std::uint32_t GetHeight() const;
+		virtual bool IsValid() const =0;
 
-	private:
-		void Free();
-		void Bind(std::uint32_t textureSlot) const;
-		bool Load(const wchar_t* texturePath);
+	protected:
+		virtual void Bind(std::uint32_t textureSlot) const=0;
+		virtual bool Load(const wchar_t* texturePath)=0;
 
-	private:
-		ID3D11Resource* m_texture;
-		ID3D11ShaderResourceView* m_shaderResourceView;
-
+	protected:
 		std::uint32_t m_width, m_height;
+
+	private:
+		static Texture* Create();
+
+	public:
+		static Texture* StaticLoad(const std::wstring& texturePath);
 
 		friend class GraphicsRenderer;
 	};

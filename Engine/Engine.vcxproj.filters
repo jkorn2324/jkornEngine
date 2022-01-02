@@ -23,6 +23,12 @@
     <Filter Include="Source Files\Events">
       <UniqueIdentifier>{b085575f-f29d-453c-b9bf-9ea6a466b55d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Platform">
+      <UniqueIdentifier>{c53188f9-20b6-40e4-ad02-d16627beedec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform\DirectX11">
+      <UniqueIdentifier>{846bcee9-d71d-41ab-8f8e-13ebb6cf0786}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\EnginePCH.cpp">
@@ -81,6 +87,30 @@
     </ClCompile>
     <ClCompile Include="Source\Core\LayerStack.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11ConstantBuffer.cpp">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11FrameBuffer.cpp">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11IndexBuffer.cpp">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11RenderingAPI.cpp">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11Shader.cpp">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11Texture.cpp">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11VertexBuffer.cpp">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering\RenderingAPI.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +186,35 @@
     <ClInclude Include="Source\Core\Timestep.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\PlatformDetector.h" />
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11ConstantBuffer.h">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11FrameBuffer.h">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11IndexBuffer.h">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11RenderingAPI.h">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11Shader.h">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11Texture.h">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11VertexBuffer.h">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rendering\RenderingAPI.h">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlatformDetector.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

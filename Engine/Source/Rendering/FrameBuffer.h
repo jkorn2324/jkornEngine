@@ -68,24 +68,16 @@ namespace Engine
 
 	public:
 		explicit FrameBuffer(const FrameBufferSpecification& specification);
-		~FrameBuffer();
+		virtual ~FrameBuffer() { }
 
-		void Bind() const;
-		void ClearDepthBuffer();
+		virtual void Bind() const=0;
+		virtual void ClearDepthBuffer()=0;
 
-		// DIRECTX11 SPECIFIC FUNCTIONS
-		ID3D11DepthStencilView* GetDepthStencilView() const;
-
-	private:
-		void CreateBuffers();
-
-	private:
-		// DIRECTX 11 SPECIFIC VARIABLES
-		// Depth stencil view for frame buffers.
-		ID3D11DepthStencilView* m_depthStencilView;
-		ID3D11Texture2D* m_depthTexture;
-
+	protected:
 		FrameBufferSpecification m_frameBufferSpecification;
 		FrameBufferAttachment m_depthStencilSpecification = FrameBufferAttachmentType::TYPE_NONE;
+
+	public:
+		static FrameBuffer* Create(const FrameBufferSpecification& specification);
 	};
 }

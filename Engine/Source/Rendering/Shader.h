@@ -1,10 +1,5 @@
 #pragma once
 
-struct ID3D11VertexShader;
-struct ID3D11PixelShader;
-struct ID3D11InputLayout;
-struct D3D11_INPUT_ELEMENT_DESC;
-
 namespace Engine
 {
 	class BufferLayout;
@@ -12,21 +7,20 @@ namespace Engine
 	class Shader
 	{
 	public:
-		explicit Shader();
-		~Shader();
+		explicit Shader() = default;
+		virtual ~Shader() { }
 
-		bool IsValid() const;
+		virtual bool IsValid() const=0;
 
+	protected:
+		virtual bool Load(const wchar_t* fileName, const BufferLayout& bufferLayout)=0;
+		virtual void Bind() const=0;
+
+	public:
 		static Shader* StaticLoad(const std::wstring& fileName, const BufferLayout& bufferLayout);
-
+		
 	private:
-		bool Load(const wchar_t* fileName, const BufferLayout& bufferLayout);
-		void Bind() const;
-
-	private:
-		ID3D11VertexShader* m_vertexShader = nullptr;
-		ID3D11PixelShader* m_pixelShader = nullptr;
-		ID3D11InputLayout* m_inputLayout = nullptr;
+		static Shader* Create();
 
 		friend class GraphicsRenderer;
 	};

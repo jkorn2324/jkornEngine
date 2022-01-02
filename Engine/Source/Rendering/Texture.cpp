@@ -1,46 +1,33 @@
 #include "EnginePCH.h"
 #include "Texture.h"
 
-#include "GraphicsRenderer.h"
-
-#include <d3d11.h>
-#include <WICTextureLoader.h>
-#include <DDSTextureLoader.h>
+#include "RenderingAPI.h"
+#include "DirectX11Texture.h"
 
 namespace Engine
 {
 
-	Texture::Texture()
-		: m_texture(nullptr),
-		m_shaderResourceView(nullptr),
-		m_width(0),
-		m_height(0)
+	Texture* Texture::Create()
 	{
-		// TODO:
-	}
-
-	Texture::~Texture()
-	{
-		Free();
-	}
-	
-	void Texture::Free()
-	{
-		if (m_shaderResourceView != nullptr)
+		switch (RenderingAPI::GetRenderingAPIType())
 		{
-			m_shaderResourceView->Release();
-		}
-		if (m_texture != nullptr)
+		case RenderingAPIType::DIRECTX11:	return new DirectX11Texture();
+		case RenderingAPIType::NONE:
 		{
-			m_texture->Release();
+			DebugAssert(false, "Unsupported Texture type.");
+			return nullptr;
 		}
-		m_width = 0;
-		m_height = 0;
+		}
+		return nullptr;
 	}
 
 	Texture* Texture::StaticLoad(const std::wstring& texturePath)
 	{
-		Texture* texture = new Texture();
+		Texture* texture = Create();
+		if (texture == nullptr)
+		{
+			return nullptr;
+		}
 		const wchar_t* cstrPath = texturePath.c_str();
 		if (!texture->Load(cstrPath))
 		{
@@ -50,39 +37,8 @@ namespace Engine
 		return texture;
 	}
 
-	bool Texture::Load(const wchar_t* texturePath)
-	{
-		Free();
-
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-
-		HRESULT result;
-		std::wstring wstringPath(texturePath);
-		std::wstring extension = wstringPath.substr(wstringPath.find_last_of('.'));
-		if (extension == L".dds"
-			|| extension == L".DDS")
-		{
-			result = DirectX::CreateDDSTextureFromFile(graphicsRenderer->m_device,
-				texturePath, &m_texture, &m_shaderResourceView);
-		}
-		else
-		{
-			result = DirectX::CreateWICTextureFromFile(graphicsRenderer->m_device,
-				texturePath, &m_texture, &m_shaderResourceView);
-		}
-
-		DebugAssert(result == S_OK, "Failed to create texture appropriately.");
-		if (result != S_OK)
-		{
-			return false;
-		}
-
-		CD3D11_TEXTURE2D_DESC textureDesc;
-		((ID3D11Texture2D*)m_texture)->GetDesc(&textureDesc);
-		m_width = textureDesc.Width;
-		m_height = textureDesc.Height;
-		return true;
-	}
+	Texture::Texture()
+		: m_width(0), m_height(0) { }
 
 	std::uint32_t Texture::GetWidth() const
 	{
@@ -92,17 +48,5 @@ namespace Engine
 	std::uint32_t Texture::GetHeight() const
 	{
 		return m_height;
-	}
-
-	void Texture::Bind(std::uint32_t slot) const
-	{
-		if (m_texture == nullptr
-			|| m_shaderResourceView == nullptr)
-		{
-			return;
-		}
-		GraphicsRenderer* graphics = GraphicsRenderer::Get();
-		graphics->m_deviceContext->PSSetShaderResources(
-			slot, 1, &m_shaderResourceView);
 	}
 }

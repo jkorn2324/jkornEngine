@@ -18,17 +18,16 @@ namespace Engine
 	{
 	public:
 		ConstantBuffer(const ConstantBuffer& buf) = delete;
-
 		explicit ConstantBuffer(const void* buffer, std::size_t stride);
-		~ConstantBuffer();
+		virtual ~ConstantBuffer() { }
 
-		void Update(const void* buffer, std::size_t stride);
+		virtual void SetData(const void* buffer, std::size_t stride)=0;
 
-	private:
-		void Bind(const std::uint32_t& slot, int flags) const;
-
-	private:
-		ID3D11Buffer* m_constantBuffer;
+	protected:
+		virtual void Bind(const std::uint32_t& slot, int flags) const=0;
+		
+	public:
+		static ConstantBuffer* Create(const void* buffer, std::size_t stride);
 
 		friend class GraphicsRenderer;
 	};

@@ -2,6 +2,8 @@
 #include "Application.h"
 
 #include "GraphicsRenderer.h"
+#include "RenderingAPI.h"
+
 #include "Window.h"
 #include "Layer.h"
 
@@ -40,7 +42,7 @@ namespace Engine
 		m_window = std::make_unique<Window>(properties);
 		m_window->SetCallback(BIND_EVENT_FUNCTION(Application::OnEvent));
 		m_graphicsRenderer = new GraphicsRenderer();
-		m_graphicsRenderer->Initialize(m_window->GetHWND());
+		m_graphicsRenderer->Initialize(m_window.get());
 	}
 
 	Application::~Application()
@@ -111,8 +113,8 @@ namespace Engine
 
 	bool Application::OnWindowResized(WindowResizedEvent& event)
 	{
-		// TODO: Set the size of the viewport
-		m_graphicsRenderer->SetResolution(event.width, event.height);
+		m_graphicsRenderer->GetRenderingAPI()
+			->SetResolution(event.width, event.height);
 		return true;
 	}
 }

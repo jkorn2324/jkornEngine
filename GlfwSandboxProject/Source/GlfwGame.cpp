@@ -79,9 +79,9 @@ namespace GlfwSandbox
 				0, 1, 2
 			};
 
-			m_vertexBuffer = new Engine::VertexBuffer(
+			m_vertexBuffer = Engine::VertexBuffer::Create(
 				&vertices[0], sizeof(vertices) / sizeof(vertices[0]), sizeof(vertices[0]));
-			m_indexBuffer = new Engine::IndexBuffer(
+			m_indexBuffer = Engine::IndexBuffer::Create(
 				&indexBuffer[0], sizeof(indexBuffer) / sizeof(indexBuffer[0]), sizeof(indexBuffer[0]));
 
 			Engine::BufferLayout bufferLayout(
@@ -114,9 +114,9 @@ namespace GlfwSandbox
 				0, 3, 2
 			};
 
-			m_spriteVertexBuffer = new Engine::VertexBuffer(
+			m_spriteVertexBuffer = Engine::VertexBuffer::Create(
 				&vertices[0], sizeof(vertices) / sizeof(vertices[0]), sizeof(vertices[0]));
-			m_spriteIndexBuffer = new Engine::IndexBuffer(
+			m_spriteIndexBuffer = Engine::IndexBuffer::Create(
 				&indices[0], sizeof(indices) / sizeof(indices[0]), sizeof(indices[0]));
 
 			Engine::AssetCache<Engine::Texture>& textureAssetCache =
@@ -137,11 +137,11 @@ namespace GlfwSandbox
 				L"Shaders/SpriteShader.hlsl", bufferLayout);
 		}
 
-		m_cameraConstantBuffer = new Engine::ConstantBuffer(
+		m_cameraConstantBuffer = Engine::ConstantBuffer::Create(
 			&m_cameraConstants, sizeof(m_cameraConstants));
-		m_entityConstantBuffer = new Engine::ConstantBuffer(
+		m_entityConstantBuffer = Engine::ConstantBuffer::Create(
 			&m_entityConstants, sizeof(m_entityConstants));
-		m_spriteConstantBuffer = new Engine::ConstantBuffer(
+		m_spriteConstantBuffer = Engine::ConstantBuffer::Create(
 			&m_spriteConstants, sizeof(m_spriteConstants));
 	}
 
@@ -153,7 +153,7 @@ namespace GlfwSandbox
 		{
 			Engine::Transform3DComponent& camComponentTransform
 				= m_cameraEntity->AddComponent<Engine::Transform3DComponent>();
-			camComponentTransform.SetPosition(MathLib::Vector3(0.0f, 0.0f, -20.0f));
+			camComponentTransform.SetPosition(MathLib::Vector3(-1.0f, 0.0f, 0.0f));
 			camComponentTransform.LookAt(MathLib::Vector3(0.0f, 0.0f, 0.0f));
 			m_cameraEntity->AddComponent<Engine::SceneCameraComponent>();
 		}
@@ -193,7 +193,7 @@ namespace GlfwSandbox
 				m_cameraConstants.c_viewProjection =
 					camera->GetViewProjectionMatrix();
 
-				m_cameraConstantBuffer->Update(&m_cameraConstants,
+				m_cameraConstantBuffer->SetData(&m_cameraConstants,
 					sizeof(m_cameraConstants));
 				graphicsRenderer->SetConstantBuffer(0,
 					m_cameraConstantBuffer,
@@ -220,14 +220,14 @@ namespace GlfwSandbox
 					* m_entityConstants.c_objectToWorld;
 			}
 
-			m_entityConstantBuffer->Update(&m_entityConstants,
+			m_entityConstantBuffer->SetData(&m_entityConstants,
 				sizeof(m_entityConstants));
 			graphicsRenderer->SetConstantBuffer(1,
 				m_entityConstantBuffer,
 				Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
 
 			m_spriteConstants.c_spriteColor = sprite.color;
-			m_spriteConstantBuffer->Update(
+			m_spriteConstantBuffer->SetData(
 				&m_spriteConstants, sizeof(m_spriteConstants));
 			graphicsRenderer->SetConstantBuffer(2,
 				m_spriteConstantBuffer,

@@ -18,17 +18,14 @@ namespace Engine
 		explicit GraphicsRenderer();
 		~GraphicsRenderer();
 
-		bool Initialize(const HWND& window);
+		bool Initialize(class Window* window);
+
+		class RenderingAPI* GetRenderingAPI() const;
 
 		void BeginFrame();
 		void EndFrame();
 
-		void SetRenderTarget(ID3D11RenderTargetView* currentRenderTarget, ID3D11DepthStencilView* depthStencilView);
-		void SetResolution(std::uint32_t width, std::uint32_t height);
-		void SetViewport(float x, float y, float width, float height);
-
 		void SetTexture(std::uint32_t slot, class Texture* texture);
-		
 		void SetShader(class Shader* shader);
 
 		// Sets the active index buffer.
@@ -44,32 +41,12 @@ namespace Engine
 		// Draws the active elements.
 		void DrawActiveElements();
 
-		// TODO: Draw a sprite component
-
 	private:
-		void ClearRenderTarget(const MathLib::Vector4& color);
-
-		bool CreateBackBuffer();
-		bool CreateDeviceAndSwapChain(const HWND& window, 
-			std::uint32_t resolutionWidth, std::uint32_t resolutionHeight);
-
-	private:
-		IDXGISwapChain* m_swapChain;
-		ID3D11DeviceContext* m_deviceContext;
-		ID3D11Device* m_device;
-
-		ID3D11RenderTargetView* m_backBufferRenderTarget;
-		ID3D11RenderTargetView* m_currentRenderTarget;
-		
-		ID3D11SamplerState* m_samplerState;
-
+		class RenderingAPI* m_renderingAPI;
 		class FrameBuffer* m_frameBuffer;
 		class VertexBuffer* m_activeVertexBuffer;
 		class IndexBuffer* m_activeIndexBuffer;
 		class Shader* m_activeShader;
-
-		std::uint32_t m_screenWidth;
-		std::uint32_t m_screenHeight;
 
 #pragma endregion
 
@@ -83,11 +60,9 @@ namespace Engine
 
 #pragma endregion
 
-		friend class VertexBuffer;
-		friend class IndexBuffer;
-		friend class Shader;
 		friend class ConstantBuffer;
-		friend class Texture;
-		friend class FrameBuffer;
+
+		friend class DirectX11Texture;
+		friend class DirectX11Shader;
 	};
 }

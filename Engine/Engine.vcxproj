@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Core\;Source\;Source\Events\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\;Source\Core\;Source\;Source\Events\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Core\;Source\;Source\Events\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\;Source\Core\;Source\;Source\Events\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -140,7 +140,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Core\;Source\;Source\Events\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\;Source\Core\;Source\;Source\Events\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -162,7 +162,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Core\;Source\;Source\Events\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\;Source\Core\;Source\;Source\Events\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2.1\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -179,14 +179,23 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11ConstantBuffer.h" />
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11FrameBuffer.h" />
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11IndexBuffer.h" />
     <ClInclude Include="Source\Core\Application.h" />
     <ClInclude Include="Source\Core\Timestep.h" />
     <ClInclude Include="Source\Core\Layer.h" />
     <ClInclude Include="Source\Core\LayerStack.h" />
+    <ClInclude Include="Source\Engine.h" />
     <ClInclude Include="Source\Events\ApplicationEvent.h" />
     <ClInclude Include="Source\Events\Event.h" />
     <ClInclude Include="Source\PlatformDetector.h" />
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11RenderingAPI.h" />
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11Shader.h" />
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11Texture.h" />
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11VertexBuffer.h" />
     <ClInclude Include="Source\Rendering\Camera.h" />
+    <ClInclude Include="Source\Rendering\RenderingAPI.h" />
     <ClInclude Include="Source\Scene\SceneCamera.h" />
     <ClInclude Include="Source\Assets\AssetCache.h" />
     <ClInclude Include="Source\Assets\AssetManager.h" />
@@ -206,9 +215,17 @@
     <ClInclude Include="Source\Core\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11ConstantBuffer.cpp" />
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11FrameBuffer.cpp" />
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11IndexBuffer.cpp" />
     <ClCompile Include="Source\Core\Application.cpp" />
     <ClCompile Include="Source\Core\Layer.cpp" />
     <ClCompile Include="Source\Core\LayerStack.cpp" />
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11RenderingAPI.cpp" />
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11Shader.cpp" />
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11Texture.cpp" />
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11VertexBuffer.cpp" />
+    <ClCompile Include="Source\Rendering\RenderingAPI.cpp" />
     <ClCompile Include="Source\Scene\SceneCamera.cpp" />
     <ClCompile Include="Source\Assets\AssetManager.cpp" />
     <ClCompile Include="Source\Rendering\FrameBuffer.cpp" />

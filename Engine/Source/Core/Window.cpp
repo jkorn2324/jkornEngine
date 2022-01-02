@@ -40,9 +40,9 @@ namespace Engine
 
 	void Window::OnUpdate()
 	{
-		// Swaps the buffers according to graphics context.
 		glfwPollEvents();
-		glfwSwapBuffers(m_window);
+		// Swaps the buffers only if its opengl.
+		// glfwSwapBuffers(m_window);
 	}
 
 	void Window::Shutdown()
