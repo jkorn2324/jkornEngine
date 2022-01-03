@@ -112,6 +112,9 @@
     <ClCompile Include="Source\Rendering\RenderingAPI.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Assets\Mesh.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\EnginePCH.h">
@@ -215,6 +218,12 @@
     </ClInclude>
     <ClInclude Include="Source\PlatformDetector.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Assets\Material.h">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Assets\Mesh.h">
+      <Filter>Source Files\Assets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

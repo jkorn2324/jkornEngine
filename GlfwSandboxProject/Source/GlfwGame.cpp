@@ -12,6 +12,7 @@
 #include "VertexBuffer.h"
 #include "ConstantBuffer.h"
 #include "BufferLayout.h"
+#include "Material.h"
 
 namespace GlfwSandbox
 {
@@ -23,6 +24,7 @@ namespace GlfwSandbox
 		m_spriteVertexBuffer(nullptr),
 		m_cameraEntity(nullptr),
 		m_spriteEntity(nullptr),
+		m_spriteMaterial(nullptr),
 		m_scene(nullptr)
 	{
 		InitializeRenderBuffers();
@@ -33,8 +35,9 @@ namespace GlfwSandbox
 	{
 		Engine::AssetManager::UncacheAssets();
 
+		delete m_spriteMaterial;
+
 		delete m_cameraConstantBuffer;
-		delete m_spriteConstantBuffer;
 		delete m_entityConstantBuffer;
 
 		delete m_vertexBuffer;
@@ -121,7 +124,7 @@ namespace GlfwSandbox
 
 			Engine::AssetCache<Engine::Texture>& textureAssetCache =
 				Engine::AssetManager::GetTextures();
-			textureAssetCache.Load(
+			Engine::Texture* texture = textureAssetCache.Load(
 				L"Assets/Textures/happy-face.png");
 
 			Engine::BufferLayout bufferLayout({
@@ -133,16 +136,18 @@ namespace GlfwSandbox
 
 			Engine::AssetCache<Engine::Shader>& shaderAssetCache =
 				Engine::AssetManager::GetShaders();
-			shaderAssetCache.Load<const Engine::BufferLayout&>(
+			Engine::Shader* shader = shaderAssetCache.Load<const Engine::BufferLayout&>(
 				L"Shaders/SpriteShader.hlsl", bufferLayout);
+
+			m_spriteMaterial = new Engine::Material<SpriteConstants>();
+			m_spriteMaterial->SetShader(shader);
+			m_spriteMaterial->SetTexture(0, texture);
 		}
 
 		m_cameraConstantBuffer = Engine::ConstantBuffer::Create(
 			&m_cameraConstants, sizeof(m_cameraConstants));
 		m_entityConstantBuffer = Engine::ConstantBuffer::Create(
 			&m_entityConstants, sizeof(m_entityConstants));
-		m_spriteConstantBuffer = Engine::ConstantBuffer::Create(
-			&m_spriteConstants, sizeof(m_spriteConstants));
 	}
 
 	void GlfwGame::InitializeSceneComponents()
@@ -226,12 +231,8 @@ namespace GlfwSandbox
 				m_entityConstantBuffer,
 				Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
 
-			m_spriteConstants.c_spriteColor = sprite.color;
-			m_spriteConstantBuffer->SetData(
-				&m_spriteConstants, sizeof(m_spriteConstants));
-			graphicsRenderer->SetConstantBuffer(2,
-				m_spriteConstantBuffer,
-				Engine::ConstantBufferFlags::PIXEL_SHADER);
+			m_spriteMaterial->materialConstants.c_spriteColor = sprite.color;
+			m_spriteMaterial->Bind();
 
 			graphicsRenderer->SetActiveVertexBuffer(m_spriteVertexBuffer);
 			graphicsRenderer->SetActiveIndexBuffer(m_spriteIndexBuffer);

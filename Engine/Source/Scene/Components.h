@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Source\Transform.h"
+
 #include "Entity.h"
 #include "SceneCamera.h"
+#include "Material.h"
 
 namespace Engine
 {
-
 	using Transform2DComponent = MathLib::Transform2D;
 	using Transform3DComponent = MathLib::Transform3D;
 
@@ -36,5 +37,15 @@ namespace Engine
 		explicit SceneCameraComponent(bool mainCam)
 			: mainCamera(mainCam), camera() { }
 		SceneCameraComponent(const SceneCameraComponent& component) = default;
+	};
+
+	class MeshComponent
+	{
+		struct MeshMaterialConstants
+		{
+			// TODO: implementation
+		};
+
+		// TODO: Implementation
 	};
 }

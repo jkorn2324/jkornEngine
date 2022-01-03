@@ -11,10 +11,7 @@ struct VertexShaderOut
     float2 uv : TEXCOORD0;
 };
 
-SamplerState DefaultSampler : register(s0);
-Texture2D SpriteTexture : register(t0);
-
-
+#include "TextureConstants.hlsl"
 #include "CameraConstants.hlsl"
 #include "ObjectConstants.hlsl"
 
@@ -37,5 +34,5 @@ VertexShaderOut VS(VertexShaderIn input)
 
 float4 PS(VertexShaderOut input) : SV_TARGET
 {
-    return SpriteTexture.Sample(DefaultSampler, input.uv) * c_spriteColor;
+    return DefaultTexture.Sample(DefaultSampler, input.uv) * c_spriteColor;
 }

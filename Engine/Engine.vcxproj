@@ -179,6 +179,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Assets\Material.h" />
+    <ClInclude Include="Source\Assets\Mesh.h" />
     <ClInclude Include="Source\Platform\DirectX11\DirectX11ConstantBuffer.h" />
     <ClInclude Include="Source\Platform\DirectX11\DirectX11FrameBuffer.h" />
     <ClInclude Include="Source\Platform\DirectX11\DirectX11IndexBuffer.h" />
@@ -215,6 +217,7 @@
     <ClInclude Include="Source\Core\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Assets\Mesh.cpp" />
     <ClCompile Include="Source\Platform\DirectX11\DirectX11ConstantBuffer.cpp" />
     <ClCompile Include="Source\Platform\DirectX11\DirectX11FrameBuffer.cpp" />
     <ClCompile Include="Source\Platform\DirectX11\DirectX11IndexBuffer.cpp" />

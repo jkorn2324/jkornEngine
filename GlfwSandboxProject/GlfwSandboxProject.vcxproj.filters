@@ -24,6 +24,7 @@
     <FxCompile Include="Shaders\SpriteShader.hlsl" />
     <FxCompile Include="Shaders\ObjectConstants.hlsl" />
     <FxCompile Include="Shaders\TriangleShader.hlsl" />
+    <FxCompile Include="Shaders\TextureConstants.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\Cube.png" />

@@ -20,6 +20,9 @@ namespace Engine
 	class VertexBuffer;
 	class IndexBuffer;
 	class ConstantBuffer;
+
+	template<typename T>
+	class Material;
 }
 
 struct EntityConstants
@@ -39,6 +42,9 @@ private:
 struct SpriteConstants
 {
 	MathLib::Vector4 c_spriteColor;
+
+	SpriteConstants()
+		: c_spriteColor(MathLib::Vector4::One) { }
 };
 
 
@@ -88,7 +94,6 @@ namespace GlfwSandbox
 		Engine::ConstantBuffer* m_entityConstantBuffer;
 		EntityConstants m_entityConstants;
 
-		Engine::ConstantBuffer* m_spriteConstantBuffer;
-		SpriteConstants m_spriteConstants;
+		Engine::Material<SpriteConstants>* m_spriteMaterial;
 	};
 }
