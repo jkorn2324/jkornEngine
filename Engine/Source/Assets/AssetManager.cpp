@@ -17,9 +17,17 @@ namespace Engine
 		return s_textureAssets;
 	}
 
+	AssetCache<Mesh> AssetManager::s_meshAssets = AssetCache<Mesh>();
+
+	AssetCache<Mesh>& AssetManager::GetMeshes()
+	{
+		return s_meshAssets;
+	}
+
 	void AssetManager::UncacheAssets()
 	{
 		s_shaderAssets.Clear();
 		s_textureAssets.Clear();
+		s_meshAssets.Clear();
 	}
 }

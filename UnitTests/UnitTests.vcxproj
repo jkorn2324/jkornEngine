@@ -98,7 +98,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\Utils;..\Engine\Source\Assets;..\Engine\Source\Rendering</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\Utils;..\Engine\Source\Assets;..\Engine\Source\Rendering</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -134,7 +134,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\Utils;..\Engine\Source\Assets;..\Engine\Source\Rendering</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -152,7 +152,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\Utils;..\Engine\Source\Assets;..\Engine\Source\Rendering</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

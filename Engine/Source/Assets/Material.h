@@ -13,17 +13,13 @@ namespace Engine
 
 	struct MaterialTextureData
 	{
-		bool bound = false;
 		Texture* texture = nullptr;
 
 		MaterialTextureData()
-			: bound(false), texture(nullptr) { }
-		MaterialTextureData(bool bound, Texture* texture)
-			: bound(bound), texture(texture) { }
+			: texture(nullptr) { }
+		MaterialTextureData(Texture* texture)
+			: texture(texture) { }
 	};
-
-	// TODO: For now make this templated, but soon we must find a way to 
-	// Push variables to the material and store them cache friendly
 
 	template<typename Constants>
 	class Material
@@ -59,7 +55,7 @@ namespace Engine
 		m_textures = new MaterialTextureData[m_numTextures];
 		for (uint32_t i = 0; i < m_numTextures; i++)
 		{
-			m_textures[i] = MaterialTextureData(false, nullptr);
+			m_textures[i] = MaterialTextureData(nullptr);
 		}
 		m_materialConstantBuffer = ConstantBuffer::Create(
 			&materialConstants, sizeof(materialConstants));
@@ -87,14 +83,6 @@ namespace Engine
 		}
 		MaterialTextureData& materialTextureData = m_textures[slot];
 		materialTextureData.texture = texture;
-		if (materialTextureData.texture != nullptr)
-		{
-			materialTextureData.bound = true;
-		}
-		else
-		{
-			materialTextureData.bound = false;
-		}
 	}
 	
 	template<typename Constants>
@@ -117,8 +105,7 @@ namespace Engine
 		for (uint32_t i = 0; i < m_numTextures; i++)
 		{
 			const auto& texture = m_textures[i];
-			if (texture.bound
-				&& texture.texture != nullptr)
+			if (texture.texture != nullptr)
 			{
 				renderer->SetTexture(i, texture.texture);
 			}

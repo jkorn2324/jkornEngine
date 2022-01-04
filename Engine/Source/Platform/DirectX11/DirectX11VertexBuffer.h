@@ -16,6 +16,9 @@ namespace Engine
 
 		bool IsValid() const override;
 
+		void SetData(const void* buffer,
+			std::uint32_t numVertices, std::uint32_t stride) override;
+
 	protected:
 		void Bind() const override;
 

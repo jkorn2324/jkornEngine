@@ -7,7 +7,7 @@
 namespace Engine
 {
 
-	IndexBuffer* IndexBuffer::Create(const void* buffer, std::uint32_t numIndices, std::uint32_t stride)
+	IndexBuffer* IndexBuffer::Create(const void* buffer, uint32_t numIndices, uint32_t stride)
 	{
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
@@ -21,7 +21,7 @@ namespace Engine
 		return nullptr;
 	}
 
-	IndexBuffer::IndexBuffer(const void* indexBuffer, std::uint32_t numIndices, std::size_t stride)
+	IndexBuffer::IndexBuffer(const void* indexBuffer, uint32_t numIndices, uint32_t stride)
 		: m_numIndices(numIndices), m_indexStride(stride)
 	{
 		

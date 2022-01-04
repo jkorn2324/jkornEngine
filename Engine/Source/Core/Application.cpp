@@ -2,6 +2,8 @@
 #include "Application.h"
 
 #include "GraphicsRenderer.h"
+#include "GraphicsRenderer2D.h"
+
 #include "RenderingAPI.h"
 
 #include "Window.h"
@@ -41,13 +43,17 @@ namespace Engine
 		};
 		m_window = std::make_unique<Window>(properties);
 		m_window->SetCallback(BIND_EVENT_FUNCTION(Application::OnEvent));
+		
 		m_graphicsRenderer = new GraphicsRenderer();
 		m_graphicsRenderer->Initialize(m_window.get());
+		GraphicsRenderer2D::Init();
 	}
 
 	Application::~Application()
 	{
 		m_windowLayerStack.Clear();
+
+		GraphicsRenderer2D::Release();
 		delete m_graphicsRenderer;
 	}
 

@@ -5,9 +5,15 @@
 #include "MathUnitTests.h"
 #include "Source\DebugAssert.h"
 #include "Source\Matrix.h"
+#include "StringUtils.h"
+
+bool RunWideStringUnitTests();
 
 int main()
 {
+	DebugAssert(RunWideStringUnitTests() == true,
+		"Wide String Unit Tests.");
+
 	DebugAssert(RunVector2UnitTests() == true, 
 		"Vector2 UnitTest Failed.");
 	DebugAssert(RunVector3UnitTests() == true, 
@@ -21,4 +27,24 @@ int main()
 
 	std::printf("Unit Tests Passed!\n");
 	return 0;
+}
+
+bool RunWideStringUnitTests()
+{
+	bool isValid = true;
+	{
+
+		std::wstring wstring(L"BigGiantWs");
+		std::string str;
+		Engine::WStringToString(wstring, str);
+		isValid &= str == "BigGiantWs";
+	}
+
+	{
+		std::string string("BigGiantWs");
+		std::wstring str;
+		Engine::StringToWString(string, str);
+		isValid &= str == L"BigGiantWs";
+	}
+	return isValid;
 }

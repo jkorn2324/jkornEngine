@@ -29,6 +29,9 @@
     <Filter Include="Source Files\Platform\DirectX11">
       <UniqueIdentifier>{846bcee9-d71d-41ab-8f8e-13ebb6cf0786}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{3a9a106c-a26f-4040-8903-e80d5424ec68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\EnginePCH.cpp">
@@ -114,6 +117,12 @@
     </ClCompile>
     <ClCompile Include="Source\Assets\Mesh.cpp">
       <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\MeshComponent.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering\GraphicsRenderer2D.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +233,15 @@
     </ClInclude>
     <ClInclude Include="Source\Assets\Mesh.h">
       <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Utils\StringUtils.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\MeshComponent.h">
+      <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rendering\GraphicsRenderer2D.h">
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

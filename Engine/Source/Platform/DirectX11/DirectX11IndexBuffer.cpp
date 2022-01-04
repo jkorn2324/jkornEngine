@@ -33,17 +33,7 @@ namespace Engine
 			->CreateBuffer(&bufferDesc, &initializationData, &m_indexBuffer);
 		DebugAssert(result == S_OK, "Failed to create index buffer.");
 
-		if (buffer != nullptr)
-		{
-			D3D11_MAPPED_SUBRESOURCE mappedResource;
-			result = renderingAPI->m_deviceContext->Map(
-				m_indexBuffer, 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-			DebugAssert(result == S_OK, "Failed to map the index buffer");
-			std::memcpy(mappedResource.pData, buffer, numIndices * stride);
-			renderingAPI->m_deviceContext->Unmap(m_indexBuffer, 0);
-		}
-		m_format = stride == sizeof(uint16_t) ?
-			DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+		SetData(buffer, numIndices, stride);
 	}
 
 	DirectX11IndexBuffer::~DirectX11IndexBuffer()
@@ -57,6 +47,26 @@ namespace Engine
 	bool DirectX11IndexBuffer::IsValid() const
 	{
 		return m_indexBuffer != nullptr;
+	}
+
+	void DirectX11IndexBuffer::SetData(const void* buffer, uint32_t numIndices, uint32_t stride)
+	{
+		m_indexStride = stride;
+		m_numIndices = numIndices;
+
+		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
+		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
+			graphicsRenderer->GetRenderingAPI());
+
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT result = renderingAPI->m_deviceContext->Map(
+			m_indexBuffer, 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		DebugAssert(result == S_OK, "Failed to map the index buffer");
+		std::memcpy(mappedResource.pData, buffer, numIndices * stride);
+		renderingAPI->m_deviceContext->Unmap(m_indexBuffer, 0);
+
+		m_format = stride == sizeof(uint16_t) ?
+			DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
 	}
 
 	void DirectX11IndexBuffer::Bind() const

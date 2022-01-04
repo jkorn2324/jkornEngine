@@ -105,6 +105,9 @@
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\libfbxsdk.dll" "$(SolutionDir)$(Platform)\$(Configuration)\libfbxsdk.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -125,6 +128,9 @@
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\libfbxsdk.dll" "$(SolutionDir)$(Platform)\$(Configuration)\libfbxsdk.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -141,6 +147,9 @@
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\libfbxsdk.dll" "$(SolutionDir)$(Platform)\$(Configuration)\libfbxsdk.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -161,6 +170,9 @@
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\libfbxsdk.dll" "$(SolutionDir)$(Platform)\$(Configuration)\libfbxsdk.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\GlfwGame.cpp" />

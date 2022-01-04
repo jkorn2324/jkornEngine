@@ -1,5 +1,7 @@
 #include "GlfwGame.h"
+
 #include "GraphicsRenderer.h"
+#include "GraphicsRenderer2D.h"
 
 #include "AssetManager.h"
 #include "AssetCache.h"
@@ -20,12 +22,9 @@ namespace GlfwSandbox
 		: Layer("Game Layer"),
 		m_vertexBuffer(nullptr),
 		m_indexBuffer(nullptr),
-		m_spriteIndexBuffer(nullptr),
-		m_spriteVertexBuffer(nullptr),
-		m_cameraEntity(nullptr),
 		m_spriteEntity(nullptr),
-		m_spriteMaterial(nullptr),
-		m_scene(nullptr)
+		m_scene(nullptr),
+		m_entityConstantBuffer(nullptr)
 	{
 		InitializeRenderBuffers();
 		InitializeSceneComponents();
@@ -35,16 +34,9 @@ namespace GlfwSandbox
 	{
 		Engine::AssetManager::UncacheAssets();
 
-		delete m_spriteMaterial;
-
-		delete m_cameraConstantBuffer;
 		delete m_entityConstantBuffer;
-
 		delete m_vertexBuffer;
 		delete m_indexBuffer;
-		delete m_spriteIndexBuffer;
-		delete m_spriteVertexBuffer;
-		delete m_cameraEntity;
 		delete m_spriteEntity;
 		delete m_scene;
 	}
@@ -102,50 +94,11 @@ namespace GlfwSandbox
 		}
 
 		{
-			SpriteShaderVertex vertices[4] =
-			{
-				{ MathLib::Vector3(-0.5f, -0.5f, 0.0f), MathLib::Vector2(0.0f, 1.0f) },
-				{ MathLib::Vector3(0.5f, -0.5f, 0.0f), MathLib::Vector2(1.0f, 1.0f) },
-				{ MathLib::Vector3(0.5f, 0.5f, 0.0f), MathLib::Vector2(1.0f, 0.0f) },
-				{ MathLib::Vector3(-0.5f, 0.5f, 0.0f), MathLib::Vector2(0.0f, 0.0f) }
-			};
-
-			// Vertices are constructed in clockwise-order.
-			std::uint16_t indices[6] =
-			{
-				2, 1, 0,
-				0, 3, 2
-			};
-
-			m_spriteVertexBuffer = Engine::VertexBuffer::Create(
-				&vertices[0], sizeof(vertices) / sizeof(vertices[0]), sizeof(vertices[0]));
-			m_spriteIndexBuffer = Engine::IndexBuffer::Create(
-				&indices[0], sizeof(indices) / sizeof(indices[0]), sizeof(indices[0]));
-
 			Engine::AssetCache<Engine::Texture>& textureAssetCache =
 				Engine::AssetManager::GetTextures();
 			Engine::Texture* texture = textureAssetCache.Load(
 				L"Assets/Textures/happy-face.png");
-
-			Engine::BufferLayout bufferLayout({
-				{ "POSITION", offsetof(SpriteShaderVertex, position),
-					sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
-				{ "TEXCOORD", offsetof(SpriteShaderVertex, uv),
-					sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2 }
-				});
-
-			Engine::AssetCache<Engine::Shader>& shaderAssetCache =
-				Engine::AssetManager::GetShaders();
-			Engine::Shader* shader = shaderAssetCache.Load<const Engine::BufferLayout&>(
-				L"Shaders/SpriteShader.hlsl", bufferLayout);
-
-			m_spriteMaterial = new Engine::Material<SpriteConstants>();
-			m_spriteMaterial->SetShader(shader);
-			m_spriteMaterial->SetTexture(0, texture);
 		}
-
-		m_cameraConstantBuffer = Engine::ConstantBuffer::Create(
-			&m_cameraConstants, sizeof(m_cameraConstants));
 		m_entityConstantBuffer = Engine::ConstantBuffer::Create(
 			&m_entityConstants, sizeof(m_entityConstants));
 	}
@@ -154,13 +107,13 @@ namespace GlfwSandbox
 	{
 		m_scene = new Engine::Scene();
 
-		m_cameraEntity = new Engine::Entity(m_scene->CreateEntity());
+		Engine::Entity entity = m_scene->CreateEntity();
 		{
 			Engine::Transform3DComponent& camComponentTransform
-				= m_cameraEntity->AddComponent<Engine::Transform3DComponent>();
+				= entity.AddComponent<Engine::Transform3DComponent>();
 			camComponentTransform.SetPosition(MathLib::Vector3(-1.0f, 0.0f, 0.0f));
 			camComponentTransform.LookAt(MathLib::Vector3(0.0f, 0.0f, 0.0f));
-			m_cameraEntity->AddComponent<Engine::SceneCameraComponent>();
+			entity.AddComponent<Engine::SceneCameraComponent>();
 		}
 
 		m_spriteEntity = new Engine::Entity(m_scene->CreateEntity());
@@ -179,65 +132,20 @@ namespace GlfwSandbox
 	void GlfwGame::Render()
 	{
 		Engine::GraphicsRenderer* graphicsRenderer = Engine::GraphicsRenderer::Get();
-		
-		// Clears Back Buffer
 		graphicsRenderer->BeginFrame();
 
-		// Gets the shader.
-		Engine::AssetCache<Engine::Shader>& shaders = Engine::AssetManager::GetShaders();
+		m_scene->Render();
 
-		// Updates the camera constants
+		// Draws the sprite based on a rect.
 		{
-			Engine::Camera* camera = m_scene->GetCamera();
-			if (camera != nullptr)
-			{
-				auto mat = camera->GetViewMatrix();
-				mat.Invert();
-
-				m_cameraConstants.c_cameraPosition = mat.GetTranslation();
-				m_cameraConstants.c_viewProjection =
-					camera->GetViewProjectionMatrix();
-
-				m_cameraConstantBuffer->SetData(&m_cameraConstants,
-					sizeof(m_cameraConstants));
-				graphicsRenderer->SetConstantBuffer(0,
-					m_cameraConstantBuffer,
-					Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
-			}
-		}
-
-		{
-			Engine::Shader* shader =
-				shaders.Get(L"Shaders/SpriteShader.hlsl");
-			graphicsRenderer->SetShader(shader);
-
-			Engine::SpriteComponent& sprite =
-				m_spriteEntity->GetComponent<Engine::SpriteComponent>();
-			graphicsRenderer->SetTexture(0, sprite.texture);
 			Engine::Transform3DComponent& transform =
 				m_spriteEntity->GetComponent<Engine::Transform3DComponent>();
-			m_entityConstants.c_objectToWorld = transform.GetTransformMatrix();
-
-			if (sprite.texture != nullptr)
-			{
-				m_entityConstants.c_objectToWorld = MathLib::Matrix4x4::CreateScale(
-					(float)sprite.texture->GetWidth(), (float)sprite.texture->GetHeight(), 1.0f)
-					* m_entityConstants.c_objectToWorld;
-			}
-
-			m_entityConstantBuffer->SetData(&m_entityConstants,
-				sizeof(m_entityConstants));
-			graphicsRenderer->SetConstantBuffer(1,
-				m_entityConstantBuffer,
-				Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
-
-			m_spriteMaterial->materialConstants.c_spriteColor = sprite.color;
-			m_spriteMaterial->Bind();
-
-			graphicsRenderer->SetActiveVertexBuffer(m_spriteVertexBuffer);
-			graphicsRenderer->SetActiveIndexBuffer(m_spriteIndexBuffer);
-			graphicsRenderer->DrawActiveElements();
+			Engine::SpriteComponent& spriteComponent =
+				m_spriteEntity->GetComponent<Engine::SpriteComponent>();
+			Engine::GraphicsRenderer2D::DrawRect(transform.GetTransformMatrix(),
+				spriteComponent.color, spriteComponent.texture);
 		}
+
 		graphicsRenderer->EndFrame();
 	}
 }

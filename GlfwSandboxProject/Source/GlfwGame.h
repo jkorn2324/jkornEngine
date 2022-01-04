@@ -23,6 +23,7 @@ namespace Engine
 
 	template<typename T>
 	class Material;
+	class Mesh;
 }
 
 struct EntityConstants
@@ -30,34 +31,10 @@ struct EntityConstants
 	MathLib::Matrix4x4 c_objectToWorld;
 };
 
-struct CameraConstants
-{
-	MathLib::Matrix4x4 c_viewProjection;
-	MathLib::Vector3 c_cameraPosition;
-
-private:
-	float pad;
-};
-
-struct SpriteConstants
-{
-	MathLib::Vector4 c_spriteColor;
-
-	SpriteConstants()
-		: c_spriteColor(MathLib::Vector4::One) { }
-};
-
-
 struct VertexPositionColor
 {
 	MathLib::Vector3 position;
 	MathLib::Vector4 color;
-};
-
-struct SpriteShaderVertex
-{
-	MathLib::Vector3 position;
-	MathLib::Vector2 uv;
 };
 
 namespace GlfwSandbox
@@ -80,20 +57,11 @@ namespace GlfwSandbox
 		Engine::VertexBuffer* m_vertexBuffer;
 		Engine::IndexBuffer* m_indexBuffer;
 
-		Engine::VertexBuffer* m_spriteVertexBuffer;
-		Engine::IndexBuffer* m_spriteIndexBuffer;
-
-		Engine::Entity* m_cameraEntity;
 		Engine::Entity* m_spriteEntity;
-
 		Engine::Scene* m_scene;
-
-		Engine::ConstantBuffer* m_cameraConstantBuffer;
-		CameraConstants m_cameraConstants;
 
 		Engine::ConstantBuffer* m_entityConstantBuffer;
 		EntityConstants m_entityConstants;
-
-		Engine::Material<SpriteConstants>* m_spriteMaterial;
+		// TODO: Find a way to load in a mesh or just create one.
 	};
 }

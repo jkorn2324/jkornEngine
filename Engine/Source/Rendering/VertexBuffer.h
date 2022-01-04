@@ -14,10 +14,13 @@ namespace Engine
 
 		virtual bool IsValid() const =0;
 
+		virtual void SetData(const void* bufferData, std::uint32_t numVertices,
+			std::uint32_t stride) =0;
+
 	protected:
 		virtual void Bind() const =0;
 
-	private:
+	protected:
 		std::uint32_t m_stride;
 		std::uint32_t m_numVerts;
 

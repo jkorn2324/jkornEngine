@@ -30,17 +30,7 @@ namespace Engine
 		HRESULT result = renderingAPI->m_device
 			->CreateBuffer(&bufferDesc, &initializationData, &m_vertexBuffer);
 		DebugAssert(result == S_OK, "Failed to create vertex buffer.");
-
-		if (buffer != nullptr)
-		{
-			// Maps the subresource to the device context.
-			D3D11_MAPPED_SUBRESOURCE mapResource;
-			result = renderingAPI->m_deviceContext->Map(
-				m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
-			DebugAssert(result == S_OK, "Failed to map the vertex buffer resource.");
-			std::memcpy(mapResource.pData, buffer, numVertices * stride);
-			renderingAPI->m_deviceContext->Unmap(m_vertexBuffer, 0);
-		}
+		SetData(buffer, numVertices, stride);
 	}
 
 	DirectX11VertexBuffer::~DirectX11VertexBuffer()
@@ -54,6 +44,24 @@ namespace Engine
 	bool DirectX11VertexBuffer::IsValid() const
 	{
 		return m_vertexBuffer != nullptr;
+	}
+
+	void DirectX11VertexBuffer::SetData(const void* buffer, std::uint32_t numVertices, std::uint32_t stride)
+	{
+		m_numVerts = numVertices;
+		m_stride = stride;
+
+		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
+		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
+			graphicsRenderer->GetRenderingAPI());
+
+		// Maps the subresource to the device context.
+		D3D11_MAPPED_SUBRESOURCE mapResource;
+		HRESULT result = renderingAPI->m_deviceContext->Map(
+			m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
+		DebugAssert(result == S_OK, "Failed to map the vertex buffer resource.");
+		std::memcpy(mapResource.pData, buffer, numVertices * stride);
+		renderingAPI->m_deviceContext->Unmap(m_vertexBuffer, 0);
 	}
 
 	void DirectX11VertexBuffer::Bind() const

@@ -4,7 +4,7 @@
 
 #include "Entity.h"
 #include "SceneCamera.h"
-#include "Material.h"
+#include "MeshComponent.h"
 
 namespace Engine
 {
@@ -37,15 +37,5 @@ namespace Engine
 		explicit SceneCameraComponent(bool mainCam)
 			: mainCamera(mainCam), camera() { }
 		SceneCameraComponent(const SceneCameraComponent& component) = default;
-	};
-
-	class MeshComponent
-	{
-		struct MeshMaterialConstants
-		{
-			// TODO: implementation
-		};
-
-		// TODO: Implementation
 	};
 }

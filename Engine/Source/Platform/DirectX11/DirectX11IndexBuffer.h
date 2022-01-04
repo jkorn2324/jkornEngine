@@ -8,10 +8,13 @@ namespace Engine
 	{
 	public:
 		explicit DirectX11IndexBuffer(const void* buffer,
-			std::uint32_t numIndices, std::uint32_t stride);
+			uint32_t numIndices, uint32_t stride);
 		~DirectX11IndexBuffer();
 
 		bool IsValid() const override;
+
+		void SetData(const void* buffer,
+			uint32_t numIndices, uint32_t stride) override;
 
 	protected:
 		void Bind() const override;
