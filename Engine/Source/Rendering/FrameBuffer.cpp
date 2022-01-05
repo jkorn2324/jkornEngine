@@ -21,7 +21,6 @@ namespace Engine
 				m_depthStencilSpecification = attachment;
 				continue;
 			}
-			// TODO: create sampler
 		}
 	}
 

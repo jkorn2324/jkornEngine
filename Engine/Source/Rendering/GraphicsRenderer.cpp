@@ -1,12 +1,12 @@
 #include "EnginePCH.h"
 #include "GraphicsRenderer.h"
 
-#include "Rendering\IndexBuffer.h"
-#include "Rendering\VertexBuffer.h"
-#include "Rendering\ConstantBuffer.h"
-#include "Rendering\Shader.h"
-#include "Rendering\FrameBuffer.h"
-#include "Rendering\Texture.h"
+#include "IndexBuffer.h"
+#include "VertexBuffer.h"
+#include "ConstantBuffer.h"
+#include "Shader.h"
+#include "FrameBuffer.h"
+#include "Texture.h"
 #include "RenderingAPI.h"
 
 #include "Source\Vector.h"
@@ -70,8 +70,6 @@ namespace Engine
 	{
 		// Clears the render target color & depth buffer.
 		m_frameBuffer->Bind();
-		m_renderingAPI->Clear();
-		m_frameBuffer->ClearDepthBuffer();
 	}
 
 	void GraphicsRenderer::EndFrame()

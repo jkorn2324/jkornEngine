@@ -24,6 +24,7 @@ namespace Engine
 	template<typename T>
 	class Material;
 	class Mesh;
+	class SubTexture;
 }
 
 struct EntityConstants
@@ -59,6 +60,8 @@ namespace GlfwSandbox
 
 		Engine::Entity* m_spriteEntity;
 		Engine::Scene* m_scene;
+
+		Engine::SubTexture* m_subTexture;
 
 		Engine::ConstantBuffer* m_entityConstantBuffer;
 		EntityConstants m_entityConstants;

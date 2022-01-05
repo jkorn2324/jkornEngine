@@ -20,6 +20,8 @@ namespace Engine
 		template<typename T>
 		T& GetComponent() const;
 		template<typename T>
+		T& GetComponent();
+		template<typename T>
 		bool HasComponent() const;
 		template<typename T, typename... Args> 
 		T& AddComponent(Args&&... args);
@@ -37,6 +39,12 @@ namespace Engine
 
 	template<typename T>
 	T& Entity::GetComponent() const
+	{
+		return m_scene->m_entityRegistry.get<T>(m_entity);
+	}
+
+	template<typename T>
+	T& Entity::GetComponent()
 	{
 		return m_scene->m_entityRegistry.get<T>(m_entity);
 	}

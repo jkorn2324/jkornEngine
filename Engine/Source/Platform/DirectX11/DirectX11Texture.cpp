@@ -14,6 +14,20 @@ namespace Engine
 		m_texture(nullptr)
 	{
 	}
+
+	DirectX11Texture::DirectX11Texture(ID3D11Resource* resource, ID3D11ShaderResourceView* shaderResourceView)
+		: Texture(),
+		m_shaderResourceView(shaderResourceView),
+		m_texture(resource)
+	{
+		if (m_texture != nullptr)
+		{
+			CD3D11_TEXTURE2D_DESC textureDesc;
+			((ID3D11Texture2D*)m_texture)->GetDesc(&textureDesc);
+			m_width = textureDesc.Width;
+			m_height = textureDesc.Height;
+		}
+	}
 	
 	DirectX11Texture::~DirectX11Texture()
 	{

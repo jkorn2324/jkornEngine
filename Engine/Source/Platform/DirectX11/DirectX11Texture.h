@@ -10,6 +10,8 @@ namespace Engine
 	{
 	public:
 		explicit DirectX11Texture();
+		explicit DirectX11Texture(ID3D11Resource* resource,
+			ID3D11ShaderResourceView* shaderResourceView);
 		~DirectX11Texture();
 
 		bool IsValid() const override;

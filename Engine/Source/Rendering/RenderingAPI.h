@@ -27,6 +27,8 @@ namespace Engine
 		virtual void Clear()=0;
 		virtual void Draw(class VertexBuffer* vertexBuffer,
 			class IndexBuffer* indexBuffer = nullptr)=0;
+		virtual void SetWireframe(bool wireframeMode)=0;
+		virtual bool IsWireframe() const=0;
 
 		virtual std::uint32_t GetWidth() const=0;
 		virtual std::uint32_t GetHeight() const=0;

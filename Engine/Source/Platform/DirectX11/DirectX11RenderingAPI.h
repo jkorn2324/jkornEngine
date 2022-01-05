@@ -30,6 +30,9 @@ namespace Engine
 		std::uint32_t GetWidth() const override;
 		std::uint32_t GetHeight() const override;
 
+		bool IsWireframe() const override;
+		void SetWireframe(bool wireframeMode) override;
+
 	private:
 		IDXGISwapChain* m_swapChain;
 		ID3D11DeviceContext* m_deviceContext;
@@ -39,10 +42,15 @@ namespace Engine
 		ID3D11RenderTargetView* m_backBufferRenderTargetView;
 		ID3D11SamplerState* m_samplerState;
 
+		ID3D11RasterizerState* m_defaultRasterizerState;
+		ID3D11RasterizerState* m_wireframeRasterizerState;
+
 		MathLib::Vector4 m_clearColor;
 
 		std::uint32_t m_width;
 		std::uint32_t m_height;
+
+		bool m_wireframeMode;
 
 		friend class DirectX11VertexBuffer;
 		friend class DirectX11IndexBuffer;

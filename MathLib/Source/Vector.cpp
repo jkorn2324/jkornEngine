@@ -651,4 +651,23 @@ namespace MathLib
 	}
 
 #pragma endregion
+	
+	Vector2Int::Vector2Int()
+		: x(0), y(0) { }
+	
+	Vector2Int::Vector2Int(int32_t x, int32_t y)
+		: x(x), y(y) { }
+
+	Vector2Int::Vector2Int(const Vector2& vec)
+		: x((int32_t)(vec.x)), y((int32_t)(vec.y)) { }
+	
+	
+	Vector3Int::Vector3Int()
+		: x(0), y(0), z(0) { }
+
+	Vector3Int::Vector3Int(int32_t x, int32_t y, int32_t z)
+		: x(x), y(y), z(z) { }
+
+	Vector3Int::Vector3Int(const Vector3& vec)
+		: x((int32_t)vec.x), y((int32_t)vec.y), z((int32_t)vec.z) { }
 }

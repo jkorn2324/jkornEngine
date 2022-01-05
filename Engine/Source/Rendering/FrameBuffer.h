@@ -14,16 +14,21 @@ namespace Engine
 		
 		// Depth Stencil
 		TYPE_DEPTH24_STENCIL8,
-		DEPTH_STENCIL = TYPE_DEPTH24_STENCIL8
+		DEPTH_STENCIL = TYPE_DEPTH24_STENCIL8,
+
+		// Render Target View
+		TYPE_RGB,
+		RENDER_TARGET = TYPE_RGB
 	};
 
 	struct FrameBufferAttachment
 	{
 		FrameBufferAttachmentType textureType;
+		bool exportAsTexture = false;
 
 		FrameBufferAttachment() = default;
 		FrameBufferAttachment(FrameBufferAttachmentType textureType)
-			: textureType(textureType) { }
+			: textureType(textureType), exportAsTexture(textureType == TYPE_RGB) { }
 	};
 
 	struct FrameBufferSpecificationAttachmentList
@@ -51,11 +56,6 @@ namespace Engine
 		std::uint32_t width = 0;
 		std::uint32_t height = 0;
 
-		// Sampler Parameters.
-		std::uint32_t samples = 1;
-
-		// Rasterization
-
 		FrameBufferSpecificationAttachmentList attachments;
 
 		FrameBufferSpecification() = default;
@@ -71,7 +71,8 @@ namespace Engine
 		virtual ~FrameBuffer() { }
 
 		virtual void Bind() const=0;
-		virtual void ClearDepthBuffer()=0;
+
+		virtual class Texture* GetTexture(FrameBufferAttachmentType type) const=0;
 
 	protected:
 		FrameBufferSpecification m_frameBufferSpecification;

@@ -16,5 +16,9 @@ namespace Engine
 			const MathLib::Vector2& scale, class Texture* texture);
 		static void DrawRect(const MathLib::Matrix4x4& transformMat,
 			const MathLib::Vector4& color, class Texture* texture);
+		static void DrawRect(const MathLib::Vector2& pos,
+			const MathLib::Vector2& scale, class SubTexture* texture);
+		static void DrawRect(const MathLib::Matrix4x4& transformMat,
+			const MathLib::Vector4& color, class SubTexture* texture);
 	};
 }

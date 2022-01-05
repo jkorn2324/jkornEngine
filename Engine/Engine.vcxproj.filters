@@ -32,6 +32,9 @@
     <Filter Include="Source Files\Utils">
       <UniqueIdentifier>{3a9a106c-a26f-4040-8903-e80d5424ec68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Rendering\Textures">
+      <UniqueIdentifier>{654971ce-eb95-4648-9664-ec03e5baff4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\EnginePCH.cpp">
@@ -52,9 +55,6 @@
     <ClCompile Include="Source\Rendering\Shader.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Rendering\Texture.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Rendering\BufferLayout.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
@@ -65,9 +65,6 @@
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\Scene.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Scene\Components.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Source\Rendering\FrameBuffer.cpp">
@@ -118,11 +115,20 @@
     <ClCompile Include="Source\Assets\Mesh.cpp">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Scene\MeshComponent.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Rendering\GraphicsRenderer2D.cpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Components\Components.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Components\MeshComponent.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering\Textures\Texture.cpp">
+      <Filter>Source Files\Rendering\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering\Textures\SubTexture.cpp">
+      <Filter>Source Files\Rendering\Textures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +150,6 @@
     <ClInclude Include="Source\Rendering\Shader.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Rendering\Texture.h">
-      <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Rendering\BufferLayout.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
@@ -157,9 +160,6 @@
       <Filter>Source Files\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene\Scene.h">
-      <Filter>Source Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Scene\Components.h">
       <Filter>Source Files\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Rendering\FrameBuffer.h">
@@ -237,11 +237,20 @@
     <ClInclude Include="Source\Utils\StringUtils.h">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Scene\MeshComponent.h">
-      <Filter>Source Files\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Rendering\GraphicsRenderer2D.h">
       <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Components\Components.h">
+      <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Components\MeshComponent.h">
+      <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rendering\Textures\Texture.h">
+      <Filter>Source Files\Rendering\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rendering\Textures\SubTexture.h">
+      <Filter>Source Files\Rendering\Textures</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

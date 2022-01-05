@@ -89,6 +89,21 @@ namespace Engine
 		return output == S_OK;
 	}
 
+
+	static bool CreateRasterizerState(ID3D11Device* device,
+		ID3D11RasterizerState** rasterizerState, bool wireframe)
+	{
+		D3D11_RASTERIZER_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_RASTERIZER_DESC));
+		desc.CullMode = wireframe ? D3D11_CULL_NONE : D3D11_CULL_BACK;
+		desc.FillMode = wireframe ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
+		desc.FrontCounterClockwise = true;
+
+		HRESULT result = device->CreateRasterizerState(&desc, rasterizerState);
+		DebugAssert(result == S_OK, "Rasterizer state failed to generate.");
+		return result == S_OK;
+	}
+
 	DirectX11RenderingAPI::DirectX11RenderingAPI()
 		: m_swapChain(nullptr),
 		m_deviceContext(nullptr),
@@ -97,7 +112,10 @@ namespace Engine
 		m_currentRenderTargetView(nullptr),
 		m_samplerState(nullptr),
 		m_width(0), m_height(0),
-		m_clearColor(0.0f, 0.0f, 1.0f, 1.0f)
+		m_clearColor(0.0f, 0.0f, 1.0f, 1.0f),
+		m_wireframeMode(false),
+		m_defaultRasterizerState(nullptr),
+		m_wireframeRasterizerState(nullptr)
 	{
 	}
 
@@ -112,6 +130,9 @@ namespace Engine
 		}
 #endif
 		m_currentRenderTargetView = nullptr;
+
+		m_defaultRasterizerState->Release();
+		m_wireframeRasterizerState->Release();
 		m_samplerState->Release();
 		m_backBufferRenderTargetView->Release();
 		m_swapChain->Release();
@@ -131,13 +152,13 @@ namespace Engine
 
 		HWND hwnd = window->GetHWND();
 		if (!CreateDeviceAndSwapChain(hwnd,
-			window->GetWidth(), window->GetHeight(), &m_device,
+			m_width, m_height, &m_device,
 			&m_deviceContext, &m_swapChain))
 		{
 			return false;
 		}
 
-		SetViewport(0.0f, 0.0f, m_width, m_height);
+		SetViewport(0.0f, 0.0f, (float)m_width, (float)m_height);
 
 		if (!CreateBackBuffer(m_swapChain, m_device,
 			&m_backBufferRenderTargetView))
@@ -150,6 +171,16 @@ namespace Engine
 		{
 			return false;
 		}
+
+		if (!CreateRasterizerState(m_device,
+			&m_defaultRasterizerState, false)
+			|| !CreateRasterizerState(m_device,
+				&m_wireframeRasterizerState, true))
+		{
+			return false;
+		}
+
+		m_deviceContext->RSSetState(m_defaultRasterizerState);
 		SetRenderTarget(m_backBufferRenderTargetView, nullptr);
 		m_deviceContext->IASetPrimitiveTopology(
 			D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -241,5 +272,20 @@ namespace Engine
 	std::uint32_t DirectX11RenderingAPI::GetHeight() const
 	{
 		return m_height;
+	}
+	
+	bool DirectX11RenderingAPI::IsWireframe() const
+	{
+		return m_wireframeMode;
+	}
+	
+	void DirectX11RenderingAPI::SetWireframe(bool wireframeMode)
+	{
+		if (wireframeMode != m_wireframeMode)
+		{
+			m_deviceContext->RSSetState(wireframeMode ?
+				m_wireframeRasterizerState : m_defaultRasterizerState);
+			m_wireframeMode = wireframeMode;
+		}
 	}
 }

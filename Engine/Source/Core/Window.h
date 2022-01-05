@@ -13,7 +13,8 @@ namespace Engine
 	struct WindowProperties
 	{
 		std::string windowTitle;
-		std::uint32_t width, height;
+		std::uint32_t width;
+		std::uint32_t height;
 
 		bool vsync = true;
 		bool resizable = false;

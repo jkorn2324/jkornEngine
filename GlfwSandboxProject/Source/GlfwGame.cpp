@@ -2,6 +2,7 @@
 
 #include "GraphicsRenderer.h"
 #include "GraphicsRenderer2D.h"
+#include "RenderingAPI.h"
 
 #include "AssetManager.h"
 #include "AssetCache.h"
@@ -10,6 +11,7 @@
 #include "Entity.h"
 #include "Components.h"
 
+#include "SubTexture.h"
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
 #include "ConstantBuffer.h"
@@ -18,13 +20,16 @@
 
 namespace GlfwSandbox
 {
+	static const wchar_t* CARDS_LARGE_TILEMAP = L"Assets/Textures/PlayingCards/Tilesheet/cardsLarge_tilemap.png";
+
 	GlfwGame::GlfwGame()
 		: Layer("Game Layer"),
 		m_vertexBuffer(nullptr),
 		m_indexBuffer(nullptr),
 		m_spriteEntity(nullptr),
 		m_scene(nullptr),
-		m_entityConstantBuffer(nullptr)
+		m_entityConstantBuffer(nullptr),
+		m_subTexture(nullptr)
 	{
 		InitializeRenderBuffers();
 		InitializeSceneComponents();
@@ -34,6 +39,7 @@ namespace GlfwSandbox
 	{
 		Engine::AssetManager::UncacheAssets();
 
+		delete m_subTexture;
 		delete m_entityConstantBuffer;
 		delete m_vertexBuffer;
 		delete m_indexBuffer;
@@ -47,6 +53,12 @@ namespace GlfwSandbox
 		{
 			m_scene->Update(ts);
 		}
+		
+		Engine::Transform3DComponent& transformComponent
+			= m_spriteEntity->GetComponent<Engine::Transform3DComponent>();
+		transformComponent.SetPosition(transformComponent.GetPosition() +
+			MathLib::Vector3::UnitX * 4.0f * ts.GetSeconds());
+
 		Render();
 	}
 
@@ -93,11 +105,13 @@ namespace GlfwSandbox
 				L"Shaders/TriangleShader.hlsl", bufferLayout);
 		}
 
+		Engine::AssetCache<Engine::Texture>& textureAssetCache =
+			Engine::AssetManager::GetTextures();
 		{
-			Engine::AssetCache<Engine::Texture>& textureAssetCache =
-				Engine::AssetManager::GetTextures();
-			Engine::Texture* texture = textureAssetCache.Load(
-				L"Assets/Textures/happy-face.png");
+			textureAssetCache.Load(L"Assets/Textures/happy-face.png");
+			Engine::Texture* texture = textureAssetCache.Load(CARDS_LARGE_TILEMAP);
+			m_subTexture = Engine::SubTexture::CreateFromTexCoords(texture,
+				MathLib::Vector2(11.0f, 2.0f), MathLib::Vector2(51.0f, 61.0f));
 		}
 		m_entityConstantBuffer = Engine::ConstantBuffer::Create(
 			&m_entityConstants, sizeof(m_entityConstants));
@@ -144,6 +158,11 @@ namespace GlfwSandbox
 				m_spriteEntity->GetComponent<Engine::SpriteComponent>();
 			Engine::GraphicsRenderer2D::DrawRect(transform.GetTransformMatrix(),
 				spriteComponent.color, spriteComponent.texture);
+		}
+
+		{
+			Engine::GraphicsRenderer2D::DrawRect(MathLib::Vector2(20.0f, 0.0f),
+				MathLib::Vector2::One, m_subTexture);
 		}
 
 		graphicsRenderer->EndFrame();

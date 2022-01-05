@@ -10,6 +10,7 @@
 #include "AssetCache.h"
 
 #include "Texture.h"
+#include "SubTexture.h"
 
 namespace Engine
 {
@@ -33,6 +34,8 @@ namespace Engine
 	};
 
 	static VertexBuffer* s_spriteVertexBuffer = nullptr;
+	bool s_spriteVertexBufferDefault = true;
+
 	static IndexBuffer* s_spriteIndexBuffer = nullptr;
 
 	static ConstantBuffer* s_spriteObjectConstantBuffer = nullptr;
@@ -48,13 +51,33 @@ namespace Engine
 
 	static const std::uint32_t indices[6] =
 	{
-		2, 1, 0,
-		0, 3, 2
+		0, 1, 2,
+		2, 3, 0
 	};
+
+	static void DrawRectInternal(const MathLib::Matrix4x4& transform, const MathLib::Vector4& color, class Texture* texture)
+	{
+		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
+
+		// Bind Material.
+		s_spriteMaterial->materialConstants.c_spriteColor = color;
+		s_spriteMaterial->SetTexture(0, texture);
+		s_spriteMaterial->Bind();
+
+		// Bind Per Object Constants.
+		s_spriteObjectConstantBuffer->SetData(&transform, sizeof(Mat4x4));
+		graphicsRenderer->SetConstantBuffer(1, s_spriteObjectConstantBuffer,
+			ConstantBufferFlags::PIXEL_SHADER | ConstantBufferFlags::VERTEX_SHADER);
+
+		// Bind Vertex & Index Buffers & Draw.
+		graphicsRenderer->SetActiveVertexBuffer(s_spriteVertexBuffer);
+		graphicsRenderer->SetActiveIndexBuffer(s_spriteIndexBuffer);
+		graphicsRenderer->DrawActiveElements();
+	}
+
 
 	void GraphicsRenderer2D::Init()
 	{
-
 		if (s_spriteVertexBuffer == nullptr)
 		{
 			s_spriteVertexBuffer = VertexBuffer::Create(
@@ -106,27 +129,53 @@ namespace Engine
 	
 	void GraphicsRenderer2D::DrawRect(const MathLib::Matrix4x4& transformMat, const MathLib::Vector4& color, Texture* texture)
 	{
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
+		// Used so that the vertex buffers are always set to a default rect.
+
+		if (!s_spriteVertexBufferDefault)
+		{
+			s_spriteVertexBuffer->SetData(&vertices,
+				sizeof(vertices) / sizeof(vertices[0]), sizeof(vertices[0]));
+			s_spriteVertexBufferDefault = true;
+		}
 		
 		Mat4x4 mat = transformMat;
 		if (texture != nullptr)
 		{
 			mat = Mat4x4::CreateScale(texture->GetWidth(), texture->GetHeight(), 1.0f) * mat;
 		}
-		
-		// Bind Material.
-		s_spriteMaterial->materialConstants.c_spriteColor = color;
-		s_spriteMaterial->SetTexture(0, texture);
-		s_spriteMaterial->Bind();
-
-		// Bind Per Object Constants.
-		s_spriteObjectConstantBuffer->SetData(&mat, sizeof(Mat4x4));
-		graphicsRenderer->SetConstantBuffer(1, s_spriteObjectConstantBuffer,
-			ConstantBufferFlags::PIXEL_SHADER | ConstantBufferFlags::VERTEX_SHADER);
-
-		// Bind Vertex & Index Buffers & Draw.
-		graphicsRenderer->SetActiveVertexBuffer(s_spriteVertexBuffer);
-		graphicsRenderer->SetActiveIndexBuffer(s_spriteIndexBuffer);
-		graphicsRenderer->DrawActiveElements();
+		DrawRectInternal(mat, color, texture);
 	}
+
+	void GraphicsRenderer2D::DrawRect(const MathLib::Vector2& pos, const MathLib::Vector2 &scale, SubTexture* texture)
+	{
+		Mat4x4 mat = Mat4x4::CreateScale(scale.x, scale.y, 1.0f)
+			* Mat4x4::CreateTranslation(pos.x, pos.y, 0.0f);
+		DrawRect(mat, Vec4::One, texture);
+	}
+	
+	void GraphicsRenderer2D::DrawRect(const MathLib::Matrix4x4& transformMat, const MathLib::Vector4& color, SubTexture* texture)
+	{
+		// Only changes UVs if it doesn't have defaults.
+		if (texture->HasDefaultUVS())
+		{
+			DrawRect(transformMat, color, texture->GetTexture());
+			return;
+		}
+
+		// Changes the UVs so that is based on the sub texture.
+		GraphicsSpriteVertex verts[4];
+		std::memcpy(&verts[0], &vertices[0], sizeof(vertices));
+		verts[0].uv = texture->GetUVS()[0];
+		verts[1].uv = texture->GetUVS()[1];
+		verts[2].uv = texture->GetUVS()[2];
+		verts[3].uv = texture->GetUVS()[3];
+
+		s_spriteVertexBuffer->SetData(&verts, 4, sizeof(GraphicsSpriteVertex));
+		s_spriteVertexBufferDefault = false;
+		
+		DrawRectInternal(Mat4x4::CreateScale(
+			texture->GetSize().x, texture->GetSize().y, 1.0f) * transformMat, 
+			color, texture->GetTexture());
+	}
+
 }

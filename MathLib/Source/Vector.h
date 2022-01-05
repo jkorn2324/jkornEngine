@@ -5,6 +5,8 @@
 namespace MathLib
 {
 
+#pragma region vector2
+
 	class Vector2
 	{
 	public:
@@ -85,6 +87,21 @@ namespace MathLib
 		friend SIMDVector2 Reflect(const SIMDVector2& vec, const SIMDVector2& normal);
 	};
 
+	class Vector2Int
+	{
+	public:
+		int32_t x;
+		int32_t y;
+
+		Vector2Int();
+		Vector2Int(int32_t x, int32_t y);
+		Vector2Int(const Vector2& vec);
+	};
+
+#pragma endregion
+
+#pragma region vector3
+
 	class Vector3
 	{
 	public:
@@ -144,6 +161,20 @@ namespace MathLib
 	{
 		// TODO: Implementation
 	};
+
+	class Vector3Int
+	{
+	public:
+		int32_t x;
+		int32_t y;
+		int32_t z;
+
+		Vector3Int();
+		Vector3Int(int32_t x, int32_t y, int32_t z);
+		Vector3Int(const Vector3& vec);
+	};
+
+#pragma endregion
 
 	class Vector4
 	{
