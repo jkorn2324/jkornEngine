@@ -1,11 +1,11 @@
 #pragma once
 
-#include "PlatformEditorLayer.h"
+#include "PlatformImGuiLayer.h"
 
 namespace Engine
 {
 
-	class DirectX11EditorLayer : public PlatformEditorLayer
+	class DirectX11ImGuiLayer : public PlatformImGuiLayer
 	{
 	public:
 		void OnLayerAdded() override;

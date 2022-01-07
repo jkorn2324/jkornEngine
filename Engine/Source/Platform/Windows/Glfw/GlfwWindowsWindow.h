@@ -49,6 +49,6 @@ namespace Engine
 		GLFWwindow* m_window;
 		WindowData m_windowData;
 
-		friend class GlfwWindowEditorLayer;
+		friend class GlfwImGuiLayer;
 	};
 }

@@ -12,10 +12,10 @@ namespace Engine
 		TYPE_GRAPHICS
 	};
 
-	class PlatformEditorLayer
+	class PlatformImGuiLayer
 	{
 	private:
-		enum class EditorLayerPlatform
+		enum class ImGuiLayerPlatform
 		{
 			NONE,
 
@@ -33,9 +33,9 @@ namespace Engine
 		virtual void EndFrame() =0;
 
 	public:
-		static std::unique_ptr<PlatformEditorLayer> Create(const LayerType& type);
+		static std::unique_ptr<PlatformImGuiLayer> Create(const LayerType& type);
 		
 	private:
-		static EditorLayerPlatform GetPlatformEditorLayer(const LayerType& type);
+		static ImGuiLayerPlatform GetPlatformImGuiLayer(const LayerType& type);
 	};
 }

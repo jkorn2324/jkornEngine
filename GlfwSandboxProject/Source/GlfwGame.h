@@ -49,7 +49,7 @@ namespace GlfwSandbox
 
 		void OnUpdate(const Engine::Timestep& ts) override;
 		
-		void OnEditorRender() override;
+		void OnImGuiRender() override;
 
 	private:
 		void InitializeRenderBuffers();

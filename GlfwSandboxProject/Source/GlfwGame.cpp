@@ -65,7 +65,8 @@ namespace GlfwSandbox
 	}
 
 	// Editor Stuff for ImGui.
-	void GlfwGame::OnEditorRender()
+
+	void GlfwGame::OnImGuiRender()
 	{
 		Engine::SpriteComponent& component = m_spriteEntity->GetComponent<Engine::SpriteComponent>();
 

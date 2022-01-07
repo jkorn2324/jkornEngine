@@ -1,10 +1,11 @@
 #pragma once
 
+#include "PlatformImGuiLayer.h"
 
 namespace Engine
 {
 
-	class GlfwWindowEditorLayer : public PlatformEditorLayer
+	class GlfwImGuiLayer : public PlatformImGuiLayer
 	{
 	public:
 		void OnLayerAdded() override;

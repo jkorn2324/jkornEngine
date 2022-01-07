@@ -34,7 +34,7 @@ namespace Engine
 
 	private:
 		std::unique_ptr<class Window> m_window;
-		class EditorLayer* m_editorLayer;
+		class ImGuiLayer* m_imguiLayer;
 		class GraphicsRenderer* m_graphicsRenderer;
 
 		LayerStack m_windowLayerStack;

@@ -7,4 +7,3 @@
 [submodule "Engine/Libraries/ImGui"]
 	path = Engine/Libraries/ImGui
 	url = https://github.com/ocornut/imgui
-	branch = docking

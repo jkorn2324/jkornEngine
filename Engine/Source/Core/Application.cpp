@@ -13,7 +13,7 @@
 #include "ApplicationEvent.h"
 #include "Timestep.h"
 
-#include "EditorLayer.h"
+#include "ImGuiLayer.h"
 
 namespace Engine
 {
@@ -35,7 +35,7 @@ namespace Engine
 		m_windowLayerStack(),
 		m_prevTime(std::chrono::high_resolution_clock::now()),
 		m_graphicsRenderer(nullptr),
-		m_editorLayer(nullptr)
+		m_imguiLayer(nullptr)
 	{
 		DebugAssert(s_instance == nullptr, "Application is already running.");
 		s_instance = this;
@@ -51,8 +51,8 @@ namespace Engine
 		m_graphicsRenderer->Initialize(m_window.get());
 		GraphicsRenderer2D::Init();
 
-		m_editorLayer = new EditorLayer();
-		m_windowLayerStack.AddOverlay(m_editorLayer);
+		m_imguiLayer = new ImGuiLayer();
+		m_windowLayerStack.AddOverlay(m_imguiLayer);
 	}
 
 	Application::~Application()
@@ -83,14 +83,14 @@ namespace Engine
 			}
 
 			{
-				m_editorLayer->BeginRender();
+				m_imguiLayer->BeginRender();
 				{
 					for (Layer* layer : m_windowLayerStack)
 					{
-						layer->OnEditorRender();
+						layer->OnImGuiRender();
 					}
 				}
-				m_editorLayer->EndRender();
+				m_imguiLayer->EndRender();
 			}
 			m_window->OnUpdate();
 		}

@@ -5,7 +5,6 @@
 
 #include "Application.h"
 #include "GlfwGame.h"
-#include "EditorLayer.h"
 
 int main()
 {

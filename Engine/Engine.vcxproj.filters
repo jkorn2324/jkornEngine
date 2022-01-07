@@ -172,20 +172,20 @@
     <ClCompile Include="Libraries\ImGui\backends\imgui_impl_win32.cpp">
       <Filter>Libraries\ImGui\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\EditorLayer.cpp">
-      <Filter>Source Files\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Platform\Windows\Glfw\GlfwWindowsWindow.cpp">
       <Filter>Source Files\Platform\Windows\Glfw</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Platform\Windows\Glfw\GlfwWindowEditorLayer.cpp">
+    <ClCompile Include="Source\Platform\Windows\Glfw\GlfwImGuiLayer.cpp">
       <Filter>Source Files\Platform\Windows\Glfw</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Platform\DirectX11\DirectX11EditorLayer.cpp">
-      <Filter>Source Files\Platform\DirectX11</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\PlatformEditorLayer.cpp">
+    <ClCompile Include="Source\ImGui\ImGuiLayer.cpp">
       <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ImGui\PlatformImGuiLayer.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11ImGuiLayer.cpp">
+      <Filter>Source Files\Platform\DirectX11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -336,20 +336,20 @@
     <ClInclude Include="Libraries\ImGui\backends\imgui_impl_win32.h">
       <Filter>Libraries\ImGui\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Editor\EditorLayer.h">
-      <Filter>Source Files\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Platform\Windows\Glfw\GlfwWindowsWindow.h">
       <Filter>Source Files\Platform\Windows\Glfw</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Platform\Windows\Glfw\GlfwWindowEditorLayer.h">
+    <ClInclude Include="Source\Platform\Windows\Glfw\GlfwImGuiLayer.h">
       <Filter>Source Files\Platform\Windows\Glfw</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Platform\DirectX11\DirectX11EditorLayer.h">
-      <Filter>Source Files\Platform\DirectX11</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Editor\PlatformEditorLayer.h">
+    <ClInclude Include="Source\ImGui\ImGuiLayer.h">
       <Filter>Source Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ImGui\PlatformImGuiLayer.h">
+      <Filter>Source Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11ImGuiLayer.h">
+      <Filter>Source Files\Platform\DirectX11</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
