@@ -23,7 +23,7 @@ namespace Engine
 		class RenderingAPI* GetRenderingAPI() const;
 
 		void BeginFrame();
-		void EndFrame();
+		void SwapBuffers();
 
 		void SetTexture(std::uint32_t slot, class Texture* texture);
 		void SetShader(class Shader* shader);

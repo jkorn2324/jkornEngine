@@ -58,5 +58,6 @@ namespace Engine
 		friend class DirectX11Texture;
 		friend class DirectX11ConstantBuffer;
 		friend class DirectX11Shader;
+		friend class DirectX11EditorLayer;
 	};
 }

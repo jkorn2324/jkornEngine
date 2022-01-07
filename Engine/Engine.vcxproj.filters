@@ -35,6 +35,24 @@
     <Filter Include="Source Files\Rendering\Textures">
       <UniqueIdentifier>{654971ce-eb95-4648-9664-ec03e5baff4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{5723f75e-53f8-4006-b867-fc132f839bdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\ImGui">
+      <UniqueIdentifier>{f8f00534-0b7b-4cb3-bcec-0812842b7043}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\ImGui\Platform">
+      <UniqueIdentifier>{3469913c-601b-44b2-be6e-90b68b93882a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor">
+      <UniqueIdentifier>{feb00756-41d2-4f4a-89e2-e08a20378f4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform\Windows">
+      <UniqueIdentifier>{bd291b64-7063-4744-97d0-cacf7aa4f1da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform\Windows\Glfw">
+      <UniqueIdentifier>{e3b400f4-f671-4ca2-be54-e1ab3b309e3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\EnginePCH.cpp">
@@ -129,6 +147,45 @@
     </ClCompile>
     <ClCompile Include="Source\Rendering\Textures\SubTexture.cpp">
       <Filter>Source Files\Rendering\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\ImGui\imgui.cpp">
+      <Filter>Libraries\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\ImGui\imgui_demo.cpp">
+      <Filter>Libraries\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\ImGui\imgui_draw.cpp">
+      <Filter>Libraries\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\ImGui\imgui_tables.cpp">
+      <Filter>Libraries\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\ImGui\imgui_widgets.cpp">
+      <Filter>Libraries\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\ImGui\backends\imgui_impl_dx11.cpp">
+      <Filter>Libraries\ImGui\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\ImGui\backends\imgui_impl_glfw.cpp">
+      <Filter>Libraries\ImGui\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\ImGui\backends\imgui_impl_win32.cpp">
+      <Filter>Libraries\ImGui\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\EditorLayer.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\Glfw\GlfwWindowsWindow.cpp">
+      <Filter>Source Files\Platform\Windows\Glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\Glfw\GlfwWindowEditorLayer.cpp">
+      <Filter>Source Files\Platform\Windows\Glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11EditorLayer.cpp">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\PlatformEditorLayer.cpp">
+      <Filter>Source Files\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -251,6 +308,48 @@
     </ClInclude>
     <ClInclude Include="Source\Rendering\Textures\SubTexture.h">
       <Filter>Source Files\Rendering\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\ImGui\imconfig.h">
+      <Filter>Libraries\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\ImGui\imgui.h">
+      <Filter>Libraries\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\ImGui\imgui_internal.h">
+      <Filter>Libraries\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\ImGui\imstb_rectpack.h">
+      <Filter>Libraries\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\ImGui\imstb_textedit.h">
+      <Filter>Libraries\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\ImGui\imstb_truetype.h">
+      <Filter>Libraries\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\ImGui\backends\imgui_impl_dx11.h">
+      <Filter>Libraries\ImGui\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\ImGui\backends\imgui_impl_glfw.h">
+      <Filter>Libraries\ImGui\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\ImGui\backends\imgui_impl_win32.h">
+      <Filter>Libraries\ImGui\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Editor\EditorLayer.h">
+      <Filter>Source Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\Windows\Glfw\GlfwWindowsWindow.h">
+      <Filter>Source Files\Platform\Windows\Glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\Windows\Glfw\GlfwWindowEditorLayer.h">
+      <Filter>Source Files\Platform\Windows\Glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11EditorLayer.h">
+      <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Editor\PlatformEditorLayer.h">
+      <Filter>Source Files\Editor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

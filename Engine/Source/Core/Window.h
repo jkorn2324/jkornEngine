@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include <Windows.h>
+#include <memory>
 
 #include "PlatformDetector.h"
 
@@ -9,6 +9,13 @@ struct GLFWwindow;
 
 namespace Engine
 {
+
+	enum class WindowType
+	{
+		NONE,
+		GLFW_WINDOWS_WINDOW,
+		WIN32_WINDOWS_WINDOW
+	};
 
 	struct WindowProperties
 	{
@@ -25,43 +32,28 @@ namespace Engine
 	public:
 		using WindowEventCallback = std::function<void(class Event&)>;
 
-		struct WindowData
-		{
-			WindowProperties properties;
-			WindowEventCallback callback;
-
-			WindowData(const WindowProperties& props)
-				: properties(props), callback(nullptr)
-			{
-			}
-		};
-
 	public:
 		Window(const WindowProperties& params);
-		~Window();
+		virtual ~Window() { }
 
-		void SetCallback(const WindowEventCallback& callback);
+		virtual void SetCallback(const WindowEventCallback& callback)=0;
 
-		std::uint32_t GetWidth() const;
-		std::uint32_t GetHeight() const;
+		virtual std::uint32_t GetWidth() const=0;
+		virtual std::uint32_t GetHeight() const=0;
 
-		void OnUpdate();
-		void Shutdown();
+		virtual void OnUpdate()=0;
+		virtual void Shutdown()=0;
 
-		bool IsValid() const;
+		virtual bool IsValid() const=0;
 
-		void SetVSync(bool vsync);
-		bool IsVSync() const;
-
-#ifdef PLATFORM_WINDOWS
-		HWND GetHWND() const;
-#endif
+		virtual void SetVSync(bool vsync)=0;
+		virtual bool IsVSync() const=0;
 
 	private:
-		void Initialize();
+		static WindowType s_windowType;
 
-	private:
-		GLFWwindow* m_window;
-		WindowData m_windowData;
+	public:
+		static WindowType GetWindowType() { return s_windowType; }
+		static std::unique_ptr<Window> GenerateWindow(const WindowProperties& properties);
 	};
 }

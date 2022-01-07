@@ -18,6 +18,8 @@
 #include "BufferLayout.h"
 #include "Material.h"
 
+#include "imgui.h"
+
 namespace GlfwSandbox
 {
 	static const wchar_t* CARDS_LARGE_TILEMAP = L"Assets/Textures/PlayingCards/Tilesheet/cardsLarge_tilemap.png";
@@ -60,6 +62,16 @@ namespace GlfwSandbox
 			MathLib::Vector3::UnitX * 4.0f * ts.GetSeconds());
 
 		Render();
+	}
+
+	// Editor Stuff for ImGui.
+	void GlfwGame::OnEditorRender()
+	{
+		Engine::SpriteComponent& component = m_spriteEntity->GetComponent<Engine::SpriteComponent>();
+
+		ImGui::Begin("Sprite Color Editor");
+		ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&component.color));
+		ImGui::End();
 	}
 
 	void GlfwGame::InitializeRenderBuffers()
@@ -140,7 +152,7 @@ namespace GlfwSandbox
 		}
 	}
 
-	// TODO: May need to render on a separate thread cuz screen gets weird if the 
+	// TODO: May need to render on a separate thread
 	// user presses and resizes the screen.
 
 	void GlfwGame::Render()
@@ -164,7 +176,5 @@ namespace GlfwSandbox
 			Engine::GraphicsRenderer2D::DrawRect(MathLib::Vector2(20.0f, 0.0f),
 				MathLib::Vector2::One, m_subTexture);
 		}
-
-		graphicsRenderer->EndFrame();
 	}
 }

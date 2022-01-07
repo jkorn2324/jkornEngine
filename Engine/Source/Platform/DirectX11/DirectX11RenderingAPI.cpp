@@ -7,8 +7,24 @@
 #include "DirectX11VertexBuffer.h"
 #include "DirectX11IndexBuffer.h"
 
+#include "GlfwWindowsWindow.h"
+
 namespace Engine
 {
+
+	static bool GetHWND(Window* window, HWND& hwnd)
+	{
+		switch (Window::GetWindowType())
+		{
+		case WindowType::GLFW_WINDOWS_WINDOW: 
+		{
+			hwnd = ((GlfwWindowsWindow*)window)->GetHWND();
+			return true;
+		}
+		}
+		DebugAssert(false, "Unsupported window type for DirectX11.");
+		return false;
+	}
 
 	static bool CreateDeviceAndSwapChain(
 		const HWND& window, std::uint32_t width, std::uint32_t height,
@@ -150,7 +166,12 @@ namespace Engine
 		m_width = window->GetWidth();
 		m_height = window->GetHeight();
 
-		HWND hwnd = window->GetHWND();
+		HWND hwnd;
+		if (!GetHWND(window, hwnd))
+		{
+			return false;
+		}
+
 		if (!CreateDeviceAndSwapChain(hwnd,
 			m_width, m_height, &m_device,
 			&m_deviceContext, &m_swapChain))
@@ -261,6 +282,9 @@ namespace Engine
 
 	void DirectX11RenderingAPI::SwapBuffers()
 	{
+		// For OpenGL, use this:
+		// glfwSwapBuffers(m_window);
+
 		m_swapChain->Present(1, 0);
 	}
 	

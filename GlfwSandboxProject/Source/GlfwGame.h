@@ -48,6 +48,8 @@ namespace GlfwSandbox
 		~GlfwGame();
 
 		void OnUpdate(const Engine::Timestep& ts) override;
+		
+		void OnEditorRender() override;
 
 	private:
 		void InitializeRenderBuffers();

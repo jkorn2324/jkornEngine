@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\Editor\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\Editor\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -140,7 +140,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\Editor\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -162,7 +162,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\Editor\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -179,6 +179,20 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Editor\PlatformEditorLayer.h" />
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11EditorLayer.h" />
+    <ClInclude Include="Source\Platform\Windows\Glfw\GlfwWindowEditorLayer.h" />
+    <ClInclude Include="Source\Platform\Windows\Glfw\GlfwWindowsWindow.h" />
+    <ClInclude Include="Source\Editor\EditorLayer.h" />
+    <ClInclude Include="Libraries\ImGui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="Libraries\ImGui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="Libraries\ImGui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="Libraries\ImGui\imconfig.h" />
+    <ClInclude Include="Libraries\ImGui\imgui.h" />
+    <ClInclude Include="Libraries\ImGui\imgui_internal.h" />
+    <ClInclude Include="Libraries\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="Libraries\ImGui\imstb_textedit.h" />
+    <ClInclude Include="Libraries\ImGui\imstb_truetype.h" />
     <ClInclude Include="Source\Rendering\GraphicsRenderer2D.h" />
     <ClInclude Include="Source\Rendering\Textures\SubTexture.h" />
     <ClInclude Include="Source\Scene\Components\MeshComponent.h" />
@@ -221,6 +235,19 @@
     <ClInclude Include="Source\Utils\StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Editor\PlatformEditorLayer.cpp" />
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11EditorLayer.cpp" />
+    <ClCompile Include="Source\Platform\Windows\Glfw\GlfwWindowEditorLayer.cpp" />
+    <ClCompile Include="Source\Platform\Windows\Glfw\GlfwWindowsWindow.cpp" />
+    <ClCompile Include="Source\Editor\EditorLayer.cpp" />
+    <ClCompile Include="Libraries\ImGui\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Libraries\ImGui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Libraries\ImGui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="Libraries\ImGui\imgui.cpp" />
+    <ClCompile Include="Libraries\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="Libraries\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Libraries\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="Libraries\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Source\Rendering\GraphicsRenderer2D.cpp" />
     <ClCompile Include="Source\Rendering\Textures\SubTexture.cpp" />
     <ClCompile Include="Source\Scene\Components\MeshComponent.cpp" />

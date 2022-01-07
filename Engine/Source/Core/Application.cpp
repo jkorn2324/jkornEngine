@@ -13,6 +13,8 @@
 #include "ApplicationEvent.h"
 #include "Timestep.h"
 
+#include "EditorLayer.h"
+
 namespace Engine
 {
 	using time_point = std::chrono::high_resolution_clock::time_point;
@@ -32,7 +34,8 @@ namespace Engine
 		m_running(true), 
 		m_windowLayerStack(),
 		m_prevTime(std::chrono::high_resolution_clock::now()),
-		m_graphicsRenderer(nullptr)
+		m_graphicsRenderer(nullptr),
+		m_editorLayer(nullptr)
 	{
 		DebugAssert(s_instance == nullptr, "Application is already running.");
 		s_instance = this;
@@ -41,12 +44,15 @@ namespace Engine
 		{
 			name, WINDOW_WIDTH, WINDOW_HEIGHT, true
 		};
-		m_window = std::make_unique<Window>(properties);
+		m_window = Window::GenerateWindow(properties);
 		m_window->SetCallback(BIND_EVENT_FUNCTION(Application::OnEvent));
 		
 		m_graphicsRenderer = new GraphicsRenderer();
 		m_graphicsRenderer->Initialize(m_window.get());
 		GraphicsRenderer2D::Init();
+
+		m_editorLayer = new EditorLayer();
+		m_windowLayerStack.AddOverlay(m_editorLayer);
 	}
 
 	Application::~Application()
@@ -75,6 +81,17 @@ namespace Engine
 					layer->OnUpdate(ts);
 				}
 			}
+
+			{
+				m_editorLayer->BeginRender();
+				{
+					for (Layer* layer : m_windowLayerStack)
+					{
+						layer->OnEditorRender();
+					}
+				}
+				m_editorLayer->EndRender();
+			}
 			m_window->OnUpdate();
 		}
 	}
@@ -97,6 +114,11 @@ namespace Engine
 	void Application::RemoveOverlay(Layer* overlay)
 	{
 		m_windowLayerStack.RemoveOverlay(overlay);
+	}
+
+	Window& Application::GetWindow() const
+	{
+		return *m_window.get();
 	}
 
 	void Application::OnEvent(Event& event)

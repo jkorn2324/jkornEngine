@@ -72,7 +72,7 @@ namespace Engine
 		m_frameBuffer->Bind();
 	}
 
-	void GraphicsRenderer::EndFrame()
+	void GraphicsRenderer::SwapBuffers()
 	{
 		m_renderingAPI->SwapBuffers();
 	}
