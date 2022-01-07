@@ -12,6 +12,18 @@ namespace Engine
 		TYPE_ORTHOGRAPHIC
 	};
 
+	struct CameraProperties
+	{
+		float nearPlane;
+		float farPlane;
+
+		float perspFOV; 
+		float perspAspectRatio;
+
+		float orthoWidth;
+		float orthoHeight;
+	};
+
 	class SceneCamera : public Camera
 	{
 	public:
@@ -19,17 +31,18 @@ namespace Engine
 		explicit SceneCamera(const SceneCameraType& type);
 		~SceneCamera() = default;
 
+		CameraProperties& GetProperties() { return m_cameraProperties; }
+		const CameraProperties& GetProperties() const { return m_cameraProperties; }
+
 		void SetViewMatrix(const MathLib::Matrix4x4& mat);
 
 	private:
 		void UpdateProjectionMatrix();
 
 	private:
-		float m_nearPlane, m_farPlane;
-
-		float m_perspFOV, m_perspAspectRatio;
-		float m_orthoWidth, m_orthoHeight;
-
+		CameraProperties m_cameraProperties;
 		SceneCameraType m_sceneCameraType;
+
+		friend class Scene;
 	};
 }

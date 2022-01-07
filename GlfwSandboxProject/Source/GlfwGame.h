@@ -8,6 +8,8 @@
 #include "Event.h"
 #include "ApplicationEvent.h"
 
+#include "Entity.h"
+
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
@@ -48,7 +50,8 @@ namespace GlfwSandbox
 		~GlfwGame();
 
 		void OnUpdate(const Engine::Timestep& ts) override;
-		
+		void OnEvent(Engine::Event& event) override;
+
 		void OnImGuiRender() override;
 
 	private:
@@ -56,10 +59,13 @@ namespace GlfwSandbox
 		void InitializeSceneComponents();
 		void Render();
 
+		bool OnWindowResize(Engine::WindowResizedEvent& resizedEvent);
+
 	private:
 		Engine::VertexBuffer* m_vertexBuffer;
 		Engine::IndexBuffer* m_indexBuffer;
 
+		Engine::Entity m_cameraEntity;
 		Engine::Entity* m_spriteEntity;
 		Engine::Scene* m_scene;
 

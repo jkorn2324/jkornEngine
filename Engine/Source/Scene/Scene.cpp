@@ -66,6 +66,7 @@ namespace Engine
 				auto matrix = transformComponent.GetTransformMatrix();
 				matrix.Invert();
 				sceneCam.SetViewMatrix(matrix);
+				sceneCam.UpdateProjectionMatrix();
 
 				if (cameraComponent.mainCamera)
 				{

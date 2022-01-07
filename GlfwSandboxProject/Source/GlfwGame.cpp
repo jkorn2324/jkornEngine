@@ -11,6 +11,11 @@
 #include "Entity.h"
 #include "Components.h"
 
+#include "Window.h"
+#include "Application.h"
+#include "ApplicationEvent.h"
+#include "Event.h"
+
 #include "SubTexture.h"
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
@@ -75,6 +80,24 @@ namespace GlfwSandbox
 		ImGui::End();
 	}
 
+	void GlfwGame::OnEvent(Engine::Event& event)
+	{
+		Engine::EventDispatcher dispatcher(event);
+		dispatcher.Invoke<Engine::WindowResizedEvent>(BIND_EVENT_FUNCTION(GlfwGame::OnWindowResize));
+	}
+
+	bool GlfwGame::OnWindowResize(Engine::WindowResizedEvent& event)
+	{
+		Engine::SceneCameraComponent& component
+			= m_cameraEntity.GetComponent<Engine::SceneCameraComponent>();
+		Engine::CameraProperties& properties
+			= component.camera.GetProperties();
+		properties.orthoWidth = (float)event.width;
+		properties.orthoHeight = (float)event.height;
+
+		return true;
+	}
+
 	void GlfwGame::InitializeRenderBuffers()
 	{
 		{
@@ -134,13 +157,20 @@ namespace GlfwSandbox
 	{
 		m_scene = new Engine::Scene();
 
-		Engine::Entity entity = m_scene->CreateEntity();
+		m_cameraEntity = m_scene->CreateEntity();
 		{
 			Engine::Transform3DComponent& camComponentTransform
-				= entity.AddComponent<Engine::Transform3DComponent>();
+				= m_cameraEntity.AddComponent<Engine::Transform3DComponent>();
 			camComponentTransform.SetPosition(MathLib::Vector3(-1.0f, 0.0f, 0.0f));
 			camComponentTransform.LookAt(MathLib::Vector3(0.0f, 0.0f, 0.0f));
-			entity.AddComponent<Engine::SceneCameraComponent>();
+			
+			Engine::SceneCameraComponent& camComponent
+				= m_cameraEntity.AddComponent<Engine::SceneCameraComponent>();
+			Engine::CameraProperties& properties
+				= camComponent.camera.GetProperties();
+			Engine::Application& app = Engine::Application::Get();
+			properties.orthoWidth = (float)app.GetWindow().GetWidth();
+			properties.orthoHeight = (float)app.GetWindow().GetHeight();
 		}
 
 		m_spriteEntity = new Engine::Entity(m_scene->CreateEntity());

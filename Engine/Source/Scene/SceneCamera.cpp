@@ -10,12 +10,14 @@ namespace Engine
 
 	SceneCamera::SceneCamera()
 		: Camera(),
-		m_nearPlane(1000.0f),
-		m_farPlane(-1000.0f),
-		m_perspFOV(MathLib::DEG2RAD * 50.0f), 
-		m_perspAspectRatio(DEFAULT_WIDTH / DEFAULT_HEIGHT),
-		m_orthoWidth(DEFAULT_WIDTH),
-		m_orthoHeight(DEFAULT_HEIGHT),
+		m_cameraProperties({
+			1000.0f,
+			-1000.0f,
+			MathLib::DEG2RAD * 50.0f,
+			DEFAULT_WIDTH / DEFAULT_HEIGHT,
+			DEFAULT_WIDTH,
+			DEFAULT_HEIGHT
+			}),
 		m_sceneCameraType(SceneCameraType::TYPE_ORTHOGRAPHIC)
 	{
 		UpdateProjectionMatrix();
@@ -23,12 +25,14 @@ namespace Engine
 
 	SceneCamera::SceneCamera(const SceneCameraType& type)
 		: Camera(),
-		m_nearPlane(1000.0f),
-		m_farPlane(-1000.0f),
-		m_perspFOV(MathLib::DEG2RAD * 50.0f),
-		m_perspAspectRatio(DEFAULT_WIDTH / DEFAULT_HEIGHT),
-		m_orthoWidth(DEFAULT_WIDTH),
-		m_orthoHeight(DEFAULT_HEIGHT),
+		m_cameraProperties({
+			1000.0f,
+			-1000.0f,
+			MathLib::DEG2RAD * 50.0f,
+			DEFAULT_WIDTH / DEFAULT_HEIGHT,
+			DEFAULT_WIDTH,
+			DEFAULT_HEIGHT
+		}),
 		m_sceneCameraType(type)
 	{
 		UpdateProjectionMatrix();
@@ -50,13 +54,15 @@ namespace Engine
 			case TYPE_ORTHOGRAPHIC:
 			{
 				m_projectionMatrix = rotationMat * MathLib::Matrix4x4::CreateOrtho(
-						m_orthoWidth, m_orthoHeight, m_nearPlane, m_farPlane);
+						m_cameraProperties.orthoWidth, m_cameraProperties.orthoHeight, 
+						m_cameraProperties.nearPlane, m_cameraProperties.farPlane);
 				break;
 			}
 			case TYPE_PERSPECTIVE:
 			{
 				m_projectionMatrix = rotationMat * MathLib::Matrix4x4::CreatePersp(
-					m_perspFOV, m_perspAspectRatio, m_nearPlane, m_farPlane);
+					m_cameraProperties.perspFOV, m_cameraProperties.perspFOV, 
+					m_cameraProperties.nearPlane, m_cameraProperties.farPlane);
 				break;
 			}
 		}
