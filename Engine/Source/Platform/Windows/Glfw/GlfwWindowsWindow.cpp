@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "GlfwWindowsWindow.h"
 
+#include <unordered_map>
 #include <Glfw\glfw3.h>
 #include <Glfw\glfw3native.h>
 
@@ -8,9 +9,87 @@
 
 #include "GraphicsRenderer.h"
 #include "RenderingAPI.h"
+#include "Input.h"
 
 namespace Engine
 {
+
+	// TODO: Static dict
+
+#pragma region keycodeConverter
+
+	static InputKeyCode s_keyCodes[GLFW_KEY_MENU];
+	static bool s_keyCodesInitialized = false;
+
+	static InputMouseButton ConvertGlfwMouseButton(int mouseCode)
+	{
+		switch (mouseCode)
+		{
+		case GLFW_MOUSE_BUTTON_1: return MOUSE_BUTTON_LEFT;
+		case GLFW_MOUSE_BUTTON_2: return MOUSE_BUTTON_RIGHT;
+		case GLFW_MOUSE_BUTTON_MIDDLE: return MOUSE_BUTTON_MIDDLE;
+		}
+		return MOUSE_BUTTON_UNKNOWN;
+	}
+
+	static InputKeyCode ConvertGlfwKeyCodeDynamic(int keyCode)
+	{
+		// Covers 0 - 9
+		if (keyCode >= GLFW_KEY_0
+			&& keyCode <= GLFW_KEY_9)
+		{
+			return (InputKeyCode)((keyCode - GLFW_KEY_0) + KEY_CODE_0);
+		}
+		// Covers A - Z
+		if (keyCode >= GLFW_KEY_A
+			&& keyCode <= GLFW_KEY_Z)
+		{
+			return (InputKeyCode)((keyCode - GLFW_KEY_A) + KEY_CODE_A);
+		}
+
+		// Covers Space - Slash
+		if (keyCode >= GLFW_KEY_SPACE
+			&& keyCode <= GLFW_KEY_SLASH)
+		{
+			return (InputKeyCode)((keyCode - GLFW_KEY_SPACE) + KEY_CODE_SPACE);
+		}
+
+		if (keyCode == GLFW_KEY_SEMICOLON
+			|| keyCode == GLFW_KEY_EQUAL)
+		{
+			return (InputKeyCode)((keyCode - GLFW_KEY_SEMICOLON) + KEY_CODE_SEMICOLON);
+		}
+		return (InputKeyCode)((keyCode - GLFW_KEY_LEFT_BRACKET) + KEY_CODE_LEFT_BRACKET);
+	}
+
+	static InputKeyCode ConvertGlfwKeyCode(int keyCode)
+	{
+		if (keyCode == GLFW_KEY_UNKNOWN)
+		{
+			return KEY_CODE_UNKNOWN;
+		}
+
+		if (s_keyCodes[keyCode] != KEY_CODE_UNKNOWN)
+		{
+			return s_keyCodes[keyCode];
+		}
+		InputKeyCode code = ConvertGlfwKeyCodeDynamic(keyCode);
+		s_keyCodes[keyCode] = code;
+		return code;
+	}
+
+	static InputAction ConvertGlfwInputAction(int inputAction)
+	{
+		switch (inputAction)
+		{
+		case GLFW_PRESS: return ACTION_PRESSED;
+		case GLFW_RELEASE: return ACTION_RELEASED;
+		}
+		return ACTION_UNKNOWN;
+	}
+
+#pragma endregion
+
 	static std::uint32_t s_numWindows = 0;
 
 	GlfwWindowsWindow::GlfwWindowsWindow(const WindowProperties& properties)
@@ -100,8 +179,15 @@ namespace Engine
 
 		s_numWindows++;
 
-		// TODO: Do this per graphics api.
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		// TODO: Use macros here
+		switch (RenderingAPI::GetRenderingAPIType())
+		{
+		case RenderingAPIType::DIRECTX11:
+		{
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+			break;
+		}
+		}
 
 		m_window = glfwCreateWindow((int)m_windowData.properties.width,
 			(int)m_windowData.properties.height, m_windowData.properties.windowTitle.c_str(), nullptr, nullptr);
@@ -143,6 +229,62 @@ namespace Engine
 					if (windowData.callback != nullptr)
 					{
 						windowData.callback(event);
+					}
+				});
+		}
+
+		// Window keyboard event.
+		{
+			glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int modifiers)
+				{
+					WindowData& windowData = *reinterpret_cast<WindowData*>(
+						glfwGetWindowUserPointer(window));
+
+					InputKeyEvent inputKeyEvent(ConvertGlfwKeyCode(key),
+						ConvertGlfwInputAction(action));
+					if (windowData.callback != nullptr)
+					{
+						windowData.callback(inputKeyEvent);
+					}
+				});
+		}
+
+		// Mouse Input Callbacks.
+		{
+			glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int mouseButton,
+				int action, int modifiers)
+				{
+					WindowData& windowData = *reinterpret_cast<WindowData*>(
+						glfwGetWindowUserPointer(window));
+					InputMouseButtonEvent mouseButtonEvent(ConvertGlfwInputAction(action), 
+						ConvertGlfwMouseButton(mouseButton));
+					if (windowData.callback != nullptr)
+					{
+						windowData.callback(mouseButtonEvent);
+					}
+				});
+
+			glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos)
+				{
+					WindowData& windowData = *reinterpret_cast<WindowData*>(
+						glfwGetWindowUserPointer(window));
+					InputMouseMoveEvent mouseMoveEvent(
+						MathLib::Vector2((float)xPos, (float)yPos));
+					if (windowData.callback != nullptr)
+					{
+						windowData.callback(mouseMoveEvent);
+					}
+				});
+
+			glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xOffset, double yOffset)
+				{
+					WindowData& windowData = *reinterpret_cast<WindowData*>(
+						glfwGetWindowUserPointer(window));
+					InputMouseScrollEvent mouseScrollEvent(
+						MathLib::Vector2((float)xOffset, (float)yOffset));
+					if (windowData.callback != nullptr)
+					{
+						windowData.callback(mouseScrollEvent);
 					}
 				});
 		}

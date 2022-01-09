@@ -69,7 +69,9 @@ namespace MathLib
 
 		float* operator[](int index) const;
 		friend Matrix4x4 operator*(const Matrix4x4& a, const Matrix4x4& b);
+
 		Matrix4x4& operator*=(const Matrix4x4& mat);
+		
 
 		friend bool operator==(const Matrix4x4& a, const Matrix4x4& b);
 		friend bool operator!=(const Matrix4x4& a, const Matrix4x4& b);

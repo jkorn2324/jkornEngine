@@ -37,6 +37,7 @@ namespace MathLib
 
 		friend Vector2 operator+(const Vector2& a, const Vector2& b);
 		friend Vector2 operator-(const Vector2& a, const Vector2& b);
+		friend Vector2 operator-(const Vector2& vec);
 		friend Vector2 operator*(const Vector2& a, const Vector2& b);
 		friend Vector2 operator*(float scalar, const Vector2& v);
 		friend Vector2 operator*(const Vector2& v, float scalar);
@@ -111,6 +112,7 @@ namespace MathLib
 
 		explicit Vector3();
 		explicit Vector3(float x, float y, float z);
+		explicit Vector3(const Vector2& vec, float z);
 		Vector3(const Vector3& vec);
 
 		float Length() const;
@@ -132,12 +134,16 @@ namespace MathLib
 		friend bool operator!=(const Vector3& a, const Vector3& b);
 
 		friend Vector3 operator+(const Vector3& a, const Vector3& b);
+		friend Vector3 operator-(const Vector3& vec);
 		friend Vector3 operator-(const Vector3& a, const Vector3& b);
 		friend Vector3 operator*(const Vector3& a, const Vector3& b);
 		friend Vector3 operator*(const Vector3& a, float scalar);
 		friend Vector3 operator*(float scalar, const Vector3& vec);
 		friend Vector3 operator/(const Vector3& a, const Vector3& b);
 		friend Vector3 operator/(const Vector3& a, float scalar);
+
+		friend Vector3 operator*(const Vector3& vec, const class Matrix3x3& mat);
+		friend Vector3 operator*(const class Matrix3x3& mat, const Vector3& vec);
 
 		Vector3& operator+=(const Vector3& v);
 		Vector3& operator-=(const Vector3& v);
@@ -186,6 +192,8 @@ namespace MathLib
 
 		explicit Vector4();
 		explicit Vector4(float x, float y, float z, float w);
+		explicit Vector4(const Vector2& vec, float z, float w);
+		explicit Vector4(const Vector3& vec, float w);
 		Vector4(const Vector4& vec);
 
 		float Length() const;
@@ -206,11 +214,15 @@ namespace MathLib
 
 		friend Vector4 operator+(const Vector4& a, const Vector4& b);
 		friend Vector4 operator-(const Vector4& a, const Vector4& b);
+		friend Vector4 operator-(const Vector4& vec);
 		friend Vector4 operator*(const Vector4& a, const Vector4& b);
 		friend Vector4 operator*(const Vector4& a, float scalar);
 		friend Vector4 operator*(float scalar, const Vector4& vec);
 		friend Vector4 operator/(const Vector4& a, const Vector4& b);
 		friend Vector4 operator/(const Vector4& a, float scalar);
+
+		friend Vector4 operator*(const Vector4& a, const class Matrix4x4& b);
+		friend Vector4 operator*(const class Matrix4x4& a, const Vector4& b);
 
 		Vector4& operator+=(const Vector4& v);
 		Vector4& operator-=(const Vector4& v);

@@ -160,21 +160,21 @@ namespace MathLib
 
 	Quaternion Quaternion::FromEuler(const Vector3& eulers, bool inDegrees)
 	{
-		return FromEuler(eulers.z, eulers.y, eulers.x, inDegrees);
+		return FromEuler(eulers.x, eulers.y, eulers.z, inDegrees);
 	}
 
-	Quaternion Quaternion::FromEuler(float yaw, float pitch, float roll)
+	Quaternion Quaternion::FromEuler(float roll, float pitch, float yaw)
 	{
-		return FromEuler(yaw, pitch, roll, true);
+		return FromEuler(roll, pitch, yaw, true);
 	}
 
-	Quaternion Quaternion::FromEuler(float yaw, float pitch, float roll, bool inDegrees)
+	Quaternion Quaternion::FromEuler(float roll, float pitch, float yaw, bool inDegrees)
 	{
 		return Quaternion(
-			Sin(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Cos(yaw * 0.5f, inDegrees) 
-				- Cos(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Sin(yaw * 0.5f, inDegrees),
-			Cos(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Cos(yaw * 0.5f, inDegrees)
-				- Sin(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Sin(yaw * 0.5f, inDegrees),
+			Sin(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Cos(roll * 0.5f, inDegrees) 
+				- Cos(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Sin(roll * 0.5f, inDegrees),
+			Cos(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Cos(roll * 0.5f, inDegrees)
+				- Sin(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Sin(roll * 0.5f, inDegrees),
 			Cos(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Sin(yaw * 0.5f, inDegrees)
 				- Sin(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Cos(yaw * 0.5f, inDegrees),
 			Cos(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Cos(yaw * 0.5f, inDegrees)

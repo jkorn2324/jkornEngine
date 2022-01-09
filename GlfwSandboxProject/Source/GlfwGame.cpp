@@ -23,11 +23,15 @@
 #include "BufferLayout.h"
 #include "Material.h"
 
+#include "Input.h"
+
 #include "imgui.h"
 
 namespace GlfwSandbox
 {
 	static const wchar_t* CARDS_LARGE_TILEMAP = L"Assets/Textures/PlayingCards/Tilesheet/cardsLarge_tilemap.png";
+	
+	static float s_rotation = 0.0f;
 
 	GlfwGame::GlfwGame()
 		: Layer("Game Layer"),
@@ -52,50 +56,6 @@ namespace GlfwSandbox
 		delete m_indexBuffer;
 		delete m_spriteEntity;
 		delete m_scene;
-	}
-
-	void GlfwGame::OnUpdate(const Engine::Timestep& ts)
-	{
-		if (m_scene != nullptr)
-		{
-			m_scene->Update(ts);
-		}
-		
-		Engine::Transform3DComponent& transformComponent
-			= m_spriteEntity->GetComponent<Engine::Transform3DComponent>();
-		transformComponent.SetPosition(transformComponent.GetPosition() +
-			MathLib::Vector3::UnitX * 4.0f * ts.GetSeconds());
-
-		Render();
-	}
-
-	// Editor Stuff for ImGui.
-
-	void GlfwGame::OnImGuiRender()
-	{
-		Engine::SpriteComponent& component = m_spriteEntity->GetComponent<Engine::SpriteComponent>();
-
-		ImGui::Begin("Sprite Color Editor");
-		ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&component.color));
-		ImGui::End();
-	}
-
-	void GlfwGame::OnEvent(Engine::Event& event)
-	{
-		Engine::EventDispatcher dispatcher(event);
-		dispatcher.Invoke<Engine::WindowResizedEvent>(BIND_EVENT_FUNCTION(GlfwGame::OnWindowResize));
-	}
-
-	bool GlfwGame::OnWindowResize(Engine::WindowResizedEvent& event)
-	{
-		Engine::SceneCameraComponent& component
-			= m_cameraEntity.GetComponent<Engine::SceneCameraComponent>();
-		Engine::CameraProperties& properties
-			= component.camera.GetProperties();
-		properties.orthoWidth = (float)event.width;
-		properties.orthoHeight = (float)event.height;
-
-		return true;
 	}
 
 	void GlfwGame::InitializeRenderBuffers()
@@ -181,6 +141,85 @@ namespace GlfwSandbox
 			m_spriteEntity->AddComponent<Engine::SpriteComponent>(
 				Engine::AssetManager::GetTextures().Get(L"Assets/Textures/happy-face.png"));
 		}
+	}
+
+	void GlfwGame::OnUpdate(const Engine::Timestep& ts)
+	{
+		if (m_scene != nullptr)
+		{
+			m_scene->Update(ts);
+		}
+
+		Engine::Transform3DComponent& transformComponent
+			= m_spriteEntity->GetComponent<Engine::Transform3DComponent>();
+		MathLib::Vector3 position = transformComponent.GetPosition();
+		MathLib::Vector3 direction;
+		if (Engine::Input::IsKeyHeld(Engine::InputKeyCode::KEY_CODE_A))
+		{
+			direction = -MathLib::Vector3::UnitX;
+		}
+		else if (Engine::Input::IsKeyHeld(Engine::InputKeyCode::KEY_CODE_D))
+		{
+			direction = MathLib::Vector3::UnitX;
+		}
+
+#if 0
+		if (Engine::Input::IsKeyPressed(Engine::InputKeyCode::KEY_CODE_SPACE))
+		{
+			position += MathLib::Vector3::UnitY * 20.0f;
+		}
+#endif
+
+		{
+			Engine::Transform3DComponent& transformComponent
+				= m_spriteEntity->GetComponent<Engine::Transform3DComponent>();
+			MathLib::Vector3 scale = transformComponent.GetScale() + MathLib::Vector3::One * 
+				Engine::Input::GetMouseScrollOffset().y * 0.02f;
+			transformComponent.SetScale(scale);
+		}
+
+		if (Engine::Input::IsMouseButtonHeld(Engine::MOUSE_BUTTON_MIDDLE))
+		{
+			s_rotation += 10.0f;
+			transformComponent.SetRotation(MathLib::Quaternion::FromEuler(0.0f, 0.0f, s_rotation));
+		}
+
+		MathLib::Vector2 screenPos = Engine::Input::GetMouseScreenPos();
+		if (m_scene != nullptr)
+		{
+			position = m_scene->GetCamera()->ScreenToWorld(screenPos);
+
+		}
+		transformComponent.SetPosition(position);
+		Render();
+	}
+
+	// Editor Stuff for ImGui.
+
+	void GlfwGame::OnImGuiRender()
+	{
+		Engine::SpriteComponent& component = m_spriteEntity->GetComponent<Engine::SpriteComponent>();
+
+		ImGui::Begin("Variables Editor");
+		ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&component.color));
+		ImGui::End();
+	}
+
+	void GlfwGame::OnEvent(Engine::Event& event)
+	{
+		Engine::EventDispatcher dispatcher(event);
+		dispatcher.Invoke<Engine::WindowResizedEvent>(BIND_EVENT_FUNCTION(GlfwGame::OnWindowResize));
+	}
+
+	bool GlfwGame::OnWindowResize(Engine::WindowResizedEvent& event)
+	{
+		Engine::SceneCameraComponent& component
+			= m_cameraEntity.GetComponent<Engine::SceneCameraComponent>();
+		Engine::CameraProperties& properties
+			= component.camera.GetProperties();
+		properties.orthoWidth = (float)event.width;
+		properties.orthoHeight = (float)event.height;
+		return true;
 	}
 
 	// TODO: May need to render on a separate thread

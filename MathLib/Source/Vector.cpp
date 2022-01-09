@@ -1,6 +1,7 @@
 #include "MathPCH.h"
 #include "Vector.h"
 #include "Math.h"
+#include "Matrix.h"
 
 namespace MathLib
 {
@@ -166,6 +167,11 @@ namespace MathLib
 			a.x - b.x, a.y - b.y);
 	}
 
+	Vector2 operator-(const Vector2& vec)
+	{
+		return Vector2(-vec.x, -vec.y);
+	}
+
 	Vector2 operator*(const Vector2& a, const Vector2& b)
 	{
 		return Vector2(
@@ -217,6 +223,9 @@ namespace MathLib
 
 	Vector3::Vector3(float x, float y, float z)
 		: x(x), y(y), z(z) { }
+
+	Vector3::Vector3(const Vector2& vec, float z)
+		: x(vec.x), y(vec.y), z(z) { }
 
 
 	Vector3::Vector3(const Vector3& vec)
@@ -307,6 +316,11 @@ namespace MathLib
 			a.x + b.x, a.y + b.y, a.z + b.z);
 	}
 
+	Vector3 operator-(const Vector3& vec)
+	{
+		return Vector3(-vec.x, -vec.y, -vec.z);
+	}
+
 	Vector3 operator-(const Vector3& a, const Vector3& b)
 	{
 		return Vector3(
@@ -341,6 +355,19 @@ namespace MathLib
 	{
 		return Vector3(
 			a.x / scalar, a.y / scalar, a.z / scalar);
+	}
+
+	Vector3 operator*(const Vector3& vec, const Matrix3x3& mat)
+	{
+		return Vector3(
+			vec.x * mat[0][0] + vec.y * mat[0][1] + vec.z * mat[0][2],
+			vec.x * mat[1][0] + vec.y * mat[1][1] + vec.z * mat[1][2],
+			vec.x * mat[2][0] + vec.y * mat[2][1] + vec.z * mat[2][2]);
+	}
+
+	Vector3 operator*(const Matrix3x3& mat, const Vector3& vec)
+	{
+		return vec * mat;
 	}
 
 	Vector3& Vector3::operator+=(const Vector3& v)
@@ -409,7 +436,15 @@ namespace MathLib
 	Vector4::Vector4(float x, float y, float z, float w)
 		: x(x), y(y), z(z), w(w) { }
 
+	
+	Vector4::Vector4(const Vector2& vec, float z, float w)
+		: x(vec.x), y(vec.y), z(z), w(w) { }
 
+	
+	Vector4::Vector4(const Vector3& vec, float w)
+		: x(vec.x), y(vec.y), z(vec.z), w(w) { }
+
+	
 	Vector4::Vector4(const Vector4& vec)
 		: x(vec.x), y(vec.y), z(vec.z), w(vec.w) { }
 
@@ -499,6 +534,11 @@ namespace MathLib
 			a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
 	}
 
+	Vector4 operator-(const Vector4& vec)
+	{
+		return Vector4(-vec.x, -vec.y, -vec.z, -vec.w);
+	}
+
 	Vector4 operator*(const Vector4& a, const Vector4& b)
 	{
 		return Vector4(
@@ -527,6 +567,20 @@ namespace MathLib
 	{
 		return Vector4(
 			a.x / scalar, a.y / scalar, a.z / scalar, a.w / scalar);
+	}
+
+	Vector4 operator*(const Vector4& a, const Matrix4x4& b)
+	{
+		return Vector4(
+			a.x * b[0][0] + a.y * b[0][1] + a.z * b[0][2] + a.w * b[0][3],
+			a.y * b[1][0] + a.y * b[1][1] + a.z * b[1][2] + a.w * b[1][3],
+			a.z * b[2][0] + a.y * b[2][1] + a.z * b[2][2] + a.w * b[2][3],
+			a.w * b[3][0] + a.y * b[3][1] + a.z * b[3][2] + a.w * b[3][3]);
+	}
+
+	Vector4 operator*(const Matrix4x4& a, const Vector4& b)
+	{
+		return b * a;
 	}
 
 	Vector4& Vector4::operator+=(const Vector4& v)

@@ -14,6 +14,7 @@
 #include "Timestep.h"
 
 #include "ImGuiLayer.h"
+#include "Input.h"
 
 namespace Engine
 {
@@ -46,6 +47,7 @@ namespace Engine
 		};
 		m_window = Window::GenerateWindow(properties);
 		m_window->SetCallback(BIND_EVENT_FUNCTION(Application::OnEvent));
+		Input::BindInputEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 		
 		m_graphicsRenderer = new GraphicsRenderer();
 		m_graphicsRenderer->Initialize(m_window.get());
@@ -123,6 +125,8 @@ namespace Engine
 
 	void Application::OnEvent(Event& event)
 	{
+		Input::OnEvent(event);
+
 		EventDispatcher dispatcher(event);
 		dispatcher.Invoke<WindowClosedEvent>(BIND_EVENT_FUNCTION(Application::OnWindowClosed));
 		dispatcher.Invoke<WindowResizedEvent>(BIND_EVENT_FUNCTION(Application::OnWindowResized));

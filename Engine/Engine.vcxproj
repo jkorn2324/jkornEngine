@@ -179,6 +179,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Input.h" />
     <ClInclude Include="Source\ImGui\PlatformImGuiLayer.h" />
     <ClInclude Include="Source\Platform\DirectX11\DirectX11ImGuiLayer.h" />
     <ClInclude Include="Source\Platform\Windows\Glfw\GlfwImGuiLayer.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="Source\Utils\StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Input.cpp" />
     <ClCompile Include="Source\ImGui\PlatformImGuiLayer.cpp" />
     <ClCompile Include="Source\Platform\DirectX11\DirectX11ImGuiLayer.cpp" />
     <ClCompile Include="Source\Platform\Windows\Glfw\GlfwImGuiLayer.cpp" />
@@ -248,6 +250,7 @@
     <ClCompile Include="Libraries\ImGui\imgui_draw.cpp" />
     <ClCompile Include="Libraries\ImGui\imgui_tables.cpp" />
     <ClCompile Include="Libraries\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\Rendering\Camera.cpp" />
     <ClCompile Include="Source\Rendering\GraphicsRenderer2D.cpp" />
     <ClCompile Include="Source\Rendering\Textures\SubTexture.cpp" />
     <ClCompile Include="Source\Scene\Components\MeshComponent.cpp" />

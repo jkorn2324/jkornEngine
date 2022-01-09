@@ -7,12 +7,17 @@ namespace Engine
 
 	enum class EventType
 	{
-		WindowClosedEvent, WindowResizedEvent
+		WindowClosedEvent, WindowResizedEvent,
+
+		InputKeyEvent, InputKeyPressedEvent, InputKeyReleasedEvent,
+		InputMouseButtonEvent, InputMouseButtonPressedEvent, InputMouseButtonReleasedEvent,
+		InputMouseMoveEvent, InputMouseScrollEvent
 	};
 
 	enum class EventCategory
 	{
-		Application
+		Application,
+		Input
 	};
 
 #define EVENT_TYPE_CLASS(type) public:\
@@ -21,6 +26,7 @@ namespace Engine
 	virtual const char* GetName() const override { return #type; }
 #define EVENT_CATEGORY_CLASS(category) public:	virtual int GetEventCategoryFlags() const override { return (int)EventCategory::category; }
 #define BIND_EVENT_FUNCTION(func) [this](auto&&...args) -> decltype(auto) { return this->func(std::forward<decltype(args)>(args)...); }
+#define BIND_STATIC_EVENT_FUNCTION(func) [](auto&&...args) -> decltype(auto) { return func(std::forward<decltype(args)>(args)...); }
 
 	class Event
 	{

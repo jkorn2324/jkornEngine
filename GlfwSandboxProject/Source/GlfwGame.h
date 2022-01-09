@@ -27,6 +27,8 @@ namespace Engine
 	class Material;
 	class Mesh;
 	class SubTexture;
+
+	class InputMouseScrollEvent;
 }
 
 struct EntityConstants

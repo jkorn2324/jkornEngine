@@ -187,6 +187,12 @@
     <ClCompile Include="Source\Platform\DirectX11\DirectX11ImGuiLayer.cpp">
       <Filter>Source Files\Platform\DirectX11</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Core\Input.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering\Camera.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\EnginePCH.h">
@@ -350,6 +356,9 @@
     </ClInclude>
     <ClInclude Include="Source\Platform\DirectX11\DirectX11ImGuiLayer.h">
       <Filter>Source Files\Platform\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Input.h">
+      <Filter>Source Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

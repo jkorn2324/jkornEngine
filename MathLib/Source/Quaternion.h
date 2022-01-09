@@ -33,8 +33,8 @@ namespace MathLib
 		
 		static Quaternion FromEuler(const Vector3& eulers);
 		static Quaternion FromEuler(const Vector3& eulers, bool inDegrees);
-		static Quaternion FromEuler(float yaw, float pitch, float roll);
-		static Quaternion FromEuler(float yaw, float pitch, float roll, bool inDegrees);
+		static Quaternion FromEuler(float roll, float pitch, float yaw);
+		static Quaternion FromEuler(float roll, float pitch, float yaw, bool inDegrees);
 
 
 		static const Quaternion Identity;

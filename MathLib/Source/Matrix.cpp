@@ -372,7 +372,7 @@ namespace MathLib
 
 	Matrix4x4 Matrix4x4::CreateOrtho(float width, float height, float nearPlane, float farPlane)
 	{
-		return CreateOrtho(-width * 0.5f, height * 0.5f, height * 0.5f, -height * 0.5f, nearPlane, farPlane);
+		return CreateOrtho(-width * 0.5f, width * 0.5f, height * 0.5f, -height * 0.5f, nearPlane, farPlane);
 	}
 
 	Matrix4x4 Matrix4x4::CreatePersp(float left, float right, float top, float bottom, float nearPlane, float farPlane)
