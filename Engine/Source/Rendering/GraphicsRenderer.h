@@ -12,54 +12,18 @@ namespace Engine
 	class GraphicsRenderer
 	{
 
-#pragma region members
-
 	public:
-		explicit GraphicsRenderer();
-		~GraphicsRenderer();
+		static bool Init();
+		static void Release();
 
-		bool Initialize(class Window* window);
+		static void SwapBuffers();
+		static void Draw(class VertexBuffer* vertexBuffer,
+			class IndexBuffer* indexBuffer);
 
-		class RenderingAPI* GetRenderingAPI() const;
 
-		void BeginFrame();
-		void SwapBuffers();
-
-		void SetTexture(std::uint32_t slot, class Texture* texture);
-		void SetShader(class Shader* shader);
-
-		// Sets the active index buffer.
-		void SetActiveIndexBuffer(class IndexBuffer* indexBuffer);
-		// Sets the active vertex buffer.
-		void SetActiveVertexBuffer(class VertexBuffer* vertexBuffer);
-
-		// Sets the active constant buffer.
-		void SetConstantBuffer(const std::size_t& slot, class ConstantBuffer* constantBuffer);
-		// Sets the acive constant buffer.
-		void SetConstantBuffer(const std::size_t& slot, class ConstantBuffer* constantBuffer, int flags);
-
-		// Draws the active elements.
-		void DrawActiveElements();
+		static class RenderingAPI& GetRenderingAPI();
 
 	private:
-		class RenderingAPI* m_renderingAPI;
-		class FrameBuffer* m_frameBuffer;
-		class VertexBuffer* m_activeVertexBuffer;
-		class IndexBuffer* m_activeIndexBuffer;
-		class Shader* m_activeShader;
-
-		friend class ConstantBuffer;
-
-#pragma endregion
-
-#pragma region statics
-
-	public:
-		static GraphicsRenderer* Get();
-
-	private:
-		static GraphicsRenderer* s_graphicsRenderer;
-
-#pragma endregion
+		static RenderingAPI* s_renderingAPI;
 	};
 }

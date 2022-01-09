@@ -47,10 +47,9 @@ namespace Engine
 		};
 		m_window = Window::GenerateWindow(properties);
 		m_window->SetCallback(BIND_EVENT_FUNCTION(Application::OnEvent));
-		Input::BindInputEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 		
-		m_graphicsRenderer = new GraphicsRenderer();
-		m_graphicsRenderer->Initialize(m_window.get());
+		Input::BindInputEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
+		GraphicsRenderer::Init();
 		GraphicsRenderer2D::Init();
 
 		m_imguiLayer = new ImGuiLayer();
@@ -62,7 +61,7 @@ namespace Engine
 		m_windowLayerStack.Clear();
 
 		GraphicsRenderer2D::Release();
-		delete m_graphicsRenderer;
+		GraphicsRenderer::Release();
 	}
 
 	void Application::Run()
@@ -145,8 +144,8 @@ namespace Engine
 
 	bool Application::OnWindowResized(WindowResizedEvent& event)
 	{
-		m_graphicsRenderer->GetRenderingAPI()
-			->SetResolution(event.width, event.height);
+		GraphicsRenderer::GetRenderingAPI().SetResolution(
+			event.width, event.height);
 		return true;
 	}
 }

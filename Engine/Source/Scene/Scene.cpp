@@ -79,7 +79,6 @@ namespace Engine
 
 	void Scene::Render()
 	{
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
 		{
 			// Sets the camera constants along with buffers.
 			if (m_camera != nullptr)
@@ -93,8 +92,7 @@ namespace Engine
 
 				s_cameraConstantBuffer->SetData(&s_cameraConstants,
 					sizeof(s_cameraConstants));
-				graphicsRenderer->SetConstantBuffer(0,
-					s_cameraConstantBuffer,
+				s_cameraConstantBuffer->Bind(0,
 					Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
 			}
 		}

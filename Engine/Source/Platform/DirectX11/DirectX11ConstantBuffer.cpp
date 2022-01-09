@@ -25,12 +25,9 @@ namespace Engine
 		subresourceData.SysMemPitch = 0;
 		subresourceData.SysMemSlicePitch = 0;
 
-		GraphicsRenderer* renderer = GraphicsRenderer::Get();
-		DebugAssert(renderer != nullptr, "Graphics renderer doesn't exist.");
-		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-			renderer->GetRenderingAPI());
-
-		HRESULT result = renderingAPI->m_device->CreateBuffer(&bufferDesc,
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)(
+			GraphicsRenderer::GetRenderingAPI());
+		HRESULT result = renderingAPI.m_device->CreateBuffer(&bufferDesc,
 			&subresourceData, &m_constantBuffer);
 		DebugAssert(result == S_OK, "Failed to create constant buffer.");
 
@@ -49,17 +46,16 @@ namespace Engine
 	{
 		if (m_constantBuffer != nullptr)
 		{
-			GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-			DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-				graphicsRenderer->GetRenderingAPI());
+			DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)(
+				GraphicsRenderer::GetRenderingAPI());
 
 			// Maps the subresource to the device context.
 			D3D11_MAPPED_SUBRESOURCE mapResource;
-			HRESULT result = renderingAPI->m_deviceContext->Map(
+			HRESULT result = renderingAPI.m_deviceContext->Map(
 				m_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
 			DebugAssert(result == S_OK, "Failed to map the vertex buffer resource.");
 			std::memcpy(mapResource.pData, buffer, stride);
-			renderingAPI->m_deviceContext->Unmap(m_constantBuffer, 0);
+			renderingAPI.m_deviceContext->Unmap(m_constantBuffer, 0);
 		}
 	}
 
@@ -70,31 +66,30 @@ namespace Engine
 			return;
 		}
 
-		GraphicsRenderer* graphics = GraphicsRenderer::Get();
-		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-			graphics->GetRenderingAPI());
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)(
+			GraphicsRenderer::GetRenderingAPI());
 
 		if (flags & ConstantBufferFlags::VERTEX_SHADER)
 		{
-			renderingAPI->m_deviceContext->VSSetConstantBuffers(
+			renderingAPI.m_deviceContext->VSSetConstantBuffers(
 				slot, 1, &m_constantBuffer);
 		}
 
 		if (flags & ConstantBufferFlags::PIXEL_SHADER)
 		{
-			renderingAPI->m_deviceContext->PSSetConstantBuffers(
+			renderingAPI.m_deviceContext->PSSetConstantBuffers(
 				slot, 1, &m_constantBuffer);
 		}
 
 		if (flags & ConstantBufferFlags::COMPUTE_SHADER)
 		{
-			renderingAPI->m_deviceContext->CSSetConstantBuffers(
+			renderingAPI.m_deviceContext->CSSetConstantBuffers(
 				slot, 1, &m_constantBuffer);
 		}
 
 		if (flags & ConstantBufferFlags::HULL_SHADER)
 		{
-			renderingAPI->m_deviceContext->HSSetConstantBuffers(
+			renderingAPI.m_deviceContext->HSSetConstantBuffers(
 				slot, 1, &m_constantBuffer);
 		}
 	}

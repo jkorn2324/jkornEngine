@@ -16,7 +16,6 @@ namespace Engine
 		void SetData(const void* buffer,
 			uint32_t numIndices, uint32_t stride) override;
 
-	protected:
 		void Bind() const override;
 
 	private:

@@ -13,9 +13,9 @@ namespace Engine
 		~DirectX11Shader();
 
 		bool IsValid() const override;
+		void Bind() const;
 
 	protected:
-		void Bind() const;
 		bool Load(const wchar_t* shaderPath, const class BufferLayout& bufferLayout) override;
 
 	private:

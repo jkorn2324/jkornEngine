@@ -58,8 +58,5 @@ namespace Engine
 			m_indexBuffer->SetData(m_mesh->GetIndices(),
 				m_mesh->GetNumIndices(), sizeof(uint32_t));
 		}
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-		graphicsRenderer->SetActiveVertexBuffer(m_vertexBuffer);
-		graphicsRenderer->SetActiveIndexBuffer(m_indexBuffer);
 	}
 }

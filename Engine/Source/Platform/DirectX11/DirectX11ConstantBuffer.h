@@ -12,8 +12,6 @@ namespace Engine
 		~DirectX11ConstantBuffer();
 
 		void SetData(const void* buffer, std::size_t stride) override;
-
-	protected:
 		void Bind(const std::uint32_t& slot, int flags) const override;
 
 	private:

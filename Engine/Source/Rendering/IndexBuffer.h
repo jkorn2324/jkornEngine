@@ -19,7 +19,6 @@ namespace Engine
 		virtual void SetData(const void* buffer,
 			uint32_t numIndices, uint32_t stride) =0;
 
-	protected:
 		virtual void Bind() const =0;
 
 	protected:
@@ -29,7 +28,5 @@ namespace Engine
 	public:
 		static IndexBuffer* Create(const void* buffer,
 			std::uint32_t numIndices, std::uint32_t stride);
-
-		friend class GraphicsRenderer;
 	};
 }

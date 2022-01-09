@@ -9,142 +9,47 @@
 #include "Texture.h"
 #include "RenderingAPI.h"
 
+#include "Application.h"
+#include "Window.h"
+
 #include "Source\Vector.h"
 
 namespace Engine
 {
+	RenderingAPI* GraphicsRenderer::s_renderingAPI = nullptr;
 
-	GraphicsRenderer* GraphicsRenderer::s_graphicsRenderer = nullptr;
-
-
-	GraphicsRenderer* GraphicsRenderer::Get()
+	bool GraphicsRenderer::Init()
 	{
-		return s_graphicsRenderer;
-	}
-
-	GraphicsRenderer::GraphicsRenderer()
-		: m_renderingAPI(nullptr),
-		m_activeIndexBuffer(nullptr),
-		m_activeVertexBuffer(nullptr),
-		m_activeShader(nullptr),
-		m_frameBuffer(nullptr)
-	{
-		DebugAssert(s_graphicsRenderer == nullptr, 
-			"There should only be one graphics renderer.");
-		s_graphicsRenderer = this;
-		m_renderingAPI = RenderingAPI::Create();
-	}
-
-	GraphicsRenderer::~GraphicsRenderer()
-	{
-		if (s_graphicsRenderer == this)
-		{
-			s_graphicsRenderer = nullptr;
-		}
-		delete m_frameBuffer;
-		delete m_renderingAPI;
-	}
-
-	bool GraphicsRenderer::Initialize(Window* window)
-	{
-		if (!m_renderingAPI->Initialize(window))
+		DebugAssert(s_renderingAPI == nullptr, 
+			"Graphics Rendering API has already been initialized.");
+		s_renderingAPI = RenderingAPI::Create();
+		if (!s_renderingAPI->Initialize(&Application::Get().GetWindow()))
 		{
 			return false;
 		}
-
-		FrameBufferSpecification frameBufferSpecification({
-			{ FrameBufferAttachmentType::DEPTH_STENCIL }
-		});
-		frameBufferSpecification.width = m_renderingAPI->GetWidth();
-		frameBufferSpecification.height = m_renderingAPI->GetHeight();
-		m_frameBuffer = FrameBuffer::Create(frameBufferSpecification);
 		return true;
 	}
 
-	RenderingAPI* GraphicsRenderer::GetRenderingAPI() const
+	void GraphicsRenderer::Release()
 	{
-		return m_renderingAPI;
+		delete s_renderingAPI;
 	}
 
-	void GraphicsRenderer::BeginFrame()
+	void GraphicsRenderer::Draw(VertexBuffer* vBuffer,
+		IndexBuffer* iBuffer)
 	{
-		// Clears the render target color & depth buffer.
-		m_frameBuffer->Bind();
+		DebugAssert(s_renderingAPI != nullptr, "Rendering API isn't initialized.");
+		s_renderingAPI->Draw(vBuffer, iBuffer);
 	}
 
 	void GraphicsRenderer::SwapBuffers()
 	{
-		m_renderingAPI->SwapBuffers();
+		s_renderingAPI->SwapBuffers();
 	}
 
-	void GraphicsRenderer::SetTexture(std::uint32_t slot, Texture* texture)
+	RenderingAPI& GraphicsRenderer::GetRenderingAPI()
 	{
-		if (texture != nullptr)
-		{
-			texture->Bind(slot);
-		}
-	}
-
-	void GraphicsRenderer::SetActiveIndexBuffer(IndexBuffer* indexBuffer)
-	{
-		if (m_activeIndexBuffer != indexBuffer)
-		{
-			m_activeIndexBuffer = indexBuffer;
-			if (m_activeIndexBuffer != nullptr)
-			{
-				m_activeIndexBuffer->Bind();
-			}
-		}
-	}
-
-	void GraphicsRenderer::SetActiveVertexBuffer(VertexBuffer* vertexBuffer)
-	{
-		if (m_activeVertexBuffer != vertexBuffer)
-		{
-			m_activeVertexBuffer = vertexBuffer;
-			if (m_activeVertexBuffer != nullptr)
-			{
-				m_activeVertexBuffer->Bind();
-			}
-		}
-	}
-
-	void GraphicsRenderer::SetConstantBuffer(const std::size_t& slot, ConstantBuffer* constantBuffer)
-	{
-		int flags = ConstantBufferFlags::COMPUTE_SHADER | ConstantBufferFlags::HULL_SHADER
-			| ConstantBufferFlags::PIXEL_SHADER | ConstantBufferFlags::VERTEX_SHADER;
-		SetConstantBuffer(slot, constantBuffer, flags);
-	}
-
-	void GraphicsRenderer::SetConstantBuffer(const std::size_t& slot, ConstantBuffer* constantBuffer, int flags)
-	{
-		if (constantBuffer != nullptr)
-		{
-			constantBuffer->Bind(slot, flags);
-		}
-	}
-
-	void GraphicsRenderer::SetShader(class Shader* shader)
-	{
-		if (m_activeShader != shader)
-		{
-			m_activeShader = shader;
-			
-			if (m_activeShader != nullptr)
-			{
-				m_activeShader->Bind();
-			}
-		}
-	}
-
-	void GraphicsRenderer::DrawActiveElements()
-	{
-		if (m_activeVertexBuffer != nullptr
-			&& m_activeShader != nullptr)
-		{
-			// Issues a draw call.
-			m_renderingAPI->Draw(m_activeVertexBuffer,
-				m_activeIndexBuffer);
-		}
+		DebugAssert(s_renderingAPI != nullptr, "RenderingAPI wasn't initialized.");
+		return *s_renderingAPI;
 	}
 }

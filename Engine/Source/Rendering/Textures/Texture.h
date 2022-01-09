@@ -13,8 +13,9 @@ namespace Engine
 		std::uint32_t GetHeight() const;
 		virtual bool IsValid() const =0;
 
+		virtual void Bind(std::uint32_t textureSlot) const =0;
+
 	protected:
-		virtual void Bind(std::uint32_t textureSlot) const=0;
 		virtual bool Load(const wchar_t* texturePath)=0;
 
 	protected:

@@ -85,12 +85,11 @@ namespace Engine
 		{
 			return;
 		}
-		GraphicsRenderer* renderer = GraphicsRenderer::Get();
-		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-			renderer->GetRenderingAPI());
-		renderingAPI->m_deviceContext->VSSetShader(m_vertexShader, nullptr, 0);
-		renderingAPI->m_deviceContext->PSSetShader(m_pixelShader, nullptr, 0);
-		renderingAPI->m_deviceContext->IASetInputLayout(m_inputLayout);
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
+			GraphicsRenderer::GetRenderingAPI();
+		renderingAPI.m_deviceContext->VSSetShader(m_vertexShader, nullptr, 0);
+		renderingAPI.m_deviceContext->PSSetShader(m_pixelShader, nullptr, 0);
+		renderingAPI.m_deviceContext->IASetInputLayout(m_inputLayout);
 	}
 	
 	bool DirectX11Shader::Load(const wchar_t* fileName, const BufferLayout& bufferLayout)
@@ -101,21 +100,19 @@ namespace Engine
 			ID3DBlob* pixelShader = nullptr;
 			if (LoadShader(fileName, "PS", "ps_4_0", pixelShader))
 			{
-				GraphicsRenderer* graphics = GraphicsRenderer::Get();
-				DebugAssert(graphics != nullptr, "Graphics Renderer doesn't exist.");
-				DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-					graphics->GetRenderingAPI());
+				DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
+					GraphicsRenderer::GetRenderingAPI();
 
-				HRESULT result = renderingAPI->m_device->CreateVertexShader(
+				HRESULT result = renderingAPI.m_device->CreateVertexShader(
 					vertexShader->GetBufferPointer(), vertexShader->GetBufferSize(), nullptr, &m_vertexShader);
 				DebugAssert(result == S_OK, "Failed to load vertex shader.");
-				result = renderingAPI->m_device->CreatePixelShader(
+				result = renderingAPI.m_device->CreatePixelShader(
 					pixelShader->GetBufferPointer(), pixelShader->GetBufferSize(), nullptr, &m_pixelShader);
 				DebugAssert(result == S_OK, "Failed to load pixel shader.");
 				if (m_vertexShader != nullptr
 					&& m_pixelShader != nullptr)
 				{
-					result = renderingAPI->m_device->CreateInputLayout(
+					result = renderingAPI.m_device->CreateInputLayout(
 						bufferLayout.GetD3D11InputElementDesc(), bufferLayout.GetNumElements(),
 						vertexShader->GetBufferPointer(), vertexShader->GetBufferSize(), &m_inputLayout);
 					DebugAssert(result == S_OK, "Failed to load input layout.");

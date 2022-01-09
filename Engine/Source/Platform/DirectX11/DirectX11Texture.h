@@ -15,10 +15,10 @@ namespace Engine
 		~DirectX11Texture();
 
 		bool IsValid() const override;
+		void Bind(const std::uint32_t slot) const override;
 
 	protected:
 		bool Load(const wchar_t* texturePath);
-		void Bind(const std::uint32_t slot) const override;
 		void Free();
 
 	private:

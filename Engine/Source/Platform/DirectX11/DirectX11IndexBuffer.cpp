@@ -11,9 +11,8 @@ namespace Engine
 		std::uint32_t numIndices, std::uint32_t stride)
 		: IndexBuffer(buffer, numIndices, stride)
 	{
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-			graphicsRenderer->GetRenderingAPI());
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)(
+			GraphicsRenderer::GetRenderingAPI());
 
 		D3D11_BUFFER_DESC bufferDesc;
 		ZeroMemory(&bufferDesc, sizeof(bufferDesc));
@@ -28,8 +27,7 @@ namespace Engine
 		initializationData.SysMemPitch = 0;
 		initializationData.SysMemSlicePitch = 0;
 
-		DebugAssert(graphicsRenderer != nullptr, "Graphics Renderer doesn't exist.");
-		HRESULT result = renderingAPI->m_device
+		HRESULT result = renderingAPI.m_device
 			->CreateBuffer(&bufferDesc, &initializationData, &m_indexBuffer);
 		DebugAssert(result == S_OK, "Failed to create index buffer.");
 
@@ -54,16 +52,15 @@ namespace Engine
 		m_indexStride = stride;
 		m_numIndices = numIndices;
 
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-			graphicsRenderer->GetRenderingAPI());
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)(
+			GraphicsRenderer::GetRenderingAPI());
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		HRESULT result = renderingAPI->m_deviceContext->Map(
+		HRESULT result = renderingAPI.m_deviceContext->Map(
 			m_indexBuffer, 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		DebugAssert(result == S_OK, "Failed to map the index buffer");
 		std::memcpy(mappedResource.pData, buffer, numIndices * stride);
-		renderingAPI->m_deviceContext->Unmap(m_indexBuffer, 0);
+		renderingAPI.m_deviceContext->Unmap(m_indexBuffer, 0);
 
 		m_format = stride == sizeof(uint16_t) ?
 			DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
@@ -75,11 +72,10 @@ namespace Engine
 		{
 			return;
 		}
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-		DirectX11RenderingAPI* api = dynamic_cast<DirectX11RenderingAPI*>(
-			graphicsRenderer->GetRenderingAPI());
+		DirectX11RenderingAPI& api = (DirectX11RenderingAPI&)
+			GraphicsRenderer::GetRenderingAPI();
 		unsigned int offset = 0;
-		api->m_deviceContext->IASetIndexBuffer(
+		api.m_deviceContext->IASetIndexBuffer(
 			m_indexBuffer, m_format, offset);
 	}
 }

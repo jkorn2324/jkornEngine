@@ -23,7 +23,6 @@ namespace Engine
 
 		virtual void SetData(const void* buffer, size_t stride)=0;
 
-	protected:
 		virtual void Bind(const uint32_t& slot, int flags) const=0;
 		
 	public:

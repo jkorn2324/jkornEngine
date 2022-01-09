@@ -22,6 +22,7 @@ namespace Engine
 	class VertexBuffer;
 	class IndexBuffer;
 	class ConstantBuffer;
+	class FrameBuffer;
 
 	template<typename T>
 	class Material;
@@ -75,6 +76,8 @@ namespace GlfwSandbox
 
 		Engine::ConstantBuffer* m_entityConstantBuffer;
 		EntityConstants m_entityConstants;
+
+		Engine::FrameBuffer* m_frameBuffer;
 		// TODO: Find a way to load in a mesh or just create one.
 	};
 }

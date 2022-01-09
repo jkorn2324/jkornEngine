@@ -18,13 +18,9 @@ namespace Engine
 
 		void SetData(const void* buffer,
 			std::uint32_t numVertices, std::uint32_t stride) override;
-
-	protected:
 		void Bind() const override;
 
 	private:
 		ID3D11Buffer* m_vertexBuffer;
-
-		friend class DirectX11RenderingAPI;
 	};
 }

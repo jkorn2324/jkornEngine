@@ -12,8 +12,8 @@ namespace Engine
 
 	void DirectX11ImGuiLayer::OnLayerAdded()
 	{
-		DirectX11RenderingAPI* api = (DirectX11RenderingAPI*)GraphicsRenderer::Get()->GetRenderingAPI();
-		ImGui_ImplDX11_Init(api->m_device, api->m_deviceContext);
+		DirectX11RenderingAPI& api = (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
+		ImGui_ImplDX11_Init(api.m_device, api.m_deviceContext);
 	}
 	
 	void DirectX11ImGuiLayer::OnShutdown()

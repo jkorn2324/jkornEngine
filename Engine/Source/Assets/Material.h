@@ -3,13 +3,15 @@
 #include "ConstantBuffer.h"
 #include "GraphicsRenderer.h"
 
+#include "ConstantBuffer.h"
+#include "Texture.h"
+#include "Shader.h"
+
 #include <stdint.h>
 
 namespace Engine
 {
 	const uint32_t MATERIAL_CONSTANT_BUFFER_SLOT = 2;
-
-	class Texture;
 
 	struct MaterialTextureData
 	{
@@ -35,7 +37,7 @@ namespace Engine
 		void Bind(uint32_t constantBufferSlot) const;
 
 	private:
-		class Shader* m_shader;
+		Shader* m_shader;
 		ConstantBuffer* m_materialConstantBuffer;
 		MaterialTextureData* m_textures;
 		uint32_t m_numTextures;
@@ -97,17 +99,16 @@ namespace Engine
 		m_materialConstantBuffer->SetData(
 			&materialConstants, sizeof(materialConstants));
 
-		GraphicsRenderer* renderer = GraphicsRenderer::Get();
-		renderer->SetShader(m_shader);
-		renderer->SetConstantBuffer(constantBufferSlot, m_materialConstantBuffer,
-			ConstantBufferFlags::PIXEL_SHADER | ConstantBufferFlags::VERTEX_SHADER);
+		m_shader->Bind();
+		m_materialConstantBuffer->Bind(constantBufferSlot,
+			PIXEL_SHADER | VERTEX_SHADER);
 
 		for (uint32_t i = 0; i < m_numTextures; i++)
 		{
 			const auto& texture = m_textures[i];
 			if (texture.texture != nullptr)
 			{
-				renderer->SetTexture(i, texture.texture);
+				texture.texture->Bind(i);
 			}
 		}
 	}

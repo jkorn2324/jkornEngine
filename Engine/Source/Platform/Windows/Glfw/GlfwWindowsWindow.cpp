@@ -123,9 +123,7 @@ namespace Engine
 	void GlfwWindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-
-		// Swaps the buffers based on graphics engine.
-		GraphicsRenderer::Get()->SwapBuffers();
+		GraphicsRenderer::SwapBuffers();
 	}
 
 	void GlfwWindowsWindow::Shutdown()

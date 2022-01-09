@@ -16,8 +16,6 @@ namespace Engine
 
 		virtual void SetData(const void* bufferData, std::uint32_t numVertices,
 			std::uint32_t stride) =0;
-
-	protected:
 		virtual void Bind() const =0;
 
 	protected:
@@ -27,7 +25,5 @@ namespace Engine
 	public:
 		static VertexBuffer* Create(const void* bufferData,
 			std::uint32_t numVertices, std::size_t stride);
-
-		friend class GraphicsRenderer;
 	};
 }

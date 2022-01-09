@@ -22,6 +22,7 @@
 #include "ConstantBuffer.h"
 #include "BufferLayout.h"
 #include "Material.h"
+#include "FrameBuffer.h"
 
 #include "Input.h"
 
@@ -40,7 +41,8 @@ namespace GlfwSandbox
 		m_spriteEntity(nullptr),
 		m_scene(nullptr),
 		m_entityConstantBuffer(nullptr),
-		m_subTexture(nullptr)
+		m_subTexture(nullptr),
+		m_frameBuffer(nullptr)
 	{
 		InitializeRenderBuffers();
 		InitializeSceneComponents();
@@ -50,6 +52,7 @@ namespace GlfwSandbox
 	{
 		Engine::AssetManager::UncacheAssets();
 
+		delete m_frameBuffer;
 		delete m_subTexture;
 		delete m_entityConstantBuffer;
 		delete m_vertexBuffer;
@@ -111,6 +114,13 @@ namespace GlfwSandbox
 		}
 		m_entityConstantBuffer = Engine::ConstantBuffer::Create(
 			&m_entityConstants, sizeof(m_entityConstants));
+
+		Engine::FrameBufferSpecification frameBufferSpecification({
+			{ Engine::FrameBufferAttachmentType::DEPTH_STENCIL }
+		});
+		frameBufferSpecification.width = Engine::GraphicsRenderer::GetRenderingAPI().GetWidth();
+		frameBufferSpecification.height = Engine::GraphicsRenderer::GetRenderingAPI().GetHeight();
+		m_frameBuffer = Engine::FrameBuffer::Create(frameBufferSpecification);
 	}
 
 	void GlfwGame::InitializeSceneComponents()
@@ -227,9 +237,7 @@ namespace GlfwSandbox
 
 	void GlfwGame::Render()
 	{
-		Engine::GraphicsRenderer* graphicsRenderer = Engine::GraphicsRenderer::Get();
-		graphicsRenderer->BeginFrame();
-
+		m_frameBuffer->Bind();
 		m_scene->Render();
 
 		// Draws the sprite based on a rect.

@@ -58,9 +58,8 @@ namespace Engine
 	{
 		Free();
 
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-			graphicsRenderer->GetRenderingAPI());
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
+			GraphicsRenderer::GetRenderingAPI();
 
 		HRESULT result;
 		std::wstring wstringPath(texturePath);
@@ -68,12 +67,12 @@ namespace Engine
 		if (extension == L".dds"
 			|| extension == L".DDS")
 		{
-			result = DirectX::CreateDDSTextureFromFile(renderingAPI->m_device,
+			result = DirectX::CreateDDSTextureFromFile(renderingAPI.m_device,
 				texturePath, &m_texture, &m_shaderResourceView);
 		}
 		else
 		{
-			result = DirectX::CreateWICTextureFromFile(renderingAPI->m_device,
+			result = DirectX::CreateWICTextureFromFile(renderingAPI.m_device,
 				texturePath, &m_texture, &m_shaderResourceView);
 		}
 
@@ -95,10 +94,9 @@ namespace Engine
 		{
 			return;
 		}
-		GraphicsRenderer* graphics = GraphicsRenderer::Get();
-		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-			graphics->GetRenderingAPI());
-		renderingAPI->m_deviceContext->PSSetShaderResources(
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
+			GraphicsRenderer::GetRenderingAPI();
+		renderingAPI.m_deviceContext->PSSetShaderResources(
 			slot, 1, &m_shaderResourceView);
 	}
 }

@@ -10,9 +10,8 @@ namespace Engine
 		std::uint32_t numVertices, std::uint32_t stride)
 		: VertexBuffer(buffer, numVertices, stride)
 	{
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-			graphicsRenderer->GetRenderingAPI());
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
+			GraphicsRenderer::GetRenderingAPI();
 
 		D3D11_BUFFER_DESC bufferDesc;
 		ZeroMemory(&bufferDesc, sizeof(bufferDesc));
@@ -27,7 +26,7 @@ namespace Engine
 		initializationData.SysMemPitch = 0;
 		initializationData.SysMemSlicePitch = 0;
 
-		HRESULT result = renderingAPI->m_device
+		HRESULT result = renderingAPI.m_device
 			->CreateBuffer(&bufferDesc, &initializationData, &m_vertexBuffer);
 		DebugAssert(result == S_OK, "Failed to create vertex buffer.");
 		SetData(buffer, numVertices, stride);
@@ -51,17 +50,16 @@ namespace Engine
 		m_numVerts = numVertices;
 		m_stride = stride;
 
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-			graphicsRenderer->GetRenderingAPI());
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
+			GraphicsRenderer::GetRenderingAPI();
 
 		// Maps the subresource to the device context.
 		D3D11_MAPPED_SUBRESOURCE mapResource;
-		HRESULT result = renderingAPI->m_deviceContext->Map(
+		HRESULT result = renderingAPI.m_deviceContext->Map(
 			m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
 		DebugAssert(result == S_OK, "Failed to map the vertex buffer resource.");
 		std::memcpy(mapResource.pData, buffer, numVertices * stride);
-		renderingAPI->m_deviceContext->Unmap(m_vertexBuffer, 0);
+		renderingAPI.m_deviceContext->Unmap(m_vertexBuffer, 0);
 	}
 
 	void DirectX11VertexBuffer::Bind() const
@@ -70,12 +68,11 @@ namespace Engine
 		{
 			return;
 		}
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-		DirectX11RenderingAPI* api = dynamic_cast<DirectX11RenderingAPI*>(
-			graphicsRenderer->GetRenderingAPI());
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
+			GraphicsRenderer::GetRenderingAPI();
 		unsigned int offsets = 0;
 		std::uint32_t stride = GetStride();
-		api->m_deviceContext->IASetVertexBuffers(0, 1,
+		renderingAPI.m_deviceContext->IASetVertexBuffers(0, 1,
 			&m_vertexBuffer, &stride, &offsets);
 	}
 }

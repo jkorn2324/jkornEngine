@@ -54,26 +54,20 @@ namespace Engine
 
 	void DirectX11FrameBuffer::CreateBuffers()
 	{
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-		DebugAssert(graphicsRenderer != nullptr, "Graphics Renderer doesn't exist.");
-		if (graphicsRenderer == nullptr)
-		{
-			return;
-		}
-		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-			graphicsRenderer->GetRenderingAPI());
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)(
+			GraphicsRenderer::GetRenderingAPI());
 
 		// Creates the depth stencil buffer.
 		if (m_depthStencilSpecification.textureType != FrameBufferAttachmentType::TYPE_NONE)
 		{
 			{
 				ID3D11DepthStencilState* depthStencilState = CreateDepthStencilState(
-					D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS, renderingAPI->m_device);
-				renderingAPI->m_deviceContext->OMSetDepthStencilState(depthStencilState, 0);
+					D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS, renderingAPI.m_device);
+				renderingAPI.m_deviceContext->OMSetDepthStencilState(depthStencilState, 0);
 				depthStencilState->Release();
 			}
 			// Creates the view texture for the frame buffer.
-			CreateViewTexture(&m_depthTexture, renderingAPI, m_depthStencilSpecification);
+			CreateViewTexture(&m_depthTexture, &renderingAPI, m_depthStencilSpecification);
 		}
 	}
 
@@ -180,26 +174,25 @@ namespace Engine
 
 	void DirectX11FrameBuffer::Bind() const
 	{
-		GraphicsRenderer* graphics = GraphicsRenderer::Get();
-		DirectX11RenderingAPI* renderingAPI = dynamic_cast<DirectX11RenderingAPI*>(
-			graphics->GetRenderingAPI());
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
+			GraphicsRenderer::GetRenderingAPI();
 
 		// If there is a render target view than we should bind it to that otherwise bind it to the back buffer.
 		if (m_renderTargetTexture.m_view != nullptr)
 		{
-			renderingAPI->SetRenderTarget((ID3D11RenderTargetView*)m_renderTargetTexture.m_view,
+			renderingAPI.SetRenderTarget((ID3D11RenderTargetView*)m_renderTargetTexture.m_view,
 				(ID3D11DepthStencilView*)m_depthTexture.m_view);
 		}
 		else
 		{
-			renderingAPI->SetRenderTarget(renderingAPI->m_backBufferRenderTargetView,
+			renderingAPI.SetRenderTarget(renderingAPI.m_backBufferRenderTargetView,
 				(ID3D11DepthStencilView*)m_depthTexture.m_view);
 		}
 
-		renderingAPI->SetViewport(0.0f, 0.0f,
+		renderingAPI.SetViewport(0.0f, 0.0f,
 			m_frameBufferSpecification.width, m_frameBufferSpecification.height);
-		renderingAPI->Clear();
-		renderingAPI->m_deviceContext->ClearDepthStencilView((ID3D11DepthStencilView*)m_depthTexture.m_view,
+		renderingAPI.Clear();
+		renderingAPI.m_deviceContext->ClearDepthStencilView((ID3D11DepthStencilView*)m_depthTexture.m_view,
 			D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
 	

@@ -57,8 +57,6 @@ namespace Engine
 
 	static void DrawRectInternal(const MathLib::Matrix4x4& transform, const MathLib::Vector4& color, class Texture* texture)
 	{
-		GraphicsRenderer* graphicsRenderer = GraphicsRenderer::Get();
-
 		// Bind Material.
 		s_spriteMaterial->materialConstants.c_spriteColor = color;
 		s_spriteMaterial->SetTexture(0, texture);
@@ -66,13 +64,11 @@ namespace Engine
 
 		// Bind Per Object Constants.
 		s_spriteObjectConstantBuffer->SetData(&transform, sizeof(Mat4x4));
-		graphicsRenderer->SetConstantBuffer(1, s_spriteObjectConstantBuffer,
-			ConstantBufferFlags::PIXEL_SHADER | ConstantBufferFlags::VERTEX_SHADER);
+		s_spriteObjectConstantBuffer->Bind(1, ConstantBufferFlags::PIXEL_SHADER
+			| ConstantBufferFlags::VERTEX_SHADER);
 
-		// Bind Vertex & Index Buffers & Draw.
-		graphicsRenderer->SetActiveVertexBuffer(s_spriteVertexBuffer);
-		graphicsRenderer->SetActiveIndexBuffer(s_spriteIndexBuffer);
-		graphicsRenderer->DrawActiveElements();
+		GraphicsRenderer::Draw(s_spriteVertexBuffer,
+			s_spriteIndexBuffer);
 	}
 
 
