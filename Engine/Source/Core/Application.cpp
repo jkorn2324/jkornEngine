@@ -8,13 +8,12 @@
 
 #include "Window.h"
 #include "Layer.h"
-
 #include "Event.h"
 #include "ApplicationEvent.h"
 #include "Timestep.h"
-
 #include "ImGuiLayer.h"
 #include "Input.h"
+#include "Logger.h"
 
 namespace Engine
 {
@@ -40,6 +39,8 @@ namespace Engine
 	{
 		DebugAssert(s_instance == nullptr, "Application is already running.");
 		s_instance = this;
+		
+		Logger::Init();
 
 		WindowProperties properties = 
 		{

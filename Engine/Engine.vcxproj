@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -102,10 +102,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>DirectXTK.lib;glfw3.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;glfw3.lib;libfbxsdk.lib;spdlogd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;Libraries\spdlog\builds\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -128,10 +128,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>DirectXTK.lib;glfw3.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;glfw3.lib;libfbxsdk.lib;spdlogd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;Libraries\spdlog\builds\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -140,7 +140,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -148,10 +148,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>DirectXTK.lib;glfw3.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;glfw3.lib;libfbxsdk.lib;spdlogd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;Libraries\spdlog\builds\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -162,7 +162,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -172,14 +172,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>DirectXTK.lib;glfw3.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;glfw3.lib;libfbxsdk.lib;spdlogd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;Libraries\spdlog\builds\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\Input.h" />
+    <ClInclude Include="Source\Core\Logger.h" />
     <ClInclude Include="Source\ImGui\PlatformImGuiLayer.h" />
     <ClInclude Include="Source\Platform\DirectX11\DirectX11ImGuiLayer.h" />
     <ClInclude Include="Source\Platform\Windows\Glfw\GlfwImGuiLayer.h" />
@@ -237,6 +238,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Core\Input.cpp" />
+    <ClCompile Include="Source\Core\Logger.cpp" />
     <ClCompile Include="Source\ImGui\PlatformImGuiLayer.cpp" />
     <ClCompile Include="Source\Platform\DirectX11\DirectX11ImGuiLayer.cpp" />
     <ClCompile Include="Source\Platform\Windows\Glfw\GlfwImGuiLayer.cpp" />

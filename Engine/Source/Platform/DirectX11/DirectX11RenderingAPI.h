@@ -2,7 +2,14 @@
 
 #include "Source\Vector.h"
 #include "RenderingAPI.h"
-#include <d3d11.h>
+
+struct IDXGISwapChain;
+struct ID3D11DeviceContext;
+struct ID3D11Device;
+struct ID3D11RenderTargetView;
+struct ID3D11DepthStencilView;
+struct ID3D11SamplerState;
+struct ID3D11RasterizerState;
 
 namespace Engine
 {

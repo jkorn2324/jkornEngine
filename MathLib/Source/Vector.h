@@ -1,6 +1,7 @@
 #pragma once
 
 #include <smmintrin.h>
+#include <cstdint>
 
 namespace MathLib
 {

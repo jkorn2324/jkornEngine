@@ -7,3 +7,6 @@
 [submodule "Engine/Libraries/ImGui"]
 	path = Engine/Libraries/ImGui
 	url = https://github.com/ocornut/imgui
+[submodule "Engine/Libraries/spdlog"]
+	path = Engine/Libraries/spdlog
+	url = https://github.com/gabime/spdlog

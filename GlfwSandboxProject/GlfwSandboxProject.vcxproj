@@ -94,9 +94,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -115,9 +115,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -136,9 +136,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -157,9 +157,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

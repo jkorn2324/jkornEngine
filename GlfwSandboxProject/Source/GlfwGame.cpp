@@ -1,31 +1,5 @@
 #include "GlfwGame.h"
 
-#include "GraphicsRenderer.h"
-#include "GraphicsRenderer2D.h"
-#include "RenderingAPI.h"
-
-#include "AssetManager.h"
-#include "AssetCache.h"
-
-#include "Scene.h"
-#include "Entity.h"
-#include "Components.h"
-
-#include "Window.h"
-#include "Application.h"
-#include "ApplicationEvent.h"
-#include "Event.h"
-
-#include "SubTexture.h"
-#include "IndexBuffer.h"
-#include "VertexBuffer.h"
-#include "ConstantBuffer.h"
-#include "BufferLayout.h"
-#include "Material.h"
-#include "FrameBuffer.h"
-
-#include "Input.h"
-
 #include "imgui.h"
 
 namespace GlfwSandbox

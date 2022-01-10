@@ -1,6 +1,8 @@
 #include "EnginePCH.h"
 #include "DirectX11RenderingAPI.h"
 
+#include <d3d11.h>
+
 #include "PlatformDetector.h"
 #include "Window.h"
 

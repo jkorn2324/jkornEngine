@@ -193,6 +193,9 @@
     <ClCompile Include="Source\Rendering\Camera.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Core\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\EnginePCH.h">
@@ -360,5 +363,6 @@
     <ClInclude Include="Source\Core\Input.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\Logger.h" />
   </ItemGroup>
 </Project>

@@ -1,36 +1,9 @@
 #pragma once
 
-#include "Layer.h"
-#include "Timestep.h"
 #include "Source\Matrix.h"
 #include "Source\Vector.h"
 
-#include "Event.h"
-#include "ApplicationEvent.h"
-
-#include "Entity.h"
-
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-
-namespace Engine
-{
-	class GraphicsRenderer;
-	class Entity;
-	class Scene;
-	class VertexBuffer;
-	class IndexBuffer;
-	class ConstantBuffer;
-	class FrameBuffer;
-
-	template<typename T>
-	class Material;
-	class Mesh;
-	class SubTexture;
-
-	class InputMouseScrollEvent;
-}
+#include "Engine.h"
 
 struct EntityConstants
 {
