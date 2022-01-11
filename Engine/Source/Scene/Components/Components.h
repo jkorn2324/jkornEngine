@@ -38,4 +38,12 @@ namespace Engine
 			: mainCamera(mainCam), camera() { }
 		SceneCameraComponent(const SceneCameraComponent& component) = default;
 	};
+
+	struct NameComponent
+	{
+		std::string name;
+
+		explicit NameComponent(const char* name)
+			: name(name) { }
+	};
 }

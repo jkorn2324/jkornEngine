@@ -4,40 +4,23 @@
 
 #include "Components.h"
 #include "Camera.h"
-#include "ConstantBuffer.h"
+
+#include "Profiler.h"
+#include "GraphicsRenderer.h"
+#include "GraphicsRenderer2D.h"
 
 namespace Engine
 {
-
-	// Static variables as there is only going to be one constant buffer.
-	static ConstantBuffer* s_cameraConstantBuffer = nullptr;
-	static CameraConstants s_cameraConstants = CameraConstants();
-	static uint32_t s_scenesAllocated = 0;
 
 	Scene::Scene()
 		: m_entityRegistry(),
 		m_markedForDestroyEntities(),
 		m_camera(nullptr)
 	{
-		s_scenesAllocated++;
-
-		if (s_cameraConstantBuffer == nullptr)
-		{
-			s_cameraConstantBuffer = ConstantBuffer::Create(
-				&s_cameraConstants, sizeof(s_cameraConstants));
-		}
 	}
 
 	Scene::~Scene()
 	{
-		s_scenesAllocated--;
-
-		if (s_scenesAllocated <= 0
-			&& s_cameraConstantBuffer != nullptr)
-		{
-			delete s_cameraConstantBuffer;
-			s_cameraConstantBuffer = nullptr;
-		}
 	}
 
 	void Scene::Update(const Timestep& ts)
@@ -79,27 +62,36 @@ namespace Engine
 
 	void Scene::Render()
 	{
+		PROFILE_SCOPE(SceneRender, Rendering);
+
+		CameraConstants constants;
 		{
-			// Sets the camera constants along with buffers.
 			if (m_camera != nullptr)
 			{
 				auto mat = m_camera->GetViewMatrix();
 				mat.Invert();
 
-				s_cameraConstants.c_cameraPosition = mat.GetTranslation();
-				s_cameraConstants.c_viewProjection =
+				constants.c_cameraPosition = mat.GetTranslation();
+				constants.c_viewProjection =
 					m_camera->GetViewProjectionMatrix();
-
-				s_cameraConstantBuffer->SetData(&s_cameraConstants,
-					sizeof(s_cameraConstants));
-				s_cameraConstantBuffer->Bind(0,
-					Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
 			}
 		}
-
+		
+		GraphicsRenderer::BeginScene(constants);
+		
+		// Render the sprites.
 		{
-			// TODO: Draw all sprite components
+			m_entityRegistry.view<SpriteComponent, Transform3DComponent>().each(
+				[](auto entity, SpriteComponent& sprite, Transform3DComponent& transform)
+				{
+					if (!sprite.enabled) return;
+
+					GraphicsRenderer2D::DrawRect(transform.GetTransformMatrix(),
+						sprite.color, sprite.texture);
+				});
 		}
+		
+		GraphicsRenderer::EndScene();
 	}
 
 	Camera* Scene::GetCamera() const
@@ -107,10 +99,16 @@ namespace Engine
 		return m_camera;
 	}
 
-	Entity Scene::CreateEntity()
+	Entity Scene::CreateEntity(const char* entityName)
 	{
 		Entity createdEntity = Entity(m_entityRegistry.create(), this);
+		createdEntity.AddComponent<NameComponent>(entityName);
 		return createdEntity;
+	}
+
+	Entity Scene::CreateEntity()
+	{
+		return CreateEntity("Entity");
 	}
 
 	void Scene::DestroyEntity(const Entity& entity)

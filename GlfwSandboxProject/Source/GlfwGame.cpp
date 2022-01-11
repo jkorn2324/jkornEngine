@@ -214,16 +214,6 @@ namespace GlfwSandbox
 		m_frameBuffer->Bind();
 		m_scene->Render();
 
-		// Draws the sprite based on a rect.
-		{
-			Engine::Transform3DComponent& transform =
-				m_spriteEntity->GetComponent<Engine::Transform3DComponent>();
-			Engine::SpriteComponent& spriteComponent =
-				m_spriteEntity->GetComponent<Engine::SpriteComponent>();
-			Engine::GraphicsRenderer2D::DrawRect(transform.GetTransformMatrix(),
-				spriteComponent.color, spriteComponent.texture);
-		}
-
 		{
 			Engine::GraphicsRenderer2D::DrawRect(MathLib::Vector2(20.0f, 0.0f),
 				MathLib::Vector2::One, m_subTexture);

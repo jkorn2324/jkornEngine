@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "FrameBuffer.h"
 
+#include "Profiler.h"
 #include "GraphicsRenderer.h"
 #include "RenderingAPI.h"
 #include "DirectX11FrameBuffer.h"
@@ -26,6 +27,8 @@ namespace Engine
 
 	FrameBuffer* FrameBuffer::Create(const FrameBufferSpecification& specification)
 	{
+		PROFILE_SCOPE(CreateFrameBuffer, Rendering);
+
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
 		case RenderingAPIType::DIRECTX11:	return new DirectX11FrameBuffer(specification);

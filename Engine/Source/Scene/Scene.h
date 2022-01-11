@@ -13,19 +13,6 @@ namespace Engine
 {
 	class Entity;
 
-	struct CameraConstants
-	{
-		MathLib::Matrix4x4 c_viewProjection;
-		MathLib::Vector3 c_cameraPosition;
-
-		CameraConstants()
-			: c_cameraPosition(MathLib::Vector3::Zero), 
-			c_viewProjection(MathLib::Matrix4x4::Identity) { }
-
-	private:
-		float pad;
-	};
-
 	class Scene
 	{
 	public:
@@ -35,6 +22,7 @@ namespace Engine
 		void Update(const Timestep& ts);
 		void Render();
 
+		Entity CreateEntity(const char* entityName);
 		Entity CreateEntity();
 		void DestroyEntity(const Entity& entity);
 

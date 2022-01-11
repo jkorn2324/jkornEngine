@@ -35,3 +35,7 @@
 .vs/
 Win32/
 x64/
+
+# More Files
+*/Engine.log
+*/Profile.json

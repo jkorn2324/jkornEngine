@@ -8,6 +8,7 @@
 
 #include "AssetManager.h"
 #include "AssetCache.h"
+#include "Profiler.h"
 
 #include "Texture.h"
 #include "SubTexture.h"
@@ -57,6 +58,8 @@ namespace Engine
 
 	static void DrawRectInternal(const MathLib::Matrix4x4& transform, const MathLib::Vector4& color, class Texture* texture)
 	{
+		PROFILE_SCOPE(DrawRectInternal, Rendering);
+
 		// Bind Material.
 		s_spriteMaterial->materialConstants.c_spriteColor = color;
 		s_spriteMaterial->SetTexture(0, texture);

@@ -3,11 +3,14 @@
 
 #include "GraphicsRenderer.h"
 #include "RenderingAPI.h"
+#include "Profiler.h"
 
 namespace Engine
 {
 	MathLib::Vector3 Camera::ScreenToWorld(const MathLib::Vector2& screenPos)
 	{
+		PROFILE_SCOPE(CameraScreenToWorld, Camera);
+
 		RenderingAPI& api = GraphicsRenderer::GetRenderingAPI();
 		MathLib::Vector2 camSpace(screenPos.x / (float)api.GetWidth(),
 			screenPos.y / (float)api.GetHeight());
@@ -21,6 +24,8 @@ namespace Engine
 	
 	MathLib::Vector2 Camera::WorldToScreen(const MathLib::Vector3& worldPos)
 	{
+		PROFILE_SCOPE(CameraWorldToScreen, Camera);
+
 		RenderingAPI& api =(RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
 		MathLib::Vector4 asVec4 = MathLib::Vector4(worldPos, 1.0f);
 		asVec4.y *= -1.0f;

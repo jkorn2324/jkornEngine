@@ -14,6 +14,8 @@
 #include "ImGuiLayer.h"
 #include "Input.h"
 #include "Logger.h"
+#include "Profiler.h"
+
 
 namespace Engine
 {
@@ -41,6 +43,7 @@ namespace Engine
 		s_instance = this;
 		
 		Logger::Init();
+		Profiler::Init();
 
 		WindowProperties properties = 
 		{
@@ -63,6 +66,7 @@ namespace Engine
 
 		GraphicsRenderer2D::Release();
 		GraphicsRenderer::Release();
+		Profiler::Release();
 	}
 
 	void Application::Run()

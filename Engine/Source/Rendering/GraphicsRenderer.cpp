@@ -18,6 +18,8 @@ namespace Engine
 {
 	RenderingAPI* GraphicsRenderer::s_renderingAPI = nullptr;
 
+	ConstantBuffer* s_cameraConstantBuffer = nullptr;
+
 	bool GraphicsRenderer::Init()
 	{
 		DebugAssert(s_renderingAPI == nullptr, 
@@ -27,12 +29,27 @@ namespace Engine
 		{
 			return false;
 		}
+
+		CameraConstants placeholder;
+		s_cameraConstantBuffer = ConstantBuffer::Create(&placeholder,
+			sizeof(CameraConstants));
 		return true;
 	}
 
 	void GraphicsRenderer::Release()
 	{
+		delete s_cameraConstantBuffer;
 		delete s_renderingAPI;
+	}
+
+	void GraphicsRenderer::BeginScene(const CameraConstants& cameraConstants)
+	{
+		DebugAssert(s_cameraConstantBuffer != nullptr, 
+			"Camera Constant buffer doesn't exist.");
+		s_cameraConstantBuffer->SetData(&cameraConstants,
+			sizeof(cameraConstants));
+		s_cameraConstantBuffer->Bind(0,
+			Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
 	}
 
 	void GraphicsRenderer::Draw(VertexBuffer* vBuffer,

@@ -4,6 +4,7 @@
 
 #include "DebugAssert.h"
 #include "PlatformDetector.h"
+#include "Profiler.h"
 
 #include "AssetCache.h"
 #include "AssetManager.h"

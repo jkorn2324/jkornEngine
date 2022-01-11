@@ -44,7 +44,8 @@ namespace Engine
 
 	void DirectX11ConstantBuffer::SetData(const void* buffer, std::size_t stride)
 	{
-		if (m_constantBuffer != nullptr)
+		if (m_constantBuffer != nullptr
+			&& buffer != nullptr)
 		{
 			DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)(
 				GraphicsRenderer::GetRenderingAPI());
