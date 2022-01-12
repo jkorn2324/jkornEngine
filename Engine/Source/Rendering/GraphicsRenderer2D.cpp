@@ -107,7 +107,7 @@ namespace Engine
 		// Loads the Sprite Shader.
 		// TODO: Make it so that these shaders can be tied to the engine.
 		{
-			Engine::BufferLayout bufferLayout({
+			std::unique_ptr<Engine::BufferLayout> bufferLayout = Engine::BufferLayout::Create({
 					{ "POSITION", offsetof(GraphicsSpriteVertex, position),
 						sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
 					{ "TEXCOORD", offsetof(GraphicsSpriteVertex, uv),
@@ -118,9 +118,9 @@ namespace Engine
 				Engine::AssetManager::GetShaders();
 
 			s_spriteShader = shaderAssetCache.Load<const Engine::BufferLayout&>(
-				L"Shaders/SpriteShader.hlsl", bufferLayout);
+				L"Shaders/SpriteShader.hlsl", *bufferLayout.get());
 			s_colorShader = shaderAssetCache.Load<const Engine::BufferLayout&>(
-				L"Shaders/ColorShader.hlsl", bufferLayout);
+				L"Shaders/ColorShader.hlsl", *bufferLayout.get());
 			s_spriteMaterial = new Material<GraphicsSpriteConstants>();
 		}
 

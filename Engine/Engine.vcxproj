@@ -107,6 +107,11 @@
     <Lib>
       <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;Libraries\spdlog\builds\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy /Y "C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\libfbxsdk.dll" "$(SolutionDir)$(Platform)\$(Configuration)\libfbxsdk.dll"
+xcopy "$(ProjectDir)Shaders\*.*" "$(SolutionDir)Editor\Shaders\" /Y /I /E
+xcopy "$(ProjectDir)Shaders\*.*" "$(SolutionDir)GlfwSandboxProject\Shaders\" /Y /I /E</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -133,6 +138,11 @@
     <Lib>
       <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;Libraries\spdlog\builds\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy /Y "C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\libfbxsdk.dll" "$(SolutionDir)$(Platform)\$(Configuration)\libfbxsdk.dll"
+xcopy "$(ProjectDir)Shaders\*.*" "$(SolutionDir)Editor\Shaders\" /Y /I /E
+xcopy "$(ProjectDir)Shaders\*.*" "$(SolutionDir)GlfwSandboxProject\Shaders\" /Y /I /E</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -153,6 +163,11 @@
     <Lib>
       <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;Libraries\spdlog\builds\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy /Y "C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\libfbxsdk.dll" "$(SolutionDir)$(Platform)\$(Configuration)\libfbxsdk.dll"
+xcopy "$(ProjectDir)Shaders\*.*" "$(SolutionDir)Editor\Shaders\" /Y /I /E
+xcopy "$(ProjectDir)Shaders\*.*" "$(SolutionDir)GlfwSandboxProject\Shaders\" /Y /I /E</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -177,6 +192,11 @@
     <Lib>
       <AdditionalLibraryDirectories>Libraries\DirectXTK\Bin\Desktop_2019\$(Platform)\$(Configuration)\;Libraries\glfw\builds\$(Platform)\src\$(Configuration)\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\;Libraries\spdlog\builds\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy /Y "C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\$(PlatformShortName)\$(Configuration)\libfbxsdk.dll" "$(SolutionDir)$(Platform)\$(Configuration)\libfbxsdk.dll"
+xcopy "$(ProjectDir)Shaders\*.*" "$(SolutionDir)Editor\Shaders\" /Y /I /E
+xcopy "$(ProjectDir)Shaders\*.*" "$(SolutionDir)GlfwSandboxProject\Shaders\" /Y /I /E</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Libraries\entt\include\entt.hpp" />
@@ -222,6 +242,7 @@
     <ClInclude Include="Source\Core\Logger.h" />
     <ClInclude Include="Source\Core\Profiler.h" />
     <ClInclude Include="Source\ImGui\PlatformImGuiLayer.h" />
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11BufferLayout.h" />
     <ClInclude Include="Source\Platform\DirectX11\DirectX11ImGuiLayer.h" />
     <ClInclude Include="Source\Platform\Windows\Glfw\GlfwImGuiLayer.h" />
     <ClInclude Include="Source\Platform\Windows\Glfw\GlfwWindowsWindow.h" />
@@ -285,6 +306,7 @@
     <ClCompile Include="Source\Core\Logger.cpp" />
     <ClCompile Include="Source\Core\Profiler.cpp" />
     <ClCompile Include="Source\ImGui\PlatformImGuiLayer.cpp" />
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11BufferLayout.cpp" />
     <ClCompile Include="Source\Platform\DirectX11\DirectX11ImGuiLayer.cpp" />
     <ClCompile Include="Source\Platform\Windows\Glfw\GlfwImGuiLayer.cpp" />
     <ClCompile Include="Source\Platform\Windows\Glfw\GlfwWindowsWindow.cpp" />
@@ -337,6 +359,44 @@
     <ProjectReference Include="..\MathLib\MathLib.vcxproj">
       <Project>{16c1c095-fafe-4275-b201-2181b1d6ca13}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\CameraConstants.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\ColorShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\ObjectConstants.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\SpriteShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\TextureConstants.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\TriangleShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

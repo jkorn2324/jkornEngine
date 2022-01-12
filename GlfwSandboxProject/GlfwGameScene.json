@@ -2,6 +2,37 @@
     "Entities": [
         {
             "Entity": "",
+            "NameComponent": "HappyFace",
+            "Transform3DComponent": {
+                "Position": {
+                    "x": 707.0,
+                    "y": 446.9999694824219,
+                    "z": 0.0
+                },
+                "Rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -0.2588190734386444,
+                    "w": -0.9659258127212524
+                },
+                "Scale": {
+                    "x": 206.28016662597656,
+                    "y": 206.28016662597656,
+                    "z": 7.279994487762451
+                }
+            },
+            "SpriteComponent": {
+                "Enabled": true,
+                "Color": {
+                    "x": 0.8980392217636108,
+                    "y": 0.24313725531101227,
+                    "z": 0.0,
+                    "w": 1.0
+                }
+            }
+        },
+        {
+            "Entity": "",
             "NameComponent": "CameraEntity",
             "Transform3DComponent": {
                 "Position": {
@@ -30,37 +61,6 @@
                 "PerspAspectRatio": -107374176.0,
                 "OrthoWidth": 1600.0,
                 "OrthoHeight": 900.0
-            }
-        },
-        {
-            "Entity": "",
-            "NameComponent": "HappyFace",
-            "Transform3DComponent": {
-                "Position": {
-                    "x": 433.0,
-                    "y": 448.9999694824219,
-                    "z": 0.0
-                },
-                "Rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": -0.7071065902709961,
-                    "w": -0.7071069478988647
-                },
-                "Scale": {
-                    "x": 200.14002990722656,
-                    "y": 200.14002990722656,
-                    "z": 1.1399998664855957
-                }
-            },
-            "SpriteComponent": {
-                "Enabled": true,
-                "Color": {
-                    "x": 0.8980392217636108,
-                    "y": 0.24313725531101227,
-                    "z": 0.0,
-                    "w": 1.0
-                }
             }
         }
     ]

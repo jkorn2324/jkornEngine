@@ -24,6 +24,8 @@ Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "genie", "Engine\Libraries\O
 		AttachLaunchAction = No
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Editor", "Editor\Editor.vcxproj", "{E2929A17-AC72-45D8-89FD-9CB467F3DC20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -148,6 +150,30 @@ Global
 		{9B1A8AE3-94DA-4033-9AC2-B9B3464AD80B}.Release-DirectX11|x86.ActiveCfg = Release
 		{9B1A8AE3-94DA-4033-9AC2-B9B3464AD80B}.RelWithDebInfo|x64.ActiveCfg = Release|x64
 		{9B1A8AE3-94DA-4033-9AC2-B9B3464AD80B}.RelWithDebInfo|x86.ActiveCfg = Release|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Debug|x64.ActiveCfg = Debug|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Debug|x64.Build.0 = Debug|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Debug|x86.ActiveCfg = Debug|Win32
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Debug|x86.Build.0 = Debug|Win32
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Debug-DirectX11|x64.ActiveCfg = Debug|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Debug-DirectX11|x64.Build.0 = Debug|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Debug-DirectX11|x86.ActiveCfg = Debug|Win32
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Debug-DirectX11|x86.Build.0 = Debug|Win32
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.MinSizeRel|x64.ActiveCfg = Debug|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.MinSizeRel|x64.Build.0 = Debug|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.MinSizeRel|x86.ActiveCfg = Debug|Win32
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.MinSizeRel|x86.Build.0 = Debug|Win32
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Release|x64.ActiveCfg = Release|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Release|x64.Build.0 = Release|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Release|x86.ActiveCfg = Release|Win32
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Release|x86.Build.0 = Release|Win32
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Release-DirectX11|x64.ActiveCfg = Release|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Release-DirectX11|x64.Build.0 = Release|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Release-DirectX11|x86.ActiveCfg = Release|Win32
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.Release-DirectX11|x86.Build.0 = Release|Win32
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.RelWithDebInfo|x64.ActiveCfg = Release|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.RelWithDebInfo|x64.Build.0 = Release|x64
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
+		{E2929A17-AC72-45D8-89FD-9CB467F3DC20}.RelWithDebInfo|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

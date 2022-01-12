@@ -19,7 +19,7 @@ namespace Engine
 	RenderingAPI* GraphicsRenderer::s_renderingAPI = nullptr;
 
 	ConstantBuffer* s_cameraConstantBuffer = nullptr;
-
+	
 	bool GraphicsRenderer::Init()
 	{
 		DebugAssert(s_renderingAPI == nullptr, 

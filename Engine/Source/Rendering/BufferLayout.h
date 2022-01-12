@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include <d3d11.h>
 #include <initializer_list>
+#include <memory>
 
 namespace Engine
 {
@@ -53,13 +53,11 @@ namespace Engine
 		BufferLayout(const BufferLayout& layout) = delete;
 
 		explicit BufferLayout(const std::initializer_list<BufferLayoutParam>& initializerList);
-		~BufferLayout();
+		virtual ~BufferLayout() { }
 
-		const D3D11_INPUT_ELEMENT_DESC* GetD3D11InputElementDesc() const;
-		uint32_t GetNumElements() const;
+		virtual uint32_t GetNumElements() const =0;
 
-	private:
-		D3D11_INPUT_ELEMENT_DESC* m_inputElementDesc;
-		uint32_t m_numElements;
+	public:
+		static std::unique_ptr<BufferLayout> Create(const std::initializer_list<BufferLayoutParam>& initializerList);
 	};
 }

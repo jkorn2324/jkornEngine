@@ -3,7 +3,7 @@
 
 #include "GraphicsRenderer.h"
 #include "DirectX11RenderingAPI.h"
-#include "BufferLayout.h"
+#include "DirectX11BufferLayout.h"
 
 #include <d3dcompiler.h>
 #include <fstream>
@@ -113,7 +113,7 @@ namespace Engine
 					&& m_pixelShader != nullptr)
 				{
 					result = renderingAPI.m_device->CreateInputLayout(
-						bufferLayout.GetD3D11InputElementDesc(), bufferLayout.GetNumElements(),
+						((DirectX11BufferLayout&)bufferLayout).GetD3D11InputElementDesc(), bufferLayout.GetNumElements(),
 						vertexShader->GetBufferPointer(), vertexShader->GetBufferSize(), &m_inputLayout);
 					DebugAssert(result == S_OK, "Failed to load input layout.");
 					if (result == S_OK)

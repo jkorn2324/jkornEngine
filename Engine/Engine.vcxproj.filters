@@ -217,6 +217,9 @@
     <ClCompile Include="Source\Scene\SceneManager.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Platform\DirectX11\DirectX11BufferLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\EnginePCH.h">
@@ -519,5 +522,14 @@
     <ClInclude Include="Source\Scene\SceneManager.h">
       <Filter>Source Files\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Platform\DirectX11\DirectX11BufferLayout.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\CameraConstants.hlsl" />
+    <FxCompile Include="Shaders\ColorShader.hlsl" />
+    <FxCompile Include="Shaders\ObjectConstants.hlsl" />
+    <FxCompile Include="Shaders\SpriteShader.hlsl" />
+    <FxCompile Include="Shaders\TextureConstants.hlsl" />
+    <FxCompile Include="Shaders\TriangleShader.hlsl" />
   </ItemGroup>
 </Project>
