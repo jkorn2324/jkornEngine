@@ -7,6 +7,7 @@
 
 #include <entt.hpp>
 #include <vector>
+#include <string>
 
 
 namespace Engine
@@ -17,22 +18,33 @@ namespace Engine
 	{
 	public:
 		explicit Scene();
+		explicit Scene(const std::wstring& name);
 		~Scene();
 
-		void Update(const Timestep& ts);
+		void OnRuntimeUpdate(const Timestep& ts);
+		void OnEditorUpdate(const Timestep& ts);
+
 		void Render();
 
 		Entity CreateEntity(const char* entityName);
 		Entity CreateEntity();
 		void DestroyEntity(const Entity& entity);
-
+		Entity Find(const std::string& entityName) const;
+		
 		class Camera* GetCamera() const;
 
+		const std::wstring& GetSceneName() const;
+
 	private:
+		class Camera* m_camera;
 		std::vector<entt::entity> m_markedForDestroyEntities;
 		entt::registry m_entityRegistry;
-		class Camera* m_camera;
+		std::wstring m_sceneName;
+
+	public:
+		static Scene* CreateDefaultScene();
 
 		friend class Entity;
+		friend class SceneSerializer;
 	};
 }

@@ -7,7 +7,7 @@
 namespace Engine
 {
 
-	VertexBuffer* VertexBuffer::Create(const void* bufferData, std::uint32_t numVertices, std::size_t stride)
+	VertexBuffer* VertexBuffer::Create(const void* bufferData, uint32_t numVertices, uint32_t stride)
 	{
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
@@ -21,17 +21,17 @@ namespace Engine
 		return nullptr;
 	}
 
-	VertexBuffer::VertexBuffer(const void* buffer, std::uint32_t numVerts, std::size_t stride)
+	VertexBuffer::VertexBuffer(const void* buffer, uint32_t numVerts, uint32_t stride)
 		: m_stride(stride), m_numVerts(numVerts)
 	{
 	}
 
-	std::uint32_t VertexBuffer::GetStride() const
+	uint32_t VertexBuffer::GetStride() const
 	{
 		return m_stride;
 	}
 
-	std::uint32_t VertexBuffer::GetNumVerts() const
+	uint32_t VertexBuffer::GetNumVerts() const
 	{
 		return m_numVerts;
 	}

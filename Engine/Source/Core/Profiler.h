@@ -31,9 +31,9 @@ namespace Engine
 		void Begin();
 		void End();
 
-		double GetCurrentTime(ProfileTimeUnit unit = TIME_MILLIS) const;
-		double GetAverageTime(ProfileTimeUnit unit = TIME_MILLIS) const;
-		double GetHighestTime(ProfileTimeUnit unit = TIME_MILLIS) const;
+		double GetCurrentDuration(ProfileTimeUnit unit = TIME_MILLIS) const;
+		double GetAverageDuration(ProfileTimeUnit unit = TIME_MILLIS) const;
+		double GetHighestDuration(ProfileTimeUnit unit = TIME_MILLIS) const;
 
 	private:
 		ProfilerTimePoint m_beginTime;

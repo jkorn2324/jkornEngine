@@ -38,6 +38,14 @@ namespace Engine
 		UpdateProjectionMatrix();
 	}
 
+	SceneCamera::SceneCamera(const SceneCameraType& type, const CameraProperties& properties)
+		: Camera(), 
+		m_sceneCameraType(type),
+		m_cameraProperties(properties)
+	{
+		UpdateProjectionMatrix();
+	}
+
 	void SceneCamera::SetViewMatrix(const MathLib::Matrix4x4& mat)
 	{
 		m_viewMatrix = mat;

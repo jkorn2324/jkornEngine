@@ -16,6 +16,16 @@ namespace MathLib
 		RecalculateMatrix();
 	}
 
+	Transform2D::Transform2D(const Vector2& pos,
+		float rot, const Vector2& scale)
+		: m_position(pos),
+		m_rotation(rot),
+		m_scale(scale),
+		m_transformMatrix()
+	{
+		RecalculateMatrix();
+	}
+
 	void Transform2D::SetPosition(float x, float y)
 	{
 		m_position.x = x;
@@ -97,6 +107,17 @@ namespace MathLib
 		: m_position(0.0f, 0.0f, 0.0f),
 		m_scale(1.0f, 1.0f, 1.0f),
 		m_rotation(MathLib::Quaternion::Identity),
+		m_transformMatrix(Mat4x4::Identity)
+	{
+		RecalculateMatrix();
+	}
+
+
+	Transform3D::Transform3D(const Vector3& pos,
+		const Quaternion& rot, const Vector3& scale)
+		: m_position(pos),
+		m_scale(scale),
+		m_rotation(rot),
 		m_transformMatrix(Mat4x4::Identity)
 	{
 		RecalculateMatrix();

@@ -54,6 +54,25 @@ namespace Engine
 
 	Input::EventFunc s_inputEventFunc = nullptr;
 
+
+	static InputMouseData::MouseButtonData* GetInputMouseButtonData(InputMouseButton mouseButton)
+	{
+		InputMouseData::MouseButtonData* mouseData = nullptr;
+		switch (mouseButton)
+		{
+		case Engine::MOUSE_BUTTON_LEFT:
+			mouseData = &s_mouseInputData.leftButton;
+			break;
+		case Engine::MOUSE_BUTTON_RIGHT:
+			mouseData = &s_mouseInputData.rightButton;
+			break;
+		case Engine::MOUSE_BUTTON_MIDDLE:
+			mouseData = &s_mouseInputData.middleButton;
+			break;
+		}
+		return mouseData;
+	}
+
 	void Input::BindInputEventFunc(const Input::EventFunc& func)
 	{
 		s_inputEventFunc = func;
@@ -101,26 +120,9 @@ namespace Engine
 
 	bool Input::IsMouseButtonPressed(InputMouseButton button)
 	{
-		InputMouseData::MouseButtonData* mouseButtonData = nullptr;
-		switch (button)
-		{
-		case MOUSE_BUTTON_LEFT:
-		{
-			mouseButtonData = &s_mouseInputData.leftButton;
-			break;
-		}
-		case MOUSE_BUTTON_MIDDLE:
-		{
-			mouseButtonData = &s_mouseInputData.rightButton;
-			break;
-		}
-		case MOUSE_BUTTON_RIGHT:
-		{
-			mouseButtonData = &s_mouseInputData.middleButton;
-			break;
-		}
-		}
+		InputMouseData::MouseButtonData* mouseButtonData = GetInputMouseButtonData(button);
 		if (mouseButtonData == nullptr) return false;
+
 		Timestep outputDiff = CalculateTimestepDiff(mouseButtonData->lastTimeClicked);
 		return mouseButtonData->buttonState == ACTION_PRESSED
 			&& outputDiff.GetSeconds() < MIN_MOUSE_HELD_TIME;
@@ -128,26 +130,9 @@ namespace Engine
 
 	bool Input::IsMouseButtonHeld(InputMouseButton button)
 	{
-		InputMouseData::MouseButtonData* mouseButtonData = nullptr;
-		switch (button)
-		{
-		case MOUSE_BUTTON_LEFT:
-		{
-			mouseButtonData = &s_mouseInputData.leftButton;
-			break;
-		}
-		case MOUSE_BUTTON_MIDDLE:
-		{
-			mouseButtonData = &s_mouseInputData.rightButton;
-			break;
-		}
-		case MOUSE_BUTTON_RIGHT:
-		{
-			mouseButtonData = &s_mouseInputData.middleButton;
-			break;
-		}
-		}
+		InputMouseData::MouseButtonData* mouseButtonData = GetInputMouseButtonData(button);
 		if (mouseButtonData == nullptr) return false;
+
 		Timestep outputDiff = CalculateTimestepDiff(mouseButtonData->lastTimeClicked);
 		return mouseButtonData->buttonState == ACTION_PRESSED
 			&& outputDiff.GetSeconds() >= MIN_MOUSE_HELD_TIME;
@@ -230,29 +215,9 @@ namespace Engine
 	
 	bool Input::OnInputMouseButtonEvent(InputMouseButtonEvent& event)
 	{
-		InputMouseData::MouseButtonData* mouseButtonData = nullptr;
-		switch (event.mouseButton)
-		{
-		case MOUSE_BUTTON_RIGHT: 
-		{
-			mouseButtonData = &s_mouseInputData.rightButton;
-			break;
-		}
-		case MOUSE_BUTTON_LEFT:
-		{
-			mouseButtonData = &s_mouseInputData.leftButton;
-			break;
-		}
-		case MOUSE_BUTTON_MIDDLE:
-		{
-			mouseButtonData = &s_mouseInputData.middleButton;
-			break;
-		}
-		}
-		if (mouseButtonData == nullptr)
-		{
-			return true;
-		}
+		InputMouseData::MouseButtonData* mouseButtonData = GetInputMouseButtonData(event.mouseButton);
+		if (mouseButtonData == nullptr) return true;
+		
 		mouseButtonData->buttonState = event.inputAction;
 		if (mouseButtonData->buttonState == ACTION_PRESSED)
 		{

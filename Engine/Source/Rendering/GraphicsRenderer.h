@@ -5,6 +5,7 @@
 
 namespace Engine
 {
+	class RenderingAPI;
 
 	struct CameraConstants
 	{
@@ -29,8 +30,7 @@ namespace Engine
 		static void Draw(class VertexBuffer* vertexBuffer,
 			class IndexBuffer* indexBuffer);
 
-
-		static class RenderingAPI& GetRenderingAPI();
+		static RenderingAPI& GetRenderingAPI();
 
 	private:
 		static RenderingAPI* s_renderingAPI;

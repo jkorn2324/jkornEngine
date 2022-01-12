@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "GraphicsRenderer2D.h"
 
+#include "RenderingAPI.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "Material.h"
@@ -41,6 +42,9 @@ namespace Engine
 
 	static ConstantBuffer* s_spriteObjectConstantBuffer = nullptr;
 	static Material<GraphicsSpriteConstants>* s_spriteMaterial = nullptr;
+	
+	static Shader* s_colorShader = nullptr;
+	static Shader* s_spriteShader = nullptr;
 
 	static GraphicsSpriteVertex vertices[4] =
 	{
@@ -59,6 +63,18 @@ namespace Engine
 	static void DrawRectInternal(const MathLib::Matrix4x4& transform, const MathLib::Vector4& color, class Texture* texture)
 	{
 		PROFILE_SCOPE(DrawRectInternal, Rendering);
+
+		// Clears the texture at the initial texture slot.
+		GraphicsRenderer::GetRenderingAPI().ClearTexture(0);
+
+		if (texture != nullptr)
+		{
+			s_spriteMaterial->SetShader(s_spriteShader);
+		}
+		else
+		{
+			s_spriteMaterial->SetShader(s_colorShader);
+		}
 
 		// Bind Material.
 		s_spriteMaterial->materialConstants.c_spriteColor = color;
@@ -100,10 +116,12 @@ namespace Engine
 
 			Engine::AssetCache<Engine::Shader>& shaderAssetCache =
 				Engine::AssetManager::GetShaders();
-			Engine::Shader* shader = shaderAssetCache.Load<const Engine::BufferLayout&>(
+
+			s_spriteShader = shaderAssetCache.Load<const Engine::BufferLayout&>(
 				L"Shaders/SpriteShader.hlsl", bufferLayout);
+			s_colorShader = shaderAssetCache.Load<const Engine::BufferLayout&>(
+				L"Shaders/ColorShader.hlsl", bufferLayout);
 			s_spriteMaterial = new Material<GraphicsSpriteConstants>();
-			s_spriteMaterial->SetShader(shader);
 		}
 
 		Mat4x4 identity = Mat4x4::Identity;
@@ -140,7 +158,7 @@ namespace Engine
 		Mat4x4 mat = transformMat;
 		if (texture != nullptr)
 		{
-			mat = Mat4x4::CreateScale(texture->GetWidth(), texture->GetHeight(), 1.0f) * mat;
+			mat = Mat4x4::CreateScale((float)texture->GetWidth(), (float)texture->GetHeight(), 1.0f) * mat;
 		}
 		DrawRectInternal(mat, color, texture);
 	}

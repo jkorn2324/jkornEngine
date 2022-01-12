@@ -32,15 +32,15 @@ namespace Engine
 	struct BufferLayoutParam
 	{
 		char name[MAX_SIZE_OF_NAME + 1];
-		std::uint32_t offset;
-		std::size_t stride;
+		uint32_t offset;
+		size_t stride;
 		BufferLayoutType layoutType;
 
-		BufferLayoutParam(const std::string& name, std::uint32_t offset, std::size_t stride, BufferLayoutType layoutType)
+		BufferLayoutParam(const std::string& name, uint32_t offset, size_t stride, BufferLayoutType layoutType)
 			: offset(offset), stride(stride), layoutType(layoutType)
 		{
-			std::uint32_t nameSize = name.size() > MAX_SIZE_OF_NAME ? 
-				MAX_SIZE_OF_NAME : name.size();
+			uint32_t nameSize = name.size() > MAX_SIZE_OF_NAME ? 
+				MAX_SIZE_OF_NAME : (uint32_t)name.size();
 			std::memcpy(this->name, name.c_str(), nameSize);
 			this->name[nameSize] = 0;
 		}
@@ -56,10 +56,10 @@ namespace Engine
 		~BufferLayout();
 
 		const D3D11_INPUT_ELEMENT_DESC* GetD3D11InputElementDesc() const;
-		std::uint32_t GetNumElements() const;
+		uint32_t GetNumElements() const;
 
 	private:
 		D3D11_INPUT_ELEMENT_DESC* m_inputElementDesc;
-		std::uint32_t m_numElements;
+		uint32_t m_numElements;
 	};
 }

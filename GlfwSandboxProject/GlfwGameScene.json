@@ -1,0 +1,67 @@
+{
+    "Entities": [
+        {
+            "Entity": "",
+            "NameComponent": "CameraEntity",
+            "Transform3DComponent": {
+                "Position": {
+                    "x": -1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "Rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "Scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "SceneCameraComponent": {
+                "MainCamera": true,
+                "CameraType": 1,
+                "NearPlane": 1000.0,
+                "FarPlane": -1000.0,
+                "PerspFOV": 0.8726646304130554,
+                "PerspAspectRatio": -107374176.0,
+                "OrthoWidth": 1600.0,
+                "OrthoHeight": 900.0
+            }
+        },
+        {
+            "Entity": "",
+            "NameComponent": "HappyFace",
+            "Transform3DComponent": {
+                "Position": {
+                    "x": 433.0,
+                    "y": 448.9999694824219,
+                    "z": 0.0
+                },
+                "Rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -0.7071065902709961,
+                    "w": -0.7071069478988647
+                },
+                "Scale": {
+                    "x": 200.14002990722656,
+                    "y": 200.14002990722656,
+                    "z": 1.1399998664855957
+                }
+            },
+            "SpriteComponent": {
+                "Enabled": true,
+                "Color": {
+                    "x": 0.8980392217636108,
+                    "y": 0.24313725531101227,
+                    "z": 0.0,
+                    "w": 1.0
+                }
+            }
+        }
+    ]
+}

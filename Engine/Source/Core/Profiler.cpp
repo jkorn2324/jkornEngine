@@ -70,17 +70,17 @@ namespace Engine
 		}
 	}
 
-	double ProfileTimer::GetCurrentTime(ProfileTimeUnit time) const
+	double ProfileTimer::GetCurrentDuration(ProfileTimeUnit time) const
 	{
 		return Convert(m_prevFrame / (double)m_numFrames, time);
 	}
 
-	double ProfileTimer::GetAverageTime(ProfileTimeUnit time) const
+	double ProfileTimer::GetAverageDuration(ProfileTimeUnit time) const
 	{
 		return Convert(m_totalTime / (double)m_numFrames, time);
 	}
 	
-	double ProfileTimer::GetHighestTime(ProfileTimeUnit time) const
+	double ProfileTimer::GetHighestDuration(ProfileTimeUnit time) const
 	{
 		return Convert(m_highestFrame, time);
 	}
@@ -194,10 +194,10 @@ namespace Engine
 		if (begin)
 		{
 			s_jsonStringWriter.String("name", 4);
-			s_jsonStringWriter.String(name.c_str(), name.size());
+			s_jsonStringWriter.String(name.c_str(), (rapidjson::SizeType)name.size());
 
 			s_jsonStringWriter.String("cat", 3);
-			s_jsonStringWriter.String(category.c_str(), category.size());
+			s_jsonStringWriter.String(category.c_str(), (rapidjson::SizeType)category.size());
 		}
 
 		s_jsonStringWriter.String("ph", 2);

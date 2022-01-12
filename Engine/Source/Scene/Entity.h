@@ -16,6 +16,7 @@ namespace Engine
 	public:
 		explicit Entity() = default;
 		explicit Entity(const entt::entity& entity, class Scene* scene);
+		explicit Entity(const entt::entity& entity, const class Scene* scene);
 
 		template<typename T>
 		T& GetComponent() const;

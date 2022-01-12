@@ -261,6 +261,12 @@ namespace Engine
 			reinterpret_cast<const float*>(&m_clearColor));
 	}
 
+	void DirectX11RenderingAPI::ClearTexture(uint32_t slot)
+	{
+		ID3D11ShaderResourceView* view = nullptr;
+		m_deviceContext->PSSetShaderResources(slot, 1, &view);
+	}
+
 	void DirectX11RenderingAPI::Draw(VertexBuffer* vertexbuffer, IndexBuffer* indexBuffer)
 	{
 		DirectX11VertexBuffer* vBuffer = dynamic_cast<DirectX11VertexBuffer*>(

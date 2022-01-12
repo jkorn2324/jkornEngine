@@ -40,11 +40,7 @@ namespace GlfwSandbox
 	private:
 		Engine::VertexBuffer* m_vertexBuffer;
 		Engine::IndexBuffer* m_indexBuffer;
-
-		Engine::Entity m_cameraEntity;
-		Engine::Entity* m_spriteEntity;
-		Engine::Scene* m_scene;
-
+		
 		Engine::SubTexture* m_subTexture;
 
 		Engine::ConstantBuffer* m_entityConstantBuffer;

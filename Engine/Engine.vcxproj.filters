@@ -56,6 +56,12 @@
     <Filter Include="Libraries\rapidjson">
       <UniqueIdentifier>{f19c0675-8e46-499f-80ad-3fbe23ca2442}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Libraries\entt">
+      <UniqueIdentifier>{c1183ab0-47c5-406b-90f8-0171702bd08b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Serialization">
+      <UniqueIdentifier>{9eed387f-eec0-49f4-9421-f3bb36626008}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\EnginePCH.cpp">
@@ -201,6 +207,15 @@
     </ClCompile>
     <ClCompile Include="Source\Core\Profiler.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Serialization\JsonFileParser.cpp">
+      <Filter>Source Files\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Serialization\SceneSerializer.cpp">
+      <Filter>Source Files\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneManager.cpp">
+      <Filter>Source Files\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -488,6 +503,21 @@
     </ClInclude>
     <ClInclude Include="Libraries\rapidjson\include\rapidjson\error\error.h">
       <Filter>Libraries\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\entt\include\entt.hpp">
+      <Filter>Libraries\entt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Serialization\JsonFileParser.h">
+      <Filter>Source Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Serialization\SceneSerializer.h">
+      <Filter>Source Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Serialization\JsonUtils.h">
+      <Filter>Source Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneManager.h">
+      <Filter>Source Files\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

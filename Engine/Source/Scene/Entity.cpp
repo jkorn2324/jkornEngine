@@ -11,6 +11,13 @@ namespace Engine
     {
     }
 
+    Entity::Entity(const entt::entity& entity, const Scene* scene)
+        : m_scene((Scene*)scene),
+        m_entity(entity)
+    {
+
+    }
+
     bool Entity::IsValid() const
     {
         return m_scene != nullptr

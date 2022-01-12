@@ -190,7 +190,7 @@ namespace Engine
 		}
 
 		renderingAPI.SetViewport(0.0f, 0.0f,
-			m_frameBufferSpecification.width, m_frameBufferSpecification.height);
+			(float)m_frameBufferSpecification.width, (float)m_frameBufferSpecification.height);
 		renderingAPI.Clear();
 		renderingAPI.m_deviceContext->ClearDepthStencilView((ID3D11DepthStencilView*)m_depthTexture.m_view,
 			D3D11_CLEAR_DEPTH, 1.0f, 0);

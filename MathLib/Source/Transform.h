@@ -13,6 +13,8 @@ namespace MathLib
 
 	public:
 		explicit Transform2D();
+		explicit Transform2D(const Vector2& pos,
+			float rot, const Vector2& scale);
 
 		void SetPosition(float x, float y);
 		void SetPosition(const Vector2& position);
@@ -48,6 +50,8 @@ namespace MathLib
 
 	public:
 		explicit Transform3D();
+		explicit Transform3D(const Vector3& pos,
+			const Quaternion& rot, const Vector3& scale);
 
 		void SetPosition(const Vector3& pos);
 		void SetPosition(float x, float y, float z);

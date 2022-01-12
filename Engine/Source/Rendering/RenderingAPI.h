@@ -30,6 +30,8 @@ namespace Engine
 		virtual void SetWireframe(bool wireframeMode)=0;
 		virtual bool IsWireframe() const=0;
 
+		virtual void ClearTexture(uint32_t slot)=0;
+
 		virtual std::uint32_t GetWidth() const=0;
 		virtual std::uint32_t GetHeight() const=0;
 

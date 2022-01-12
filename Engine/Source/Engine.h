@@ -42,5 +42,7 @@
 #include "Entity.h"
 #include "Scene.h"
 #include "SceneCamera.h"
+#include "SceneSerializer.h"
+#include "SceneManager.h"
 
 #include "StringUtils.h"

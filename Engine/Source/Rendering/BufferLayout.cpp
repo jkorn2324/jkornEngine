@@ -154,7 +154,7 @@ namespace Engine
 	}
 
 	BufferLayout::BufferLayout(const std::initializer_list<BufferLayoutParam>& layoutParameters)
-		: m_numElements(layoutParameters.size()), m_inputElementDesc(nullptr)
+		: m_numElements((uint32_t)layoutParameters.size()), m_inputElementDesc(nullptr)
 	{
 		m_inputElementDesc = new D3D11_INPUT_ELEMENT_DESC[m_numElements];
 		// Creates the input element description.

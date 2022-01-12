@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\;Libraries\rapidjson\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;Source\Serialization\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\;Libraries\rapidjson\include\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\;Libraries\rapidjson\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;Source\Serialization\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\;Libraries\rapidjson\include\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -140,7 +140,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\;Libraries\rapidjson\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;Source\Serialization\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\;Libraries\rapidjson\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -162,7 +162,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WINDOWS;FBXSDK_SHARED;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\;Libraries\rapidjson\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Rendering\Textures\;Source\Rendering\;Source\Scene\Components\;Source\Scene\;Source\Assets\;Source\Platform\DirectX11\;Source\Platform\Windows\Glfw\;Source\Platform\Windows;Source\Platform\;Source\Core\;Source\;Source\Events\;Source\Utils\;Source\ImGui\;Source\Serialization\;..\MathLib\;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include\;Libraries\entt\include\;Libraries\DirectXTK\Inc;Libraries\glfw\include;Libraries\ImGui;Libraries\spdlog\include\;Libraries\rapidjson\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -179,6 +179,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Libraries\entt\include\entt.hpp" />
     <ClInclude Include="Libraries\rapidjson\include\rapidjson\allocators.h" />
     <ClInclude Include="Libraries\rapidjson\include\rapidjson\cursorstreamwrapper.h" />
     <ClInclude Include="Libraries\rapidjson\include\rapidjson\document.h" />
@@ -273,6 +274,10 @@
     <ClInclude Include="Source\Rendering\Textures\Texture.h" />
     <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Core\Window.h" />
+    <ClInclude Include="Source\Serialization\JsonFileParser.h" />
+    <ClInclude Include="Source\Scene\SceneManager.h" />
+    <ClInclude Include="Source\Serialization\SceneSerializer.h" />
+    <ClInclude Include="Source\Serialization\JsonUtils.h" />
     <ClInclude Include="Source\Utils\StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -324,6 +329,9 @@
     <ClCompile Include="Source\Rendering\Textures\Texture.cpp" />
     <ClCompile Include="Source\Scene\Scene.cpp" />
     <ClCompile Include="Source\Core\Window.cpp" />
+    <ClCompile Include="Source\Serialization\JsonFileParser.cpp" />
+    <ClCompile Include="Source\Scene\SceneManager.cpp" />
+    <ClCompile Include="Source\Serialization\SceneSerializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MathLib\MathLib.vcxproj">

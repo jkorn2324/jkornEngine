@@ -12,10 +12,28 @@
 namespace Engine
 {
 
+	Scene* Scene::CreateDefaultScene()
+	{
+		Scene* scene = new Scene();
+		// TODO: Add Default Scene
+
+		return scene;
+	}
+
 	Scene::Scene()
 		: m_entityRegistry(),
 		m_markedForDestroyEntities(),
-		m_camera(nullptr)
+		m_camera(nullptr),
+		m_sceneName(L"DefaultScene")
+	{
+
+	}
+
+	Scene::Scene(const std::wstring& name)
+		: m_entityRegistry(),
+		m_markedForDestroyEntities(),
+		m_camera(nullptr),
+		m_sceneName(name)
 	{
 	}
 
@@ -23,8 +41,12 @@ namespace Engine
 	{
 	}
 
-	void Scene::Update(const Timestep& ts)
+	const std::wstring& Scene::GetSceneName() const { return m_sceneName; }
+
+	void Scene::OnRuntimeUpdate(const Timestep& ts)
 	{
+		PROFILE_SCOPE(RuntimeUpdate, Update);
+
 		// Destroys the entities if they are marked for destroy.
 		{
 			std::int32_t sizeOfVec = m_markedForDestroyEntities.size() - 1;
@@ -60,6 +82,13 @@ namespace Engine
 		}
 	}
 
+	void Scene::OnEditorUpdate(const Timestep& ts)
+	{
+		PROFILE_SCOPE(EditorUpdate, Update);
+
+		// TODO: Implement editor update.
+	}
+
 	void Scene::Render()
 	{
 		PROFILE_SCOPE(SceneRender, Rendering);
@@ -82,16 +111,30 @@ namespace Engine
 		// Render the sprites.
 		{
 			m_entityRegistry.view<SpriteComponent, Transform3DComponent>().each(
-				[](auto entity, SpriteComponent& sprite, Transform3DComponent& transform)
-				{
-					if (!sprite.enabled) return;
+			[](auto entity, SpriteComponent& sprite, Transform3DComponent& transform)
+			{
+				if (!sprite.enabled) return;
 
-					GraphicsRenderer2D::DrawRect(transform.GetTransformMatrix(),
-						sprite.color, sprite.texture);
-				});
+				GraphicsRenderer2D::DrawRect(transform.GetTransformMatrix(),
+					sprite.color, sprite.texture);
+			});
 		}
 		
 		GraphicsRenderer::EndScene();
+	}
+
+	Entity Scene::Find(const std::string& entityName) const
+	{
+		const auto entityView = m_entityRegistry.view<const NameComponent>();
+		for (auto entity : entityView)
+		{
+			auto nameComponent = entityView.get(entity);
+			if (nameComponent.name == entityName)
+			{
+				return Entity(entity, this);
+			}
+		}
+		return Entity(entt::null, this);
 	}
 
 	Camera* Scene::GetCamera() const

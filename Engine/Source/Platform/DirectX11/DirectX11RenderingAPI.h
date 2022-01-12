@@ -30,6 +30,8 @@ namespace Engine
 		void SetClearColor(const MathLib::Vector4& clearColor) override;
 		void Clear() override;
 
+		void ClearTexture(uint32_t slot) override;
+
 		void Draw(class VertexBuffer* buffer, 
 			class IndexBuffer* indexBuffer = nullptr) override;
 		void SwapBuffers() override;

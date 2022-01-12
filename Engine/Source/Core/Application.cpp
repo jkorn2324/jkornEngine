@@ -15,7 +15,8 @@
 #include "Input.h"
 #include "Logger.h"
 #include "Profiler.h"
-
+#include "AssetManager.h"
+#include "SceneManager.h"
 
 namespace Engine
 {
@@ -55,6 +56,7 @@ namespace Engine
 		Input::BindInputEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 		GraphicsRenderer::Init();
 		GraphicsRenderer2D::Init();
+		SceneManager::Init();
 
 		m_imguiLayer = new ImGuiLayer();
 		m_windowLayerStack.AddOverlay(m_imguiLayer);
@@ -64,6 +66,8 @@ namespace Engine
 	{
 		m_windowLayerStack.Clear();
 
+		SceneManager::Release();
+		AssetManager::UncacheAssets();
 		GraphicsRenderer2D::Release();
 		GraphicsRenderer::Release();
 		Profiler::Release();

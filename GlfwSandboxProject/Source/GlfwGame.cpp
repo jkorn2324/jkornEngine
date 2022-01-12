@@ -12,8 +12,6 @@ namespace GlfwSandbox
 		: Layer("Game Layer"),
 		m_vertexBuffer(nullptr),
 		m_indexBuffer(nullptr),
-		m_spriteEntity(nullptr),
-		m_scene(nullptr),
 		m_entityConstantBuffer(nullptr),
 		m_subTexture(nullptr),
 		m_frameBuffer(nullptr)
@@ -24,60 +22,18 @@ namespace GlfwSandbox
 	
 	GlfwGame::~GlfwGame()
 	{
-		Engine::AssetManager::UncacheAssets();
+		Engine::SceneSerializer serializer(&Engine::SceneManager::GetActiveScene());
+		serializer.Serialize(L"GlfwGameScene.json");
 
 		delete m_frameBuffer;
 		delete m_subTexture;
 		delete m_entityConstantBuffer;
 		delete m_vertexBuffer;
 		delete m_indexBuffer;
-		delete m_spriteEntity;
-		delete m_scene;
 	}
 
 	void GlfwGame::InitializeRenderBuffers()
 	{
-		{
-			VertexPositionColor vertices[3] =
-			{
-				{
-					MathLib::Vector3(0.0f, 0.5f, 0.0f),
-					MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f)
-				},
-				{
-					MathLib::Vector3(0.0f, -0.5f, 0.0f),
-					MathLib::Vector4(0.0f, 1.0f, 0.0f, 1.0f)
-				},
-				{
-					MathLib::Vector3(-0.25f, 0.0f, 0.0f),
-					MathLib::Vector4(1.0f, 0.0f, 0.0f, 1.0f)
-				}
-			};
-
-			std::uint16_t indexBuffer[3]
-			{
-				0, 1, 2
-			};
-
-			m_vertexBuffer = Engine::VertexBuffer::Create(
-				&vertices[0], sizeof(vertices) / sizeof(vertices[0]), sizeof(vertices[0]));
-			m_indexBuffer = Engine::IndexBuffer::Create(
-				&indexBuffer[0], sizeof(indexBuffer) / sizeof(indexBuffer[0]), sizeof(indexBuffer[0]));
-
-			Engine::BufferLayout bufferLayout(
-				{
-					{ "POSITION", offsetof(VertexPositionColor, position),
-						sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
-					{ "COLOR", offsetof(VertexPositionColor, color),
-						sizeof(MathLib::Vector4), Engine::BufferLayoutType::FLOAT4 }
-				});
-
-			Engine::AssetCache<Engine::Shader>& shaderAssetCache =
-				Engine::AssetManager::GetShaders();
-			Engine::Shader* shader = shaderAssetCache.Load<const Engine::BufferLayout&>(
-				L"Shaders/TriangleShader.hlsl", bufferLayout);
-		}
-
 		Engine::AssetCache<Engine::Texture>& textureAssetCache =
 			Engine::AssetManager::GetTextures();
 		{
@@ -99,17 +55,23 @@ namespace GlfwSandbox
 
 	void GlfwGame::InitializeSceneComponents()
 	{
-		m_scene = new Engine::Scene();
+		Engine::SceneManager::LoadScene(L"GlfwGameScene.json");
+		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
 
-		m_cameraEntity = m_scene->CreateEntity();
+		Engine::Entity cameraEntity = scene.Find("CameraEntity");
+		if (cameraEntity.IsValid())
+		{
+			return;
+		}
+		cameraEntity = scene.CreateEntity("CameraEntity");
 		{
 			Engine::Transform3DComponent& camComponentTransform
-				= m_cameraEntity.AddComponent<Engine::Transform3DComponent>();
+				= cameraEntity.AddComponent<Engine::Transform3DComponent>();
 			camComponentTransform.SetPosition(MathLib::Vector3(-1.0f, 0.0f, 0.0f));
 			camComponentTransform.LookAt(MathLib::Vector3(0.0f, 0.0f, 0.0f));
 			
 			Engine::SceneCameraComponent& camComponent
-				= m_cameraEntity.AddComponent<Engine::SceneCameraComponent>();
+				= cameraEntity.AddComponent<Engine::SceneCameraComponent>();
 			Engine::CameraProperties& properties
 				= camComponent.camera.GetProperties();
 			Engine::Application& app = Engine::Application::Get();
@@ -117,64 +79,64 @@ namespace GlfwSandbox
 			properties.orthoHeight = (float)app.GetWindow().GetHeight();
 		}
 
-		m_spriteEntity = new Engine::Entity(m_scene->CreateEntity());
+		Engine::Entity entity = scene.CreateEntity("HappyFace");
 		{
 			Engine::Transform3DComponent& component
-				= m_spriteEntity->AddComponent<Engine::Transform3DComponent>();
-			component.SetScale(0.1f, 0.1f, 0.1f);
-			m_spriteEntity->AddComponent<Engine::SpriteComponent>(
-				Engine::AssetManager::GetTextures().Get(L"Assets/Textures/happy-face.png"));
+				= entity.AddComponent<Engine::Transform3DComponent>();
+			component.SetScale(200.0f, 200.0f, 1.0f);
+			entity.AddComponent<Engine::SpriteComponent>();
+			/* entity.AddComponent<Engine::SpriteComponent>(
+				Engine::AssetManager::GetTextures().Get(L"Assets/Textures/happy-face.png")); */
 		}
 	}
 
 	void GlfwGame::OnUpdate(const Engine::Timestep& ts)
 	{
-		if (m_scene != nullptr)
-		{
-			m_scene->Update(ts);
-		}
+		Engine::SceneManager::OnRuntimeUpdate(ts);
 
-		Engine::Transform3DComponent& transformComponent
-			= m_spriteEntity->GetComponent<Engine::Transform3DComponent>();
-		MathLib::Vector3 position = transformComponent.GetPosition();
-		MathLib::Vector3 direction;
-		if (Engine::Input::IsKeyHeld(Engine::InputKeyCode::KEY_CODE_A))
-		{
-			direction = -MathLib::Vector3::UnitX;
-		}
-		else if (Engine::Input::IsKeyHeld(Engine::InputKeyCode::KEY_CODE_D))
-		{
-			direction = MathLib::Vector3::UnitX;
-		}
+		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
+		Engine::Entity entity = scene.Find("HappyFace");
 
-#if 0
-		if (Engine::Input::IsKeyPressed(Engine::InputKeyCode::KEY_CODE_SPACE))
-		{
-			position += MathLib::Vector3::UnitY * 20.0f;
-		}
-#endif
-
+		if (entity.IsValid())
 		{
 			Engine::Transform3DComponent& transformComponent
-				= m_spriteEntity->GetComponent<Engine::Transform3DComponent>();
-			MathLib::Vector3 scale = transformComponent.GetScale() + MathLib::Vector3::One * 
-				Engine::Input::GetMouseScrollOffset().y * 0.02f;
-			transformComponent.SetScale(scale);
-		}
+				= entity.GetComponent<Engine::Transform3DComponent>();
+			MathLib::Vector3 position = transformComponent.GetPosition();
+			MathLib::Vector3 direction;
+			if (Engine::Input::IsKeyHeld(Engine::InputKeyCode::KEY_CODE_A))
+			{
+				direction = -MathLib::Vector3::UnitX;
+			}
+			else if (Engine::Input::IsKeyHeld(Engine::InputKeyCode::KEY_CODE_D))
+			{
+				direction = MathLib::Vector3::UnitX;
+			}
 
-		if (Engine::Input::IsMouseButtonHeld(Engine::MOUSE_BUTTON_MIDDLE))
-		{
-			s_rotation += 10.0f;
-			transformComponent.SetRotation(MathLib::Quaternion::FromEuler(0.0f, 0.0f, s_rotation));
-		}
+#if 0
+			if (Engine::Input::IsKeyPressed(Engine::InputKeyCode::KEY_CODE_SPACE))
+			{
+				position += MathLib::Vector3::UnitY * 20.0f;
+			}
+#endif
 
-		MathLib::Vector2 screenPos = Engine::Input::GetMouseScreenPos();
-		if (m_scene != nullptr)
-		{
-			position = m_scene->GetCamera()->ScreenToWorld(screenPos);
+			{
+				Engine::Transform3DComponent& transformComponent
+					= entity.GetComponent<Engine::Transform3DComponent>();
+				MathLib::Vector3 scale = transformComponent.GetScale() + MathLib::Vector3::One *
+					Engine::Input::GetMouseScrollOffset().y * 0.02f;
+				transformComponent.SetScale(scale);
+			}
 
+			if (Engine::Input::IsMouseButtonHeld(Engine::MOUSE_BUTTON_MIDDLE))
+			{
+				s_rotation += 10.0f;
+				transformComponent.SetRotation(MathLib::Quaternion::FromEuler(0.0f, 0.0f, s_rotation));
+			}
+
+			MathLib::Vector2 screenPos = Engine::Input::GetMouseScreenPos();
+			position = scene.GetCamera()->ScreenToWorld(screenPos);
+			transformComponent.SetPosition(position);
 		}
-		transformComponent.SetPosition(position);
 		Render();
 	}
 
@@ -182,11 +144,17 @@ namespace GlfwSandbox
 
 	void GlfwGame::OnImGuiRender()
 	{
-		Engine::SpriteComponent& component = m_spriteEntity->GetComponent<Engine::SpriteComponent>();
+		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
+		Engine::Entity spriteEntity = scene.Find("HappyFace");
+		if (spriteEntity.IsValid())
+		{
+			Engine::SpriteComponent& component = 
+				spriteEntity.GetComponent<Engine::SpriteComponent>();
 
-		ImGui::Begin("Variables Editor");
-		ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&component.color));
-		ImGui::End();
+			ImGui::Begin("Variables Editor");
+			ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&component.color));
+			ImGui::End();
+		}
 	}
 
 	void GlfwGame::OnEvent(Engine::Event& event)
@@ -197,12 +165,17 @@ namespace GlfwSandbox
 
 	bool GlfwGame::OnWindowResize(Engine::WindowResizedEvent& event)
 	{
-		Engine::SceneCameraComponent& component
-			= m_cameraEntity.GetComponent<Engine::SceneCameraComponent>();
-		Engine::CameraProperties& properties
-			= component.camera.GetProperties();
-		properties.orthoWidth = (float)event.width;
-		properties.orthoHeight = (float)event.height;
+		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
+		Engine::Entity cameraEntity = scene.Find("CameraEntity");
+		if (cameraEntity.IsValid())
+		{
+			Engine::SceneCameraComponent& component
+				= cameraEntity.GetComponent<Engine::SceneCameraComponent>();
+			Engine::CameraProperties& properties
+				= component.camera.GetProperties();
+			properties.orthoWidth = (float)event.width;
+			properties.orthoHeight = (float)event.height;
+		}
 		return true;
 	}
 
@@ -212,7 +185,7 @@ namespace GlfwSandbox
 	void GlfwGame::Render()
 	{
 		m_frameBuffer->Bind();
-		m_scene->Render();
+		Engine::SceneManager::GetActiveScene().Render();
 
 		{
 			Engine::GraphicsRenderer2D::DrawRect(MathLib::Vector2(20.0f, 0.0f),

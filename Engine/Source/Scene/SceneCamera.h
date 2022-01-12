@@ -29,10 +29,15 @@ namespace Engine
 	public:
 		explicit SceneCamera();
 		explicit SceneCamera(const SceneCameraType& type);
+		explicit SceneCamera(const SceneCameraType& type,
+			const CameraProperties& properties);
 		~SceneCamera() = default;
 
 		CameraProperties& GetProperties() { return m_cameraProperties; }
 		const CameraProperties& GetProperties() const { return m_cameraProperties; }
+
+		SceneCameraType GetSceneCameraType() const { return m_sceneCameraType; }
+		void SetSceneCameraType(SceneCameraType cameraType) { m_sceneCameraType = cameraType; }
 
 		void SetViewMatrix(const MathLib::Matrix4x4& mat);
 
