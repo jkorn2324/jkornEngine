@@ -1,8 +1,14 @@
 #pragma once
 
+#include <functional>
 
 namespace Engine
 {
+
+	class Scene;
+	class Timestep;
+
+	using EventFunc = std::function<void(class Event&)>;
 
 	class SceneManager
 	{
@@ -12,9 +18,14 @@ namespace Engine
 
 		static void LoadScene(const wchar_t* filePath);
 
-		static class Scene& GetActiveScene();
+		static Scene& GetActiveScene();
 
-		static void OnRuntimeUpdate(const class Timestep& ts);
-		static void OnEditorUpdate(const class Timestep& ts);
+		static void OnRuntimeUpdate(const Timestep& ts);
+		static void OnEditorUpdate(const Timestep& ts);
+
+	private:
+		static void BindEventFunc(const EventFunc& func);
+
+		friend class Application;
 	};
 }

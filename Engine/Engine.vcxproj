@@ -241,6 +241,7 @@ xcopy "$(ProjectDir)Shaders\*.*" "$(SolutionDir)GlfwSandboxProject\Shaders\" /Y 
     <ClInclude Include="Source\Core\Input.h" />
     <ClInclude Include="Source\Core\Logger.h" />
     <ClInclude Include="Source\Core\Profiler.h" />
+    <ClInclude Include="Source\Events\SceneEvent.h" />
     <ClInclude Include="Source\ImGui\PlatformImGuiLayer.h" />
     <ClInclude Include="Source\Platform\DirectX11\DirectX11BufferLayout.h" />
     <ClInclude Include="Source\Platform\DirectX11\DirectX11ImGuiLayer.h" />

@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "Scene.h"
 #include "Entity.h"
+#include "SceneEvent.h"
 
 #include "Components.h"
 #include "Camera.h"
@@ -8,6 +9,8 @@
 #include "Profiler.h"
 #include "GraphicsRenderer.h"
 #include "GraphicsRenderer2D.h"
+
+#include <sstream>
 
 namespace Engine
 {
@@ -42,6 +45,11 @@ namespace Engine
 	}
 
 	const std::wstring& Scene::GetSceneName() const { return m_sceneName; }
+
+	void Scene::BindEventFunc(const EventFunc& func)
+	{
+		m_eventFunc = func;
+	}
 
 	void Scene::OnRuntimeUpdate(const Timestep& ts)
 	{
@@ -146,6 +154,12 @@ namespace Engine
 	{
 		Entity createdEntity = Entity(m_entityRegistry.create(), this);
 		createdEntity.AddComponent<NameComponent>(entityName);
+
+		if (m_eventFunc != nullptr)
+		{
+			EntityCreatedEvent createdEvent(createdEntity);
+			m_eventFunc(createdEvent);
+		}
 		return createdEntity;
 	}
 
@@ -162,6 +176,12 @@ namespace Engine
 		if (find == m_markedForDestroyEntities.end())
 		{
 			m_markedForDestroyEntities.push_back(entity.m_entity);
+		}
+
+		if (m_eventFunc != nullptr)
+		{
+			EntityDestroyedEvent destroyedEvent(entity);
+			m_eventFunc(destroyedEvent);
 		}
 	}
 }

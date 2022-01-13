@@ -22,6 +22,12 @@
     <ClCompile Include="Source\Layer\EditorLayer.cpp">
       <Filter>Source Files\Layer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Layer\Window\SceneHierarchy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utils\EditorUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\EditorPCH.h">
@@ -30,5 +36,7 @@
     <ClInclude Include="Source\Layer\EditorLayer.h">
       <Filter>Source Files\Layer</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Layer\Window\SceneHierarchy.h" />
+    <ClInclude Include="Source\Utils\EditorUtils.h" />
   </ItemGroup>
 </Project>

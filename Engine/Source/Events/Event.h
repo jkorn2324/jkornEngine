@@ -11,13 +11,19 @@ namespace Engine
 
 		InputKeyEvent, InputKeyPressedEvent, InputKeyReleasedEvent,
 		InputMouseButtonEvent, InputMouseButtonPressedEvent, InputMouseButtonReleasedEvent,
-		InputMouseMoveEvent, InputMouseScrollEvent
+		InputMouseMoveEvent, InputMouseScrollEvent,
+
+		EntityCreatedEvent, EntityDestroyedEvent,
+
+		EntitySelectionEvent
 	};
 
 	enum class EventCategory
 	{
 		Application,
-		Input
+		Input,
+		Scene,
+		Editor
 	};
 
 #define EVENT_TYPE_CLASS(type) public:\

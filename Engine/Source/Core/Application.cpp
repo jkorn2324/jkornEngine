@@ -56,6 +56,8 @@ namespace Engine
 		Input::BindInputEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 		GraphicsRenderer::Init();
 		GraphicsRenderer2D::Init();
+
+		SceneManager::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 		SceneManager::Init();
 
 		m_imguiLayer = new ImGuiLayer();

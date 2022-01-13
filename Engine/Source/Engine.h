@@ -21,6 +21,7 @@
 
 #include "ApplicationEvent.h"
 #include "Event.h"
+#include "SceneEvent.h"
 
 #include "ImGuiLayer.h"
 

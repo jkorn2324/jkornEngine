@@ -31,6 +31,18 @@ namespace Engine
 
 		bool IsValid() const;
 
+		const entt::entity& GetID() const { return m_entity; }
+
+		friend bool operator==(const Entity& a, const Entity& b)
+		{
+			return a.m_entity == b.m_entity;
+		}
+
+		friend bool operator!=(const Entity& a, const Entity& b)
+		{
+			return a.m_entity != b.m_entity;
+		}
+
 	private:
 		class Scene* m_scene;
 		entt::entity m_entity{ entt::null };
