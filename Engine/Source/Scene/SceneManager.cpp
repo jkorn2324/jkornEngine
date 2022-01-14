@@ -64,4 +64,12 @@ namespace Engine
 			s_activeScene->BindEventFunc(s_eventFunc);
 		}
 	}
+
+	void SceneManager::Render()
+	{
+		if (s_activeScene != nullptr)
+		{
+			s_activeScene->Render();
+		}
+	}
 }

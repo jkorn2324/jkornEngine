@@ -23,6 +23,8 @@ namespace Engine
 		static void OnRuntimeUpdate(const Timestep& ts);
 		static void OnEditorUpdate(const Timestep& ts);
 
+		static void Render();
+
 	private:
 		static void BindEventFunc(const EventFunc& func);
 

@@ -164,12 +164,14 @@
     <ClCompile Include="Source\Editor.cpp" />
     <ClCompile Include="Source\EditorPCH.cpp" />
     <ClCompile Include="Source\Layer\EditorLayer.cpp" />
+    <ClCompile Include="Source\Layer\Window\EntityInspector.cpp" />
     <ClCompile Include="Source\Layer\Window\SceneHierarchy.cpp" />
     <ClCompile Include="Source\Utils\EditorUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\EditorPCH.h" />
     <ClInclude Include="Source\Layer\EditorLayer.h" />
+    <ClInclude Include="Source\Layer\Window\EntityInspector.h" />
     <ClInclude Include="Source\Layer\Window\SceneHierarchy.h" />
     <ClInclude Include="Source\Utils\EditorUtils.h" />
   </ItemGroup>

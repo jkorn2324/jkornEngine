@@ -47,26 +47,33 @@ namespace MathLib
 
 	Vector3 Quaternion::ToEuler() const
 	{
-		Vector3 quatX(
-			1.0f - 2.0f * y * y - 2.0f * z * z,
-			2.0f * x * y + 2.0f * z * w,
-			2.0f * x * z - 2.0f * y * w);
-		quatX.Normalize();
-		Vector3 quatY(
-			2.0f * x * y - 2.0f * z * w,
-			1.0f - 2.0f * x * x - 2.0f * z * z,
-			2.0f * y * z + 2.0f * x * w);
-		quatY.Normalize();
-		Vector3 quatZ(
-			2.0f * x * z + 2.0f * y * w,
-			2.0f * y * z - 2.0f * x * w,
-			1.0f - 2.0f * x * x - 2.0f * y * y);
-		quatZ.Normalize();
+		return ToEuler(false);
+	}
 
-		return Vector3(
-			ACos(Dot(quatX, Vector3::UnitX), false),
-			ACos(Dot(quatY, Vector3::UnitY), false),
-			ACos(Dot(quatZ, Vector3::UnitZ), false));
+	Vector3 Quaternion::ToEuler(bool inDegrees) const
+	{
+		// X-Axis
+		float roll = ATan2(
+			2.0f * ((w * x) + (y * z)),
+			1.0f - 2.0f * (x * x + y * y));
+		
+		// Y-Axis
+		float pitch = 2.0f * (w * y - z * x);
+		if (Abs(pitch) >= 1.0f)
+		{
+			pitch = std::copysign(PI * 0.5f, pitch);
+		}
+		else
+		{
+			pitch = ASin(pitch, false);
+		}
+
+		// Z-Axis
+		float yaw = ATan2(
+			2.0f * (w * z + x * y), 
+			1.0f - 2.0f * (y * y + z * z));
+		float conversion = inDegrees ? RAD2DEG : 1.0f;
+		return Vector3(roll * conversion, pitch * conversion, yaw * conversion);
 	}
 
 	void Quaternion::Conjugate()
@@ -84,6 +91,11 @@ namespace MathLib
 	Vector3 ToEuler(const Quaternion& quaternion)
 	{
 		return quaternion.ToEuler();
+	}
+
+	Vector3 ToEuler(const Quaternion& quat, bool inDegrees)
+	{
+		return quat.ToEuler(inDegrees);
 	}
 
 	Quaternion Concatenate(const Quaternion& a, const Quaternion& b)
@@ -171,14 +183,14 @@ namespace MathLib
 	Quaternion Quaternion::FromEuler(float roll, float pitch, float yaw, bool inDegrees)
 	{
 		return Quaternion(
-			Sin(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Cos(roll * 0.5f, inDegrees) 
-				- Cos(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Sin(roll * 0.5f, inDegrees),
+			Sin(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Cos(roll * 0.5f, inDegrees)
+			- Cos(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Sin(roll * 0.5f, inDegrees),
 			Cos(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Cos(roll * 0.5f, inDegrees)
-				- Sin(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Sin(roll * 0.5f, inDegrees),
+			- Sin(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Sin(roll * 0.5f, inDegrees),
 			Cos(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Sin(yaw * 0.5f, inDegrees)
-				- Sin(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Cos(yaw * 0.5f, inDegrees),
+			- Sin(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Cos(yaw * 0.5f, inDegrees),
 			Cos(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Cos(yaw * 0.5f, inDegrees)
-				- Sin(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Sin(yaw * 0.5f, inDegrees));
+			- Sin(roll * 0.5f, inDegrees) * Sin(pitch * 0.5f, inDegrees) * Sin(yaw * 0.5f, inDegrees));
 	}
 
 	Quaternion Normalize(const Quaternion& quat)
@@ -189,5 +201,21 @@ namespace MathLib
 			quat.y / length,
 			quat.z / length,
 			quat.w / length);
+	}
+
+	bool operator==(const Quaternion& a, const Quaternion& b)
+	{
+		return MathLib::IsCloseEnough(a.x, b.x)
+			&& MathLib::IsCloseEnough(a.y, b.y)
+			&& MathLib::IsCloseEnough(a.z, b.z)
+			&& MathLib::IsCloseEnough(a.w, b.w);
+	}
+
+	bool operator!=(const Quaternion& a, const Quaternion& b)
+	{
+		return !MathLib::IsCloseEnough(a.x, b.x)
+			|| !MathLib::IsCloseEnough(a.y, b.y)
+			|| !MathLib::IsCloseEnough(a.z, b.z)
+			|| !MathLib::IsCloseEnough(a.w, b.w);
 	}
 }

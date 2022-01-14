@@ -384,7 +384,7 @@ namespace MathLib
 			(right + left) / (right - left), (top + bottom) / (top - bottom), -(farPlane + nearPlane) / (farPlane - nearPlane), -1.0f,
 			0.0f, 0.0f, -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane), 0.0f
 		};
-		return Matrix4x4();
+		return Matrix4x4(mat);
 	}
 
 	Matrix4x4 Matrix4x4::CreatePersp(float fov, float width, float height, float nearPlane, float farPlane)

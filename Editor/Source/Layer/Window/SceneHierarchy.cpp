@@ -49,12 +49,12 @@ namespace Editor
 
 	void SceneHierarchy::Draw()
 	{
-		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar;
-		if (!ImGui::Begin("Scene Hierarchy", &m_open, windowFlags))
+		if (!m_open)
 		{
-			ImGui::End();
 			return;
 		}
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar;
+		ImGui::Begin("Scene Hierarchy", &m_open, windowFlags);
 
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Left)
 			&& ImGui::IsWindowHovered())

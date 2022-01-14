@@ -28,6 +28,9 @@
     <ClCompile Include="Source\Utils\EditorUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Layer\Window\EntityInspector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\EditorPCH.h">
@@ -38,5 +41,6 @@
     </ClInclude>
     <ClInclude Include="Source\Layer\Window\SceneHierarchy.h" />
     <ClInclude Include="Source\Utils\EditorUtils.h" />
+    <ClInclude Include="Source\Layer\Window\EntityInspector.h" />
   </ItemGroup>
 </Project>

@@ -76,6 +76,11 @@ namespace MathLib
 		return m_rotation;
 	}
 
+	float Transform2D::GetRotation(bool inDegrees) const
+	{
+		return inDegrees ? MathLib::DEG2RAD * m_rotation : m_rotation;
+	}
+
 	const Mat3x3& Transform2D::GetTransformMatrix3x3() const
 	{
 		return m_transformMatrix;
@@ -189,6 +194,8 @@ namespace MathLib
 	void Transform3D::SetRotation(const Quaternion& quat)
 	{
 		m_rotation = quat;
+		m_rotation.Normalize();
+
 		RecalculateMatrix();
 	}
 

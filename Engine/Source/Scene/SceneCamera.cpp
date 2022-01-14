@@ -8,11 +8,14 @@ namespace Engine
 	static const float DEFAULT_WIDTH = 600.0f;
 	static const float DEFAULT_HEIGHT = 800.0f;
 
+	static const float DEFAULT_NEAR_PLANE = 25.0f;
+	static const float DEFAULT_FAR_PLANE = 10000.0f;
+
 	SceneCamera::SceneCamera()
 		: Camera(),
 		m_cameraProperties({
-			1000.0f,
-			-1000.0f,
+			DEFAULT_NEAR_PLANE,
+			DEFAULT_FAR_PLANE,
 			MathLib::DEG2RAD * 50.0f,
 			DEFAULT_WIDTH / DEFAULT_HEIGHT,
 			DEFAULT_WIDTH,
@@ -26,8 +29,8 @@ namespace Engine
 	SceneCamera::SceneCamera(const SceneCameraType& type)
 		: Camera(),
 		m_cameraProperties({
-			1000.0f,
-			-1000.0f,
+			DEFAULT_NEAR_PLANE,
+			DEFAULT_FAR_PLANE,
 			MathLib::DEG2RAD * 50.0f,
 			DEFAULT_WIDTH / DEFAULT_HEIGHT,
 			DEFAULT_WIDTH,
@@ -69,7 +72,7 @@ namespace Engine
 			case TYPE_PERSPECTIVE:
 			{
 				m_projectionMatrix = rotationMat * MathLib::Matrix4x4::CreatePersp(
-					m_cameraProperties.perspFOV, m_cameraProperties.perspFOV, 
+					m_cameraProperties.perspFOV, m_cameraProperties.perspAspectRatio, 
 					m_cameraProperties.nearPlane, m_cameraProperties.farPlane);
 				break;
 			}

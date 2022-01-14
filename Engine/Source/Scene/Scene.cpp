@@ -61,6 +61,7 @@ namespace Engine
 			while (sizeOfVec >= 0)
 			{
 				m_entityRegistry.destroy(m_markedForDestroyEntities[sizeOfVec]);
+				m_markedForDestroyEntities.pop_back();
 				sizeOfVec--;
 			}
 		}
@@ -170,6 +171,10 @@ namespace Engine
 
 	void Scene::DestroyEntity(const Entity& entity)
 	{
+		if (!entity.IsValid())
+		{
+			return;
+		}
 		const auto& find = std::find(m_markedForDestroyEntities.begin(), 
 			m_markedForDestroyEntities.end(), entity.m_entity);
 

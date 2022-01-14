@@ -4,6 +4,7 @@
 #include "Timestep.h"
 
 #include "SceneHierarchy.h"
+#include "EntityInspector.h"
 
 namespace Engine
 {
@@ -30,5 +31,6 @@ namespace Editor
 	private:
 		Engine::FrameBuffer* m_frameBuffer;
 		SceneHierarchy m_sceneHierarchy;
+		EntityInspector m_entityInspector;
 	};
 }

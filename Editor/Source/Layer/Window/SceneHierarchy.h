@@ -24,6 +24,7 @@ namespace Editor
 		SceneHierarchy();
 		~SceneHierarchy();
 
+		void SetOpen(bool open) { m_open = open; }
 		bool IsOpen() const { return m_open; }
 		
 		void OnEvent(Engine::Event& event);

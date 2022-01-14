@@ -55,6 +55,12 @@ namespace MathLib
 		return std::atan2f(y, x);
 	}
 
+	static float ASin(float input, bool inDegrees = true)
+	{
+		float theta = inDegrees ? DEG2RAD * input : input;
+		return std::asinf(theta);
+	}
+
 	template<typename T>
 	static T Max(const T& a, const T& b)
 	{

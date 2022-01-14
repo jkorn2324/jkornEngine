@@ -27,6 +27,7 @@ namespace MathLib
 
 		void SetRotation(float rotation, bool inDegrees = true);
 		float GetRotation() const;
+		float GetRotation(bool inDegrees) const;
 
 		void LookAt(const MathLib::Vector2& position);
 
