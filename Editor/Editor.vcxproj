@@ -93,7 +93,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>Source\;Source\Layer\;Source\Layer\Window\;Source\Utils\;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Source\Serialization\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\;Source\Layer\;Source\Layer\Window\;Source\Utils\;Source\Scene\;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Source\Serialization\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>EditorPCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -112,7 +112,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>Source\;Source\Layer\;Source\Layer\Window\;Source\Utils\;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Source\Serialization\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\;Source\Layer\;Source\Layer\Window\;Source\Utils\;Source\Scene\;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Source\Serialization\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>EditorPCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -131,7 +131,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>Source\;Source\Layer\;Source\Layer\Window\;Source\Utils\;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Source\Serialization\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\;Source\Layer\;Source\Layer\Window\;Source\Utils\;Source\Scene\;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Source\Serialization\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>EditorPCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -149,7 +149,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>Source\;Source\Layer\;Source\Layer\Window\;Source\Utils\;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Source\Serialization\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\;Source\Layer\;Source\Layer\Window\;Source\Utils\;Source\Scene\;..\MathLib;..\Engine;..\Engine\Source\;..\Engine\Source\Rendering\Textures\;..\Engine\Source\Rendering\;..\Engine\Source\Assets\;..\Engine\Source\Scene\;..\Engine\Source\Events\;..\Engine\Source\Core\;..\Engine\Source\Scene\Components\;..\Engine\Source\Platform\Windows\;..\Engine\Source\Platform\;..\Engine\Source\ImGui\;..\Engine\Source\Utils\;..\Engine\Source\Serialization\;..\Engine\Libraries\entt\include\;..\Engine\Libraries\ImGui\;..\Engine\Libraries\spdlog\include\</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>EditorPCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -166,6 +166,7 @@
     <ClCompile Include="Source\Layer\EditorLayer.cpp" />
     <ClCompile Include="Source\Layer\Window\EntityInspector.cpp" />
     <ClCompile Include="Source\Layer\Window\SceneHierarchy.cpp" />
+    <ClCompile Include="Source\Scene\EditorCamera.cpp" />
     <ClCompile Include="Source\Utils\EditorUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +174,7 @@
     <ClInclude Include="Source\Layer\EditorLayer.h" />
     <ClInclude Include="Source\Layer\Window\EntityInspector.h" />
     <ClInclude Include="Source\Layer\Window\SceneHierarchy.h" />
+    <ClInclude Include="Source\Scene\EditorCamera.h" />
     <ClInclude Include="Source\Utils\EditorUtils.h" />
   </ItemGroup>
   <ItemGroup>

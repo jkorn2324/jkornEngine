@@ -29,7 +29,9 @@ namespace Editor
 		void OnEvent(Engine::Event& event) override;
 
 	private:
-		Engine::FrameBuffer* m_frameBuffer;
+		Engine::FrameBuffer* m_editorFrameBuffer;
+		Engine::FrameBuffer* m_runtimeFrameBuffer;
+
 		SceneHierarchy m_sceneHierarchy;
 		EntityInspector m_entityInspector;
 	};

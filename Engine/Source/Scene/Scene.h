@@ -27,6 +27,7 @@ namespace Engine
 		void OnRuntimeUpdate(const Timestep& ts);
 		void OnEditorUpdate(const Timestep& ts);
 
+		void Render(const struct CameraConstants& cameraConstants);
 		void Render();
 
 		Entity CreateEntity(const char* entityName);

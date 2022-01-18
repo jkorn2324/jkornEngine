@@ -206,8 +206,8 @@ namespace MathLib
 
 	void Transform3D::LookAt(const MathLib::Vector3& position)
 	{
-		Vector3 forwardAxis = Vector3::UnitX;
-		Vector3 forward = m_transformMatrix.GetXAxis();
+		Vector3 forwardAxis = Vector3::UnitZ;
+		Vector3 forward = m_transformMatrix.GetZAxis();
 		Vector3 dir = Normalize(position - m_position);
 		float dotForwardNDir = Dot(forward, dir);
 		if (dotForwardNDir >= 1.0f)
@@ -216,6 +216,6 @@ namespace MathLib
 		}
 		float dot = Dot(forwardAxis, dir);
 		Vector3 axis = Normalize(Cross(forwardAxis, dir));
-		SetRotation(Quaternion(axis, MathLib::ACos(dot)));
+		SetRotation(Quaternion(axis, MathLib::ACos(dot, false)));
 	}
 }

@@ -105,17 +105,17 @@ namespace Engine
 			WriteString(writer, "CameraType");
 			writer.Uint((uint32_t)cameraComponent.camera.GetSceneCameraType());
 			WriteString(writer, "NearPlane");
-			writer.Double(properties.nearPlane);
+			writer.Double((double)properties.nearPlane);
 			WriteString(writer, "FarPlane");
-			writer.Double(properties.farPlane);
+			writer.Double((double)properties.farPlane);
 			WriteString(writer, "PerspFOV");
-			writer.Double(properties.perspFOV);
+			writer.Double((double)properties.perspFOV);
 			WriteString(writer, "PerspAspectRatio");
-			writer.Double(properties.perspAspectRatio);
+			writer.Double((double)properties.perspAspectRatio);
 			WriteString(writer, "OrthoWidth");
-			writer.Double(properties.orthoWidth);
+			writer.Double((double)properties.orthoWidth);
 			WriteString(writer, "OrthoHeight");
-			writer.Double(properties.orthoHeight);
+			writer.Double((double)properties.orthoHeight);
 
 			writer.EndObject();
 		}
@@ -214,6 +214,8 @@ namespace Engine
 				"FarPlane", cameraProperties.farPlane);
 			ReadFloat(value["SceneCameraComponent"],
 				"PerspFOV", cameraProperties.perspFOV);
+			ReadFloat(value["SceneCameraComponent"],
+				"PerspAspectRatio", cameraProperties.perspAspectRatio);
 			ReadFloat(value["SceneCameraComponent"],
 				"OrthoWidth", cameraProperties.orthoWidth);
 			ReadFloat(value["SceneCameraComponent"],

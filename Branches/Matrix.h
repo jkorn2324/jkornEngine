@@ -18,9 +18,9 @@ namespace MathLib
 
 		Vector2 GetTranslation() const;
 		Vector2 GetScale() const;
-		// Gets the x axis (Right direction).
+		// Gets the x axis (forward direction).
 		Vector2 GetXAxis() const;
-		// Gets the y axis (Up direction).
+		// Gets the y axis (left direction).
 		Vector2 GetYAxis() const;
 
 		void Transpose();
@@ -57,11 +57,11 @@ namespace MathLib
 
 		Vector3 GetScale() const;
 		Vector3 GetTranslation() const;
-		// Gets the x axis of the matrix (Right Direction)
+		// Gets the x axis of the matrix (forward direction)
 		Vector3 GetXAxis() const;
-		// Gets the y axis of the matrix (Up direction)
+		// Gets the y axis of the matrix (left direction)
 		Vector3 GetYAxis() const;
-		// Gets the z axis of the matrix (Forward direction).
+		// Gets the z axis of the matrix (up direction).
 		Vector3 GetZAxis() const;
 
 		void Transpose();
@@ -95,8 +95,6 @@ namespace MathLib
 
 		static Matrix4x4 CreatePersp(float fov, float width, float height, float nearPlane, float farPlane, bool fovInRadians = false);
 		static Matrix4x4 CreatePersp(float fov, float aspectRatio, float nearPlane, float farPlane, bool fovInRadians = false);
-
-		static Matrix4x4 CreateLookAt(const Vector3& lookAtPosition, const Vector3& eyePos, const Vector3& upDir);
 
 		static const Matrix4x4 Identity;
 	};

@@ -24,6 +24,7 @@ namespace Engine
 		static void OnEditorUpdate(const Timestep& ts);
 
 		static void Render();
+		static void Render(const struct CameraConstants& cameraConstants);
 
 	private:
 		static void BindEventFunc(const EventFunc& func);

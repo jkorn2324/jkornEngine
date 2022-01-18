@@ -19,6 +19,14 @@ namespace Editor
 		static void OnEvent(Engine::Event& event);
 
 		static std::vector<Engine::Entity>& GetEntities();
+
+		static bool IsPlaying();
+		static void SetPlaying(bool playing);
+
+		static bool IsPaused();
+		static void SetPaused(bool paused);
+
+		static class EditorCamera& GetEditorCamera();
 	};
 
 	class EditorSelection
@@ -28,5 +36,6 @@ namespace Editor
 
 		static Engine::Entity GetSelectedEntity();
 		static void SetSelectedEntity(const Engine::Entity& entity);
+		static bool HasSelectedEntity();
 	};
 }

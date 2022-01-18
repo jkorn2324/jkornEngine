@@ -72,4 +72,12 @@ namespace Engine
 			s_activeScene->Render();
 		}
 	}
+
+	void SceneManager::Render(const CameraConstants& cameraConstants)
+	{
+		if (s_activeScene != nullptr)
+		{
+			s_activeScene->Render(cameraConstants);
+		}
+	}
 }

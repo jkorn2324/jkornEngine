@@ -6,9 +6,25 @@
 
 #include "Source\Vector.h"
 #include "EditorUtils.h"
+#include "EditorCamera.h"
+
+#include <string>
 
 namespace Editor
 {
+
+	static void SaveScene(const std::wstring& filePath)
+	{
+		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
+		Engine::SceneSerializer sceneSerializer(&scene);
+		sceneSerializer.Serialize(filePath + 
+			scene.GetSceneName() + L".scene");
+	}
+
+	static void SaveScene()
+	{
+		SaveScene(L"");
+	}
 
 
 	static void DrawDemo()
@@ -19,7 +35,8 @@ namespace Editor
 
 	EditorLayer::EditorLayer()
 		: Layer("Editor"),
-		m_frameBuffer(nullptr),
+		m_runtimeFrameBuffer(nullptr),
+		m_editorFrameBuffer(nullptr),
 		m_sceneHierarchy(),
 		m_entityInspector()
 	{
@@ -27,21 +44,40 @@ namespace Editor
 
 	EditorLayer::~EditorLayer()
 	{
-		delete m_frameBuffer;
+		delete m_runtimeFrameBuffer;
+		delete m_editorFrameBuffer;
 	}
 
 	void EditorLayer::OnLayerAdded()
 	{
 		Engine::GraphicsRenderer::GetRenderingAPI().SetClearColor(
 			MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+		Engine::Application& app = Engine::Application::Get();
 
-		Engine::FrameBufferSpecification specifications(
+		// Runtime Specifications.
 		{
-			Engine::FrameBufferAttachmentType::DEPTH_STENCIL
-		});
-		specifications.width = Engine::Application::Get().GetWindow().GetWidth();
-		specifications.height = Engine::Application::Get().GetWindow().GetHeight();
-		m_frameBuffer = Engine::FrameBuffer::Create(specifications);
+			Engine::FrameBufferSpecification runtimeSpecifications(
+				{
+					Engine::FrameBufferAttachmentType::DEPTH_STENCIL
+				});
+
+			runtimeSpecifications.width = app.GetWindow().GetWidth();
+			runtimeSpecifications.height = app.GetWindow().GetHeight();
+			m_runtimeFrameBuffer = Engine::FrameBuffer::Create(runtimeSpecifications);
+
+		}
+
+		// Editor Specifiations.
+		{
+			Engine::FrameBufferSpecification editorSpecifications(
+			{
+				Engine::FrameBufferAttachmentType::DEPTH_STENCIL
+				// Engine::FrameBufferAttachmentType::RENDER_TARGET
+			});
+			editorSpecifications.width = app.GetWindow().GetWidth();
+			editorSpecifications.height = app.GetWindow().GetHeight();
+			m_editorFrameBuffer = Engine::FrameBuffer::Create(editorSpecifications);
+		}
 	}
 
 	void EditorLayer::OnLayerRemoved()
@@ -51,14 +87,37 @@ namespace Editor
 
 	void EditorLayer::OnUpdate(const Engine::Timestep& timestep)
 	{
-		m_frameBuffer->Bind();
-
-		Engine::SceneManager::OnEditorUpdate(timestep);
-
+		if (!EditorSceneManager::IsPlaying())
+		{
+			// Updates camera and scene.
+			EditorCamera& camera = EditorSceneManager::GetEditorCamera();
+			camera.OnEditorUpdate(timestep);
+			Engine::SceneManager::OnEditorUpdate(timestep);
+			
+			// Render to a view texture.
+			{
+				Engine::CameraConstants cameraConstants;
+				cameraConstants.c_cameraPosition = camera.GetTransformMatrix().GetTranslation();
+				cameraConstants.c_viewProjection = camera.GetViewProjectionMatrix();
+				// TODO: Render the editor to a texture, then bind the texture to a viewport.
+				
+				m_editorFrameBuffer->Bind();
+				Engine::SceneManager::Render(cameraConstants);
+			}
+		}
+		else
+		{
+			Engine::SceneManager::OnRuntimeUpdate(timestep);
+		}
 		// TODO: Play button.
-#if 1
-		Engine::SceneManager::OnRuntimeUpdate(timestep);
-		Engine::SceneManager::Render();
+	
+#if 0
+		// Runtime frame buffer.
+		{
+			// TODO: Render the scene to a texture.
+			m_runtimeFrameBuffer->Bind();
+			Engine::SceneManager::Render();
+		}
 #endif
 	}
 
@@ -75,7 +134,12 @@ namespace Editor
 			{
 				if (ImGui::BeginMenu("File"))
 				{
-					// TODO: Implementation of Different Menu Items
+					if (ImGui::MenuItem("Save"))
+					{
+						SaveScene();
+					}
+					// TODO: Loading Scenes
+
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenuBar();

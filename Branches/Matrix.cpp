@@ -389,24 +389,8 @@ namespace MathLib
 		{
 			{xScale, 0.0f, 0.0f, 0.0f},
 			{0.0f, yScale, 0.0f, 0.0f},
-			{0.0f, 0.0f, -(farPlane / (farPlane - nearPlane)), 1.0f},
+			{0.0f, 0.0f, -(farPlane / (farPlane - nearPlane)), -1.0f},
 			{0.0f, 0.0f, -((nearPlane * farPlane) / (farPlane - nearPlane)), 0.0f}
-		};
-		return Matrix4x4(mat);
-	}
-
-	Matrix4x4 Matrix4x4::CreateLookAt(const Vector3& lookAtPosition, const Vector3& eyePos, const Vector3& upDir)
-	{
-		Vector3 forward = Normalize((lookAtPosition - eyePos));
-		Vector3 right = Normalize(Cross(Normalize(upDir), forward));
-		Vector3 newUp = Normalize(Cross(forward, right));
-
-		float mat[4][4] =
-		{
-			{ right.x, right.y, right.z, 0.0f },
-			{ newUp.x, newUp.y, newUp.z, 0.0f },
-			{ forward.x, forward.y, forward.z, 0.0f},
-			{ eyePos.x, eyePos.y, eyePos.z, 1.0f }
 		};
 		return Matrix4x4(mat);
 	}

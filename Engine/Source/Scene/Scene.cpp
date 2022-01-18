@@ -98,10 +98,29 @@ namespace Engine
 		// TODO: Implement editor update.
 	}
 
-	void Scene::Render()
+	void Scene::Render(const CameraConstants& cameraConstants)
 	{
 		PROFILE_SCOPE(SceneRender, Rendering);
 
+		GraphicsRenderer::BeginScene(cameraConstants);
+
+		// Render the sprites.
+		{
+			m_entityRegistry.view<SpriteComponent, Transform3DComponent>().each(
+				[](auto entity, SpriteComponent& sprite, Transform3DComponent& transform)
+				{
+					if (!sprite.enabled) return;
+
+					GraphicsRenderer2D::DrawRect(transform.GetTransformMatrix(),
+						sprite.color, sprite.texture);
+				});
+		}
+
+		GraphicsRenderer::EndScene();
+	}
+
+	void Scene::Render()
+	{
 		CameraConstants constants;
 		{
 			if (m_camera != nullptr)
@@ -114,22 +133,7 @@ namespace Engine
 					m_camera->GetViewProjectionMatrix();
 			}
 		}
-		
-		GraphicsRenderer::BeginScene(constants);
-		
-		// Render the sprites.
-		{
-			m_entityRegistry.view<SpriteComponent, Transform3DComponent>().each(
-			[](auto entity, SpriteComponent& sprite, Transform3DComponent& transform)
-			{
-				if (!sprite.enabled) return;
-
-				GraphicsRenderer2D::DrawRect(transform.GetTransformMatrix(),
-					sprite.color, sprite.texture);
-			});
-		}
-		
-		GraphicsRenderer::EndScene();
+		Render(constants);
 	}
 
 	Entity Scene::Find(const std::string& entityName) const
