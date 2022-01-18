@@ -8,6 +8,7 @@
 namespace Engine
 {
 	class Timestep;
+	class Event;
 }
 
 namespace Editor
@@ -55,7 +56,12 @@ namespace Editor
 	private:
 		MathLib::Matrix4x4 m_transformMatrix;
 		MathLib::Vector3 m_position;
+
 		MathLib::Vector3 m_focusPosition;
+		MathLib::Vector2 m_prevMousePos;
+		
+		float m_cameraYaw;
+		float m_cameraPitch;
 
 		EditorCameraProperties m_editorCameraProperties;
 	};

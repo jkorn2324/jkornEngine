@@ -34,6 +34,8 @@ namespace Engine
 
 	static InputKeyCode ConvertGlfwKeyCodeDynamic(int keyCode)
 	{
+
+
 		// Covers 0 - 9
 		if (keyCode >= GLFW_KEY_0
 			&& keyCode <= GLFW_KEY_9)
@@ -59,7 +61,48 @@ namespace Engine
 		{
 			return (InputKeyCode)((keyCode - GLFW_KEY_SEMICOLON) + KEY_CODE_SEMICOLON);
 		}
-		return (InputKeyCode)((keyCode - GLFW_KEY_LEFT_BRACKET) + KEY_CODE_LEFT_BRACKET);
+
+		if (keyCode >= GLFW_KEY_LEFT_BRACKET
+			&& keyCode <= GLFW_KEY_RIGHT_BRACKET)
+		{
+			return (InputKeyCode)((keyCode - GLFW_KEY_LEFT_BRACKET) + KEY_CODE_LEFT_BRACKET);
+		}
+
+		if (keyCode == GLFW_KEY_GRAVE_ACCENT)
+		{
+			return KEY_CODE_GRAVE_ACCENT;
+		}
+
+		if (keyCode == GLFW_KEY_WORLD_1
+			|| keyCode == GLFW_KEY_WORLD_2)
+		{
+			return (InputKeyCode)((keyCode - GLFW_KEY_WORLD_1) + KEY_CODE_WORLD_1);
+		}
+
+		if (keyCode >= GLFW_KEY_ESCAPE
+			&& keyCode <= GLFW_KEY_END)
+		{
+			return (InputKeyCode)((keyCode - GLFW_KEY_ESCAPE) + KEY_CODE_ESCAPE);
+		}
+
+		if (keyCode >= GLFW_KEY_CAPS_LOCK
+			&& keyCode <= GLFW_KEY_PAUSE)
+		{
+			return (InputKeyCode)((keyCode - GLFW_KEY_CAPS_LOCK) + KEY_CODE_CAPS_LOCK);
+		}
+
+		if (keyCode >= GLFW_KEY_F1
+			&& keyCode <= GLFW_KEY_F25)
+		{
+			return (InputKeyCode)((keyCode - GLFW_KEY_F1) + KEY_CODE_F1);
+		}
+
+		if (keyCode >= GLFW_KEY_KP_0
+			&& keyCode <= GLFW_KEY_KP_EQUAL)
+		{
+			return (InputKeyCode)((keyCode - GLFW_KEY_KP_0) + KEY_CODE_NUMPAD_0);
+		}
+		return (InputKeyCode)((keyCode - GLFW_KEY_LEFT_SHIFT) + KEY_CODE_LEFT_SHIFT);
 	}
 
 	static InputKeyCode ConvertGlfwKeyCode(int keyCode)

@@ -8,19 +8,27 @@ namespace Editor
 {
 	static const float LOOK_AT_MULTIPLIER = 3.0f;
 	static const float SCROLL_POSITION_MULTIPLIER = 3.0f;
+	static const float ROTATION_SPEED = 1.0f;
 
 	EditorCamera::EditorCamera()
 		: Camera::Camera(),
 		m_editorCameraProperties(),
 		m_transformMatrix(MathLib::Matrix4x4::Identity),
-		m_focusPosition(MathLib::Vector3::Zero)
+		m_focusPosition(MathLib::Vector3::Zero),
+		m_prevMousePos(MathLib::Vector2::Zero),
+		m_cameraYaw(0.0f),
+		m_cameraPitch(0.0f)
 	{
 	}
 
 	EditorCamera::EditorCamera(const EditorCameraProperties& properties)
 		: Camera::Camera(),
 		m_editorCameraProperties(properties),
-		m_transformMatrix(MathLib::Matrix4x4::Identity)
+		m_transformMatrix(MathLib::Matrix4x4::Identity),
+		m_prevMousePos(MathLib::Vector2::Zero),
+		m_focusPosition(MathLib::Vector3::Zero),
+		m_cameraYaw(0.0f),
+		m_cameraPitch(0.0f)
 	{
 	}
 	
@@ -28,14 +36,20 @@ namespace Editor
 	{
 		HandleCameraInput(ts);
 		UpdateViewMatrix();
+	
+		m_prevMousePos = Engine::Input::GetMouseScreenPos();
 	}
 
 	void EditorCamera::HandleCameraInput(const Engine::Timestep& ts)
 	{
+
 		if (Engine::Input::IsKeyPressed(Engine::KEY_CODE_R))
 		{
 			m_transformMatrix = MathLib::Matrix4x4::Identity;
 			m_position = MathLib::Vector3::Zero;
+			m_focusPosition = MathLib::Vector3::Zero;
+			m_cameraYaw = 0.0f;
+			m_cameraPitch = 0.0f;
 			return;
 		}
 
@@ -52,7 +66,10 @@ namespace Editor
 					- MathLib::Vector3::UnitZ * LOOK_AT_MULTIPLIER;
 				m_transformMatrix = MathLib::Matrix4x4::CreateLookAt(
 					transform3D.GetPosition(), eyePos, MathLib::Vector3::UnitY);
+				m_focusPosition = transform3D.GetPosition();
 				m_position = m_transformMatrix.GetTranslation();
+				m_cameraYaw = 0.0f;
+				m_cameraPitch = 0.0f;
 				return;
 			}
 
@@ -65,6 +82,7 @@ namespace Editor
 					- MathLib::Vector3::UnitZ * LOOK_AT_MULTIPLIER;
 				m_transformMatrix = MathLib::Matrix4x4::CreateLookAt(
 					lookAtPos, eyePos, MathLib::Vector3::UnitY);
+				m_focusPosition = lookAtPos;
 				m_position = m_transformMatrix.GetTranslation();
 				return;
 			}
@@ -83,7 +101,31 @@ namespace Editor
 			}
 		}
 
-		m_transformMatrix = MathLib::Matrix4x4::CreateTranslation(m_position);
+		// Mouse Rotation
+		{
+			// Perspective.
+			if (m_editorCameraProperties.cameraType == CAMERA_PERSPECTIVE)
+			{
+				if (Engine::Input::IsKeyHeld(
+					Engine::KEY_CODE_LEFT_ALT)
+					&& Engine::Input::IsMouseButtonHeld(Engine::MOUSE_BUTTON_LEFT))
+				{
+					MathLib::Vector2 mouseDifference = 
+						Engine::Input::GetMouseScreenPos() - m_prevMousePos;
+					
+					float yawSign = m_transformMatrix.GetYAxis().y < 0.0f ? -1.0f : 1.0f;
+					m_cameraYaw +=
+						yawSign * mouseDifference.x * ts.GetSeconds() * ROTATION_SPEED;
+					m_cameraPitch +=
+						mouseDifference.y * ts.GetSeconds() * ROTATION_SPEED;
+
+				}
+			}
+		}
+
+		m_transformMatrix = MathLib::Matrix4x4::CreateFromQuaternion(
+			MathLib::Quaternion::FromEuler(0.0f, -m_cameraPitch, -m_cameraYaw))
+			* MathLib::Matrix4x4::CreateTranslation(m_position);
 	}
 
 	void EditorCamera::UpdateWASD(const Engine::Timestep& ts)
@@ -124,9 +166,13 @@ namespace Editor
 		if (hasInput)
 		{
 			cameraInputDirection.Normalize();
-			// Set the position of the camera.
-			m_position += cameraInputDirection *
+			MathLib::Vector3 difference = cameraInputDirection *
 				m_editorCameraProperties.cameraSpeed * ts.GetSeconds();
+
+			// Set the position of the camera.
+			m_position += difference;
+			// Updates the focus position.
+			m_focusPosition += difference;
 		}
 	}
 
@@ -149,8 +195,10 @@ namespace Editor
 			}
 			if (hasInput)
 			{
-				m_position += direction 
-					* ts.GetSeconds() * SCROLL_POSITION_MULTIPLIER;
+				MathLib::Vector3 difference =
+					direction * ts.GetSeconds() * SCROLL_POSITION_MULTIPLIER;
+				m_position += difference;
+				m_focusPosition += difference;
 			}
 		}
 	}
