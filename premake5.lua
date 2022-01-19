@@ -4,8 +4,9 @@ include "Dependencies.lua"
 
 workspace "jkornEngine"
 	
-	startproject "Editor"
-	startprojectpath = "%{wks.location}/Editor/"
+	startupprojectname = "GlfwSandboxProject"
+	startproject "%{startupprojectname}"
+	startprojectpath = "%{wks.location}%{startupprojectname}/"
 
 	configurations 
 	{ 
@@ -19,7 +20,7 @@ workspace "jkornEngine"
 		"Win32"
 	}
 
-	filter { "platforms:Win64" }
+	filter { "platforms:x64" }
 		system "Windows"
 		architecture "x86_64"
 
@@ -53,8 +54,13 @@ workspace "jkornEngine"
 		}
 
 -- Create projects for static libraries.
-filter { "system:Windows"}
-	include "Engine/Libraries/directxtk.lua"
+
+group "Dependencies"
+	include "Engine/Libraries/glfw.lua"
+	include "Engine/Libraries/ImGui.lua"
+group ""
 
 include "MathLib"
 include "Engine"
+include "Editor"
+include "GlfwSandboxProject"

@@ -31,12 +31,22 @@
 *.out
 *.app
 
-# Folders
+# Build Folders
+**/Win32/
+**/Win64/
+**/x64/
+**/Builds/
+**/Builds-Int/
+
+# Visual Studio Files
 .vs/
-Win32/
-x64/
-*/Builds/
-*/Builds-Int/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+
+# Visual Studio Code Files
+.vscode/
 
 # More Files
 */Engine.log

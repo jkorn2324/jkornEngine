@@ -17,7 +17,7 @@ extern bool DbgAssertFunction(bool expression, const wchar_t* string,
 #define DBG_WIDEN(x) DBG_WIDEN2(x)
 #define __WFILE__ DBG_WIDEN(__FILE__)
 
-#define DebugAssert(expr, description) {if (DbgAssertFunction((expr), L#expr, L##description, __LINE__, __WFILE__)) {__debugbreak();}}
+#define DebugAssert(expr, description) { if (DbgAssertFunction((expr), L#expr, L##description, __LINE__, __WFILE__)) { __debugbreak(); } }
 #else
 #include <assert.h>
 #define DebugAssert(expr, description) { assert(expr); }

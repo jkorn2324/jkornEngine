@@ -2,10 +2,6 @@
 
 #include "PlatformDetector.h"
 
-#ifdef PLATFORM_WINDOWS
-#include <Windows.h>
-#endif
-
 #include <iostream>
 #include <algorithm>
 #include <memory>

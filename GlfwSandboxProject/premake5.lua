@@ -1,14 +1,11 @@
 --premake5.lua
 
-project "Editor"
+project "GlfwSandboxProject"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
 	staticruntime "off"
 
-	pchheader "EditorPCH.h"
-	pchsource "%{prj.location}/Source/EditorPCH.cpp"
-	
 	targetdir "%{wks.location}/%{prj.name}/Builds/%{cfg.buildcfg}/%{cfg.platform}/"
 	objdir "%{wks.location}/%{prj.name}/Builds-Int/%{cfg.buildcfg}/%{cfg.platform}/"
 

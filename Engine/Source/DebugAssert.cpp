@@ -2,6 +2,8 @@
 
 #ifdef PLATFORM_WINDOWS
 
+#include <Windows.h>
+
 bool DbgAssertFunction(bool expression, const wchar_t* string, 
 	const wchar_t* desc, int line_num, const wchar_t* file_name)
 {

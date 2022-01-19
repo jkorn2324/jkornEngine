@@ -4,12 +4,13 @@ project "MathLib"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
+	staticruntime "off"
 
 	pchheader "MathPCH.h"
 	pchsource "Source/MathPCH.cpp"
 
-	targetdir "%{wks.location}/%{prj.name}/Builds/%{cfg.buildcfg}/"
-	objdir "%{wks.location}/%{prj.name}/Builds-Int/%{cfg.buildcfg}/"
+	targetdir "%{wks.location}/%{prj.name}/Builds/%{cfg.buildcfg}/%{cfg.platform}"
+	objdir "%{wks.location}/%{prj.name}/Builds-Int/%{cfg.buildcfg}/%{cfg.platform}"
 
 	files
 	{
@@ -17,3 +18,11 @@ project "MathLib"
 		"Source/**.cpp",
 		"Source/**.hpp"
 	}
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "on"

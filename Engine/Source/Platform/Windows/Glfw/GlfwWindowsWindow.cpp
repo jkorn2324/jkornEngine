@@ -34,8 +34,6 @@ namespace Engine
 
 	static InputKeyCode ConvertGlfwKeyCodeDynamic(int keyCode)
 	{
-
-
 		// Covers 0 - 9
 		if (keyCode >= GLFW_KEY_0
 			&& keyCode <= GLFW_KEY_9)

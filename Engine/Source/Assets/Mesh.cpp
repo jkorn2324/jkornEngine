@@ -38,7 +38,8 @@ namespace Engine
 		if (!importer->Initialize(converted.c_str(), -1,
 			s_fbxManager->GetIOSettings()))
 		{
-			DebugAssert(false, importer->GetStatus().GetErrorString());
+			const char* errorString = importer->GetStatus().GetErrorString();
+			DebugAssert(false, "Mesh Failed to load.");
 			return nullptr;
 		}
 		FbxScene* outScene = FbxScene::Create(s_fbxManager, name.c_str());
