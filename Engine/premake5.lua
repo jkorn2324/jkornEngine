@@ -133,5 +133,5 @@ project "Engine"
 		}
 		postbuildcommands
 		{
-			"copy /Y \"C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2020.2\\lib\\vs2019\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
+			"copy /Y \"C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2020.2\\lib\\vs2019\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
 		}
