@@ -35,7 +35,11 @@
 .vs/
 Win32/
 x64/
+*/Builds/
+*/Builds-Int/
 
 # More Files
 */Engine.log
 */Profile.json
+
+

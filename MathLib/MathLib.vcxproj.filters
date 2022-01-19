@@ -55,4 +55,8 @@
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Dependencies.lua" />
+    <None Include="..\premake5.lua" />
+  </ItemGroup>
 </Project>

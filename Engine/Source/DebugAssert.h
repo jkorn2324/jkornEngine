@@ -1,8 +1,14 @@
 #pragma once
 #include <intrin.h>
 
+#ifndef DEBUG
 #ifdef _DEBUG
-#ifdef _WINDOWS
+#define DEBUG
+#endif
+#endif
+
+#ifdef DEBUG
+#ifdef PLATFORM_WINDOWS
 
 extern bool DbgAssertFunction(bool expression, const wchar_t* string,
 	const wchar_t* desc, int line_num, const wchar_t* file_name);

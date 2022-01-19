@@ -1,16 +1,16 @@
 #pragma once
 
+#ifndef PLATFORM_WINDOWS
 #ifdef WINDOWS
-
 #define PLATFORM_WINDOWS
-
-#ifdef WIN32
-#define PLATFORM_WINDOWS_X86
-#else
-#define PLATFORM_WINDOWS_X64
+#endif
 #endif
 
+#ifdef PLATFORM_WINDOWS
+
+#ifndef GLFW_EXPOSE_NATIVE_WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32
+#endif
 
 #ifndef NOMINMAX
 #define NOMINMAX

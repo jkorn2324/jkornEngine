@@ -33,7 +33,7 @@ namespace Engine
 					L"%hs", (char*)errorBlob->GetBufferPointer());
 				OutputDebugString(buffer);
 
-#ifdef _WINDOWS
+#ifdef PLATFORM_WINDOWS
 				MessageBox(nullptr, buffer, L"Error", MB_OK);
 #endif
 				errorBlob->Release();
