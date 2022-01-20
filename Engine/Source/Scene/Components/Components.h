@@ -4,7 +4,6 @@
 
 #include "Entity.h"
 #include "SceneCamera.h"
-#include "MeshComponent.h"
 
 namespace Engine
 {
@@ -52,5 +51,18 @@ namespace Engine
 			: name(name) { }
 		explicit NameComponent(const char* name)
 			: name(name) { }
+	};
+
+	struct MeshComponent
+	{
+		// TODO: Generate a default material.
+
+		class Mesh* mesh;
+		class Material* material;
+
+		explicit MeshComponent()
+			: mesh(nullptr), material(nullptr) { }
+		explicit MeshComponent(class Mesh* mesh, class Material* material)
+			: mesh(mesh), material(material) { }
 	};
 }

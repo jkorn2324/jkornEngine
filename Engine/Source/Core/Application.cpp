@@ -3,6 +3,7 @@
 
 #include "GraphicsRenderer.h"
 #include "GraphicsRenderer2D.h"
+#include "GraphicsRenderer3D.h"
 
 #include "RenderingAPI.h"
 
@@ -56,6 +57,7 @@ namespace Engine
 		Input::BindInputEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 		GraphicsRenderer::Init();
 		GraphicsRenderer2D::Init();
+		GraphicsRenderer3D::Init();
 
 		SceneManager::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 		SceneManager::Init();
@@ -70,6 +72,7 @@ namespace Engine
 
 		SceneManager::Release();
 		AssetManager::UncacheAssets();
+		GraphicsRenderer3D::Release();
 		GraphicsRenderer2D::Release();
 		GraphicsRenderer::Release();
 		Profiler::Release();

@@ -300,9 +300,9 @@ namespace Editor
 			if (mouseDifference != MathLib::Vector2::Zero)
 			{
 				m_cameraRotation.y +=
-					mouseDifference.x * ROTATION_SPEED;
-				m_cameraRotation.x +=
 					mouseDifference.y * ROTATION_SPEED;
+				m_cameraRotation.x +=
+					mouseDifference.x * ROTATION_SPEED;
 			}
 		}
 	}

@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include "MaterialConstants.h"
+
 namespace Engine
 {
 	const uint32_t MATERIAL_CONSTANT_BUFFER_SLOT = 2;
@@ -23,93 +25,37 @@ namespace Engine
 			: texture(texture) { }
 	};
 
-	template<typename Constants>
 	class Material
 	{
 	public:
-		explicit Material();
+		explicit Material(const MaterialConstantsLayout& layout);
 		~Material();
 
 		void SetShader(class Shader* shader);
 		void SetTexture(uint32_t slot, Texture* texture);
 
+		const MaterialTextureData& GetTextureData(uint32_t slot) const { return m_textures[slot]; }
+		const MaterialConstants& GetMaterialConstants() const { return m_materialConstants; }
+		MaterialConstants& GetMaterialConstants() { return m_materialConstants; }
+
 		void Bind() const;
 		void Bind(uint32_t constantBufferSlot) const;
+
+		friend bool operator==(const Material& a, const Material& b)
+		{
+			return a.m_shader == b.m_shader;
+		}
+
+		friend bool operator!=(const Material& a, const Material& b)
+		{
+			return a.m_shader != b.m_shader;
+		}
 
 	private:
 		Shader* m_shader;
 		ConstantBuffer* m_materialConstantBuffer;
 		MaterialTextureData* m_textures;
+		MaterialConstants m_materialConstants;
 		uint32_t m_numTextures;
-
-	public:
-		Constants materialConstants;
 	};
-
-	template<typename Constants>
-	Material<Constants>::Material()
-		: m_shader(nullptr),
-		m_materialConstantBuffer(nullptr),
-		m_textures(nullptr),
-		m_numTextures(1),
-		materialConstants()
-	{
-		m_textures = new MaterialTextureData[m_numTextures];
-		for (uint32_t i = 0; i < m_numTextures; i++)
-		{
-			m_textures[i] = MaterialTextureData(nullptr);
-		}
-		m_materialConstantBuffer = ConstantBuffer::Create(
-			&materialConstants, sizeof(materialConstants));
-	}
-
-	template<typename Constants>
-	Material<Constants>::~Material()
-	{
-		delete[] m_textures;
-		delete m_materialConstantBuffer;
-	}
-	
-	template<typename Constants>
-	inline void Material<Constants>::SetShader(Shader* shader)
-	{
-		m_shader = shader;
-	}
-
-	template<typename Constants>
-	inline void Material<Constants>::SetTexture(uint32_t slot, Texture* texture)
-	{
-		if (slot >= m_numTextures)
-		{
-			return;
-		}
-		MaterialTextureData& materialTextureData = m_textures[slot];
-		materialTextureData.texture = texture;
-	}
-	
-	template<typename Constants>
-	inline void Material<Constants>::Bind() const
-	{
-		Bind(MATERIAL_CONSTANT_BUFFER_SLOT);
-	}
-	
-	template<typename Constants>
-	inline void Material<Constants>::Bind(uint32_t constantBufferSlot) const
-	{
-		m_materialConstantBuffer->SetData(
-			&materialConstants, sizeof(materialConstants));
-
-		m_shader->Bind();
-		m_materialConstantBuffer->Bind(constantBufferSlot,
-			PIXEL_SHADER | VERTEX_SHADER);
-
-		for (uint32_t i = 0; i < m_numTextures; i++)
-		{
-			const auto& texture = m_textures[i];
-			if (texture.texture != nullptr)
-			{
-				texture.texture->Bind(i);
-			}
-		}
-	}
 }

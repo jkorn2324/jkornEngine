@@ -3,4 +3,5 @@
 cbuffer PerObjectConstants : register(b1)
 {
     float4x4 c_objectToWorld;
+    float3 c_objectPosition;
 };

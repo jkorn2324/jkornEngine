@@ -7,14 +7,8 @@
 namespace Engine
 {
 
-	struct MeshVertex
-	{
-		MathLib::Vector3 point;
-		MathLib::Vector3 normal;
-		MathLib::Vector2 uv;
-		MathLib::Vector4 color = MathLib::Vector4::One;
-	};
-
+	class VertexBuffer;
+	class IndexBuffer;
 
 	class Mesh
 	{
@@ -22,27 +16,35 @@ namespace Engine
 		explicit Mesh();
 		~Mesh();
 
-		void SetIndices(const std::uint32_t* indices, std::uint32_t indexCount);
-		void SetVertices(const MeshVertex* vertices, std::uint32_t vertexCount);
+		void SetIndices(const uint32_t* indices, uint32_t indexCount);
+		void SetVertices(const void* vertices, size_t stride, uint32_t indexCount);
 
-		MeshVertex* GetVertices() const;
+		template<typename T>
+		T& operator[](int index) { return (T)m_vertices[index]; }
+
+		template<typename T>
+		T* GetVertices() const { return reinterpret_cast<T*>(m_vertices); }
 		std::uint32_t GetNumVertices() const;
 
 		std::uint32_t* GetIndices() const;
 		std::uint32_t GetNumIndices() const;
 
-		static Mesh* StaticLoad(const std::wstring& path);
+		VertexBuffer* GetVertexBuffer() const { return m_vertexBuffer; }
+		IndexBuffer* GetIndexBuffer() const { return m_indexBuffer; }
 
-	private:
-		bool Load(const std::wstring& path);
+		void SetSkinned(bool skinned) { m_skinned = skinned; }
+		bool IsSkinned() const { return m_skinned; }
 
-		bool LoadFBX(const std::wstring& path);
-
-	private:
-		MeshVertex* m_vertices;
+	private:	
+		char* m_vertices;
 		std::uint32_t* m_indices;
+
+		VertexBuffer* m_vertexBuffer;
+		IndexBuffer* m_indexBuffer;
 
 		std::uint32_t m_vertexCount;
 		std::uint32_t m_indexCount;
+
+		bool m_skinned;
 	};
 }

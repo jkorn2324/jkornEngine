@@ -21,12 +21,13 @@ namespace Engine
 	using Vec4 = MathLib::Vector4;
 	using Vec2 = MathLib::Vector2;
 
-	struct GraphicsSpriteConstants
+	struct GraphicsObjectConstants
 	{
-		MathLib::Vector4 c_spriteColor;
+		MathLib::Matrix4x4 c_objectToWorld;
+		MathLib::Vector3 c_worldPosition;
 
-		GraphicsSpriteConstants()
-			: c_spriteColor(MathLib::Vector4::One) { }
+	private:
+		float pad;
 	};
 
 	struct GraphicsSpriteVertex
@@ -41,7 +42,9 @@ namespace Engine
 	static IndexBuffer* s_spriteIndexBuffer = nullptr;
 
 	static ConstantBuffer* s_spriteObjectConstantBuffer = nullptr;
-	static Material<GraphicsSpriteConstants>* s_spriteMaterial = nullptr;
+	static GraphicsObjectConstants s_spriteObjectConstants;
+
+	static Material* s_spriteMaterial = nullptr;
 	
 	static Shader* s_colorShader = nullptr;
 	static Shader* s_spriteShader = nullptr;
@@ -77,12 +80,16 @@ namespace Engine
 		}
 
 		// Bind Material.
-		s_spriteMaterial->materialConstants.c_spriteColor = color;
+		MaterialConstants& constants = s_spriteMaterial->GetMaterialConstants();
+		constants.SetMaterialConstant("c_spriteColor", color);
 		s_spriteMaterial->SetTexture(0, texture);
 		s_spriteMaterial->Bind();
 
+		s_spriteObjectConstants.c_objectToWorld = transform;
+		s_spriteObjectConstants.c_worldPosition = transform.GetTranslation();
+
 		// Bind Per Object Constants.
-		s_spriteObjectConstantBuffer->SetData(&transform, sizeof(Mat4x4));
+		s_spriteObjectConstantBuffer->SetData(&s_spriteObjectConstants, sizeof(GraphicsObjectConstants));
 		s_spriteObjectConstantBuffer->Bind(1, ConstantBufferFlags::PIXEL_SHADER
 			| ConstantBufferFlags::VERTEX_SHADER);
 
@@ -120,7 +127,11 @@ namespace Engine
 				L"Shaders/SpriteShader.hlsl", *bufferLayout.get());
 			s_colorShader = shaderAssetCache.Load<const Engine::BufferLayout&>(
 				L"Shaders/ColorShader.hlsl", *bufferLayout.get());
-			s_spriteMaterial = new Material<GraphicsSpriteConstants>();
+
+			// Defines a new material with a given layout.
+			s_spriteMaterial = new Material({ 
+				{ "c_spriteColor", sizeof(MathLib::Vector4) } 
+			});
 		}
 
 		Mat4x4 identity = Mat4x4::Identity;

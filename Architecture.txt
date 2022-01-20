@@ -1,0 +1,9 @@
+Rendering Architecture:
+
+
+-> Meshes - Includes Batch Rendering and Instanced Rendering
+    -> Sort by material.
+
+Material System:
+-> Internal Static Materials - Unlit Color, Unlit Texture Color, etc...
+-> Dynamic Materials - Custom Parameters that can be changed with ease.
