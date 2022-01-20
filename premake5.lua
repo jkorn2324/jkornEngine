@@ -4,9 +4,9 @@ include "Dependencies.lua"
 
 workspace "jkornEngine"
 	
-	startupprojectname = "GlfwSandboxProject"
+	startupprojectname = "Editor"
 	startproject "%{startupprojectname}"
-	startprojectpath = "%{wks.location}%{startupprojectname}/"
+	startprojectpath = "%{wks.location}%{startupprojectname}"
 
 	configurations 
 	{ 

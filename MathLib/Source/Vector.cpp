@@ -316,6 +316,11 @@ namespace MathLib
 			a.x + b.x, a.y + b.y, a.z + b.z);
 	}
 
+	Vector3 operator+(const Vector3& a, const Vector2& b)
+	{
+		return Vector3(a.x + b.x, a.y + b.y, a.z);
+	}
+
 	Vector3 operator-(const Vector3& vec)
 	{
 		return Vector3(-vec.x, -vec.y, -vec.z);
@@ -325,6 +330,11 @@ namespace MathLib
 	{
 		return Vector3(
 			a.x - b.x, a.y - b.y, a.z - b.z);
+	}
+
+	Vector3 operator-(const Vector3& a, const Vector2& b)
+	{
+		return Vector3(a.x - b.x, a.y - b.y, a.z);
 	}
 
 	Vector3 operator*(const Vector3& a, const Vector3& b)
@@ -378,11 +388,25 @@ namespace MathLib
 		return *this;
 	}
 
+	Vector3& Vector3::operator+=(const Vector2& v)
+	{
+		x += v.x;
+		y += v.y;
+		return *this;
+	}
+
 	Vector3& Vector3::operator-=(const Vector3& v)
 	{
 		x -= v.x;
 		y -= v.y;
 		z -= v.z;
+		return *this;
+	}
+
+	Vector3& Vector3::operator-=(const Vector2& v)
+	{
+		x -= v.x;
+		y -= v.y;
 		return *this;
 	}
 

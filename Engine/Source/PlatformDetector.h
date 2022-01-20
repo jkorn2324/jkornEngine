@@ -17,3 +17,9 @@
 #endif
 
 #endif
+
+#ifdef PLATFORM_LINUX
+
+#error Platform is not supported.
+
+#endif

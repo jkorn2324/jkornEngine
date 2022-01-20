@@ -2,6 +2,37 @@
     "Entities": [
         {
             "Entity": "",
+            "NameComponent": "HappyFace",
+            "Transform3DComponent": {
+                "Position": {
+                    "x": 0.8297459483146667,
+                    "y": 0.700207531452179,
+                    "z": 0.0
+                },
+                "Rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -0.2588190734386444,
+                    "w": -0.9659258127212524
+                },
+                "Scale": {
+                    "x": 204.539794921875,
+                    "y": 204.539794921875,
+                    "z": 5.539996147155762
+                }
+            },
+            "SpriteComponent": {
+                "Enabled": true,
+                "Color": {
+                    "x": 0.8980392217636108,
+                    "y": 0.3607843220233917,
+                    "z": 0.0,
+                    "w": 1.0
+                }
+            }
+        },
+        {
+            "Entity": "",
             "NameComponent": "CameraEntity",
             "Transform3DComponent": {
                 "Position": {
@@ -30,37 +61,6 @@
                 "PerspAspectRatio": 0.75,
                 "OrthoWidth": 1600.0,
                 "OrthoHeight": 900.0
-            }
-        },
-        {
-            "Entity": "",
-            "NameComponent": "HappyFace",
-            "Transform3DComponent": {
-                "Position": {
-                    "x": 0.8962656855583191,
-                    "y": 0.6986514925956726,
-                    "z": 0.0
-                },
-                "Rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": -0.2588190734386444,
-                    "w": -0.9659258127212524
-                },
-                "Scale": {
-                    "x": 204.539794921875,
-                    "y": 204.539794921875,
-                    "z": 5.539996147155762
-                }
-            },
-            "SpriteComponent": {
-                "Enabled": true,
-                "Color": {
-                    "x": 0.8980392217636108,
-                    "y": 0.3607843220233917,
-                    "z": 0.0,
-                    "w": 1.0
-                }
             }
         }
     ]

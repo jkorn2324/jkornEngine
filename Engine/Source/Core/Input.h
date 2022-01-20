@@ -272,12 +272,18 @@ namespace Engine
 		using EventFunc = std::function<void(class Event&)>;
 
 		static bool IsKeyPressed(InputKeyCode keyCode);
+		static bool IsKeyPressed(InputKeyCode keyCode,
+			const float maxTime);
+
 		static bool IsKeyHeld(InputKeyCode keyCode);
-		static float GetTimeHeld(InputKeyCode keyCode);
+		static float GetTimeKeyHeld(InputKeyCode keyCode);
 
 		static bool IsMouseButtonPressed(InputMouseButton button);
+		static bool IsMouseButtonPressed(InputMouseButton button,
+			const float maxTime);
+		static float GetMouseButtonTimeHeld(InputMouseButton button);
+
 		static bool IsMouseButtonHeld(InputMouseButton button);
-		
 		static MathLib::Vector2 GetMouseScreenPos();
 		static MathLib::Vector2 GetMouseScrollOffset();
 

@@ -36,10 +36,12 @@ namespace MathLib
 		friend bool operator==(const Quaternion& a, const Quaternion& b);
 		friend bool operator!=(const Quaternion& a, const Quaternion& b);
 
+		// Y = Yaw Internal, X = Pitch Internal, Z = Roll Internal
+		// X = Yaw, Y = Pitch, Z = Roll, Since Z = Forward
 		static Quaternion FromEuler(const Vector3& eulers);
 		static Quaternion FromEuler(const Vector3& eulers, bool inDegrees);
-		static Quaternion FromEuler(float roll, float pitch, float yaw);
-		static Quaternion FromEuler(float roll, float pitch, float yaw, bool inDegrees);
+		static Quaternion FromEuler(float yaw, float pitch, float roll);
+		static Quaternion FromEuler(float yaw, float pitch, float roll, bool inDegrees);
 
 
 		static const Quaternion Identity;

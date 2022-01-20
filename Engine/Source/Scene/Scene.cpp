@@ -57,7 +57,7 @@ namespace Engine
 
 		// Destroys the entities if they are marked for destroy.
 		{
-			std::int32_t sizeOfVec = m_markedForDestroyEntities.size() - 1;
+			int32_t sizeOfVec = (int32_t)m_markedForDestroyEntities.size() - 1;
 			while (sizeOfVec >= 0)
 			{
 				m_entityRegistry.destroy(m_markedForDestroyEntities[sizeOfVec]);

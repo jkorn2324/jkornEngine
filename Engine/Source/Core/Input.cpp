@@ -93,21 +93,26 @@ namespace Engine
 
 	bool Input::IsKeyPressed(InputKeyCode keyCode)
 	{
+		return IsKeyPressed(keyCode, MIN_KEY_HELD_TIME);
+	}
+
+	bool Input::IsKeyPressed(InputKeyCode keyCode, const float maxTime)
+	{
 		const auto& found = s_keyCodes.find(keyCode);
 		if (found != s_keyCodes.end()
 			&& found->second.isPressed)
 		{
-			return GetTimeHeld(keyCode) < MIN_KEY_HELD_TIME;
+			return GetTimeKeyHeld(keyCode) < maxTime;
 		}
 		return false;
 	}
 	
 	bool Input::IsKeyHeld(InputKeyCode keyCode)
 	{
-		return GetTimeHeld(keyCode) >= MIN_KEY_HELD_TIME;
+		return GetTimeKeyHeld(keyCode) >= MIN_KEY_HELD_TIME;
 	}
 
-	float Input::GetTimeHeld(InputKeyCode keyCode)
+	float Input::GetTimeKeyHeld(InputKeyCode keyCode)
 	{
 		const auto& found = s_keyCodes.find(keyCode);
 		if (found != s_keyCodes.end()
@@ -120,22 +125,35 @@ namespace Engine
 
 	bool Input::IsMouseButtonPressed(InputMouseButton button)
 	{
-		InputMouseData::MouseButtonData* mouseButtonData = GetInputMouseButtonData(button);
-		if (mouseButtonData == nullptr) return false;
-
-		Timestep outputDiff = CalculateTimestepDiff(mouseButtonData->lastTimeClicked);
-		return mouseButtonData->buttonState == ACTION_PRESSED
-			&& outputDiff.GetSeconds() < MIN_MOUSE_HELD_TIME;
+		return IsMouseButtonPressed(button, MIN_MOUSE_HELD_TIME);
 	}
 
-	bool Input::IsMouseButtonHeld(InputMouseButton button)
+	bool Input::IsMouseButtonPressed(InputMouseButton button, const float maxPressedTime)
 	{
 		InputMouseData::MouseButtonData* mouseButtonData = GetInputMouseButtonData(button);
 		if (mouseButtonData == nullptr) return false;
 
 		Timestep outputDiff = CalculateTimestepDiff(mouseButtonData->lastTimeClicked);
 		return mouseButtonData->buttonState == ACTION_PRESSED
-			&& outputDiff.GetSeconds() >= MIN_MOUSE_HELD_TIME;
+			&& outputDiff.GetSeconds() < maxPressedTime;
+	}
+
+
+	bool Input::IsMouseButtonHeld(InputMouseButton button)
+	{
+		return GetMouseButtonTimeHeld(button) >= MIN_MOUSE_HELD_TIME;
+	}
+
+	float Input::GetMouseButtonTimeHeld(InputMouseButton button)
+	{
+		InputMouseData::MouseButtonData* mouseButtonData = GetInputMouseButtonData(button);
+		if (mouseButtonData == nullptr) return false;
+		Timestep outDiff = CalculateTimestepDiff(mouseButtonData->lastTimeClicked);
+		if (mouseButtonData->buttonState != ACTION_PRESSED)
+		{
+			return 0.0f;
+		}
+		return outDiff.GetSeconds();
 	}
 
 	MathLib::Vector2 Input::GetMouseScreenPos()

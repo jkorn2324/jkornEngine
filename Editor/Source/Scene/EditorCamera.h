@@ -46,11 +46,20 @@ namespace Editor
 
 		const MathLib::Matrix4x4& GetTransformMatrix() const { return m_transformMatrix; }
 
-	private:
-		void HandleCameraInput(const class Engine::Timestep& ts);
-		void UpdateScrolling(const class Engine::Timestep& ts);
-		void UpdateWASD(const class Engine::Timestep& ts);
+		bool LookAt(const class MathLib::Vector3& lookAtPos,
+			const class MathLib::Vector3& eyePos);
 
+	private:
+		bool UpdateZoom(const class Engine::Timestep& ts, float zoomDirection);
+
+		void HandleCameraInput(const class Engine::Timestep& ts);
+		void UpdateWASD(const class Engine::Timestep& ts);
+		void UpdateCameraRotation(const class MathLib::Vector2& mouseDelta);
+
+		void HandleCameraReset();
+		void HandleCameraFocus();
+
+		void UpdateTransformMatrix();
 		void UpdateViewMatrix();
 
 	private:
@@ -60,9 +69,12 @@ namespace Editor
 		MathLib::Vector3 m_focusPosition;
 		MathLib::Vector2 m_prevMousePos;
 		
-		float m_cameraYaw;
-		float m_cameraPitch;
+		float m_distanceToFocus = 1.0f;
+		MathLib::Vector3 m_cameraRotation;
 
 		EditorCameraProperties m_editorCameraProperties;
+
+		bool m_hasFocusPosition = false;
+		bool m_isFocusedFar = false;
 	};
 }

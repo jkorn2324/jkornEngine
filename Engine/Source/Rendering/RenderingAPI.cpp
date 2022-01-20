@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "RenderingAPI.h"
+
 #include "DirectX11RenderingAPI.h"
 
 namespace Engine
@@ -13,12 +14,8 @@ namespace Engine
 		switch (s_renderingAPIType)
 		{
 			case RenderingAPIType::DIRECTX11:	return new DirectX11RenderingAPI();
-			case RenderingAPIType::NONE:
-			{
-				DebugAssert(false, "Unsupported rendering api.");
-				return nullptr;
-			}
 		}
+		DebugAssert(false, "Unsupported rendering api.");
 		return nullptr;
 	}
 

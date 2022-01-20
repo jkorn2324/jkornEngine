@@ -73,7 +73,7 @@ namespace MathLib
 			2.0f * (w * z + x * y), 
 			1.0f - 2.0f * (y * y + z * z));
 		float conversion = inDegrees ? RAD2DEG : 1.0f;
-		return Vector3(roll * conversion, pitch * conversion, yaw * conversion);
+		return Vector3(yaw * conversion, pitch * conversion, roll * conversion);
 	}
 
 	void Quaternion::Conjugate()
@@ -172,15 +172,15 @@ namespace MathLib
 
 	Quaternion Quaternion::FromEuler(const Vector3& eulers, bool inDegrees)
 	{
-		return FromEuler(eulers.x, eulers.y, eulers.z, inDegrees);
+		return FromEuler(eulers.y, eulers.x, eulers.z, inDegrees);
 	}
 
-	Quaternion Quaternion::FromEuler(float roll, float pitch, float yaw)
+	Quaternion Quaternion::FromEuler(float yaw, float pitch, float roll)
 	{
-		return FromEuler(roll, pitch, yaw, true);
+		return FromEuler(yaw, pitch, roll, true);
 	}
 
-	Quaternion Quaternion::FromEuler(float roll, float pitch, float yaw, bool inDegrees)
+	Quaternion Quaternion::FromEuler(float yaw, float pitch, float roll, bool inDegrees)
 	{
 		return Quaternion(
 			Sin(roll * 0.5f, inDegrees) * Cos(pitch * 0.5f, inDegrees) * Cos(roll * 0.5f, inDegrees)

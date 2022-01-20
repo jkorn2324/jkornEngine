@@ -99,7 +99,7 @@ project "Engine"
 
 		postbuildcommands 
 		{
-			"xcopy /E /I \"%{prj.location}Shaders/\" \"%{startprojectpath}Shaders/\""
+			"xcopy /Y \"%{prj.location}Shaders/\" \"%{startprojectpath}/Shaders/\""
 		}
 
 		-- Pre Build command so that the MathLib gets built before Engine.
@@ -113,11 +113,12 @@ project "Engine"
 		-- Pre Build Commands so that glfw & DirectXTK gets built before the Engine lib.
 		prebuildcommands
 		{
-			"msbuild ../Engine/Libraries/DirectXTK/DirectXTK_Desktop_2019.vcxproj /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
+			"msbuild ..\\Engine\\Libraries\\DirectXTK\\DirectXTK_Desktop_2019.vcxproj /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
 		}
 
 		postbuildcommands
 		{
+			"mkdir \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\"",
 			"copy /Y \"C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2020.2\\lib\\vs2019\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\\libfbxsdk.dll\""
 		}
 	filter { "architecture:x86_64", "system:Windows"}
@@ -129,9 +130,10 @@ project "Engine"
 		-- Pre Build Commands so that glfw & DirectXTK gets built before the Engine lib.
 		prebuildcommands
 		{
-			"msbuild ../Engine/Libraries/DirectXTK/DirectXTK_Desktop_2019.vcxproj /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
+			"msbuild \"..\\Engine\\Libraries\\DirectXTK\\DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
 		}
 		postbuildcommands
 		{
+			"mkdir \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\"",
 			"copy /Y \"C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2020.2\\lib\\vs2019\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
 		}

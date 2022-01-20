@@ -105,7 +105,6 @@ namespace Engine
 		}
 
 		// Loads the Sprite Shader.
-		// TODO: Make it so that these shaders can be tied to the engine.
 		{
 			std::unique_ptr<Engine::BufferLayout> bufferLayout = Engine::BufferLayout::Create({
 					{ "POSITION", offsetof(GraphicsSpriteVertex, position),
