@@ -18,6 +18,7 @@ namespace Engine
 
 	public:
 		static Shader* StaticLoad(const std::wstring& fileName, const BufferLayout& bufferLayout);
+		static Shader* StaticLoad(const std::wstring& fileName, const std::unique_ptr<BufferLayout>& bufferLayout);
 		
 	private:
 		static Shader* Create();

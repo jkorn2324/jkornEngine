@@ -13,8 +13,9 @@ namespace Engine
 			: m_cachedAssets() { }
 		~AssetCache() { Clear(); }
 
-		void Cache(const std::wstring& name, TAsset* asset);
-		
+		template<typename... Args>
+		TAsset* Cache(const std::wstring& name, Args&& ...args);
+		TAsset* Cache(const std::wstring& name);
 		TAsset* Get(const std::wstring& name) const;
 
 		TAsset* Load(const std::wstring& name);
@@ -39,17 +40,30 @@ namespace Engine
 	}
 
 	template<typename TAsset>
-	inline void AssetCache<TAsset>::Cache(const std::wstring& name, TAsset* asset)
+	TAsset* AssetCache<TAsset>::Cache(const std::wstring& name)
 	{
-		if (asset != nullptr)
+		TAsset* found = Get(name);
+		if (found != nullptr)
 		{
-			return;
+			return found;
 		}
-		const auto& found = m_cachedAssets.find(name);
-		if (found == m_cachedAssets.end())
+		TAsset* asset = new TAsset();
+		m_cachedAssets.emplace(name, asset);
+		return asset;
+	}
+
+	template<typename TAsset>
+	template<typename ...Args>
+	inline TAsset* AssetCache<TAsset>::Cache(const std::wstring& name, Args && ...args)
+	{
+		TAsset* found = Get(name);
+		if (found != nullptr)
 		{
-			m_cachedAssets.emplace(name, asset);
+			return found;
 		}
+		TAsset* created = new TAsset(std::forward<Args>(args)...);
+		m_cachedAssets.emplace(name, created);
+		return created;
 	}
 
 	template<typename TAsset>

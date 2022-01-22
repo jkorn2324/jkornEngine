@@ -9,6 +9,7 @@
 #include "Profiler.h"
 #include "GraphicsRenderer.h"
 #include "GraphicsRenderer2D.h"
+#include "GraphicsRenderer3D.h"
 
 #include <sstream>
 
@@ -82,7 +83,8 @@ namespace Engine
 				sceneCam.SetViewMatrix(matrix);
 				sceneCam.UpdateProjectionMatrix();
 
-				if (cameraComponent.mainCamera)
+				if (cameraComponent.enabled
+					&& cameraComponent.mainCamera)
 				{
 					m_camera = &cameraComponent.camera;
 					break;
@@ -113,6 +115,29 @@ namespace Engine
 
 					GraphicsRenderer2D::DrawRect(transform.GetTransformMatrix(),
 						sprite.color, sprite.texture);
+				});
+		}
+
+		// Render the meshes.
+		{
+			m_entityRegistry.view<MeshComponent, Transform3DComponent>().each(
+				[](auto entity, MeshComponent& mesh, Transform3DComponent& transform)
+				{
+					if (!mesh.enabled) return;
+
+					if (mesh.mesh != nullptr)
+					{
+						// Draws the mesh with a material.
+						if (mesh.material != nullptr)
+						{
+							GraphicsRenderer3D::DrawMesh(transform.GetTransformMatrix(),
+								*mesh.mesh, *mesh.material);
+							return;
+						}
+						// Draws the mesh without a material.
+						GraphicsRenderer3D::DrawMesh(transform.GetTransformMatrix(),
+							*mesh.mesh);
+					}
 				});
 		}
 

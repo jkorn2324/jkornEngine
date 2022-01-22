@@ -99,7 +99,7 @@ project "Engine"
 
 		postbuildcommands 
 		{
-			"xcopy /Y \"%{prj.location}Shaders/\" \"%{startprojectpath}/Shaders/\""
+			"xcopy /Y /E /I \"%{prj.location}Shaders\" \"%{startprojectpath}/Shaders\""
 		}
 
 		-- Pre Build command so that the MathLib gets built before Engine.

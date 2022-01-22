@@ -81,4 +81,21 @@ namespace Engine
 	{
 		return m_indexCount;
 	}
+
+	bool Mesh::Load(const std::wstring& path)
+	{
+		// TODO: Implementation
+		return false;
+	}
+	
+	Mesh* Mesh::StaticLoad(const std::wstring& path)
+	{
+		Mesh* mesh = new Mesh();
+		if (!mesh->Load(path))
+		{
+			delete mesh;
+			return nullptr;
+		}
+		return mesh;
+	}
 }

@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Mesh.h"
+#include "Material.h"
 
 namespace Engine
 {
@@ -13,11 +14,9 @@ namespace Engine
 	public:
 		static AssetCache<Texture>& GetTextures();
 		static AssetCache<Shader>& GetShaders();
+		static AssetCache<Mesh>& GetMeshes();
+		static AssetCache<Material>& GetMaterials();
 
 		static void UncacheAssets();
-
-	private:
-		static AssetCache<Texture> s_textureAssets;
-		static AssetCache<Shader> s_shaderAssets;
 	};
 }

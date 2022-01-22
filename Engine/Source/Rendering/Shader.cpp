@@ -22,6 +22,15 @@ namespace Engine
 		return shader;
 	}
 
+	Shader* Shader::StaticLoad(const std::wstring& fileName, const std::unique_ptr<BufferLayout>& bufferLayout)
+	{
+		if (bufferLayout.get() == nullptr)
+		{
+			return nullptr;
+		}
+		return StaticLoad(fileName, *bufferLayout.get());
+	}
+
 	Shader* Shader::Create()
 	{
 		switch (RenderingAPI::GetRenderingAPIType())

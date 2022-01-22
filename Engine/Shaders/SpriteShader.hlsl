@@ -14,8 +14,9 @@ struct VertexShaderOut
 #include "TextureConstants.hlsl"
 #include "CameraConstants.hlsl"
 #include "ObjectConstants.hlsl"
+#include "MaterialConstants.hlsl"
 
-cbuffer SpriteConstants : register(b2)
+cbuffer SpriteConstants : register(b3)
 {
     float4 c_spriteColor;
 };
@@ -34,5 +35,10 @@ VertexShaderOut VS(VertexShaderIn input)
 
 float4 PS(VertexShaderOut input) : SV_TARGET
 {
-    return DefaultTexture.Sample(DefaultSampler, input.uv) * c_spriteColor;
+    float4 textureColor = float4(1.0, 1.0, 1.0, 1.0);
+    if (HAS_MATERIAL_FLAG(MaterialFlag_DefaultTexture))
+    {
+        textureColor = DefaultTexture.Sample(DefaultSampler, input.uv);
+    }
+    return textureColor * c_spriteColor;
 }

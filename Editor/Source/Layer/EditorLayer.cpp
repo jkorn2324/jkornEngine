@@ -32,13 +32,15 @@ namespace Editor
 		ImGui::ShowDemoWindow();
 	}
 
+	// TODO: Find a better way to get the main project menu path.
 
 	EditorLayer::EditorLayer()
 		: Layer("Editor"),
 		m_runtimeFrameBuffer(nullptr),
 		m_editorFrameBuffer(nullptr),
 		m_sceneHierarchy(),
-		m_entityInspector()
+		m_entityInspector(),
+		m_projectMenu(Engine::GetWorkingDirectory())
 	{
 	}
 
@@ -87,6 +89,8 @@ namespace Editor
 
 	void EditorLayer::OnUpdate(const Engine::Timestep& timestep)
 	{
+		m_projectMenu.OnUpdate(timestep);
+
 		if (!EditorSceneManager::IsPlaying())
 		{
 			// Updates camera and scene.
@@ -150,6 +154,7 @@ namespace Editor
 
 		m_sceneHierarchy.Draw();
 		m_entityInspector.Draw();
+		m_projectMenu.Draw();
 	}
 	
 	void EditorLayer::OnEvent(Engine::Event& event)
@@ -159,6 +164,7 @@ namespace Editor
 
 		m_sceneHierarchy.OnEvent(event);
 		m_entityInspector.OnEvent(event);
+		m_projectMenu.OnEvent(event);
 
 		Engine::EventDispatcher dispatcher(event);
 		// TODO: Listen for key press events

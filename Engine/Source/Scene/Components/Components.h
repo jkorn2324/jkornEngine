@@ -31,8 +31,9 @@ namespace Engine
 
 	struct SceneCameraComponent
 	{
-		bool mainCamera = true;
 		SceneCamera camera;
+		bool mainCamera = true;
+		bool enabled = true;
 
 		explicit SceneCameraComponent() = default;
 		explicit SceneCameraComponent(bool mainCam)
@@ -57,6 +58,7 @@ namespace Engine
 	{
 		// TODO: Generate a default material.
 
+		bool enabled = true;
 		class Mesh* mesh;
 		class Material* material;
 

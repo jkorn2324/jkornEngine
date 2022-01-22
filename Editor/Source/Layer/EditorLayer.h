@@ -5,6 +5,7 @@
 
 #include "SceneHierarchy.h"
 #include "EntityInspector.h"
+#include "ProjectMenu.h"
 
 namespace Engine
 {
@@ -34,5 +35,6 @@ namespace Editor
 
 		SceneHierarchy m_sceneHierarchy;
 		EntityInspector m_entityInspector;
+		ProjectMenu m_projectMenu;
 	};
 }

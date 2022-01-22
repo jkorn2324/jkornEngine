@@ -45,8 +45,6 @@ namespace Engine
 	static GraphicsObjectConstants s_spriteObjectConstants;
 
 	static Material* s_spriteMaterial = nullptr;
-	
-	static Shader* s_colorShader = nullptr;
 	static Shader* s_spriteShader = nullptr;
 
 	static GraphicsSpriteVertex vertices[4] =
@@ -69,15 +67,6 @@ namespace Engine
 
 		// Clears the texture at the initial texture slot.
 		GraphicsRenderer::GetRenderingAPI().ClearTexture(0);
-
-		if (texture != nullptr)
-		{
-			s_spriteMaterial->SetShader(s_spriteShader);
-		}
-		else
-		{
-			s_spriteMaterial->SetShader(s_colorShader);
-		}
 
 		// Bind Material.
 		MaterialConstants& constants = s_spriteMaterial->GetMaterialConstants();
@@ -125,13 +114,13 @@ namespace Engine
 
 			s_spriteShader = shaderAssetCache.Load<const Engine::BufferLayout&>(
 				L"Shaders/SpriteShader.hlsl", *bufferLayout.get());
-			s_colorShader = shaderAssetCache.Load<const Engine::BufferLayout&>(
-				L"Shaders/ColorShader.hlsl", *bufferLayout.get());
 
-			// Defines a new material with a given layout.
-			s_spriteMaterial = new Material({ 
-				{ "c_spriteColor", sizeof(MathLib::Vector4) } 
-			});
+			// Defines the sprite material.
+			s_spriteMaterial = Engine::AssetManager::GetMaterials().Cache(
+				L"SpriteMaterial", MaterialConstantsLayout{
+					{ "c_spriteColor", sizeof(MathLib::Vector4) }
+				});
+			s_spriteMaterial->SetShader(s_spriteShader);
 		}
 
 		Mat4x4 identity = Mat4x4::Identity;
@@ -142,7 +131,6 @@ namespace Engine
 	void GraphicsRenderer2D::Release()
 	{
 		delete s_spriteObjectConstantBuffer;
-		delete s_spriteMaterial;
 		delete s_spriteVertexBuffer;
 		delete s_spriteIndexBuffer;
 	}

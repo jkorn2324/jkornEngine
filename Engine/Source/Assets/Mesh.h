@@ -35,6 +35,11 @@ namespace Engine
 		void SetSkinned(bool skinned) { m_skinned = skinned; }
 		bool IsSkinned() const { return m_skinned; }
 
+		static Mesh* StaticLoad(const std::wstring& path);
+
+	private:
+		bool Load(const std::wstring& path);
+
 	private:	
 		char* m_vertices;
 		std::uint32_t* m_indices;

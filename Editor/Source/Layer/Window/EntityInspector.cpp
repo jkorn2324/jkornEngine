@@ -14,8 +14,44 @@ namespace Editor
 	{
 		if (entity.HasComponent<T>())
 		{
+			ImGui::BeginGroup();
+			
 			T& component = entity.GetComponent<T>();
 			func(component);
+
+			ImGui::EndGroup();
+		}
+	}
+
+	template<typename T>
+	static void DrawTreeNodeComponent(const Engine::Entity& entity,
+		const char* name, const std::function<void(T&)>& func)
+	{
+		if (entity.HasComponent<T>())
+		{
+			ImGui::BeginGroup();
+			bool open = ImGui::TreeNode(name);
+			if (open)
+			{
+				T& component = entity.GetComponent<T>();
+				func(component);
+				ImGui::TreePop();
+			}
+			ImGui::EndGroup();
+		}
+	}
+
+	template<typename T>
+	static void DrawComponentInMenu(const char* name, Engine::Entity& entity,
+		const std::function<void(T&)>& func)
+	{
+		if (!entity.HasComponent<T>())
+		{
+			if (ImGui::MenuItem(name))
+			{
+				T& newComponent = entity.AddComponent<T>();
+				if (func != nullptr) func(newComponent);
+			}
 		}
 	}
 
@@ -44,16 +80,15 @@ namespace Editor
 				ImGui::BeginGroup();
 				ImGui::InputText("Name", nameOutput, sizeof(nameOutput) / sizeof(char));
 				ImGui::EndGroup();
+				ImGui::Separator();
 
 				component.name = nameOutput;
 			});
 
 		// Draw Transform 3D Component.
-		DrawComponent<Engine::Transform3DComponent>(entity,
+		DrawTreeNodeComponent<Engine::Transform3DComponent>(entity, "Transform 3D Component",
 			[=](Engine::Transform3DComponent& component) -> void
 			{
-				ImGui::BeginGroup();
-
 				MathLib::Vector3 pos = component.GetPosition();
 				if (ImGui::InputFloat3("Position", reinterpret_cast<float*>(&pos), "%.3f",
 					ImGuiInputTextFlags_EnterReturnsTrue))
@@ -79,16 +114,12 @@ namespace Editor
 				{
 					component.SetScale(scale);
 				}
-
-				ImGui::EndGroup();
 			});
 
 		// Draw Transform 2D Component.
-		DrawComponent<Engine::Transform2DComponent>(entity,
+		DrawTreeNodeComponent<Engine::Transform2DComponent>(entity, "Transform 2D Component",
 			[=](Engine::Transform2DComponent& component) -> void
 			{
-				ImGui::BeginGroup();
-
 				MathLib::Vector2 pos = component.GetPosition();
 				ImGui::InputFloat2("Position", reinterpret_cast<float*>(&pos));
 				component.SetPosition(pos);
@@ -100,28 +131,21 @@ namespace Editor
 				MathLib::Vector2 scale = component.GetScale();
 				ImGui::InputFloat2("Scale", reinterpret_cast<float*>(&scale));
 				component.SetScale(scale);
-
-				ImGui::EndGroup();
 			});
 
 		// Draw Sprite Component.
-		DrawComponent<Engine::SpriteComponent>(entity,
+		DrawTreeNodeComponent<Engine::SpriteComponent>(entity, "Sprite Component",
 			[=](Engine::SpriteComponent& component) -> void
 			{
-				ImGui::BeginGroup();
-
 				ImGui::Checkbox("Enabled", &component.enabled);
 				ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&component.color));
-
-				ImGui::EndGroup();
 			});
 
 
-		DrawComponent<Engine::SceneCameraComponent>(entity,
+		DrawTreeNodeComponent<Engine::SceneCameraComponent>(entity, "Scene Camera Component",
 			[=](Engine::SceneCameraComponent& component) -> void
 			{
-				ImGui::BeginGroup();
-
+				ImGui::Checkbox("Enabled", &component.enabled);
 				ImGui::Checkbox("Main Camera", &component.mainCamera);
 
 				Engine::SceneCamera& camera = component.camera;
@@ -153,8 +177,14 @@ namespace Editor
 					break;
 				}
 				}
+			});
 
-				ImGui::EndGroup();
+		DrawTreeNodeComponent<Engine::MeshComponent>(entity, "Mesh Component",
+			[=](Engine::MeshComponent& component) -> void
+			{
+				ImGui::Checkbox("Enabled", &component.enabled);
+				
+				// TODO: Implementation
 			});
 	}
 
@@ -202,6 +232,23 @@ namespace Editor
 						}
 
 						DrawComponentInMenu<Engine::SpriteComponent>("Sprite", entity);
+						DrawComponentInMenu<Engine::MeshComponent>("Mesh", entity,
+							[=](Engine::MeshComponent& meshComponent) -> void
+							{
+								// TODO: Remove this, as this is temporary.
+								Engine::AssetCache<Engine::Mesh>& meshes
+									= Engine::AssetManager::GetMeshes();
+								meshComponent.mesh = meshes.Get(L"DefaultCube");
+
+								Engine::AssetCache<Engine::Material>& materials
+									= Engine::AssetManager::GetMaterials();
+								meshComponent.material = materials.Get(L"Unlit-ColorUV");
+								Engine::MaterialConstants& constants
+									= meshComponent.material->GetMaterialConstants();
+								constants.SetMaterialConstant(
+									"c_materialColor", MathLib::Vector4::One);
+							});
+
 						DrawComponentInMenu<Engine::SceneCameraComponent>("Camera", entity);
 
 						ImGui::EndMenu();
