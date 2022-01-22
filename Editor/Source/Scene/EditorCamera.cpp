@@ -69,7 +69,7 @@ namespace Editor
 		m_prevMousePos = Engine::Input::GetMouseScreenPos();
 	}
 
-	const MathLib::Matrix4x4& EditorCamera::GetTransformMatrix() const
+	MathLib::Matrix4x4 EditorCamera::GetTransformMatrix() const
 	{
 		return MathLib::Matrix4x4::CreateFromQuaternion(GetRotation())
 			* MathLib::Matrix4x4::CreateTranslation(m_position);

@@ -118,7 +118,7 @@ namespace Engine
 				if (e.HasComponent<Transform2DComponent>())
 				{
 					MathLib::Matrix4x4 transformMat = 
-						e.GetComponent<Transform2DComponent>().GetTransformMatrix4x4();
+						e.GetComponent<Transform2DComponent>().GetTransformMatrix();
 					GraphicsRenderer2D::DrawRect(
 						transformMat, sprite.color, sprite.texture);
 				}

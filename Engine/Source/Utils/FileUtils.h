@@ -23,7 +23,11 @@ namespace Engine
 	static std::string GetWorkingDirectory()
 	{
 		char cwdBuffer[_MAX_PATH];
+#ifdef PLATFORM_WINDOWS
+		_getcwd(cwdBuffer, _MAX_PATH);
+#elif PLATFORM_LINUX
 		getcwd(cwdBuffer, _MAX_PATH);
+#endif
 		return (std::string)cwdBuffer;
 	}
 

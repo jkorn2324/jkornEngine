@@ -37,7 +37,7 @@ namespace Editor
 
 	static bool OnWindowSizeChanged(Engine::WindowResizedEvent& event)
 	{
-		s_editorCamera.SetViewport(event.width, event.height);
+		s_editorCamera.SetViewport((float)event.width, (float)event.height);
 		return true;
 	}
 

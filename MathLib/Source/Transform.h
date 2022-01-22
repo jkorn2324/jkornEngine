@@ -31,18 +31,13 @@ namespace MathLib
 
 		void LookAt(const MathLib::Vector2& position);
 
-		Matrix4x4 GetTransformMatrix4x4() const;
-		const Mat3x3& GetTransformMatrix3x3() const;
-
-	private:
-		void RecalculateMatrix();
+		Vector2 GetForward() const;
+		Matrix4x4 GetTransformMatrix() const;
 
 	private:
 		Vector2 m_position;
 		Vector2 m_scale;
 		float m_rotation;
-
-		Mat3x3 m_transformMatrix;
 	};
 
 	class Transform3D
@@ -68,18 +63,18 @@ namespace MathLib
 		void SetRotation(const Quaternion& quat);
 		const Quaternion& GetRotation() const;
 
+		MathLib::Vector3 GetForward() const;
+		MathLib::Vector3 GetUp() const;
+		MathLib::Vector3 GetRight() const;
+
+		void LookAt(const MathLib::Vector3& position, const MathLib::Vector3& up);
 		void LookAt(const MathLib::Vector3& position);
 
-		const Mat4x4& GetTransformMatrix() const;
-
-	private:
-		void RecalculateMatrix();
+		Mat4x4 GetTransformMatrix() const;
 
 	private:
 		MathLib::Vector3 m_position;
 		MathLib::Vector3 m_scale;
 		MathLib::Quaternion m_rotation;
-
-		Mat4x4 m_transformMatrix;
 	};
 }
