@@ -257,13 +257,13 @@ namespace MathLib
 
 	Matrix4x4 Matrix4x4::CreateEuler(const Vector3& eulers, bool inDegrees)
 	{
-		return CreateEuler(eulers.x, eulers.y, eulers.z, inDegrees);
+		return CreateEuler(eulers.y, eulers.x, eulers.z, inDegrees);
 	}
 
 	Matrix4x4 Matrix4x4::CreateEuler(float yaw, float pitch, float roll, bool inDegrees)
 	{
-		return CreateRotationX(pitch, inDegrees) * 
-			CreateRotationY(yaw, inDegrees) * CreateRotationZ(roll, inDegrees);
+		return CreateRotationZ(roll, inDegrees) * 
+			CreateRotationX(pitch, inDegrees) * CreateRotationY(yaw, inDegrees);
 	}
 
 	Matrix4x4 Matrix4x4::CreateFromQuaternion(const Quaternion& quat)

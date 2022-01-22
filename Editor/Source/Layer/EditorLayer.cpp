@@ -52,6 +52,8 @@ namespace Editor
 
 	void EditorLayer::OnLayerAdded()
 	{
+		EditorSceneManager::Init();
+
 		Engine::GraphicsRenderer::GetRenderingAPI().SetClearColor(
 			MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 		Engine::Application& app = Engine::Application::Get();
@@ -165,8 +167,5 @@ namespace Editor
 		m_sceneHierarchy.OnEvent(event);
 		m_entityInspector.OnEvent(event);
 		m_projectMenu.OnEvent(event);
-
-		Engine::EventDispatcher dispatcher(event);
-		// TODO: Listen for key press events
 	}
 }

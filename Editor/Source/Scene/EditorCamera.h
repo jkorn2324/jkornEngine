@@ -44,10 +44,16 @@ namespace Editor
 		const EditorCameraProperties& GetCameraProperties() const { return m_editorCameraProperties; }
 		EditorCameraProperties& GetCameraProperties() { return m_editorCameraProperties; }
 
-		const MathLib::Matrix4x4& GetTransformMatrix() const { return m_transformMatrix; }
+		const MathLib::Matrix4x4& GetTransformMatrix() const;
 
 		bool LookAt(const class MathLib::Vector3& lookAtPos,
 			const class MathLib::Vector3& eyePos);
+
+		void SetViewport(float width, float height)
+		{
+			m_editorCameraProperties.width = width;
+			m_editorCameraProperties.height = height;
+		}
 
 	private:
 		bool UpdateZoom(const class Engine::Timestep& ts, float zoomDirection);
@@ -59,18 +65,22 @@ namespace Editor
 		void HandleCameraReset();
 		void HandleCameraFocus();
 
-		void UpdateTransformMatrix();
+		void UpdatePosition();
 		void UpdateViewMatrix();
 
+		MathLib::Vector3 GetForward() const;
+		MathLib::Vector3 GetRight() const; 
+		MathLib::Vector3 GetUp() const; 
+		MathLib::Quaternion GetRotation() const;
+
 	private:
-		MathLib::Matrix4x4 m_transformMatrix;
 		MathLib::Vector3 m_position;
 
 		MathLib::Vector3 m_focusPosition;
 		MathLib::Vector2 m_prevMousePos;
 		
 		float m_distanceToFocus = 1.0f;
-		MathLib::Vector3 m_cameraRotation;
+		MathLib::Vector2 m_cameraRotation;
 
 		EditorCameraProperties m_editorCameraProperties;
 

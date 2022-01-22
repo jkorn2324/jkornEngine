@@ -35,6 +35,18 @@ namespace Editor
 		return true;
 	}
 
+	static bool OnWindowSizeChanged(Engine::WindowResizedEvent& event)
+	{
+		s_editorCamera.SetViewport(event.width, event.height);
+		return true;
+	}
+
+	void EditorSceneManager::Init()
+	{
+		Engine::Window& window = Engine::Application::Get().GetWindow();
+		s_editorCamera.SetViewport((float)window.GetWidth(),
+			(float)window.GetHeight());
+	}
 
 	void EditorSceneManager::OnEvent(Engine::Event& event)
 	{
@@ -43,6 +55,8 @@ namespace Editor
 			BIND_STATIC_EVENT_FUNCTION(OnEntityCreated_SceneManager));
 		dispatcher.Invoke<Engine::EntityDestroyedEvent>(
 			BIND_STATIC_EVENT_FUNCTION(OnEntityDestroyed_SceneManager));
+		dispatcher.Invoke<Engine::WindowResizedEvent>(
+			BIND_STATIC_EVENT_FUNCTION(OnWindowSizeChanged));
 	}
 	
 	std::vector<Engine::Entity>& EditorSceneManager::GetEntities()

@@ -125,8 +125,10 @@ namespace Editor
 				component.SetPosition(pos);
 
 				float rotation = component.GetRotation(true);
-				ImGui::InputFloat("Rotation", reinterpret_cast<float*>(&rotation));
-				component.SetRotation(rotation, true);
+				if (ImGui::InputFloat("Rotation", reinterpret_cast<float*>(&rotation)))
+				{
+					component.SetRotation(rotation, true);
+				}
 
 				MathLib::Vector2 scale = component.GetScale();
 				ImGui::InputFloat2("Scale", reinterpret_cast<float*>(&scale));

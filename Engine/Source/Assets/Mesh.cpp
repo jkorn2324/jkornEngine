@@ -64,7 +64,7 @@ namespace Engine
 		std::memcpy(m_vertices, vertices, 
 			stride * vertexCount);
 		m_vertexBuffer = VertexBuffer::Create(vertices,
-			vertexCount, stride);
+			vertexCount, (uint32_t)stride);
 	}
 
 	uint32_t Mesh::GetNumVertices() const

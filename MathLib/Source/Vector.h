@@ -129,6 +129,8 @@ namespace MathLib
 		friend Vector3 Lerp(const Vector3& a, const Vector3& b, float alpha);
 		friend Vector3 LerpClamped(const Vector3& a, const Vector3& b, float alpha);
 
+		friend Vector3 Rotate(const class Quaternion& quat, const Vector3& direction);
+
 		friend bool IsNormalized(const Vector3& vec);
 
 		friend bool operator==(const Vector3& a, const Vector3& b);
@@ -162,11 +164,11 @@ namespace MathLib
 		Vector3& operator/=(const Vector3& v);
 		Vector3& operator/=(float scalar);
 
-		// Get Forward Direction.
+		// Get Right Direction.
 		static const Vector3 UnitX;
-		// Get Left Direction.
-		static const Vector3 UnitY;
 		// Get Up Direction.
+		static const Vector3 UnitY;
+		// Get Forward Direction.
 		static const Vector3 UnitZ;
 		static const Vector3 One;
 		static const Vector3 Zero;

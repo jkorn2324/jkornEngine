@@ -16,6 +16,7 @@ namespace Editor
 	class EditorSceneManager
 	{
 	public:
+		static void Init();
 		static void OnEvent(Engine::Event& event);
 
 		static std::vector<Engine::Entity>& GetEntities();

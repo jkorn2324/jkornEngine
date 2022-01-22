@@ -78,7 +78,7 @@ namespace MathLib
 
 	float Transform2D::GetRotation(bool inDegrees) const
 	{
-		return inDegrees ? MathLib::DEG2RAD * m_rotation : m_rotation;
+		return inDegrees ? MathLib::RAD2DEG * m_rotation : m_rotation;
 	}
 
 	const Mat3x3& Transform2D::GetTransformMatrix3x3() const
@@ -89,7 +89,7 @@ namespace MathLib
 	Mat4x4 Transform2D::GetTransformMatrix4x4() const
 	{
 		return Matrix4x4::CreateScale(m_scale.x, m_scale.y, 1.0f)
-			* Matrix4x4::CreateRotationX(m_rotation)
+			* Matrix4x4::CreateRotationZ(m_rotation, false)
 			* Matrix4x4::CreateTranslation(m_position.x, m_position.y, 0.0f);
 	}
 

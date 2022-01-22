@@ -108,14 +108,28 @@ namespace Engine
 
 		// Render the sprites.
 		{
-			m_entityRegistry.view<SpriteComponent, Transform3DComponent>().each(
-				[](auto entity, SpriteComponent& sprite, Transform3DComponent& transform)
-				{
-					if (!sprite.enabled) return;
+			auto entityView = m_entityRegistry.view<SpriteComponent>();
+			for (auto entity : entityView)
+			{
+				auto sprite = entityView.get<SpriteComponent>(entity);
+				if (!sprite.enabled) return;
 
-					GraphicsRenderer2D::DrawRect(transform.GetTransformMatrix(),
-						sprite.color, sprite.texture);
-				});
+				Entity e = Entity{ entity, this };
+				if (e.HasComponent<Transform2DComponent>())
+				{
+					MathLib::Matrix4x4 transformMat = 
+						e.GetComponent<Transform2DComponent>().GetTransformMatrix4x4();
+					GraphicsRenderer2D::DrawRect(
+						transformMat, sprite.color, sprite.texture);
+				}
+				if (e.HasComponent<Transform3DComponent>())
+				{
+					MathLib::Matrix4x4 transformMat
+						= e.GetComponent<Transform3DComponent>().GetTransformMatrix();
+					GraphicsRenderer2D::DrawRect(
+						transformMat, sprite.color, sprite.texture);
+				}
+			}
 		}
 
 		// Render the meshes.

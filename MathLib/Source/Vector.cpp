@@ -2,6 +2,7 @@
 #include "Vector.h"
 #include "Math.h"
 #include "Matrix.h"
+#include "Quaternion.h"
 
 namespace MathLib
 {
@@ -277,6 +278,19 @@ namespace MathLib
 	{
 		alpha = Clamp(0.0f, 1.0f, alpha);
 		return Lerp(a, b, alpha);
+	}
+
+	Vector3 Rotate(const Quaternion& quat, const Vector3& direction)
+	{
+		MathLib::Vector3 normalizedCopy(direction);
+		normalizedCopy.Normalize();
+
+		Quaternion negQuat(-quat);
+		Quaternion outQuat(direction.x, direction.y, direction.z, 0.0f);
+		outQuat = Concatenate(quat, outQuat);
+		outQuat = Concatenate(outQuat, negQuat);
+
+		return Vector3(outQuat.x, outQuat.y, outQuat.z);
 	}
 
 	Vector3 Normalize(const Vector3& in)

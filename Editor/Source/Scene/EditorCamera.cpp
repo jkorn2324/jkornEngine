@@ -6,8 +6,8 @@
 
 namespace Editor
 {
-	static const float FOCUSED_FAR_DISTANCE = 10.0f;
-	static const float FOCUSED_NEAR_DISTANCE = 1.0f;
+	static const float FOCUSED_FAR_DISTANCE = 20.0f;
+	static const float FOCUSED_NEAR_DISTANCE = 5.0f;
 
 	static const float ROTATION_SPEED = 1.2f;
 
@@ -27,7 +27,6 @@ namespace Editor
 	EditorCamera::EditorCamera()
 		: Camera::Camera(),
 		m_editorCameraProperties(),
-		m_transformMatrix(MathLib::Matrix4x4::Identity),
 		m_focusPosition(MathLib::Vector3::Zero),
 		m_prevMousePos(MathLib::Vector2::Zero)
 	{
@@ -36,10 +35,30 @@ namespace Editor
 	EditorCamera::EditorCamera(const EditorCameraProperties& properties)
 		: Camera::Camera(),
 		m_editorCameraProperties(properties),
-		m_transformMatrix(MathLib::Matrix4x4::Identity),
 		m_prevMousePos(MathLib::Vector2::Zero),
 		m_focusPosition(MathLib::Vector3::Zero)
 	{
+	}
+
+	MathLib::Vector3 EditorCamera::GetForward() const
+	{
+		return MathLib::Rotate(GetRotation(), MathLib::Vector3::UnitZ);
+	}
+
+	MathLib::Vector3 EditorCamera::GetUp() const
+	{
+		return MathLib::Rotate(GetRotation(), MathLib::Vector3::UnitY);
+	}
+
+	MathLib::Vector3 EditorCamera::GetRight() const
+	{
+		return MathLib::Rotate(GetRotation(), MathLib::Vector3::UnitX);
+	}
+
+	MathLib::Quaternion EditorCamera::GetRotation() const
+	{
+		return MathLib::Quaternion::FromEuler(MathLib::Vector3(
+			m_cameraRotation, 0.0f), false);
 	}
 
 	void EditorCamera::OnEditorUpdate(const Engine::Timestep& ts)
@@ -48,6 +67,12 @@ namespace Editor
 		UpdateViewMatrix();
 
 		m_prevMousePos = Engine::Input::GetMouseScreenPos();
+	}
+
+	const MathLib::Matrix4x4& EditorCamera::GetTransformMatrix() const
+	{
+		return MathLib::Matrix4x4::CreateFromQuaternion(GetRotation())
+			* MathLib::Matrix4x4::CreateTranslation(m_position);
 	}
 
 	bool EditorCamera::LookAt(const MathLib::Vector3& lookAtPos,
@@ -59,12 +84,10 @@ namespace Editor
 			return false;
 		}
 
-		m_transformMatrix = MathLib::Matrix4x4::CreateLookAt(
-			lookAtPos, eyePos, MathLib::Vector3::UnitY);
-		m_position = m_transformMatrix.GetTranslation();
+		m_position = eyePos;
 		m_focusPosition = lookAtPos;
 		m_hasFocusPosition = true;
-		m_cameraRotation = MathLib::Vector3::Zero;
+		m_cameraRotation = MathLib::Vector2::Zero;
 		m_isFocusedFar = false;
 		m_distanceToFocus = FOCUSED_NEAR_DISTANCE;
 		return true;
@@ -75,7 +98,6 @@ namespace Editor
 		if (Engine::Input::IsKeyPressed(Engine::KEY_CODE_R))
 		{
 			HandleCameraReset();
-			UpdateTransformMatrix();
 			return;
 		}
 
@@ -84,7 +106,6 @@ namespace Editor
 			Engine::KEY_CODE_F, ts.GetSeconds()))
 		{
 			HandleCameraFocus();
-			UpdateTransformMatrix();
 			return;
 		}
 
@@ -150,7 +171,7 @@ namespace Editor
 		}
 
 		// Updates the camera rotation.
-		UpdateTransformMatrix();
+		UpdatePosition();
 	}
 
 	bool EditorCamera::UpdateZoom(const Engine::Timestep& ts, float zoomDirection)
@@ -163,12 +184,12 @@ namespace Editor
 			if (zoomDirection > 0.0f)
 			{
 				hasInput = true;
-				direction = m_transformMatrix.GetZAxis();
+				direction = GetForward();
 			}
 			else if (zoomDirection < 0.0f)
 			{
 				hasInput = true;
-				direction = -m_transformMatrix.GetZAxis();
+				direction = -GetForward();
 			}
 
 			if (hasInput)
@@ -197,11 +218,10 @@ namespace Editor
 
 	void EditorCamera::HandleCameraReset()
 	{
-		m_transformMatrix = MathLib::Matrix4x4::Identity;
 		m_position = MathLib::Vector3::Zero;
 		m_focusPosition = MathLib::Vector3::Zero;
 		m_hasFocusPosition = false;
-		m_cameraRotation = MathLib::Vector3::Zero;
+		m_cameraRotation = MathLib::Vector2::Zero;
 		m_distanceToFocus = FOCUSED_NEAR_DISTANCE;
 		m_isFocusedFar = false;
 	}
@@ -253,22 +273,22 @@ namespace Editor
 		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_W))
 		{
 			hasInput = true;
-			cameraInputDirection += m_transformMatrix.GetZAxis();
+			cameraInputDirection += GetForward();
 		}
 		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_A))
 		{
 			hasInput = true;
-			cameraInputDirection += -m_transformMatrix.GetXAxis();
+			cameraInputDirection += -GetRight();
 		}
 		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_D))
 		{
 			hasInput = true;
-			cameraInputDirection += m_transformMatrix.GetXAxis();
+			cameraInputDirection += GetRight();
 		}
 		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_S))
 		{
 			hasInput = true;
-			cameraInputDirection += -m_transformMatrix.GetZAxis();
+			cameraInputDirection += -GetForward();
 		}
 		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_Q))
 		{
@@ -297,36 +317,33 @@ namespace Editor
 		if (m_editorCameraProperties.cameraType == CAMERA_PERSPECTIVE)
 		{
 			MathLib::Vector2 mouseDifference = mouseDelta * 0.003f;
-			if (mouseDifference != MathLib::Vector2::Zero)
-			{
-				m_cameraRotation.y +=
-					mouseDifference.y * ROTATION_SPEED;
-				m_cameraRotation.x +=
-					mouseDifference.x * ROTATION_SPEED;
-			}
+			// y = Yaw
+			m_cameraRotation.y +=
+				mouseDifference.x * ROTATION_SPEED;
+			// x = Pitch
+			m_cameraRotation.x +=
+				mouseDifference.y * ROTATION_SPEED;
 		}
 	}
 
 
-	void EditorCamera::UpdateTransformMatrix()
+	void EditorCamera::UpdatePosition()
 	{
 		// Updates the focus position based on the yaw and pitch.
 		if (m_hasFocusPosition)
 		{
-			MathLib::Vector3 newDifference =
-				-m_transformMatrix.GetZAxis() * m_distanceToFocus;
-			MathLib::Vector3 newPos = m_focusPosition + newDifference;
+			MathLib::Vector3 distanceFromFocus =
+				-GetForward() * m_distanceToFocus;
+			MathLib::Vector3 newPos = m_focusPosition + distanceFromFocus;
 			m_position = newPos;
 		}
-		m_transformMatrix = MathLib::Matrix4x4::CreateEuler(m_cameraRotation, false)
-			* MathLib::Matrix4x4::CreateTranslation(m_position);
 	}
 
 	void EditorCamera::UpdateViewMatrix()
 	{
 		// If we want to make forward x axis, left y axis, anx up z axis, need to create
 		// a rotation matrix around y axis & z axis.
-		m_viewMatrix = m_transformMatrix;
+		m_viewMatrix = GetTransformMatrix();
 		m_viewMatrix.Invert();
 
 		switch (m_editorCameraProperties.cameraType)
