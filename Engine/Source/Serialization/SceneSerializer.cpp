@@ -31,6 +31,12 @@ namespace Engine
 			WriteString(writer, nameComponent.name);
 		}
 
+		if (entity.HasComponent<EntityHierarchyComponent>())
+		{
+			EntityHierarchyComponent& ehc = entity.GetComponent<EntityHierarchyComponent>();
+			// TODO: Write the parent Guid and Children Guid
+		}
+
 		// Transform 3D Component.
 		if (entity.HasComponent<Transform3DComponent>())
 		{
@@ -41,11 +47,11 @@ namespace Engine
 			writer.StartObject();
 
 			WriteString(writer, "Position");
-			WriteVector3(writer, transform3D.GetPosition());
+			WriteVector3(writer, transform3D.GetLocalPosition());
 			WriteString(writer, "Rotation");
-			WriteQuaternion(writer, transform3D.GetRotation());
+			WriteQuaternion(writer, transform3D.GetLocalRotation());
 			WriteString(writer, "Scale");
-			WriteVector3(writer, transform3D.GetScale());
+			WriteVector3(writer, transform3D.GetLocalScale());
 
 			writer.EndObject();
 		}
@@ -60,11 +66,11 @@ namespace Engine
 			writer.StartObject();
 
 			WriteString(writer, "Position");
-			WriteVector2(writer, transform2D.GetPosition());
+			WriteVector2(writer, transform2D.GetLocalPosition());
 			WriteString(writer, "Rotation");
-			writer.Double(transform2D.GetRotation());
+			writer.Double(transform2D.GetLocalRotation());
 			WriteString(writer, "Scale");
-			WriteVector2(writer, transform2D.GetScale());
+			WriteVector2(writer, transform2D.GetLocalScale());
 
 			writer.EndObject();
 		}
@@ -144,6 +150,24 @@ namespace Engine
 			else
 			{
 				entity.AddComponent<NameComponent>(name);
+			}
+		}
+
+		if (value.HasMember("EntityHierarchyComponent"))
+		{
+			if (entity.HasComponent<EntityHierarchyComponent>())
+			{
+				// TODO: Load the owning entity's Guid.
+				// TODO: Load the children entity Guids.
+				EntityHierarchyComponent component 
+					= entity.GetComponent<EntityHierarchyComponent>();
+			}
+			else
+			{
+				// TODO: Load the owning entity's Guid.
+				// TODO: Load the children entity Guids.
+				EntityHierarchyComponent component
+					= entity.AddComponent<EntityHierarchyComponent>(entity);
 			}
 		}
 

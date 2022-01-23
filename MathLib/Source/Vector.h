@@ -143,6 +143,8 @@ namespace MathLib
 		friend Vector3 operator-(const Vector3& a, const Vector3& b);
 		friend Vector3 operator-(const Vector3& a, const Vector2& b);
 
+		friend Vector3 operator*(const Vector3& a, const Vector2& b);
+
 		friend Vector3 operator*(const Vector3& a, const Vector3& b);
 		friend Vector3 operator*(const Vector3& a, float scalar);
 		friend Vector3 operator*(float scalar, const Vector3& vec);

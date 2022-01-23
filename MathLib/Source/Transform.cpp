@@ -8,9 +8,10 @@ namespace MathLib
 	using Mat4x4 = MathLib::Matrix4x4;
 
 	Transform2D::Transform2D()
-		: m_position(MathLib::Vector2::Zero),
+		: m_position(Vector2::Zero),
 		m_rotation(0.0f),
-		m_scale(1.0f, 1.0f)
+		m_scale(1.0f, 1.0f),
+		m_parentTransformMatrix(Matrix4x4::Identity)
 	{
 	}
 
@@ -18,79 +19,108 @@ namespace MathLib
 		float rot, const Vector2& scale)
 		: m_position(pos),
 		m_rotation(rot),
-		m_scale(scale)
+		m_scale(scale),
+		m_parentTransformMatrix(Matrix4x4::Identity)
 	{
 	}
 
-	void Transform2D::SetPosition(float x, float y)
+	void Transform2D::SetParentTransformMatrix(const Matrix4x4& mat)
+	{
+		m_parentTransformMatrix = mat;
+	}
+
+	void Transform2D::SetLocalPosition(float x, float y)
 	{
 		m_position.x = x;
 		m_position.y = y;
 	}
 
-	void Transform2D::SetPosition(const Vector2& position)
+	void Transform2D::SetLocalPosition(const Vector2& position)
 	{
-		SetPosition(position.x, position.y);
+		SetLocalPosition(position.x, position.y);
 	}
 
-	const Vector2& Transform2D::GetPosition() const
+	const Vector2& Transform2D::GetLocalPosition() const
 	{
 		return m_position;
 	}
 
-	void Transform2D::SetScale(float scale)
+	void Transform2D::SetLocalScale(float scale)
 	{
-		SetScale(scale, scale);
+		SetLocalScale(scale, scale);
 	}
 
-	void Transform2D::SetScale(float x, float y)
+	void Transform2D::SetLocalScale(float x, float y)
 	{
 		m_scale.x = x;
 		m_scale.y = y;
 	}
 
-	void Transform2D::SetScale(const Vector2& scale)
+	void Transform2D::SetLocalScale(const Vector2& scale)
 	{
-		SetScale(scale.x, scale.y);
+		SetLocalScale(scale.x, scale.y);
 	}
 
-	const Vector2& Transform2D::GetScale() const
+	const Vector2& Transform2D::GetLocalScale() const
 	{
 		return m_scale;
 	}
 
-	void Transform2D::SetRotation(float rotation, bool inDegrees)
+	void Transform2D::SetLocalRotation(float rotation, bool inDegrees)
 	{
 		m_rotation = inDegrees ? MathLib::DEG2RAD * rotation : rotation;
 	}
 
-	float Transform2D::GetRotation() const
+	float Transform2D::GetLocalRotation() const
 	{
 		return m_rotation;
 	}
 
-	float Transform2D::GetRotation(bool inDegrees) const
+	float Transform2D::GetLocalRotation(bool inDegrees) const
 	{
 		return inDegrees ? MathLib::RAD2DEG * m_rotation : m_rotation;
 	}
 
 	void Transform2D::LookAt(const MathLib::Vector2& position)
 	{
-		Vector2 dir = Normalize(position - m_position);
+		Vector2 dir = Normalize(position - GetWorldPosition());
 		float angle = MathLib::ATan2(dir.y, dir.x);
 		m_rotation = angle;
 	}
 
-	Vector2 Transform2D::GetForward() const
+	Vector2 Transform2D::GetLocalForward() const
 	{
 		float x = Cos(m_rotation, false);
 		float y = Sin(m_rotation, false);
 		return Normalize(Vector2(x, y));
 	}
 
+	Vector2 Transform2D::GetWorldPosition() const
+	{
+		Vector3 worldPosition = m_parentTransformMatrix.GetTranslation();
+		return Vector2(worldPosition.x, worldPosition.y)
+			+ m_position;
+	}
+
+	Vector2 Transform2D::GetWorldForward() const
+	{
+		Vector3 parentForward = m_parentTransformMatrix.GetZAxis();
+		Vector2 forwardAdded = Vector2(parentForward.x, parentForward.y)
+			+ GetLocalForward();
+		forwardAdded.Normalize();
+		return forwardAdded;
+	}
+
+	Vector2 Transform2D::GetWorldScale() const
+	{
+		Vector3 scaleVec3 = m_parentTransformMatrix.GetScale();
+		return Vector2(scaleVec3.x, scaleVec3.y)
+			* m_scale;
+	}
+
 	Matrix4x4 Transform2D::GetTransformMatrix() const
 	{
-		return Matrix4x4::CreateScale(MathLib::Vector3(m_scale, 1.0f))
+		return m_parentTransformMatrix * Matrix4x4::CreateScale(MathLib::Vector3(m_scale, 1.0f))
 			* Matrix4x4::CreateRotationZ(m_rotation)
 			* Matrix4x4::CreateTranslation(
 				MathLib::Vector3(m_position, 0.0f));
@@ -99,7 +129,8 @@ namespace MathLib
 	Transform3D::Transform3D()
 		: m_position(0.0f, 0.0f, 0.0f),
 		m_scale(1.0f, 1.0f, 1.0f),
-		m_rotation(MathLib::Quaternion::Identity)
+		m_rotation(MathLib::Quaternion::Identity),
+		m_parentTransformMatrix(Mat4x4::Identity)
 	{
 	}
 
@@ -108,97 +139,137 @@ namespace MathLib
 		const Quaternion& rot, const Vector3& scale)
 		: m_position(pos),
 		m_scale(scale),
-		m_rotation(rot)
+		m_rotation(rot),
+		m_parentTransformMatrix(Mat4x4::Identity)
 	{
 	}
 
-	void Transform3D::SetPosition(const Vector3& pos)
+	void Transform3D::SetParentTransformMatrix(const Matrix4x4& matrix)
 	{
-		SetPosition(pos.x, pos.y, pos.z);
+		m_parentTransformMatrix = matrix;
 	}
 
-	void Transform3D::SetPosition(float x, float y, float z)
+	void Transform3D::SetLocalPosition(const Vector3& pos)
+	{
+		SetLocalPosition(pos.x, pos.y, pos.z);
+	}
+
+	void Transform3D::SetLocalPosition(float x, float y, float z)
 	{
 		m_position.x = x;
 		m_position.y = y;
 		m_position.z = z;
 	}
 
-	const Vector3& Transform3D::GetPosition() const
+	const Vector3& Transform3D::GetLocalPosition() const
 	{
 		return m_position;
 	}
 
-	void Transform3D::SetScale(float x, float y, float z)
+	void Transform3D::SetLocalScale(float x, float y, float z)
 	{
 		m_scale.x = x;
 		m_scale.y = y;
 		m_scale.z = z;
 	}
 
-	void Transform3D::SetScale(float s)
+	void Transform3D::SetLocalScale(float s)
 	{
-		SetScale(s, s, s);
+		SetLocalScale(s, s, s);
 	}
 
-	void Transform3D::SetScale(const Vector3& vec)
+	void Transform3D::SetLocalScale(const Vector3& vec)
 	{
-		SetScale(vec.x, vec.y, vec.z);
+		SetLocalScale(vec.x, vec.y, vec.z);
 	}
 
-	const Vector3& Transform3D::GetScale() const
+	const Vector3& Transform3D::GetLocalScale() const
 	{
 		return m_scale;
 	}
 
 	MathLib::Matrix4x4 Transform3D::GetTransformMatrix() const
 	{
-		return Mat4x4::CreateScale(m_scale)
+		return m_parentTransformMatrix * Mat4x4::CreateScale(m_scale)
 			* Mat4x4::CreateFromQuaternion(m_rotation)
 			* Mat4x4::CreateTranslation(m_position);
 	}
 	
-	void Transform3D::SetRotation(const Vector3& eulers, bool inDegrees)
+	void Transform3D::SetLocalRotation(const Vector3& eulers, bool inDegrees)
 	{
-		SetRotation(Quaternion::FromEuler(eulers, inDegrees));
+		SetLocalRotation(Quaternion::FromEuler(eulers, inDegrees));
 	}
 
-	void Transform3D::SetRotation(float yaw, float pitch, float roll, bool inDegrees)
+	void Transform3D::SetLocalRotation(float yaw, float pitch, float roll, bool inDegrees)
 	{
-		SetRotation(Quaternion::FromEuler(yaw, pitch, roll, inDegrees));
+		SetLocalRotation(Quaternion::FromEuler(yaw, pitch, roll, inDegrees));
 	}
 
-	void Transform3D::SetRotation(const Quaternion& quat)
+	void Transform3D::SetLocalRotation(const Quaternion& quat)
 	{
 		m_rotation = quat;
 		m_rotation.Normalize();
 	}
 
-	const Quaternion& Transform3D::GetRotation() const
+	const Quaternion& Transform3D::GetLocalRotation() const
 	{
 		return m_rotation;
 	}
 
-	MathLib::Vector3 Transform3D::GetForward() const
+	Vector3 Transform3D::GetWorldPosition() const
+	{
+		return m_parentTransformMatrix.GetTranslation() + m_position;
+	}
+
+	Vector3 Transform3D::GetWorldScale() const
+	{
+		return m_parentTransformMatrix.GetScale() * m_scale;
+	}
+
+	MathLib::Vector3 Transform3D::GetLocalForward() const
 	{
 		return Rotate(m_rotation, MathLib::Vector3::UnitZ);
 	}
 
-	MathLib::Vector3 Transform3D::GetUp() const
+	MathLib::Vector3 Transform3D::GetLocalUp() const
 	{
 		return Rotate(m_rotation, MathLib::Vector3::UnitY);
 	}
 
-	MathLib::Vector3 Transform3D::GetRight() const
+	MathLib::Vector3 Transform3D::GetLocalRight() const
 	{
 		return Rotate(m_rotation, MathLib::Vector3::UnitZ);
+	}
+
+	Vector3 Transform3D::GetWorldForward() const
+	{
+		Vector3 combinedDirections =
+			m_parentTransformMatrix.GetZAxis() + GetLocalForward();
+		combinedDirections.Normalize();
+		return combinedDirections;
+	}
+
+	Vector3 Transform3D::GetWorldUp() const
+	{
+		Vector3 combinedDirections =
+			m_parentTransformMatrix.GetYAxis() + GetLocalUp();
+		combinedDirections.Normalize();
+		return combinedDirections;
+	}
+
+	Vector3 Transform3D::GetWorldRight() const
+	{
+		Vector3 combinedDirections =
+			m_parentTransformMatrix.GetXAxis() + GetLocalRight();
+		combinedDirections.Normalize();
+		return combinedDirections;
 	}
 
 	void Transform3D::LookAt(const MathLib::Vector3& position, const MathLib::Vector3& up)
 	{
 		Vector3 newForward = position - m_position;
 		newForward.Normalize();
-		Vector3 currentForward = GetForward();
+		Vector3 currentForward = GetWorldForward();
 
 		Vector3 forwardNormal = Cross(newForward, currentForward);
 		float forwardAngle = ACos(Dot(newForward, currentForward), false);

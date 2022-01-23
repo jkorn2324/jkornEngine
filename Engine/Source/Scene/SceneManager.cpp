@@ -3,6 +3,10 @@
 
 #include "Scene.h"
 #include "SceneSerializer.h"
+#include "Entity.h"
+
+#include "SceneEvent.h"
+#include "EntityHierarchyComponent.h"
 
 namespace Engine
 {
@@ -20,6 +24,14 @@ namespace Engine
 		delete s_activeScene;
 	}
 	
+	void SceneManager::OnEvent(Event& event)
+	{
+		if (s_activeScene != nullptr)
+		{
+			s_activeScene->OnEvent(event);
+		}
+	}
+
 	void SceneManager::LoadScene(const wchar_t* filePath)
 	{
 		if (s_activeScene != nullptr)
@@ -37,6 +49,14 @@ namespace Engine
 	Scene& SceneManager::GetActiveScene()
 	{
 		return *s_activeScene;
+	}
+
+	void SceneManager::OnUpdate(const Timestep& ts)
+	{
+		if (s_activeScene != nullptr)
+		{
+			s_activeScene->OnUpdate(ts);
+		}
 	}
 	
 	void SceneManager::OnRuntimeUpdate(const Timestep& ts)

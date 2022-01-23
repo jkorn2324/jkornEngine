@@ -82,9 +82,27 @@ namespace Editor
 			Engine::WStringToString(Engine::SceneManager::GetActiveScene().GetSceneName(),
 				sceneName);
 
-			if (ImGui::TreeNode(sceneName.c_str()))
+			bool sceneNodeOpened = ImGui::TreeNode(sceneName.c_str());
+			if (ImGui::BeginDragDropTarget())
 			{
-				std::vector<Engine::Entity>& entities = EditorSceneManager::GetEntities();
+				if (const ImGuiPayload* dragAndDropPayload
+					= ImGui::AcceptDragDropPayload("_sceneHierarchyEntitySelection"))
+				{
+					Engine::Entity* selectedEntityNode = (Engine::Entity*)dragAndDropPayload->Data;
+					if (selectedEntityNode != nullptr)
+					{
+						Engine::EntityHierarchyComponent& hierarchy
+							= selectedEntityNode->GetComponent<Engine::EntityHierarchyComponent>();
+						hierarchy.SetParent(Engine::Entity::None);
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			if (sceneNodeOpened)
+			{
+				const std::vector<Engine::Entity>& entities = 
+					Engine::SceneManager::GetActiveScene().GetRootEntities();
 				for (uint32_t i = 0; i < entities.size(); i++)
 				{
 					DrawEntity(entities[i]);
@@ -104,22 +122,20 @@ namespace Editor
 	{
 		ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
 
-		ImGuiTreeNodeFlags nodeFlags = 0;
-		if (EditorSelection::GetSelectedEntity() == entity)
+		bool isEntitySameAsSelection = EditorSelection::GetSelectedEntity()
+			== entity;
+		ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow;
+		if (isEntitySameAsSelection)
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
-		else
-		{
-			nodeFlags |= ImGuiTreeNodeFlags_OpenOnArrow;
-		}
 		nodeFlags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 
-		// TODO: Detect if the entity has children.
-		bool hasChildren = false;
-		if (!hasChildren)
+		Engine::EntityHierarchyComponent& ehc
+			= entity.GetComponent<Engine::EntityHierarchyComponent>();
+		if (!ehc.HasChildren())
 		{
-			nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+			nodeFlags |= ImGuiTreeNodeFlags_Leaf;
 		}
 
 		Engine::NameComponent& nameComponent
@@ -154,17 +170,54 @@ namespace Editor
 		}
 		}
 
+		if (!isEntitySameAsSelection
+			&& ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* dragAndDropPayload
+				= ImGui::AcceptDragDropPayload("_sceneHierarchyEntitySelection"))
+			{
+				Engine::Entity* selectedEntityNode = (Engine::Entity*)dragAndDropPayload->Data;
+				if (selectedEntityNode != nullptr
+					&& *selectedEntityNode != entity)
+				{
+					Engine::EntityHierarchyComponent& hierarchy
+						= selectedEntityNode->GetComponent<Engine::EntityHierarchyComponent>();
+					hierarchy.SetParent(entity);
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		// Drag and Drop Source
+		if (isEntitySameAsSelection
+			&& ImGui::BeginDragDropSource())
+		{
+			void* selectedEntityNode = &EditorSelection::GetSelectedEntity();
+			ImGui::SetDragDropPayload("_sceneHierarchyEntitySelection", selectedEntityNode, 
+				sizeof(Engine::Entity));
+			ImGui::Text(nameComponent.name.c_str());
+			ImGui::EndDragDropSource();
+		}
+
+		if (isOpened)
+		{
+			if (ehc.HasChildren())
+			{
+				auto children = ehc.GetChildren();
+				for (int i = 0; i < children.size(); i++)
+				{
+					DrawEntity(children[i]);
+				}
+			}
+			ImGui::TreePop();
+		}
+
+		ImGui::Unindent();
+
 		if (deleted)
 		{
 			Engine::SceneManager::GetActiveScene().DestroyEntity(
-				EditorSelection::GetSelectedEntity());
+				entity);
 		}
-#if 0
-		// TODO: Draw Children.
-		if (isOpened && hasChildren)
-		{
-		}
-#endif
-		ImGui::Unindent();
 	}
 }

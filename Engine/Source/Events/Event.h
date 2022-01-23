@@ -13,9 +13,8 @@ namespace Engine
 		InputMouseButtonEvent, InputMouseButtonPressedEvent, InputMouseButtonReleasedEvent,
 		InputMouseMoveEvent, InputMouseScrollEvent,
 
-		EntityCreatedEvent, EntityDestroyedEvent,
-
-		EntitySelectionEvent
+		EntityCreatedEvent, EntityDestroyedEvent, EntityHierarchyChangedEvent,
+		EntityComponentAddedEvent, EntityComponentRemovedEvent
 	};
 
 	enum class EventCategory
@@ -29,7 +28,8 @@ namespace Engine
 #define EVENT_TYPE_CLASS(type) public:\
 	static EventType GetStaticEventType() { return EventType::type; }\
 	virtual EventType GetEventType() const override { return GetStaticEventType(); }\
-	virtual const char* GetName() const override { return #type; }
+	virtual const char* GetName() const override { return #type; }\
+	static bool StaticIsValid(class Event& event) { return true; }
 #define EVENT_CATEGORY_CLASS(category) public:	virtual int GetEventCategoryFlags() const override { return (int)EventCategory::category; }
 #define BIND_EVENT_FUNCTION(func) [this](auto&&...args) -> decltype(auto) { return this->func(std::forward<decltype(args)>(args)...); }
 #define BIND_STATIC_EVENT_FUNCTION(func) [](auto&&...args) -> decltype(auto) { return func(std::forward<decltype(args)>(args)...); }
@@ -50,6 +50,8 @@ namespace Engine
 			return GetEventCategoryFlags() & (int)category;
 		}
 
+		virtual bool IsValid() const { return true; }
+
 		bool eventHandled = false;
 	};
 
@@ -63,7 +65,8 @@ namespace Engine
 		template<typename EventType, typename Func>
 		bool Invoke(const Func& callback)
 		{
-			if (m_event.GetEventType() == EventType::GetStaticEventType())
+			if (m_event.GetEventType() == EventType::GetStaticEventType()
+				&& EventType::StaticIsValid(m_event))
 			{
 				m_event.eventHandled |= callback(static_cast<EventType&>(m_event));
 				return true;

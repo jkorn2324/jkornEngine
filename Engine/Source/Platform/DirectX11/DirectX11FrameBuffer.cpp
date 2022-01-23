@@ -62,7 +62,7 @@ namespace Engine
 		{
 			{
 				ID3D11DepthStencilState* depthStencilState = CreateDepthStencilState(
-					D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS, renderingAPI.m_device);
+					D3D11_COMPARISON_LESS_EQUAL, renderingAPI.m_device);
 				renderingAPI.m_deviceContext->OMSetDepthStencilState(depthStencilState, 0);
 				depthStencilState->Release();
 			}
@@ -115,7 +115,7 @@ namespace Engine
 				ID3D11Texture2D* texture;
 				ID3D11ShaderResourceView* shaderResource;
 				CreateTextureWithShaderResource(api,
-					D3D11_BIND_RENDER_TARGET| D3D11_BIND_SHADER_RESOURCE,
+					D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
 					DXGI_FORMAT_R32G32B32A32_FLOAT, 1, &texture, &shaderResource);
 				ID3D11RenderTargetView* renderTargetView;
 				HRESULT result = api->m_device->CreateRenderTargetView(texture,
@@ -140,7 +140,7 @@ namespace Engine
 			ZeroMemory(&viewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 			viewDesc.Texture2D.MipLevels = 1;
 			viewDesc.Format = shaderResourceFormat;
-			viewDesc.ViewDimension = D3D11_SRV_DIMENSION::D3D10_1_SRV_DIMENSION_TEXTURE2D;
+			viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			result = api->m_device->CreateShaderResourceView(*outTexture,
 				&viewDesc, outShaderResource);
 		}
@@ -189,11 +189,14 @@ namespace Engine
 				(ID3D11DepthStencilView*)m_depthTexture.m_view);
 		}
 
+		renderingAPI.Clear();
+		if (m_depthTexture.m_view != nullptr)
+		{
+			renderingAPI.m_deviceContext->ClearDepthStencilView((ID3D11DepthStencilView*)m_depthTexture.m_view,
+				D3D11_CLEAR_DEPTH, 1.0f, 0);
+		}
 		renderingAPI.SetViewport(0.0f, 0.0f,
 			(float)m_frameBufferSpecification.width, (float)m_frameBufferSpecification.height);
-		renderingAPI.Clear();
-		renderingAPI.m_deviceContext->ClearDepthStencilView((ID3D11DepthStencilView*)m_depthTexture.m_view,
-			D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
 	
 	Texture* DirectX11FrameBuffer::GetTexture(FrameBufferAttachmentType type) const

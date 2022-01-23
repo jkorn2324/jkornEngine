@@ -1,9 +1,157 @@
-Rendering Architecture:
+General Rendering:
+-> Per platform rendering
+   -> Implementations move on from being relied on enum
+      to macros []
+   -> OpenGL Implementation []
+   -> Vulkan Implementation []
 
+-> Objects are sorted by material when being processed for Rendering []
+   -> Limits the amount of times that buffers need to be
+      sent the GPU before a draw call is issued. []
 
--> Meshes - Includes Batch Rendering and Instanced Rendering
-    -> Sort by material.
+3D Rendering:
+-> Can Render Basic Objects in API calls []
+   - Can draw cube []
+   - Can draw a mesh [x]
+-> Supports batch rendering - See in 2D Rendering Section []
+-> Supports instanced rendering - See in 2D Rendering Section []
+
+2D Rendering:
+-> Can Render Basic Shapes in API calls []
+   - Render Rectangles with textures [x]
+   - Render Rectangles from sub textures [x]
+-> Supports batch rendering []
+   - Batch Rendering = an array of vertices that contain
+     a set of vertices for different objects, if amount
+     of vertex buffers reaches a certain cap or if the
+     amount of texture slots fills up to the max, submit
+     these vertices for drawing
+-> Supports instanced rendering []
+   - Instanced Rendering = a bunch of different objects that
+     have just about the exact same properties can be sent to
+     the GPU in a single draw call but they each have slightly
+     different parameters, such as transform matrix, color, etc...
+
+Shaders:
+-> Write a system for loading and running Compute Shaders []
+     
+----------------------------------------------------------------
+
+Asset Management:
+
+-> Implement GUIDs/UUIDs when saving assets.
+   -> Refactor Asset manager so that we can also load an asset
+      directly via a GUID []
+   -> Serialize Assets with meta files that contain Guids []
+   -> Give Entities Guids []
+   -> Give Components Guids []
+   -> Give Materials Guids []
+   -> Give Shaders Guids []
 
 Material System:
--> Internal Static Materials - Unlit Color, Unlit Texture Color, etc...
--> Dynamic Materials - Custom Parameters that can be changed with ease.
+-> Dynamic Materials - Custom Parameters that 
+can be changed with ease. [x]
+   -> Must be provided with a layout.
+-> Track whether a texture has been assigned to a slot [x]
+
+--------------------------------------------------------------
+Physics/Collisions:
+
+2D Collisions:
+-> Box Collisions []
+   -> OOBB []
+-> Circle Collisions []
+   -> Pretty easy
+
+3D Collisions:
+-> GJK - Use that for all types of collisions with meshes. []
+
+Physics:
+-> Basic Rigidbody Physics []
+
+-------------------------------------------------------------
+Serialization:
+
+Type = JSON (at least for now)
+
+-> Serialize Components to a format []
+   -> Transform3D Component [x]
+   -> Transform2D Component [x]
+   -> Scene Camera [x]
+   -> Mesh Component []
+      -> Blocked by Guids
+   -> Sprite Component []
+      -> Blocked by Guids
+-> Load Components from a format 
+   -> Transform3D Component [x]
+   -> Transform2D Component [x]
+   -> Scene Camera [x]
+   -> Mesh Component []
+     -> Blocked by Guids
+   -> Sprite Component [] 
+     -> Blocked by Guids
+
+-> Can Serialize Entities to a format [x]
+   -> Components [x]
+-> Can Load Entities from serialized format [x]
+   -> Components [x]
+
+-------------------------------------------------------------
+
+ECS:
+
+-> Added entt [x]
+-> Implemented a wrapper around entt to use as the main ECS method [x]
+-> Implemented a base entity class [x]
+
+-> Added different types of built-in components that the engine will need []
+   -> Transform 3D []
+      -> Contains a reference to a parent matrix or transform.
+   -> Transform 2D []
+      -> Contains a reference to a parent matrix or transform.
+   -> Scene Camera [x]
+   -> Sprite Component (Might Change to Sprite Renderer) []
+   -> Mesh Component (Might Change to Mesh Renderer) []
+   -> Entity Relationship Component (Come up with better name) []
+      -> Contains a reference to parent's entt ids 
+      -> Contains a list of children entt ids
+
+Scene Events:
+    -> Event that gets triggered when an entity gets destroyed []
+    -> Event that gets triggered when an entity gets added []
+    -> Event that gets triggered when a component gets added []
+    -> Event that gets triggered when a component gets removed. []
+
+-------------------------------------------------------------
+
+Editor Hub:
+-> Contains a menu list of all the projects that exist on machine []
+-> Can double click on a project in that list and it will open it
+if the project exists []
+-> Can create new project via a dropdown []
+-> Can delete a project from list of content view projects []
+
+-------------------------------------------------------------
+
+Editor:
+
+-> Support Scripting in Engine []
+   -> Should use C#
+
+-> Make Prettier and Give it Style []
+-> Entity Inspector Window
+   -> Add Components [x]
+   -> Edit Components [x]
+   -> Delete Components []
+
+-> Scene Hierarchy
+   -> Add Entities [x]
+   -> Delete Entities [x]
+   -> View children entities []
+
+-> Project Window
+   -> Displays all files in a given path []
+   -> Can double click on sub folder and open the path []
+   -> Can drag and drop files into project window []
+   -> Can drag files in project window into scene []
+

@@ -116,7 +116,6 @@ namespace Engine
 		desc.CullMode = wireframe ? D3D11_CULL_NONE : D3D11_CULL_BACK;
 		desc.FillMode = wireframe ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
 		desc.FrontCounterClockwise = true;
-		desc.MultisampleEnable = true;
 
 		HRESULT result = device->CreateRasterizerState(&desc, rasterizerState);
 		DebugAssert(result == S_OK, "Rasterizer state failed to generate.");

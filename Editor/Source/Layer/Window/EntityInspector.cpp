@@ -89,14 +89,14 @@ namespace Editor
 		DrawTreeNodeComponent<Engine::Transform3DComponent>(entity, "Transform 3D Component",
 			[=](Engine::Transform3DComponent& component) -> void
 			{
-				MathLib::Vector3 pos = component.GetPosition();
+				MathLib::Vector3 pos = component.GetLocalPosition();
 				if (ImGui::InputFloat3("Position", reinterpret_cast<float*>(&pos), "%.3f",
 					ImGuiInputTextFlags_EnterReturnsTrue))
 				{
-					component.SetPosition(pos);
+					component.SetLocalPosition(pos);
 				}
 
-				MathLib::Quaternion quaternion = component.GetRotation();
+				MathLib::Quaternion quaternion = component.GetLocalRotation();
 				MathLib::Vector3 eulers = quaternion.ToEuler(true);
 				if (ImGui::InputFloat3("Rotation", reinterpret_cast<float*>(&eulers), "%.3f",
 					ImGuiInputTextFlags_EnterReturnsTrue))
@@ -104,15 +104,15 @@ namespace Editor
 					MathLib::Quaternion quaternionFromEulers = MathLib::Quaternion::FromEuler(eulers, true);
 					if (quaternionFromEulers != quaternion)
 					{
-						component.SetRotation(quaternionFromEulers);
+						component.SetLocalRotation(quaternionFromEulers);
 					}
 				}
 
-				MathLib::Vector3 scale = component.GetScale();
+				MathLib::Vector3 scale = component.GetLocalScale();
 				if (ImGui::InputFloat3("Scale", reinterpret_cast<float*>(&scale), "%.3f",
 					ImGuiInputTextFlags_EnterReturnsTrue))
 				{
-					component.SetScale(scale);
+					component.SetLocalScale(scale);
 				}
 			});
 
@@ -120,19 +120,19 @@ namespace Editor
 		DrawTreeNodeComponent<Engine::Transform2DComponent>(entity, "Transform 2D Component",
 			[=](Engine::Transform2DComponent& component) -> void
 			{
-				MathLib::Vector2 pos = component.GetPosition();
+				MathLib::Vector2 pos = component.GetLocalPosition();
 				ImGui::InputFloat2("Position", reinterpret_cast<float*>(&pos));
-				component.SetPosition(pos);
+				component.SetLocalPosition(pos);
 
-				float rotation = component.GetRotation(true);
+				float rotation = component.GetLocalRotation(true);
 				if (ImGui::InputFloat("Rotation", reinterpret_cast<float*>(&rotation)))
 				{
-					component.SetRotation(rotation, true);
+					component.SetLocalRotation(rotation, true);
 				}
 
-				MathLib::Vector2 scale = component.GetScale();
+				MathLib::Vector2 scale = component.GetLocalScale();
 				ImGui::InputFloat2("Scale", reinterpret_cast<float*>(&scale));
-				component.SetScale(scale);
+				component.SetLocalScale(scale);
 			});
 
 		// Draw Sprite Component.

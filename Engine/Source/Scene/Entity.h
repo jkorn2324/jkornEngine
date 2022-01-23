@@ -6,17 +6,18 @@
 
 #include <entt.hpp>
 
+#include "SceneEvent.h"
 #include "Scene.h"
 
 namespace Engine
 {
+	using EventFunc = std::function<void(Event&)>;
 
 	class Entity
 	{
 	public:
 		explicit Entity() = default;
 		explicit Entity(const entt::entity& entity, class Scene* scene);
-		explicit Entity(const entt::entity& entity, const class Scene* scene);
 
 		template<typename T>
 		T& GetComponent() const;
@@ -44,10 +45,19 @@ namespace Engine
 		}
 
 	private:
-		class Scene* m_scene;
+		static void BindEventFunc(const EventFunc& func);
+
+	private:
+		class Scene* m_scene = nullptr;
 		entt::entity m_entity{ entt::null };
 
+		static EventFunc s_componentEventFunc;
+
 		friend class Scene;
+		friend class Application;
+
+	public:
+		static const Entity None;
 	};
 
 	template<typename T>
@@ -72,12 +82,29 @@ namespace Engine
 	T& Entity::AddComponent(Args && ...args)
 	{
 		T& component = m_scene->m_entityRegistry.emplace<T>(m_entity, std::forward<Args>(args)...);
+		
+		if (s_componentEventFunc != nullptr)
+		{
+			EntityComponentAddedEvent<T> event(*this, component);
+			s_componentEventFunc(event);
+		}
 		return component;
 	}
 
 	template<typename T>
 	void Entity::RemoveComponent()
 	{
+		if (!HasComponent<T>())
+		{
+			return;
+		}
+		T& component = GetComponent<T>();
+		if (s_componentEventFunc != nullptr)
+		{
+			EntityComponentRemovedEvent<T> event(*this, component);
+			s_componentEventFunc(event);
+		}
+
 		m_scene->m_entityRegistry.remove_if_exists<T>(m_entity);
 	}
 }

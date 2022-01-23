@@ -4,6 +4,7 @@
 
 #include "Entity.h"
 #include "SceneCamera.h"
+#include "EntityHierarchyComponent.h"
 
 namespace Engine
 {

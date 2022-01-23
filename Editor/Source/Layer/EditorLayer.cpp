@@ -62,7 +62,7 @@ namespace Editor
 		{
 			Engine::FrameBufferSpecification runtimeSpecifications(
 				{
-					Engine::FrameBufferAttachmentType::DEPTH_STENCIL
+					// Engine::FrameBufferAttachmentType::DEPTH_STENCIL
 				});
 
 			runtimeSpecifications.width = app.GetWindow().GetWidth();
@@ -92,6 +92,7 @@ namespace Editor
 	void EditorLayer::OnUpdate(const Engine::Timestep& timestep)
 	{
 		m_projectMenu.OnUpdate(timestep);
+		Engine::SceneManager::OnUpdate(timestep);
 
 		if (!EditorSceneManager::IsPlaying())
 		{

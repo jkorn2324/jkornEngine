@@ -67,7 +67,7 @@ namespace GlfwSandbox
 		{
 			Engine::Transform3DComponent& camComponentTransform
 				= cameraEntity.AddComponent<Engine::Transform3DComponent>();
-			camComponentTransform.SetPosition(MathLib::Vector3(-1.0f, 0.0f, 0.0f));
+			camComponentTransform.SetLocalPosition(MathLib::Vector3(-1.0f, 0.0f, 0.0f));
 			camComponentTransform.LookAt(MathLib::Vector3(0.0f, 0.0f, 0.0f));
 			
 			Engine::SceneCameraComponent& camComponent
@@ -83,7 +83,7 @@ namespace GlfwSandbox
 		{
 			Engine::Transform3DComponent& component
 				= entity.AddComponent<Engine::Transform3DComponent>();
-			component.SetScale(200.0f, 200.0f, 1.0f);
+			component.SetLocalScale(200.0f, 200.0f, 1.0f);
 			entity.AddComponent<Engine::SpriteComponent>();
 			/* entity.AddComponent<Engine::SpriteComponent>(
 				Engine::AssetManager::GetTextures().Get(L"Assets/Textures/happy-face.png")); */
@@ -101,7 +101,7 @@ namespace GlfwSandbox
 		{
 			Engine::Transform3DComponent& transformComponent
 				= entity.GetComponent<Engine::Transform3DComponent>();
-			MathLib::Vector3 position = transformComponent.GetPosition();
+			MathLib::Vector3 position = transformComponent.GetWorldPosition();
 			MathLib::Vector3 direction;
 			if (Engine::Input::IsKeyHeld(Engine::InputKeyCode::KEY_CODE_A))
 			{
@@ -122,20 +122,20 @@ namespace GlfwSandbox
 			{
 				Engine::Transform3DComponent& transformComponent
 					= entity.GetComponent<Engine::Transform3DComponent>();
-				MathLib::Vector3 scale = transformComponent.GetScale() + MathLib::Vector3::One *
+				MathLib::Vector3 scale = transformComponent.GetLocalScale() + MathLib::Vector3::One *
 					Engine::Input::GetMouseScrollOffset().y * 0.02f;
-				transformComponent.SetScale(scale);
+				transformComponent.SetLocalScale(scale);
 			}
 
 			if (Engine::Input::IsMouseButtonHeld(Engine::MOUSE_BUTTON_MIDDLE))
 			{
 				s_rotation += 10.0f;
-				transformComponent.SetRotation(MathLib::Quaternion::FromEuler(0.0f, 0.0f, s_rotation));
+				transformComponent.SetLocalRotation(MathLib::Quaternion::FromEuler(0.0f, 0.0f, s_rotation));
 			}
 
 			MathLib::Vector2 screenPos = Engine::Input::GetMouseScreenPos();
 			position = scene.GetCamera()->ScreenToWorld(screenPos);
-			transformComponent.SetPosition(position);
+			transformComponent.SetLocalPosition(position);
 		}
 		Render();
 	}

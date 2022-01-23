@@ -16,32 +16,43 @@ namespace MathLib
 		explicit Transform2D(const Vector2& pos,
 			float rot, const Vector2& scale);
 
-		void SetPosition(float x, float y);
-		void SetPosition(const Vector2& position);
-		const Vector2& GetPosition() const;
+		void SetParentTransformMatrix(const Matrix4x4& mat);
 
-		void SetScale(float scale);
-		void SetScale(float x, float y);
-		void SetScale(const Vector2& scale);
-		const Vector2& GetScale() const;
+		void SetLocalPosition(float x, float y);
+		void SetLocalPosition(const Vector2& position);
+		
+		const Vector2& GetLocalPosition() const;
 
-		void SetRotation(float rotation, bool inDegrees = true);
-		float GetRotation() const;
-		float GetRotation(bool inDegrees) const;
+		void SetLocalScale(float scale);
+		void SetLocalScale(float x, float y);
+		void SetLocalScale(const Vector2& scale);
+		const Vector2& GetLocalScale() const;
+
+		void SetLocalRotation(float rotation, bool inDegrees = true);
+		float GetLocalRotation() const;
+		float GetLocalRotation(bool inDegrees) const;
 
 		void LookAt(const MathLib::Vector2& position);
 
-		Vector2 GetForward() const;
+		Vector2 GetLocalForward() const;
+
+		Vector2 GetWorldPosition() const;
+		Vector2 GetWorldForward() const;
+		Vector2 GetWorldScale() const;
+
 		Matrix4x4 GetTransformMatrix() const;
 
 	private:
 		Vector2 m_position;
 		Vector2 m_scale;
 		float m_rotation;
+
+		Matrix4x4 m_parentTransformMatrix;
 	};
 
 	class Transform3D
 	{
+
 		using Mat4x4 = MathLib::Matrix4x4;
 
 	public:
@@ -49,23 +60,32 @@ namespace MathLib
 		explicit Transform3D(const Vector3& pos,
 			const Quaternion& rot, const Vector3& scale);
 
-		void SetPosition(const Vector3& pos);
-		void SetPosition(float x, float y, float z);
-		const Vector3& GetPosition() const;
+		void SetParentTransformMatrix(const Matrix4x4& matrix);
 
-		void SetScale(float x, float y, float z);
-		void SetScale(float s);
-		void SetScale(const Vector3& vec);
-		const Vector3& GetScale() const;
+		void SetLocalPosition(const Vector3& pos);
+		void SetLocalPosition(float x, float y, float z);
+		const Vector3& GetLocalPosition() const;
 
-		void SetRotation(const Vector3& eulers, bool inDegrees = true);
-		void SetRotation(float yaw, float pitch, float roll, bool inDegrees = true);
-		void SetRotation(const Quaternion& quat);
-		const Quaternion& GetRotation() const;
+		void SetLocalScale(float x, float y, float z);
+		void SetLocalScale(float s);
+		void SetLocalScale(const Vector3& vec);
+		const Vector3& GetLocalScale() const;
 
-		MathLib::Vector3 GetForward() const;
-		MathLib::Vector3 GetUp() const;
-		MathLib::Vector3 GetRight() const;
+		void SetLocalRotation(const Vector3& eulers, bool inDegrees = true);
+		void SetLocalRotation(float yaw, float pitch, float roll, bool inDegrees = true);
+		void SetLocalRotation(const Quaternion& quat);
+		const Quaternion& GetLocalRotation() const;
+
+		Vector3 GetWorldPosition() const;
+		Vector3 GetWorldScale() const;
+
+		Vector3 GetLocalForward() const;
+		Vector3 GetLocalUp() const;
+		Vector3 GetLocalRight() const;
+
+		Vector3 GetWorldForward() const;
+		Vector3 GetWorldUp() const;
+		Vector3 GetWorldRight() const;
 
 		void LookAt(const MathLib::Vector3& position, const MathLib::Vector3& up);
 		void LookAt(const MathLib::Vector3& position);
@@ -76,5 +96,6 @@ namespace MathLib
 		MathLib::Vector3 m_position;
 		MathLib::Vector3 m_scale;
 		MathLib::Quaternion m_rotation;
+		MathLib::Matrix4x4 m_parentTransformMatrix;
 	};
 }

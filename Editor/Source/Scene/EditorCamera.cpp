@@ -117,10 +117,11 @@ namespace Editor
 			if (Engine::Input::IsMouseButtonHeld(
 				Engine::InputMouseButton::MOUSE_BUTTON_MIDDLE))
 			{
-				MathLib::Vector2 positionDelta(-mouseDelta.x * MOUSE_CAMERA_MULTIPLIER, 
-					mouseDelta.y * MOUSE_CAMERA_MULTIPLIER);
-				m_position += positionDelta;
-				m_focusPosition += positionDelta;
+				MathLib::Vector3 dir = GetRight() * -mouseDelta.x
+					+ GetUp() * mouseDelta.y;
+				MathLib::Vector3 directionDelta = dir * MOUSE_CAMERA_MULTIPLIER;
+				m_position += directionDelta;
+				m_focusPosition += directionDelta;
 			}
 		}
 
@@ -235,9 +236,9 @@ namespace Editor
 			{
 				Engine::Transform3DComponent& transform3D =
 					selectedEntity.GetComponent<Engine::Transform3DComponent>();
-				MathLib::Vector3 eyePos = transform3D.GetPosition()
+				MathLib::Vector3 eyePos = transform3D.GetWorldPosition()
 					- MathLib::Vector3::UnitZ * FOCUSED_NEAR_DISTANCE;
-				if (LookAt(transform3D.GetPosition(), eyePos))
+				if (LookAt(transform3D.GetWorldPosition(), eyePos))
 				{
 					return;
 				}
@@ -246,7 +247,7 @@ namespace Editor
 			{
 				Engine::Transform2DComponent& transform2D =
 					selectedEntity.GetComponent<Engine::Transform2DComponent>();
-				MathLib::Vector3 lookAtPos = MathLib::Vector3(transform2D.GetPosition(), 0.0f);
+				MathLib::Vector3 lookAtPos = MathLib::Vector3(transform2D.GetWorldPosition(), 0.0f);
 				MathLib::Vector3 eyePos = lookAtPos
 					- MathLib::Vector3::UnitZ * FOCUSED_NEAR_DISTANCE;
 				if (LookAt(lookAtPos, eyePos))
@@ -270,32 +271,38 @@ namespace Editor
 	{
 		bool hasInput = false;
 		MathLib::Vector3 cameraInputDirection = MathLib::Vector3::Zero;
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_W))
+		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_W)
+			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_S))
 		{
 			hasInput = true;
 			cameraInputDirection += GetForward();
 		}
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_A))
-		{
-			hasInput = true;
-			cameraInputDirection += -GetRight();
-		}
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_D))
-		{
-			hasInput = true;
-			cameraInputDirection += GetRight();
-		}
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_S))
+		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_S)
+			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_W))
 		{
 			hasInput = true;
 			cameraInputDirection += -GetForward();
 		}
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_Q))
+		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_A)
+			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_D))
+		{
+			hasInput = true;
+			cameraInputDirection += -GetRight();
+		}
+		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_D)
+			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_A))
+		{
+			hasInput = true;
+			cameraInputDirection += GetRight();
+		}
+		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_Q)
+			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_E))
 		{
 			hasInput = true;
 			cameraInputDirection += -MathLib::Vector3::UnitY;
 		}
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_E))
+		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_E)
+			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_Q))
 		{
 			hasInput = true;
 			cameraInputDirection += MathLib::Vector3::UnitY;

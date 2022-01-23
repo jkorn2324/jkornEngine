@@ -13,4 +13,15 @@
 #include <chrono>
 #include <cstdint>
 
+#ifdef PLATFORM_WINDOWS
+
+#include <Windows.h>
+
+#ifdef GetObject
+	#undef GetObject
+#endif
+
+#endif
+
 #include "DebugAssert.h"
+#include "Logger.h"

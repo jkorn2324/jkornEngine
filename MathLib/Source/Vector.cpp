@@ -351,6 +351,12 @@ namespace MathLib
 		return Vector3(a.x - b.x, a.y - b.y, a.z);
 	}
 
+	Vector3 operator*(const Vector3& a, const Vector2& b)
+	{
+		return Vector3(
+			a.x * b.x, a.y * b.y, a.z * 0.0f);
+	}
+
 	Vector3 operator*(const Vector3& a, const Vector3& b)
 	{
 		return Vector3(

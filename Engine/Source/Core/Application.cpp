@@ -14,10 +14,11 @@
 #include "Timestep.h"
 #include "ImGuiLayer.h"
 #include "Input.h"
-#include "Logger.h"
 #include "Profiler.h"
 #include "AssetManager.h"
 #include "SceneManager.h"
+#include "Entity.h"
+#include "EntityHierarchyComponent.h"
 
 namespace Engine
 {
@@ -61,6 +62,10 @@ namespace Engine
 
 		SceneManager::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 		SceneManager::Init();
+
+		// Binds the component add and remove to the event func.
+		Entity::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
+		EntityHierarchyComponent::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 
 		m_imguiLayer = new ImGuiLayer();
 		m_windowLayerStack.AddOverlay(m_imguiLayer);
@@ -139,6 +144,7 @@ namespace Engine
 	void Application::OnEvent(Event& event)
 	{
 		Input::OnEvent(event);
+		SceneManager::OnEvent(event);
 
 		EventDispatcher dispatcher(event);
 		dispatcher.Invoke<WindowClosedEvent>(BIND_EVENT_FUNCTION(Application::OnWindowClosed));

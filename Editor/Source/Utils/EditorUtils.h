@@ -19,8 +19,6 @@ namespace Editor
 		static void Init();
 		static void OnEvent(Engine::Event& event);
 
-		static std::vector<Engine::Entity>& GetEntities();
-
 		static bool IsPlaying();
 		static void SetPlaying(bool playing);
 
