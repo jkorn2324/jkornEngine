@@ -60,3 +60,7 @@ project "Editor"
 		defines { "RELEASE", "NDEBUG" }
 		optimize "On"
 		runtime "Release"
+	
+	filter "files:Source/EditorApplication.cpp"
+		flags "NoPCH"
+

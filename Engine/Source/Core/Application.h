@@ -6,16 +6,25 @@
 
 #include "LayerStack.h"
 
+int main(int argsc, char** argsv);
+
+
+
 namespace Engine
 {
-
+	struct ApplicationArgs
+	{
+		int argsCount;
+		char** args;
+	};
+	
 	class Event;
 
 	class Application
 	{
 	public:
 		Application(const std::string& name);
-		~Application();
+		virtual ~Application();
 
 		void Run();
 
@@ -46,10 +55,14 @@ namespace Engine
 
 	private:
 		static class Application* s_instance;
+		friend int ::main(int argsc, char** argsv);
 
 	public:
 		static class Application& Get();
 
 #pragma endregion
 	};
+
+	Application* Create(const ApplicationArgs& args);
 }
+
