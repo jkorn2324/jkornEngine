@@ -21,7 +21,7 @@ namespace Editor
 
 	struct EditorCameraProperties
 	{
-		float nearPlane = 0.0f;
+		float nearPlane = 1.0f;
 		float farPlane = 10000.0f;
 
 		float width = 800.0f;

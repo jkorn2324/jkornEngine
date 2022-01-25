@@ -1,3 +1,6 @@
+TODOS:
+-> Build Dependencies (ASAP)
+
 General Rendering:
 -> Per platform rendering
    -> Implementations move on from being relied on enum

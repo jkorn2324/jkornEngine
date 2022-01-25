@@ -54,6 +54,23 @@ namespace Engine
 			}
 		}
 
+		template<typename T>
+		T* GetMaterialConstant(const std::string& name)
+		{
+			const auto& found = m_materialConstants.find(name);
+			if (found != m_materialConstants.end())
+			{
+				char* bufferPosition = m_materialBuffer + found->second.offset;
+				size_t bufferSize = found->second.stride;
+				if (sizeof(T) > bufferSize)
+				{
+					return nullptr;
+				}
+				return (T*)bufferPosition;
+			}
+			return nullptr;
+		}
+
 		const char* GetRawBuffer() const { return m_materialBuffer; }
 		size_t GetBufferSize() const { return m_totalBufferSize; }
 

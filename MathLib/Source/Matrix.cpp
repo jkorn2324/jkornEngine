@@ -389,7 +389,7 @@ namespace MathLib
 		{
 			{xScale, 0.0f, 0.0f, 0.0f},
 			{0.0f, yScale, 0.0f, 0.0f},
-			{0.0f, 0.0f, -(farPlane / (farPlane - nearPlane)), 1.0f},
+			{0.0f, 0.0f, (farPlane / (farPlane - nearPlane)), 1.0f},
 			{0.0f, 0.0f, -((nearPlane * farPlane) / (farPlane - nearPlane)), 0.0f}
 		};
 		return Matrix4x4(mat);

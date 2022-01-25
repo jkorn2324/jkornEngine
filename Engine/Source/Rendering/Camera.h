@@ -14,7 +14,10 @@ namespace Engine
 
 		const MathLib::Matrix4x4& GetViewMatrix() const { return m_viewMatrix; }
 		const MathLib::Matrix4x4& GetProjectionMatrix() const { return m_projectionMatrix; }
-		MathLib::Matrix4x4 GetViewProjectionMatrix() const { return m_viewMatrix * m_projectionMatrix; }
+		MathLib::Matrix4x4 GetViewProjectionMatrix() const 
+		{ 
+			return m_viewMatrix * m_projectionMatrix; 
+		}
 
 		MathLib::Vector3 ScreenToWorld(const MathLib::Vector2& screenPos);
 		MathLib::Vector2 WorldToScreen(const MathLib::Vector3& worldPos);
