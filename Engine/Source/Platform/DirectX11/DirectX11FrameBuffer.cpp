@@ -43,13 +43,18 @@ namespace Engine
 	DirectX11FrameBuffer::DirectX11FrameBuffer(const FrameBufferSpecification& specification)
 		: FrameBuffer(specification),
 		m_depthTexture(),
-		m_renderTargetTexture()
+		m_renderTargetTexture(),
+		m_depthStencilState(nullptr)
 	{
 		CreateBuffers();
 	}
 
 	DirectX11FrameBuffer::~DirectX11FrameBuffer() 
 	{
+		if (m_depthStencilState != nullptr)
+		{
+			m_depthStencilState->Release();
+		}
 	}
 
 	void DirectX11FrameBuffer::CreateBuffers()
@@ -61,10 +66,9 @@ namespace Engine
 		if (m_depthStencilSpecification.textureType != FrameBufferAttachmentType::TYPE_NONE)
 		{
 			{
-				ID3D11DepthStencilState* depthStencilState = CreateDepthStencilState(
-					D3D11_COMPARISON_LESS_EQUAL, renderingAPI.m_device);
-				renderingAPI.m_deviceContext->OMSetDepthStencilState(depthStencilState, 0);
-				depthStencilState->Release();
+				m_depthStencilState = CreateDepthStencilState(
+					D3D11_COMPARISON_LESS, renderingAPI.m_device);
+				renderingAPI.m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 0);
 			}
 			// Creates the view texture for the frame buffer.
 			CreateViewTexture(&m_depthTexture, &renderingAPI, m_depthStencilSpecification);
@@ -185,16 +189,23 @@ namespace Engine
 		}
 		else
 		{
-			renderingAPI.SetRenderTarget(renderingAPI.m_backBufferRenderTargetView,
+			renderingAPI.SetRenderTarget(renderingAPI.m_backBufferRenderTargetView, 
 				(ID3D11DepthStencilView*)m_depthTexture.m_view);
 		}
-
+		
 		renderingAPI.Clear();
 		if (m_depthTexture.m_view != nullptr)
 		{
 			renderingAPI.m_deviceContext->ClearDepthStencilView((ID3D11DepthStencilView*)m_depthTexture.m_view,
 				D3D11_CLEAR_DEPTH, 1.0f, 0);
 		}
+		// Sets the depth stencil state.
+		if (m_depthStencilState != nullptr)
+		{
+			renderingAPI.m_deviceContext->OMSetDepthStencilState(
+				m_depthStencilState, 0);
+		}
+
 		renderingAPI.SetViewport(0.0f, 0.0f,
 			(float)m_frameBufferSpecification.width, (float)m_frameBufferSpecification.height);
 	}

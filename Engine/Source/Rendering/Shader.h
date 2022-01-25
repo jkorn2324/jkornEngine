@@ -1,9 +1,9 @@
 #pragma once
 
+#include "BufferLayout.h"
+
 namespace Engine
 {
-	class BufferLayout;
-
 	class Shader
 	{
 	public:

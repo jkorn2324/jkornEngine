@@ -183,7 +183,6 @@ namespace Engine
 
 		GraphicsRenderer::BeginScene(cameraConstants);
 
-
 		// Render the meshes.
 		{
 			m_entityRegistry.view<MeshComponent, Transform3DComponent>().each(

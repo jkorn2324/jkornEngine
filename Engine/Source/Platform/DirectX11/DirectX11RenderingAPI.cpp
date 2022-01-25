@@ -196,13 +196,15 @@ namespace Engine
 		}
 
 		if (!CreateRasterizerState(m_device,
-			&m_defaultRasterizerState, false)
-			|| !CreateRasterizerState(m_device,
-				&m_wireframeRasterizerState, true))
+			&m_defaultRasterizerState, false))
 		{
 			return false;
 		}
-
+		if (!CreateRasterizerState(m_device,
+			&m_wireframeRasterizerState, true))
+		{
+			return false;
+		}
 		m_deviceContext->RSSetState(m_defaultRasterizerState);
 		SetRenderTarget(m_backBufferRenderTargetView, nullptr);
 		m_deviceContext->IASetPrimitiveTopology(

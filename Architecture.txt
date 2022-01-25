@@ -9,6 +9,8 @@ General Rendering:
    -> Limits the amount of times that buffers need to be
       sent the GPU before a draw call is issued. []
 
+-> Need to figure out depth buffer issue []
+
 3D Rendering:
 -> Can Render Basic Objects in API calls []
    - Can draw cube []
@@ -105,22 +107,24 @@ ECS:
 -> Implemented a base entity class [x]
 
 -> Added different types of built-in components that the engine will need []
-   -> Transform 3D []
+   -> Transform 3D [x]
       -> Contains a reference to a parent matrix or transform.
-   -> Transform 2D []
+   -> Transform 2D [x]
       -> Contains a reference to a parent matrix or transform.
    -> Scene Camera [x]
    -> Sprite Component (Might Change to Sprite Renderer) []
-   -> Mesh Component (Might Change to Mesh Renderer) []
-   -> Entity Relationship Component (Come up with better name) []
-      -> Contains a reference to parent's entt ids 
-      -> Contains a list of children entt ids
+      -> Need to make texture accessible in Editor - Blocked by Project Window []
+   -> Mesh Component (Might Change to Mesh Renderer) []\
+      -> Need to make mesh accessible in Editor - Blocked by Project Window []
+   -> Entity Relationship Component (Come up with better name) [x]
+      -> Contains a reference to parent entities [x]
+      -> Contains a list of children entities [x]
 
 Scene Events:
-    -> Event that gets triggered when an entity gets destroyed []
-    -> Event that gets triggered when an entity gets added []
-    -> Event that gets triggered when a component gets added []
-    -> Event that gets triggered when a component gets removed. []
+    -> Event that gets triggered when an entity gets destroyed [x]
+    -> Event that gets triggered when an entity gets added [x]
+    -> Event that gets triggered when a component gets added [x]
+    -> Event that gets triggered when a component gets removed. [x]
 
 -------------------------------------------------------------
 
