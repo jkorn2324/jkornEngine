@@ -14,6 +14,7 @@ project "Engine"
 
 	files
 	{
+		"%{prj.location}/Source/",
 		"%{prj.location}/Source/**.h",
 		"%{prj.location}/Source/**.cpp",
 		"%{prj.location}/Source/**.hpp",
@@ -54,7 +55,7 @@ project "Engine"
 	-- Linking Libraries.
 	links
 	{
-		"%{LibraryNames.MathLib}",
+		"MathLib",
 		"%{LibraryNames.glfw}",
 		"%{LibraryNames.ImGui}"
 	}
@@ -121,6 +122,11 @@ project "Engine"
 			"mkdir \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\"",
 			"copy /Y \"C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2020.2\\lib\\vs2019\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\\libfbxsdk.dll\""
 		}
+
+		defines
+		{
+			"PLATFORM_WINDOWS_X86"
+		}
 	filter { "architecture:x86_64", "system:Windows"}
 		libdirs
 		{
@@ -136,4 +142,9 @@ project "Engine"
 		{
 			"mkdir \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\"",
 			"copy /Y \"C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2020.2\\lib\\vs2019\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
+		}
+
+		defines
+		{
+			"PLATFORM_WINDOWS_X64"
 		}

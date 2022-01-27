@@ -37,8 +37,8 @@ project "Editor"
 
 	links
 	{
-		"%{LibraryNames.MathLib}",
-		"Engine.lib"
+		"MathLib",
+		"Engine"
 	}
 
 	libdirs

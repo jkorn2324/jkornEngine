@@ -11,7 +11,9 @@ namespace Editor
 
 	ProjectMenu::ProjectMenu(const std::string& path)
 		: m_open(true),
-		m_currentPath(path)
+		m_rootPath(path),
+		m_currentPath(path),
+		m_selectedPathInFileMenu()
 	{
 	}
 
@@ -50,15 +52,86 @@ namespace Editor
 		{
 			ImVec2 currentWindowSize = ImGui::GetWindowSize();
 			currentWindowSize.x *= 0.2f;
-			currentWindowSize.y *= 0.95f;
+			currentWindowSize.y = 0.0f;
 			ImGui::BeginChild("files_panel", currentWindowSize, true);
 
-			// TODO: Project Menu
+			// Draws the file in the tree menu and then draws sub files.
+			DrawFileInTreeMenu(m_rootPath);
 
 			ImGui::EndChild();
 		}
 		ImGui::EndGroup();
 
+		ImGui::SameLine();
+		{
+			ImGui::BeginChild("content_view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
+			ImGui::BeginGroup();
+
+			// Draws the files based on the current directory in content view.
+			if (std::filesystem::is_directory(m_currentPath))
+			{
+				auto currentFiles = std::filesystem::directory_iterator(m_currentPath);
+				for (const auto& entry : currentFiles)
+				{
+					DrawFileInContentView(entry);
+				}
+			}
+
+			ImGui::EndGroup();
+			ImGui::EndChild();
+		}
 		ImGui::End();
+	}
+
+	void ProjectMenu::DrawFileInTreeMenu(const std::filesystem::path& path)
+	{
+		if (!std::filesystem::is_directory(path))
+		{
+			return;
+		}
+		bool isSelected = m_selectedPathInFileMenu == path;
+		ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow;
+		if (isSelected)
+		{
+			nodeFlags |= ImGuiTreeNodeFlags_Selected;
+		}
+		nodeFlags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+		if (path.empty()
+			|| !Engine::FileUtils::ContainsSubdirectories(path))
+		{
+			nodeFlags |= ImGuiTreeNodeFlags_Leaf;
+		}
+
+		const auto& fileName = path.filename();
+		bool isOpened = ImGui::TreeNodeEx(
+			fileName.u8string().c_str(), nodeFlags);
+
+		if (ImGui::IsItemClicked())
+		{
+			// Sets the current path.
+			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+				m_currentPath = path;
+			}
+			m_selectedPathInFileMenu = path;
+		}
+
+		if (isOpened)
+		{
+			if (!path.empty())
+			{
+				auto directoryIterator = std::filesystem::directory_iterator(path);
+				for (auto entry : directoryIterator)
+				{
+					DrawFileInTreeMenu(directoryIterator->path());
+				}
+			}
+			ImGui::TreePop();
+		}
+	}
+	
+	void ProjectMenu::DrawFileInContentView(const std::filesystem::path& path)
+	{
+		// TODO: Draws the file in the content view
 	}
 }

@@ -40,7 +40,7 @@ namespace Editor
 		m_editorFrameBuffer(nullptr),
 		m_sceneHierarchy(),
 		m_entityInspector(),
-		m_projectMenu(Engine::GetWorkingDirectory())
+		m_projectMenu(Engine::FileUtils::GetWorkingDirectory())
 	{
 	}
 
