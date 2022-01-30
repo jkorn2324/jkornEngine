@@ -11,7 +11,7 @@
 #include "Layer.h"
 #include "Event.h"
 #include "ApplicationEvent.h"
-#include "Timestep.h"
+#include "EngineTime.h"
 #include "ImGuiLayer.h"
 #include "Input.h"
 #include "Profiler.h"
@@ -92,8 +92,9 @@ namespace Engine
 			std::chrono::nanoseconds diff =
 				std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - m_prevTime);
 			m_prevTime = currentTime;
-			Timestep ts = (float)diff.count() * 0.000000001f;
-			
+			float timestep = (float)diff.count() * 0.000000001f;
+			Timestep ts = { timestep, Time::GetTimeScale() };
+
 			// Update the window layer stack.
 			{
 				for (Layer* layer : m_windowLayerStack)

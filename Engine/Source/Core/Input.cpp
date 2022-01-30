@@ -135,7 +135,7 @@ namespace Engine
 
 		Timestep outputDiff = CalculateTimestepDiff(mouseButtonData->lastTimeClicked);
 		return mouseButtonData->buttonState == ACTION_PRESSED
-			&& outputDiff.GetSeconds() < maxPressedTime;
+			&& outputDiff.GetRawSeconds() < maxPressedTime;
 	}
 
 
@@ -153,7 +153,7 @@ namespace Engine
 		{
 			return 0.0f;
 		}
-		return outDiff.GetSeconds();
+		return outDiff.GetRawSeconds();
 	}
 
 	MathLib::Vector2 Input::GetMouseScreenPos()

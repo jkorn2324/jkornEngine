@@ -103,7 +103,7 @@ namespace Editor
 
 		// Handles when camera looks at an entity, resets position.
 		if (Engine::Input::IsKeyPressed(
-			Engine::KEY_CODE_F, ts.GetSeconds()))
+			Engine::KEY_CODE_F, ts.GetRawSeconds()))
 		{
 			HandleCameraFocus();
 			return;
@@ -203,12 +203,12 @@ namespace Editor
 					float interpolatedSpeed = MathLib::Lerp(
 						MIN_SCROLL_MULTIPLIER, MAX_SCROLL_MULTIPLIER, clampedDistance);
 					m_distanceToFocus +=
-						interpolatedSpeed * -zoomDirection * ts.GetSeconds();
+						interpolatedSpeed * -zoomDirection * ts.GetRawSeconds();
 				}
 				else
 				{
 					MathLib::Vector3 difference =
-						direction * ts.GetSeconds() * DEFAULT_SCROLL_DISTANCE;
+						direction * ts.GetRawSeconds() * DEFAULT_SCROLL_DISTANCE;
 					m_position += difference;
 				}
 				return true;
@@ -313,7 +313,7 @@ namespace Editor
 			m_hasFocusPosition = false;
 			cameraInputDirection.Normalize();
 			MathLib::Vector3 difference = cameraInputDirection *
-				m_editorCameraProperties.cameraSpeed * ts.GetSeconds();
+				m_editorCameraProperties.cameraSpeed * ts.GetRawSeconds();
 			m_position += difference;
 		}
 	}

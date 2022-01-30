@@ -86,7 +86,10 @@ namespace Editor
 		DrawDemo();
 
 		static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
-		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		ImGuiWindowFlags sWindowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
+			| ImGuiWindowFlags_NoTitleBar;
+		ImGuiWindowFlags windowFlags = sWindowFlags;
+
 		
 		// Draws the main window.
 		{
@@ -111,6 +114,7 @@ namespace Editor
 			}
 
 			DrawMenuBar();
+
 			ImGui::End();
 		}
 
