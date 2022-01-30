@@ -15,6 +15,8 @@ namespace Engine
 
 		virtual void Bind(std::uint32_t textureSlot) const =0;
 
+		virtual const void* GetTextureID() const =0;
+
 	protected:
 		virtual bool Load(const wchar_t* texturePath)=0;
 

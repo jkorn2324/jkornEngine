@@ -17,6 +17,8 @@ namespace Engine
 		bool IsValid() const override;
 		void Bind(const std::uint32_t slot) const override;
 
+		const void* GetTextureID() const override;
+
 	protected:
 		bool Load(const wchar_t* texturePath);
 		void Free();

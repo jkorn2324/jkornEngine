@@ -36,18 +36,16 @@ namespace Editor
 
 	EditorLayer::EditorLayer()
 		: Layer("Editor"),
-		m_runtimeFrameBuffer(nullptr),
-		m_editorFrameBuffer(nullptr),
 		m_sceneHierarchy(),
 		m_entityInspector(),
-		m_projectMenu(Engine::FileUtils::GetWorkingDirectory())
+		m_projectMenu(Engine::FileUtils::GetWorkingDirectory()),
+		m_sceneView(),
+		m_gameView()
 	{
 	}
 
 	EditorLayer::~EditorLayer()
 	{
-		delete m_runtimeFrameBuffer;
-		delete m_editorFrameBuffer;
 	}
 
 	void EditorLayer::OnLayerAdded()
@@ -56,32 +54,6 @@ namespace Editor
 
 		Engine::GraphicsRenderer::GetRenderingAPI().SetClearColor(
 			MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f));
-		Engine::Application& app = Engine::Application::Get();
-
-		// Runtime Specifications.
-		{
-			Engine::FrameBufferSpecification runtimeSpecifications(
-				{
-					// Engine::FrameBufferAttachmentType::DEPTH_STENCIL
-				});
-
-			runtimeSpecifications.width = app.GetWindow().GetWidth();
-			runtimeSpecifications.height = app.GetWindow().GetHeight();
-			m_runtimeFrameBuffer = Engine::FrameBuffer::Create(runtimeSpecifications);
-
-		}
-
-		// Editor Specifiations.
-		{
-			Engine::FrameBufferSpecification editorSpecifications(
-			{
-				Engine::FrameBufferAttachmentType::DEPTH_STENCIL
-				// Engine::FrameBufferAttachmentType::RENDER_TARGET
-			});
-			editorSpecifications.width = app.GetWindow().GetWidth();
-			editorSpecifications.height = app.GetWindow().GetHeight();
-			m_editorFrameBuffer = Engine::FrameBuffer::Create(editorSpecifications);
-		}
 	}
 
 	void EditorLayer::OnLayerRemoved()
@@ -92,72 +64,109 @@ namespace Editor
 	void EditorLayer::OnUpdate(const Engine::Timestep& timestep)
 	{
 		m_projectMenu.OnUpdate(timestep);
+
+		EditorSceneManager::GetEditorCamera().OnEditorUpdate(timestep);
 		Engine::SceneManager::OnUpdate(timestep);
 
-		if (!EditorSceneManager::IsPlaying())
-		{
-			// Updates camera and scene.
-			EditorCamera& camera = EditorSceneManager::GetEditorCamera();
-			camera.OnEditorUpdate(timestep);
-			Engine::SceneManager::OnEditorUpdate(timestep);
-			
-			// Render to a view texture.
-			{
-				Engine::CameraConstants cameraConstants;
-				cameraConstants.c_cameraPosition = camera.GetTransformMatrix().GetTranslation();
-				cameraConstants.c_viewProjection = camera.GetViewProjectionMatrix();
-				// TODO: Render the editor to a texture, then bind the texture to a viewport.
-				
-				m_editorFrameBuffer->Bind();
-				Engine::SceneManager::Render(cameraConstants);
-			}
-		}
-		else
+		if (EditorSceneManager::IsPlaying())
 		{
 			Engine::SceneManager::OnRuntimeUpdate(timestep);
 		}
-		// TODO: Play button.
-	
-#if 0
-		// Runtime frame buffer.
+		else
 		{
-			// TODO: Render the scene to a texture.
-			m_runtimeFrameBuffer->Bind();
-			Engine::SceneManager::Render();
+			Engine::SceneManager::OnEditorUpdate(timestep);
 		}
-#endif
+
+		m_sceneView.RenderScene();
+		m_gameView.RenderScene();
 	}
 
 	void EditorLayer::OnImGuiRender()
 	{
 		DrawDemo();
 
+		static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		
 		// Draws the main window.
 		{
-			ImGuiWindowFlags mainWindowFlags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_MenuBar;
-			ImGui::Begin("Editor", nullptr, mainWindowFlags);
+			const ImGuiViewport* viewport = ImGui::GetMainViewport();
+			
+			ImGui::SetNextWindowPos(viewport->WorkPos);
+			ImGui::SetNextWindowSize(viewport->WorkSize);
+			ImGui::SetNextWindowViewport(viewport->ID);
+			
+			windowFlags |= ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		}
 
-			if (ImGui::BeginMenuBar())
+		// Draws the editor dockspace.
+		{
+			ImGui::Begin("Editor", nullptr, windowFlags);
+
+			// Apply the dockspace.
 			{
-				if (ImGui::BeginMenu("File"))
-				{
-					if (ImGui::MenuItem("Save"))
-					{
-						SaveScene();
-					}
-					// TODO: Loading Scenes
-
-					ImGui::EndMenu();
-				}
-				ImGui::EndMenuBar();
+				ImGuiID dockspace_id = ImGui::GetID("editor-dockspace");
+				ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
 			}
 
+			DrawMenuBar();
 			ImGui::End();
 		}
 
 		m_sceneHierarchy.Draw();
 		m_entityInspector.Draw();
 		m_projectMenu.Draw();
+		m_sceneView.Draw();
+		m_gameView.Draw();
+	}
+
+	void EditorLayer::DrawMenuBar()
+	{
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Save"))
+				{
+					SaveScene();
+				}
+				// TODO: Loading Scenes
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Window"))
+			{
+				if (ImGui::BeginMenu("General"))
+				{
+					if (ImGui::MenuItem("Scene View"))
+					{
+						m_sceneView.SetOpen(true);
+					}
+					if (ImGui::MenuItem("Game View"))
+					{
+						m_gameView.SetOpen(true);
+					}
+					if (ImGui::MenuItem("Scene Hierarchy"))
+					{
+						m_sceneHierarchy.SetOpen(true);
+					}
+					if (ImGui::MenuItem("Entity Inspector"))
+					{
+						m_entityInspector.SetOpen(true);
+					}
+					if (ImGui::MenuItem("Project Menu"))
+					{
+						m_projectMenu.SetOpen(true);
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenuBar();
+		}
 	}
 	
 	void EditorLayer::OnEvent(Engine::Event& event)
@@ -168,5 +177,6 @@ namespace Editor
 		m_sceneHierarchy.OnEvent(event);
 		m_entityInspector.OnEvent(event);
 		m_projectMenu.OnEvent(event);
+		m_sceneView.OnEvent(event);
 	}
 }

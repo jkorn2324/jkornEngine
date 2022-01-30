@@ -138,11 +138,6 @@ namespace Engine
 				UpdateEntityHierarchies(entity, hierarchy);
 			}
 		}
-	}
-
-	void Scene::OnRuntimeUpdate(const Timestep& ts)
-	{
-		PROFILE_SCOPE(RuntimeUpdate, Update);
 
 		// Selects the view cameras based on a set of camera components.
 		{
@@ -168,6 +163,13 @@ namespace Engine
 				}
 			}
 		}
+	}
+
+	void Scene::OnRuntimeUpdate(const Timestep& ts)
+	{
+		PROFILE_SCOPE(RuntimeUpdate, Update);
+
+		// TODO: Implement on runtime update.
 	}
 
 	void Scene::OnEditorUpdate(const Timestep& ts)

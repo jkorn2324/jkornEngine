@@ -6,6 +6,8 @@
 #include "SceneHierarchy.h"
 #include "EntityInspector.h"
 #include "ProjectMenu.h"
+#include "SceneView.h"
+#include "GameView.h"
 
 namespace Engine
 {
@@ -30,11 +32,13 @@ namespace Editor
 		void OnEvent(Engine::Event& event) override;
 
 	private:
-		Engine::FrameBuffer* m_editorFrameBuffer;
-		Engine::FrameBuffer* m_runtimeFrameBuffer;
+		void DrawMenuBar();
 
+	private:
 		SceneHierarchy m_sceneHierarchy;
 		EntityInspector m_entityInspector;
 		ProjectMenu m_projectMenu;
+		SceneView m_sceneView;
+		GameView m_gameView;
 	};
 }

@@ -34,8 +34,8 @@ project "GlfwSandboxProject"
 
 	links
 	{
-		"%{LibraryNames.MathLib}",
-		"Engine.lib"
+		"MathLib",
+		"Engine"
 	}
 
 	libdirs

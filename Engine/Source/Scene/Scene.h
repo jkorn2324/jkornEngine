@@ -36,12 +36,7 @@ namespace Engine
 
 		void OnEvent(Event& event);
 
-		void OnUpdate(const Timestep& ts);
-		void OnRuntimeUpdate(const Timestep& ts);
-		void OnEditorUpdate(const Timestep& ts);
 
-		void Render(const struct CameraConstants& cameraConstants);
-		void Render();
 
 		Entity CreateEntity(const char* entityName);
 		Entity CreateEntity();
@@ -55,6 +50,13 @@ namespace Engine
 		const std::wstring& GetSceneName() const;
 
 	private:
+		void OnUpdate(const Timestep& ts);
+		void OnRuntimeUpdate(const Timestep& ts);
+		void OnEditorUpdate(const Timestep& ts);
+
+		void Render(const struct CameraConstants& cameraConstants);
+		void Render();
+
 		void BindEventFunc(const EventFunc& func);
 
 		bool OnEntityHierarchyChanged(EntityHierarchyChangedEvent& event);

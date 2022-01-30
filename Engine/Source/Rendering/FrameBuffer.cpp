@@ -11,7 +11,8 @@ namespace Engine
 
 	FrameBuffer::FrameBuffer(const FrameBufferSpecification& specification)
 		: m_frameBufferSpecification(),
-		m_depthStencilSpecification()
+		m_depthStencilSpecification(),
+		m_renderTargetSpecification()
 	{
 		m_frameBufferSpecification = specification;
 
@@ -20,6 +21,11 @@ namespace Engine
 			if (attachment.textureType == TYPE_DEPTH24_STENCIL8)
 			{
 				m_depthStencilSpecification = attachment;
+				continue;
+			}
+			else if (attachment.textureType == TYPE_RGB)
+			{
+				m_renderTargetSpecification = attachment;
 				continue;
 			}
 		}

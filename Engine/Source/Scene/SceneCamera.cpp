@@ -17,7 +17,7 @@ namespace Engine
 			DEFAULT_NEAR_PLANE,
 			DEFAULT_FAR_PLANE,
 			70.0f,
-			DEFAULT_HEIGHT / DEFAULT_WIDTH,
+			DEFAULT_WIDTH / DEFAULT_HEIGHT,
 			DEFAULT_WIDTH,
 			DEFAULT_HEIGHT
 			}),
@@ -32,7 +32,7 @@ namespace Engine
 			DEFAULT_NEAR_PLANE,
 			DEFAULT_FAR_PLANE,
 			70.0f,
-			DEFAULT_HEIGHT / DEFAULT_WIDTH,
+			DEFAULT_WIDTH / DEFAULT_HEIGHT,
 			DEFAULT_WIDTH,
 			DEFAULT_HEIGHT
 		}),
@@ -56,13 +56,7 @@ namespace Engine
 
 	void SceneCamera::UpdateProjectionMatrix()
 	{
-#if 0
-		static MathLib::Matrix4x4 rotation = MathLib::Matrix4x4::CreateRotationY(-MathLib::PIOVER2, false)
-			* MathLib::Matrix4x4::CreateRotationZ(-MathLib::PIOVER2, false);
-#else
 		static MathLib::Matrix4x4 rotation = MathLib::Matrix4x4::Identity;
-#endif
-
 		switch (m_sceneCameraType)
 		{
 			case TYPE_ORTHOGRAPHIC:

@@ -8,6 +8,7 @@ namespace Engine
 {
 
 	class PlatformImGuiLayer;
+	class Event;
 
 	class ImGuiLayer : public Layer
 	{
@@ -16,6 +17,8 @@ namespace Engine
 		explicit ImGuiLayer();
 		~ImGuiLayer();
 
+		void OnEvent(Event& event) override;
+
 		void OnLayerAdded() override;
 		void OnLayerRemoved() override;
 
@@ -23,6 +26,10 @@ namespace Engine
 		void EndRender();
 
 	private:
+		bool OnWindowResized(class WindowResizedEvent& event);
+
+	private:
+		class FrameBuffer* m_frameBuffer;
 		std::unique_ptr<PlatformImGuiLayer> m_windowImGuiLayer;
 		std::unique_ptr<PlatformImGuiLayer> m_graphicsImGuiLayer;
 	};

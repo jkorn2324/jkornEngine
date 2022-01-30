@@ -10,7 +10,7 @@ namespace Engine
 
 	enum FrameBufferAttachmentType
 	{
-		TYPE_NONE,
+		FRAME_BUFFER_ATTACHMENT_TYPE_NONE,
 		
 		// Depth Stencil
 		TYPE_DEPTH24_STENCIL8,
@@ -71,12 +71,15 @@ namespace Engine
 		virtual ~FrameBuffer() { }
 
 		virtual void Bind() const=0;
+		
+		const FrameBufferSpecification& GetSpecification() const { return m_frameBufferSpecification; }
 
 		virtual class Texture* GetTexture(FrameBufferAttachmentType type) const=0;
 
 	protected:
 		FrameBufferSpecification m_frameBufferSpecification;
-		FrameBufferAttachment m_depthStencilSpecification = FrameBufferAttachmentType::TYPE_NONE;
+		FrameBufferAttachment m_depthStencilSpecification = FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE;
+		FrameBufferAttachment m_renderTargetSpecification = FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE;
 
 	public:
 		static FrameBuffer* Create(const FrameBufferSpecification& specification);

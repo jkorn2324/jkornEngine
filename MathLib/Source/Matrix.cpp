@@ -262,8 +262,8 @@ namespace MathLib
 
 	Matrix4x4 Matrix4x4::CreateEuler(float yaw, float pitch, float roll, bool inDegrees)
 	{
-		return CreateRotationZ(roll, inDegrees) * 
-			CreateRotationX(pitch, inDegrees) * CreateRotationY(yaw, inDegrees);
+		return CreateRotationY(yaw, inDegrees) * 
+			CreateRotationX(pitch, inDegrees) * CreateRotationZ(roll, inDegrees);
 	}
 
 	Matrix4x4 Matrix4x4::CreateFromQuaternion(const Quaternion& quat)

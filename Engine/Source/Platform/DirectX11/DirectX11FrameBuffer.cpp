@@ -63,7 +63,7 @@ namespace Engine
 			GraphicsRenderer::GetRenderingAPI());
 
 		// Creates the depth stencil buffer.
-		if (m_depthStencilSpecification.textureType != FrameBufferAttachmentType::TYPE_NONE)
+		if (m_depthStencilSpecification.textureType != FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE)
 		{
 			{
 				m_depthStencilState = CreateDepthStencilState(
@@ -72,6 +72,11 @@ namespace Engine
 			}
 			// Creates the view texture for the frame buffer.
 			CreateViewTexture(&m_depthTexture, &renderingAPI, m_depthStencilSpecification);
+		}
+
+		if (m_renderTargetSpecification.textureType != FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE)
+		{
+			CreateViewTexture(&m_renderTargetTexture, &renderingAPI, m_renderTargetSpecification);
 		}
 	}
 
@@ -120,7 +125,7 @@ namespace Engine
 				ID3D11ShaderResourceView* shaderResource;
 				CreateTextureWithShaderResource(api,
 					D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
-					DXGI_FORMAT_R32G32B32A32_FLOAT, 1, &texture, &shaderResource);
+					DXGI_FORMAT_R32G32B32A32_FLOAT, 0, &texture, &shaderResource);
 				ID3D11RenderTargetView* renderTargetView;
 				HRESULT result = api->m_device->CreateRenderTargetView(texture,
 					nullptr, &renderTargetView);

@@ -34,6 +34,15 @@ namespace Engine
 		Free();
 	}
 
+	const void* DirectX11Texture::GetTextureID() const
+	{
+		if (m_shaderResourceView != nullptr)
+		{
+			return m_shaderResourceView;
+		}
+		return nullptr;
+	}
+
 	void DirectX11Texture::Free()
 	{
 		if (m_shaderResourceView != nullptr)

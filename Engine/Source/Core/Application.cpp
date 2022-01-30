@@ -44,7 +44,7 @@ namespace Engine
 	{
 		DebugAssert(s_instance == nullptr, "Application is already running.");
 		s_instance = this;
-		
+
 		Logger::Init();
 		Profiler::Init();
 
