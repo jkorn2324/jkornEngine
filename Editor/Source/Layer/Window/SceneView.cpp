@@ -59,17 +59,20 @@ namespace Editor
 			return;
 		}
 		// TODO: Implementation
-		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollWithMouse
-			| ImGuiWindowFlags_NoScrollbar;
+
+		static ImGuiWindowFlags sWindowFlags = ImGuiWindowFlags_NoScrollWithMouse
+			| ImGuiWindowFlags_NoScrollbar
+			| ImGuiWindowFlags_NoCollapse;
+		ImGuiWindowFlags windowFlags = sWindowFlags;
 		ImGui::Begin("Scene", &m_open, windowFlags);
 
-		ImVec2 windowSize = ImGui::GetWindowSize();
 
 		Engine::Texture* frameTexture = m_frameBuffer->GetTexture(Engine::RENDER_TARGET);
 		if (frameTexture != nullptr)
 		{
+			// TODO: Fit the texture inside of the window.
 			ImGui::Image((void*)frameTexture->GetTextureID(),
-				ImVec2((float)frameTexture->GetWidth(), (float)frameTexture->GetHeight()));
+				ImVec2(frameTexture->GetWidth(), frameTexture->GetHeight()));
 		}
 		ImGui::End();
 	}
