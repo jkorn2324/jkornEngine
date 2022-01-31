@@ -20,8 +20,8 @@ namespace Editor
 				Engine::DEPTH_STENCIL,
 				Engine::RENDER_TARGET
 			});
-		frameBufferSpecification.width = (float)window.GetWidth();
-		frameBufferSpecification.height = (float)window.GetHeight();
+		frameBufferSpecification.width = window.GetWidth();
+		frameBufferSpecification.height = window.GetHeight();
 		m_frameBuffer = Engine::FrameBuffer::Create(frameBufferSpecification);
 	}
 

@@ -10,6 +10,7 @@
 #include "GraphicsRenderer.h"
 #include "RenderingAPI.h"
 #include "Input.h"
+#include "PlatformInput.h"
 
 namespace Engine
 {
@@ -18,116 +19,6 @@ namespace Engine
 
 #pragma region keycodeConverter
 
-	static InputKeyCode s_keyCodes[GLFW_KEY_MENU];
-	static bool s_keyCodesInitialized = false;
-
-	static InputMouseButton ConvertGlfwMouseButton(int mouseCode)
-	{
-		switch (mouseCode)
-		{
-		case GLFW_MOUSE_BUTTON_1: return MOUSE_BUTTON_LEFT;
-		case GLFW_MOUSE_BUTTON_2: return MOUSE_BUTTON_RIGHT;
-		case GLFW_MOUSE_BUTTON_MIDDLE: return MOUSE_BUTTON_MIDDLE;
-		}
-		return MOUSE_BUTTON_UNKNOWN;
-	}
-
-	static InputKeyCode ConvertGlfwKeyCodeDynamic(int keyCode)
-	{
-		// Covers 0 - 9
-		if (keyCode >= GLFW_KEY_0
-			&& keyCode <= GLFW_KEY_9)
-		{
-			return (InputKeyCode)((keyCode - GLFW_KEY_0) + KEY_CODE_0);
-		}
-		// Covers A - Z
-		if (keyCode >= GLFW_KEY_A
-			&& keyCode <= GLFW_KEY_Z)
-		{
-			return (InputKeyCode)((keyCode - GLFW_KEY_A) + KEY_CODE_A);
-		}
-
-		// Covers Space - Slash
-		if (keyCode >= GLFW_KEY_SPACE
-			&& keyCode <= GLFW_KEY_SLASH)
-		{
-			return (InputKeyCode)((keyCode - GLFW_KEY_SPACE) + KEY_CODE_SPACE);
-		}
-
-		if (keyCode == GLFW_KEY_SEMICOLON
-			|| keyCode == GLFW_KEY_EQUAL)
-		{
-			return (InputKeyCode)((keyCode - GLFW_KEY_SEMICOLON) + KEY_CODE_SEMICOLON);
-		}
-
-		if (keyCode >= GLFW_KEY_LEFT_BRACKET
-			&& keyCode <= GLFW_KEY_RIGHT_BRACKET)
-		{
-			return (InputKeyCode)((keyCode - GLFW_KEY_LEFT_BRACKET) + KEY_CODE_LEFT_BRACKET);
-		}
-
-		if (keyCode == GLFW_KEY_GRAVE_ACCENT)
-		{
-			return KEY_CODE_GRAVE_ACCENT;
-		}
-
-		if (keyCode == GLFW_KEY_WORLD_1
-			|| keyCode == GLFW_KEY_WORLD_2)
-		{
-			return (InputKeyCode)((keyCode - GLFW_KEY_WORLD_1) + KEY_CODE_WORLD_1);
-		}
-
-		if (keyCode >= GLFW_KEY_ESCAPE
-			&& keyCode <= GLFW_KEY_END)
-		{
-			return (InputKeyCode)((keyCode - GLFW_KEY_ESCAPE) + KEY_CODE_ESCAPE);
-		}
-
-		if (keyCode >= GLFW_KEY_CAPS_LOCK
-			&& keyCode <= GLFW_KEY_PAUSE)
-		{
-			return (InputKeyCode)((keyCode - GLFW_KEY_CAPS_LOCK) + KEY_CODE_CAPS_LOCK);
-		}
-
-		if (keyCode >= GLFW_KEY_F1
-			&& keyCode <= GLFW_KEY_F25)
-		{
-			return (InputKeyCode)((keyCode - GLFW_KEY_F1) + KEY_CODE_F1);
-		}
-
-		if (keyCode >= GLFW_KEY_KP_0
-			&& keyCode <= GLFW_KEY_KP_EQUAL)
-		{
-			return (InputKeyCode)((keyCode - GLFW_KEY_KP_0) + KEY_CODE_NUMPAD_0);
-		}
-		return (InputKeyCode)((keyCode - GLFW_KEY_LEFT_SHIFT) + KEY_CODE_LEFT_SHIFT);
-	}
-
-	static InputKeyCode ConvertGlfwKeyCode(int keyCode)
-	{
-		if (keyCode == GLFW_KEY_UNKNOWN)
-		{
-			return KEY_CODE_UNKNOWN;
-		}
-
-		if (s_keyCodes[keyCode] != KEY_CODE_UNKNOWN)
-		{
-			return s_keyCodes[keyCode];
-		}
-		InputKeyCode code = ConvertGlfwKeyCodeDynamic(keyCode);
-		s_keyCodes[keyCode] = code;
-		return code;
-	}
-
-	static InputAction ConvertGlfwInputAction(int inputAction)
-	{
-		switch (inputAction)
-		{
-		case GLFW_PRESS: return ACTION_PRESSED;
-		case GLFW_RELEASE: return ACTION_RELEASED;
-		}
-		return ACTION_UNKNOWN;
-	}
 
 #pragma endregion
 
@@ -279,8 +170,9 @@ namespace Engine
 					WindowData& windowData = *reinterpret_cast<WindowData*>(
 						glfwGetWindowUserPointer(window));
 
-					InputKeyEvent inputKeyEvent(ConvertGlfwKeyCode(key),
-						ConvertGlfwInputAction(action));
+					InputKeyEvent inputKeyEvent(
+						Input::GetPlatformInput().ToKeyCode(key),
+						Input::GetPlatformInput().ToAction(action));
 					if (windowData.callback != nullptr)
 					{
 						windowData.callback(inputKeyEvent);
@@ -295,8 +187,9 @@ namespace Engine
 				{
 					WindowData& windowData = *reinterpret_cast<WindowData*>(
 						glfwGetWindowUserPointer(window));
-					InputMouseButtonEvent mouseButtonEvent(ConvertGlfwInputAction(action), 
-						ConvertGlfwMouseButton(mouseButton));
+					InputMouseButtonEvent mouseButtonEvent(
+						Input::GetPlatformInput().ToAction(action),
+						Input::GetPlatformInput().ToMouseButton(mouseButton));
 					if (windowData.callback != nullptr)
 					{
 						windowData.callback(mouseButtonEvent);

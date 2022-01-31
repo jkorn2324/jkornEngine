@@ -11,16 +11,10 @@ namespace Editor
 
 	static bool OnWindowSizeChanged(Engine::WindowResizedEvent& event)
 	{
-		s_editorCamera.SetViewport((float)event.width, (float)event.height);
 		return true;
 	}
 
-	void EditorSceneManager::Init()
-	{
-		Engine::Window& window = Engine::Application::Get().GetWindow();
-		s_editorCamera.SetViewport((float)window.GetWidth(),
-			(float)window.GetHeight());
-	}
+	void EditorSceneManager::Init() { }
 
 	void EditorSceneManager::OnEvent(Engine::Event& event)
 	{

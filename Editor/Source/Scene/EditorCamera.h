@@ -13,6 +13,23 @@ namespace Engine
 
 namespace Editor
 {
+	static const float FOCUSED_FAR_DISTANCE = 20.0f;
+	static const float FOCUSED_NEAR_DISTANCE = 5.0f;
+
+	static const float ROTATION_SPEED = 1.2f;
+
+	static const float DEFAULT_SCROLL_DISTANCE = 20.0f;
+
+	static const float SCROLL_FOCUS_MAX_DISTANCE = 13.0f;
+	static const float SCROLL_FOCUS_MIN_DISTANCE = 3.0f;
+
+	static const float MAX_SCROLL_MULTIPLIER = 30.0f;
+	static const float MIN_SCROLL_MULTIPLIER = 6.0f;
+
+	static const float CAMERA_VIEW_THRESHOLD = -0.5f;
+
+	static const float MOUSE_CAMERA_MULTIPLIER = 0.03f;
+
 	enum CameraType
 	{
 		CAMERA_PERSPECTIVE,
@@ -49,36 +66,28 @@ namespace Editor
 		bool LookAt(const class MathLib::Vector3& lookAtPos,
 			const class MathLib::Vector3& eyePos);
 
-		void SetViewport(float width, float height)
-		{
-			m_editorCameraProperties.width = width;
-			m_editorCameraProperties.height = height;
-		}
-
 		MathLib::Vector3 GetForward() const;
 		MathLib::Vector3 GetRight() const;
 		MathLib::Vector3 GetUp() const;
 		MathLib::Quaternion GetRotation() const;
 
+		void ResetCamera();
+		void FocusCamera();
+		void MoveCamera(const MathLib::Vector3& positionDelta, bool moveFocus);
+		void RotateCamera(const MathLib::Vector2& delta);
+		bool ZoomCamera(float direction);
+
+		void SetFocused(bool focused) { m_hasFocusPosition = focused; }
+		bool IsFocused() const { return m_hasFocusPosition; }
+
 	private:
-		bool UpdateZoom(const class Engine::Timestep& ts, float zoomDirection);
-
-		void HandleCameraInput(const class Engine::Timestep& ts);
-		void UpdateWASD(const class Engine::Timestep& ts);
-		void UpdateCameraRotation(const class MathLib::Vector2& mouseDelta);
-
-		void HandleCameraReset();
-		void HandleCameraFocus();
-
 		void UpdatePosition();
 		void UpdateViewMatrix();
 
 
 	private:
 		MathLib::Vector3 m_position;
-
 		MathLib::Vector3 m_focusPosition;
-		MathLib::Vector2 m_prevMousePos;
 		
 		float m_distanceToFocus = 1.0f;
 		MathLib::Vector2 m_cameraRotation;

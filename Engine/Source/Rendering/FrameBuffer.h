@@ -72,6 +72,8 @@ namespace Engine
 
 		virtual void Bind() const=0;
 		
+		virtual void Resize(uint32_t width, uint32_t height);
+
 		const FrameBufferSpecification& GetSpecification() const { return m_frameBufferSpecification; }
 
 		virtual class Texture* GetTexture(FrameBufferAttachmentType type) const=0;

@@ -1,7 +1,9 @@
 #include "EnginePCH.h"
 #include "Input.h"
+#include "PlatformInput.h"
 
 #include <chrono>
+#include "Window.h"
 
 namespace Engine
 {
@@ -11,7 +13,7 @@ namespace Engine
 	static const float MIN_MOUSE_HELD_TIME = 1.0f / 50.0f;
 	static const float MAX_SCROLL_TIME = 1.0f / 30.0f;
 
-	
+
 	InputMouseMoveEvent::InputMouseMoveEvent(const MathLib::Vector2& mousePos)
 		: mousePos(mousePos), prevMousePos(Input::GetMouseScreenPos()) { }
 
@@ -53,7 +55,7 @@ namespace Engine
 	static InputMouseData s_mouseInputData;
 
 	Input::EventFunc s_inputEventFunc = nullptr;
-
+	PlatformInput* s_platformInput = nullptr;
 
 	static InputMouseData::MouseButtonData* GetInputMouseButtonData(InputMouseButton mouseButton)
 	{
@@ -71,6 +73,16 @@ namespace Engine
 			break;
 		}
 		return mouseData;
+	}
+
+	void Input::Init()
+	{
+		s_platformInput = PlatformInput::CreatePlatformInput();
+	}
+
+	void Input::Release()
+	{
+		delete s_platformInput;
 	}
 
 	void Input::BindInputEventFunc(const Input::EventFunc& func)
@@ -169,6 +181,12 @@ namespace Engine
 			return MathLib::Vector2::Zero;
 		}
 		return s_mouseInputData.scrollOffset;
+	}
+
+	PlatformInput& Input::GetPlatformInput()
+	{
+		DebugAssert(s_platformInput != nullptr, "Platform input exists.");
+		return *s_platformInput;
 	}
 
 	bool Input::OnInputKeyEvent(InputKeyEvent& event)

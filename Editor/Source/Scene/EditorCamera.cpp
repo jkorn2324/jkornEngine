@@ -6,36 +6,19 @@
 
 namespace Editor
 {
-	static const float FOCUSED_FAR_DISTANCE = 20.0f;
-	static const float FOCUSED_NEAR_DISTANCE = 5.0f;
 
-	static const float ROTATION_SPEED = 1.2f;
-
-	static const float DEFAULT_SCROLL_DISTANCE = 20.0f;
-
-	static const float SCROLL_FOCUS_MAX_DISTANCE = 13.0f;
-	static const float SCROLL_FOCUS_MIN_DISTANCE = 3.0f;
-
-	static const float MAX_SCROLL_MULTIPLIER = 30.0f;
-	static const float MIN_SCROLL_MULTIPLIER = 6.0f;
-
-	static const float CAMERA_VIEW_THRESHOLD = -0.5f;
-
-	static const float MOUSE_CAMERA_MULTIPLIER = 0.03f;
 
 
 	EditorCamera::EditorCamera()
 		: Camera::Camera(),
 		m_editorCameraProperties(),
-		m_focusPosition(MathLib::Vector3::Zero),
-		m_prevMousePos(MathLib::Vector2::Zero)
+		m_focusPosition(MathLib::Vector3::Zero)
 	{
 	}
 
 	EditorCamera::EditorCamera(const EditorCameraProperties& properties)
 		: Camera::Camera(),
 		m_editorCameraProperties(properties),
-		m_prevMousePos(MathLib::Vector2::Zero),
 		m_focusPosition(MathLib::Vector3::Zero)
 	{
 	}
@@ -63,10 +46,8 @@ namespace Editor
 
 	void EditorCamera::OnEditorUpdate(const Engine::Timestep& ts)
 	{
-		HandleCameraInput(ts);
+		UpdatePosition();
 		UpdateViewMatrix();
-
-		m_prevMousePos = Engine::Input::GetMouseScreenPos();
 	}
 
 	MathLib::Matrix4x4 EditorCamera::GetTransformMatrix() const
@@ -93,89 +74,7 @@ namespace Editor
 		return true;
 	}
 
-	void EditorCamera::HandleCameraInput(const Engine::Timestep& ts)
-	{
-		if (Engine::Input::IsKeyPressed(Engine::KEY_CODE_R))
-		{
-			HandleCameraReset();
-			return;
-		}
-
-		// Handles when camera looks at an entity, resets position.
-		if (Engine::Input::IsKeyPressed(
-			Engine::KEY_CODE_F, ts.GetRawSeconds()))
-		{
-			HandleCameraFocus();
-			return;
-		}
-
-		MathLib::Vector2 mouseDelta = Engine::Input::GetMouseScreenPos()
-			- m_prevMousePos;
-
-		{
-			// Only moves the editor camera if the mouse button is held.
-			if (Engine::Input::IsMouseButtonHeld(
-				Engine::InputMouseButton::MOUSE_BUTTON_MIDDLE))
-			{
-				MathLib::Vector3 dir = GetRight() * -mouseDelta.x
-					+ GetUp() * mouseDelta.y;
-				MathLib::Vector3 directionDelta = dir * MOUSE_CAMERA_MULTIPLIER;
-				m_position += directionDelta;
-				m_focusPosition += directionDelta;
-			}
-		}
-
-
-		bool handledZoom = false;
-		if (Engine::Input::IsKeyHeld(
-			Engine::InputKeyCode::KEY_CODE_LEFT_ALT))
-		{
-			float altKeyHeld = Engine::Input::GetTimeKeyHeld(
-				Engine::InputKeyCode::KEY_CODE_LEFT_ALT);
-
-			// Only updates the rotation if the left mouse button is held.
-			if (Engine::Input::IsMouseButtonHeld(
-				Engine::InputMouseButton::MOUSE_BUTTON_LEFT))
-			{
-				float leftMouseButtonTime = Engine::Input::GetMouseButtonTimeHeld(
-					Engine::InputMouseButton::MOUSE_BUTTON_LEFT);
-				if (altKeyHeld > leftMouseButtonTime)
-				{
-					UpdateCameraRotation(mouseDelta);
-				}
-			}
-
-			// Only updates the zoom if the right mouse button is held.
-			if (Engine::Input::IsMouseButtonHeld(
-				Engine::InputMouseButton::MOUSE_BUTTON_RIGHT))
-			{
-				float rightMouseButtonTime = Engine::Input::GetMouseButtonTimeHeld(
-					Engine::InputMouseButton::MOUSE_BUTTON_RIGHT);
-				handledZoom = altKeyHeld > rightMouseButtonTime
-					&& UpdateZoom(ts, mouseDelta.x * MOUSE_CAMERA_MULTIPLIER);
-			}
-		}
-		else
-		{
-			if (Engine::Input::IsMouseButtonHeld(
-				Engine::InputMouseButton::MOUSE_BUTTON_RIGHT))
-			{
-				// Updates the position of the editor camera.
-				UpdateWASD(ts);
-			}
-		}
-
-		// Updates the zoom if the zoom wasn't updated from the alt key.
-		if (!handledZoom)
-		{
-			UpdateZoom(ts, Engine::Input::GetMouseScrollOffset().y);
-		}
-
-		// Updates the camera rotation.
-		UpdatePosition();
-	}
-
-	bool EditorCamera::UpdateZoom(const Engine::Timestep& ts, float zoomDirection)
+	bool EditorCamera::ZoomCamera(float zoomDirection)
 	{
 		if (m_editorCameraProperties.cameraType == CAMERA_PERSPECTIVE)
 		{
@@ -203,12 +102,12 @@ namespace Editor
 					float interpolatedSpeed = MathLib::Lerp(
 						MIN_SCROLL_MULTIPLIER, MAX_SCROLL_MULTIPLIER, clampedDistance);
 					m_distanceToFocus +=
-						interpolatedSpeed * -zoomDirection * ts.GetRawSeconds();
+						interpolatedSpeed * -zoomDirection;
 				}
 				else
 				{
 					MathLib::Vector3 difference =
-						direction * ts.GetRawSeconds() * DEFAULT_SCROLL_DISTANCE;
+						direction * DEFAULT_SCROLL_DISTANCE;
 					m_position += difference;
 				}
 				return true;
@@ -217,7 +116,7 @@ namespace Editor
 		return false;
 	}
 
-	void EditorCamera::HandleCameraReset()
+	void EditorCamera::ResetCamera()
 	{
 		m_position = MathLib::Vector3::Zero;
 		m_focusPosition = MathLib::Vector3::Zero;
@@ -227,7 +126,7 @@ namespace Editor
 		m_isFocusedFar = false;
 	}
 
-	void EditorCamera::HandleCameraFocus()
+	void EditorCamera::FocusCamera()
 	{
 		if (EditorSelection::HasSelectedEntity())
 		{
@@ -267,70 +166,21 @@ namespace Editor
 		}
 	}
 
-	void EditorCamera::UpdateWASD(const Engine::Timestep& ts)
+	void EditorCamera::MoveCamera(const MathLib::Vector3& positionDelta, bool moveFocus)
 	{
-		bool hasInput = false;
-		MathLib::Vector3 cameraInputDirection = MathLib::Vector3::Zero;
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_W)
-			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_S))
-		{
-			hasInput = true;
-			cameraInputDirection += GetForward();
-		}
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_S)
-			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_W))
-		{
-			hasInput = true;
-			cameraInputDirection += -GetForward();
-		}
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_A)
-			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_D))
-		{
-			hasInput = true;
-			cameraInputDirection += -GetRight();
-		}
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_D)
-			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_A))
-		{
-			hasInput = true;
-			cameraInputDirection += GetRight();
-		}
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_Q)
-			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_E))
-		{
-			hasInput = true;
-			cameraInputDirection += -MathLib::Vector3::UnitY;
-		}
-		if (Engine::Input::IsKeyHeld(Engine::KEY_CODE_E)
-			&& !Engine::Input::IsKeyHeld(Engine::KEY_CODE_Q))
-		{
-			hasInput = true;
-			cameraInputDirection += MathLib::Vector3::UnitY;
-		}
-
-		if (hasInput)
-		{
-			m_hasFocusPosition = false;
-			cameraInputDirection.Normalize();
-			MathLib::Vector3 difference = cameraInputDirection *
-				m_editorCameraProperties.cameraSpeed * ts.GetRawSeconds();
-			m_position += difference;
-		}
+		m_position += positionDelta;
+		if (moveFocus && m_hasFocusPosition) m_focusPosition += positionDelta;
 	}
 
-	void EditorCamera::UpdateCameraRotation(const MathLib::Vector2& mouseDelta)
+	void EditorCamera::RotateCamera(const MathLib::Vector2& delta)
 	{
-		// Perspective.
-		if (m_editorCameraProperties.cameraType == CAMERA_PERSPECTIVE)
-		{
-			MathLib::Vector2 mouseDifference = mouseDelta * 0.003f;
-			// y = Yaw
-			m_cameraRotation.y +=
-				mouseDifference.x * ROTATION_SPEED;
-			// x = Pitch
-			m_cameraRotation.x +=
-				mouseDifference.y * ROTATION_SPEED;
-		}
+		MathLib::Vector2 mouseDifference = delta * 0.003f;
+		// y = Yaw
+		m_cameraRotation.y +=
+			mouseDifference.x * ROTATION_SPEED;
+		// x = Pitch
+		m_cameraRotation.x +=
+			mouseDifference.y * ROTATION_SPEED;
 	}
 
 

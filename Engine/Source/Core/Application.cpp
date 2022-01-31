@@ -56,6 +56,8 @@ namespace Engine
 		m_window->SetCallback(BIND_EVENT_FUNCTION(Application::OnEvent));
 		
 		Input::BindInputEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
+		Input::Init();
+		
 		GraphicsRenderer::Init();
 		GraphicsRenderer2D::Init();
 		GraphicsRenderer3D::Init();
@@ -80,6 +82,8 @@ namespace Engine
 		GraphicsRenderer3D::Release();
 		GraphicsRenderer2D::Release();
 		GraphicsRenderer::Release();
+		Input::Release();
+
 		Profiler::Release();
 	}
 

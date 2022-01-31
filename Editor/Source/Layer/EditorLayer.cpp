@@ -64,8 +64,13 @@ namespace Editor
 	void EditorLayer::OnUpdate(const Engine::Timestep& timestep)
 	{
 		m_projectMenu.OnUpdate(timestep);
-
-		EditorSceneManager::GetEditorCamera().OnEditorUpdate(timestep);
+		
+		// Updates the scene view.
+		{
+			m_sceneView.OnUpdate(timestep);
+			EditorSceneManager::GetEditorCamera().OnEditorUpdate(timestep);
+		}
+		
 		Engine::SceneManager::OnUpdate(timestep);
 
 		if (EditorSceneManager::IsPlaying())

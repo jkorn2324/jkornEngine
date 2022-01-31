@@ -31,6 +31,12 @@ namespace Engine
 		}
 	}
 
+	void FrameBuffer::Resize(uint32_t width, uint32_t height)
+	{
+		m_frameBufferSpecification.width = width;
+		m_frameBufferSpecification.height = height;
+	}
+
 	FrameBuffer* FrameBuffer::Create(const FrameBufferSpecification& specification)
 	{
 		PROFILE_SCOPE(CreateFrameBuffer, Rendering);

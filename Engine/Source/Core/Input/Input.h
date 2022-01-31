@@ -265,11 +265,15 @@ namespace Engine
 
 #pragma endregion
 
+	class PlatformInput;
 
 	class Input
 	{
 	public:
 		using EventFunc = std::function<void(class Event&)>;
+
+		static void Init();
+		static void Release();
 
 		static bool IsKeyPressed(InputKeyCode keyCode);
 		static bool IsKeyPressed(InputKeyCode keyCode,
@@ -286,6 +290,8 @@ namespace Engine
 		static bool IsMouseButtonHeld(InputMouseButton button);
 		static MathLib::Vector2 GetMouseScreenPos();
 		static MathLib::Vector2 GetMouseScrollOffset();
+
+		static PlatformInput& GetPlatformInput();
 
 	private:
 		static void OnEvent(Event& event);
