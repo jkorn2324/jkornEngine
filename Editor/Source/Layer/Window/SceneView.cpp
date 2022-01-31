@@ -15,7 +15,8 @@ namespace Editor
 		m_focused(false),
 		m_prevMousePos(),
 		m_mouseScroll(),
-		m_windowSize()
+		m_windowSize(),
+		m_windowBarSpacing(0.0f)
 	{
 		Engine::FrameBufferSpecification editorSpecifications(
 			{
@@ -24,9 +25,12 @@ namespace Editor
 			});
 
 		Engine::Application& app = Engine::Application::Get();
-		m_windowSize.x = editorSpecifications.width = app.GetWindow().GetWidth();
-		m_windowSize.y = editorSpecifications.height = app.GetWindow().GetHeight();
+		editorSpecifications.width = app.GetWindow().GetWidth();
+		editorSpecifications.height = app.GetWindow().GetHeight();
 		m_frameBuffer = Engine::FrameBuffer::Create(editorSpecifications);
+
+		m_windowSize.x = (float)editorSpecifications.width;
+		m_windowSize.y = (float)editorSpecifications.height;
 	}
 
 	SceneView::~SceneView()
@@ -53,6 +57,8 @@ namespace Editor
 		// Resets the camera.
 		MathLib::Vector2 currentPos = *reinterpret_cast<MathLib::Vector2*>(
 			&ImGui::GetMousePos());
+
+		ImGuiIO& io = ImGui::GetIO();
 
 		Engine::PlatformInput& platformInput = Engine::Input::GetPlatformInput();
 		EditorCamera& editorCamera = EditorSceneManager::GetEditorCamera();
@@ -87,14 +93,14 @@ namespace Editor
 		if (ImGui::IsKeyDown(
 			platformInput.FromKeyCode(Engine::KEY_CODE_LEFT_ALT)))
 		{
-			float altKeyHeld = Engine::Input::GetTimeKeyHeld(
-				Engine::InputKeyCode::KEY_CODE_LEFT_ALT);
+			float altKeyHeld = io.KeysDownDuration[
+				platformInput.FromKeyCode(Engine::KEY_CODE_LEFT_ALT)];
 			// Only updates the rotation if the left mouse button is held.
 			if (ImGui::IsMouseDown(
 				platformInput.FromMouseButton(Engine::InputMouseButton::MOUSE_BUTTON_LEFT)))
 			{
-				float leftMouseButtonTime = Engine::Input::GetMouseButtonTimeHeld(
-					Engine::InputMouseButton::MOUSE_BUTTON_LEFT);
+				float leftMouseButtonTime = io.MouseDownDuration[
+					platformInput.FromMouseButton(Engine::InputMouseButton::MOUSE_BUTTON_LEFT)];
 				if (altKeyHeld > leftMouseButtonTime)
 				{
 					editorCamera.RotateCamera(delta);
@@ -104,27 +110,32 @@ namespace Editor
 			if (ImGui::IsMouseDown(
 				platformInput.FromMouseButton(Engine::InputMouseButton::MOUSE_BUTTON_RIGHT)))
 			{
-				float rightMouseButtonTime = Engine::Input::GetMouseButtonTimeHeld(
-					Engine::InputMouseButton::MOUSE_BUTTON_RIGHT);
+				float rightMouseButtonTime = io.MouseDownDuration[
+					platformInput.FromMouseButton(Engine::InputMouseButton::MOUSE_BUTTON_RIGHT)];
 				handledZoom = altKeyHeld > rightMouseButtonTime
 					&& editorCamera.ZoomCamera(ts * delta.x * MOUSE_CAMERA_MULTIPLIER);
 			}
 		}
 		else
 		{
-			MathLib::Vector3 camInputDirection;
-			if (GetCameraDirection(camInputDirection, editorCamera, platformInput))
+			if (ImGui::IsMouseDown(
+				platformInput.FromMouseButton(Engine::InputMouseButton::MOUSE_BUTTON_RIGHT)))
 			{
-				editorCamera.SetFocused(false);
-				camInputDirection.Normalize();
-				editorCamera.MoveCamera(camInputDirection *
-					editorCamera.GetCameraProperties().cameraSpeed * ts.GetRawSeconds(), false);
+				MathLib::Vector3 camInputDirection;
+				if (GetCameraDirection(camInputDirection, editorCamera, platformInput))
+				{
+					editorCamera.SetFocused(false);
+					camInputDirection.Normalize();
+					editorCamera.MoveCamera(camInputDirection *
+						editorCamera.GetCameraProperties().cameraSpeed * ts.GetRawSeconds(), false);
+				}
 			}
 		}
 
 		if (!handledZoom)
 		{
-			editorCamera.ZoomCamera(ts * m_mouseScroll.y);
+			editorCamera.ZoomCamera(ts * m_mouseScroll.y * 
+				(DEFAULT_SCROLL_DISTANCE * 0.25F));
 		}
 		m_prevMousePos = currentPos;
 	}
@@ -133,42 +144,41 @@ namespace Editor
 		const EditorCamera& editorCamera, const Engine::PlatformInput& platformInput) const
 	{
 		bool hasInput = false;
-		MathLib::Vector3 cameraInputDirection = MathLib::Vector3::Zero;
 		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_W))
 			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_S)))
 		{
 			hasInput = true;
-			cameraInputDirection += editorCamera.GetForward();
+			outputDirection += editorCamera.GetForward();
 		}
 		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_S))
 			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_W)))
 		{
 			hasInput = true;
-			cameraInputDirection += -editorCamera.GetForward();
+			outputDirection += -editorCamera.GetForward();
 		}
 		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_A))
 			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_D)))
 		{
 			hasInput = true;
-			cameraInputDirection += -editorCamera.GetRight();
+			outputDirection += -editorCamera.GetRight();
 		}
 		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_D))
 			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_A)))
 		{
 			hasInput = true;
-			cameraInputDirection += editorCamera.GetRight();
+			outputDirection += editorCamera.GetRight();
 		}
 		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_Q))
 			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_E)))
 		{
 			hasInput = true;
-			cameraInputDirection += -MathLib::Vector3::UnitY;
+			outputDirection += -MathLib::Vector3::UnitY;
 		}
 		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_E))
 			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_Q)))
 		{
 			hasInput = true;
-			cameraInputDirection += MathLib::Vector3::UnitY;
+			outputDirection += MathLib::Vector3::UnitY;
 		}
 		return hasInput;
 	}
@@ -184,8 +194,8 @@ namespace Editor
 		{
 			EditorCameraProperties& properties = editorCamera.GetCameraProperties();
 			properties.width = m_windowSize.x;
-			properties.height = m_windowSize.y;
-			m_frameBuffer->Resize(properties.width, properties.height);
+			properties.height = m_windowSize.y - m_windowBarSpacing;
+			m_frameBuffer->Resize((uint32_t)properties.width, (uint32_t)properties.height);
 		}
 
 		Engine::CameraConstants cameraConstants;
@@ -206,8 +216,6 @@ namespace Editor
 		{
 			return;
 		}
-		// TODO: Implementation
-
 		static ImGuiWindowFlags sWindowFlags = ImGuiWindowFlags_NoScrollWithMouse
 			| ImGuiWindowFlags_NoScrollbar
 			| ImGuiWindowFlags_NoCollapse;
@@ -216,20 +224,18 @@ namespace Editor
 
 		// Updates scene view attributes.
 		{
+			ImGuiIO& io = ImGui::GetIO();
 			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(&ImGui::GetWindowSize());
 			m_focused = ImGui::IsWindowFocused();
-			// TODO: Fix
-			m_mouseScroll = MathLib::Vector2{ 0.0f, 0.0f };
+			m_mouseScroll = MathLib::Vector2{ io.MouseWheelH, io.MouseWheel };
+			m_windowBarSpacing = ImGui::GetTextLineHeightWithSpacing() * 2.0f;
 		}
 
 		Engine::Texture* frameTexture = m_frameBuffer->GetTexture(Engine::RENDER_TARGET);
 		if (frameTexture != nullptr)
 		{
-			Engine::Window& mainWindow = Engine::Application::Get().GetWindow();
-			ImVec2 appSize = { (float)mainWindow.GetWidth(), (float)mainWindow.GetHeight() };
-
 			ImGui::Image((void*)frameTexture->GetTextureID(),
-				ImVec2(frameTexture->GetWidth(), frameTexture->GetHeight()));
+				ImVec2((float)frameTexture->GetWidth(), (float)frameTexture->GetHeight()));
 		}
 		ImGui::End();
 	}

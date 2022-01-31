@@ -106,9 +106,8 @@ namespace Editor
 				}
 				else
 				{
-					MathLib::Vector3 difference =
-						direction * DEFAULT_SCROLL_DISTANCE;
-					m_position += difference;
+					MoveCamera(direction * MathLib::Abs(zoomDirection)
+						* DEFAULT_SCROLL_DISTANCE, false);
 				}
 				return true;
 			}

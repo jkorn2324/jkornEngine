@@ -40,6 +40,7 @@ namespace Editor
 	private:
 		Engine::FrameBuffer* m_frameBuffer;
 		MathLib::Vector2 m_windowSize;
+		float m_windowBarSpacing;
 		MathLib::Vector2 m_prevMousePos;
 		MathLib::Vector2 m_mouseScroll;
 		bool m_open, m_focused;

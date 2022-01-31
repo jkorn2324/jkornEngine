@@ -18,7 +18,7 @@ namespace Editor
 
 	static const float ROTATION_SPEED = 1.2f;
 
-	static const float DEFAULT_SCROLL_DISTANCE = 20.0f;
+	static const float DEFAULT_SCROLL_DISTANCE = 10.0f;
 
 	static const float SCROLL_FOCUS_MAX_DISTANCE = 13.0f;
 	static const float SCROLL_FOCUS_MIN_DISTANCE = 3.0f;

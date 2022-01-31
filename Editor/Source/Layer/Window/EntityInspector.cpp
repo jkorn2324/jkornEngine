@@ -160,25 +160,8 @@ namespace Editor
 				{
 					camera.SetSceneCameraType((Engine::SceneCameraType)cameraType);
 				}
-
 				ImGui::InputFloat("Near Plane", &cameraProperties.nearPlane);
 				ImGui::InputFloat("Far Plane", &cameraProperties.farPlane);
-
-				switch (camera.GetSceneCameraType())
-				{
-				case Engine::TYPE_PERSPECTIVE:
-				{
-					ImGui::InputFloat("FOV", &cameraProperties.perspFOV);
-					ImGui::InputFloat("Aspect Ratio", &cameraProperties.perspAspectRatio);
-					break;
-				}
-				case Engine::TYPE_ORTHOGRAPHIC:
-				{
-					ImGui::InputFloat("Width", &cameraProperties.orthoWidth);
-					ImGui::InputFloat("Height", &cameraProperties.orthoHeight);
-					break;
-				}
-				}
 			});
 
 		DrawTreeNodeComponent<Engine::MeshComponent>(entity, "Mesh Component",
