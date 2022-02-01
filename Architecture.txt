@@ -143,22 +143,29 @@ if the project exists []
 Editor:
 
 -> Support Scripting in Engine []
-   -> Should use C#
+   -> Should use C# []
 
 -> Make Prettier and Give it Style []
+
 -> Entity Inspector Window
    -> Add Components [x]
    -> Edit Components [x]
-   -> Delete Components []
+   -> Delete Components [x]
 
 -> Scene Hierarchy
    -> Add Entities [x]
    -> Delete Entities [x]
-   -> View children entities []
+   -> View children entities [x]
 
 -> Project Window
-   -> Displays all files in a given path []
+   -> Displays all files in a given path [x]
    -> Can double click on sub folder and open the path []
    -> Can drag and drop files into project window []
    -> Can drag files in project window into scene []
+
+-> Game
+   -> Must have a way to play the game in the Editor
+      -> Play Button []
+      -> Stop Button []
+   -> Must have a way to change aspect ratios in game view [x]
 

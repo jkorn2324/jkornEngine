@@ -8,6 +8,11 @@ namespace Engine
 
 namespace Editor
 {
+	enum class ComponentSelectionType
+	{
+		TYPE_NONE,
+		TYPE_POPUP
+	};
 
 	class EntityInspector
 	{
@@ -24,5 +29,6 @@ namespace Editor
 
 	private:
 		bool m_open;
+		ComponentSelectionType m_selectionType;
 	};
 }

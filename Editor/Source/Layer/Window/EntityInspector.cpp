@@ -24,13 +24,41 @@ namespace Editor
 	}
 
 	template<typename T>
-	static void DrawTreeNodeComponent(const Engine::Entity& entity,
-		const char* name, const std::function<void(T&)>& func)
+	static void DrawTreeNodeComponent(Engine::Entity& entity,
+		const char* name, ComponentSelectionType& selectionType, const std::function<void(T&)>& func)
 	{
 		if (entity.HasComponent<T>())
 		{
 			ImGui::BeginGroup();
-			bool open = ImGui::TreeNode(name);
+
+			static ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow
+				| ImGuiTreeNodeFlags_SpanAvailWidth
+				| ImGuiTreeNodeFlags_OpenOnArrow;
+			bool open = ImGui::TreeNodeEx(name, nodeFlags);
+
+			if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+			{
+				selectionType = ComponentSelectionType::TYPE_POPUP;
+			}
+
+			bool deleted = false;
+			// Popup based on the selection.
+			switch (selectionType)
+			{
+			case ComponentSelectionType::TYPE_POPUP:
+			{
+				if (ImGui::BeginPopupContextItem())
+				{
+					if (ImGui::MenuItem("Delete"))
+					{
+						deleted = true;
+					}
+					ImGui::EndPopup();
+				}
+				break;
+			}
+			}
+
 			if (open)
 			{
 				T& component = entity.GetComponent<T>();
@@ -38,6 +66,8 @@ namespace Editor
 				ImGui::TreePop();
 			}
 			ImGui::EndGroup();
+
+			if (deleted) entity.RemoveComponent<T>();
 		}
 	}
 
@@ -68,7 +98,7 @@ namespace Editor
 	}
 
 
-	static void DrawEntity(const Engine::Entity& entity)
+	static void DrawEntity(Engine::Entity& entity, ComponentSelectionType& selectionType)
 	{
 		// Draw Name Component.
 		DrawComponent<Engine::NameComponent>(entity,
@@ -86,7 +116,7 @@ namespace Editor
 			});
 
 		// Draw Transform 3D Component.
-		DrawTreeNodeComponent<Engine::Transform3DComponent>(entity, "Transform 3D Component",
+		DrawTreeNodeComponent<Engine::Transform3DComponent>(entity, "Transform 3D Component",  selectionType,
 			[=](Engine::Transform3DComponent& component) -> void
 			{
 				MathLib::Vector3 pos = component.GetLocalPosition();
@@ -117,7 +147,7 @@ namespace Editor
 			});
 
 		// Draw Transform 2D Component.
-		DrawTreeNodeComponent<Engine::Transform2DComponent>(entity, "Transform 2D Component",
+		DrawTreeNodeComponent<Engine::Transform2DComponent>(entity, "Transform 2D Component", selectionType,
 			[=](Engine::Transform2DComponent& component) -> void
 			{
 				MathLib::Vector2 pos = component.GetLocalPosition();
@@ -136,7 +166,7 @@ namespace Editor
 			});
 
 		// Draw Sprite Component.
-		DrawTreeNodeComponent<Engine::SpriteComponent>(entity, "Sprite Component",
+		DrawTreeNodeComponent<Engine::SpriteComponent>(entity, "Sprite Component", selectionType,
 			[=](Engine::SpriteComponent& component) -> void
 			{
 				ImGui::Checkbox("Enabled", &component.enabled);
@@ -144,7 +174,7 @@ namespace Editor
 			});
 
 
-		DrawTreeNodeComponent<Engine::SceneCameraComponent>(entity, "Scene Camera Component",
+		DrawTreeNodeComponent<Engine::SceneCameraComponent>(entity, "Scene Camera Component", selectionType,
 			[=](Engine::SceneCameraComponent& component) -> void
 			{
 				ImGui::Checkbox("Enabled", &component.enabled);
@@ -164,7 +194,7 @@ namespace Editor
 				ImGui::InputFloat("Far Plane", &cameraProperties.farPlane);
 			});
 
-		DrawTreeNodeComponent<Engine::MeshComponent>(entity, "Mesh Component",
+		DrawTreeNodeComponent<Engine::MeshComponent>(entity, "Mesh Component", selectionType,
 			[=](Engine::MeshComponent& component) -> void
 			{
 				ImGui::Checkbox("Enabled", &component.enabled);
@@ -175,7 +205,8 @@ namespace Editor
 
 
 	EntityInspector::EntityInspector()
-		: m_open(true)
+		: m_open(true),
+		m_selectionType(ComponentSelectionType::TYPE_NONE)
 	{
 	}
 	
@@ -242,7 +273,7 @@ namespace Editor
 				}
 			}
 
-			DrawEntity(entity);
+			DrawEntity(entity, m_selectionType);
 		}
 		ImGui::End();
 	}

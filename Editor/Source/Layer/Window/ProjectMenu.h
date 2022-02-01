@@ -25,11 +25,17 @@ namespace Editor
 
 		void Draw();
 
+		const MathLib::Vector2& GetContentViewSize() const { return m_contentViewSize; }
+
 	private:
 		void DrawFileInTreeMenu(const std::filesystem::path& path);
 		void DrawFileInContentView(const std::filesystem::path& path);
 
 	private:
+		std::vector<std::filesystem::path> m_currentFiles;
+		MathLib::Vector2 m_windowSize;
+		MathLib::Vector2 m_contentViewSize;
+
 		std::filesystem::path m_currentPath;
 		std::filesystem::path m_rootPath;
 		std::filesystem::path m_selectedPathInFileMenu;
