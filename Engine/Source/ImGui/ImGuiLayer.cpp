@@ -8,6 +8,7 @@
 #include "Window.h"
 
 #include "GraphicsRenderer.h"
+#include "RenderingAPI.h"
 #include "PlatformImGuiLayer.h"
 #include "FrameBuffer.h"
 
@@ -18,8 +19,7 @@ namespace Engine
 {
 
 	ImGuiLayer::ImGuiLayer()
-		: Layer("Editor Layer") ,
-		m_frameBuffer(nullptr)
+		: Layer("Editor Layer")
 	{
 		m_graphicsImGuiLayer = PlatformImGuiLayer::Create(LayerType::TYPE_GRAPHICS);
 		m_windowImGuiLayer = PlatformImGuiLayer::Create(LayerType::TYPE_WINDOW);
@@ -27,8 +27,6 @@ namespace Engine
 
 	ImGuiLayer::~ImGuiLayer()
 	{
-		delete m_frameBuffer;
-
 		OnLayerRemoved();
 	}
 
@@ -49,12 +47,7 @@ namespace Engine
 	{
 		const auto& window = Application::Get().GetWindow();
 
-		// Frame Buffer for rendering editor.
-		FrameBufferSpecification specifications;
-		specifications.width = window.GetWidth();
-		specifications.height = window.GetHeight();
-		m_frameBuffer = Engine::FrameBuffer::Create(specifications);
-
+		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
@@ -79,8 +72,6 @@ namespace Engine
 
 	void ImGuiLayer::BeginRender()
 	{
-		m_frameBuffer->Bind();
-
 		m_graphicsImGuiLayer->BeginFrame();
 		m_windowImGuiLayer->BeginFrame();
 		ImGui::NewFrame();
@@ -88,9 +79,9 @@ namespace Engine
 
 	void ImGuiLayer::EndRender()
 	{
-		Application& app = Application::Get();
 		ImGuiIO& io = ImGui::GetIO();
-		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+		const auto& window = Application::Get().GetWindow();
+		io.DisplaySize = ImVec2((float)window.GetWidth(), (float)window.GetHeight());
 
 		ImGui::Render();
 		m_graphicsImGuiLayer->EndFrame();

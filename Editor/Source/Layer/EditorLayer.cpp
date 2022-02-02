@@ -29,7 +29,9 @@ namespace Editor
 
 	static void DrawDemo()
 	{
+#if 0
 		ImGui::ShowDemoWindow();
+#endif
 	}
 
 	// TODO: Find a better way to get the main project menu path.
@@ -91,26 +93,45 @@ namespace Editor
 		DrawDemo();
 
 		static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
-		ImGuiWindowFlags sWindowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
-			| ImGuiWindowFlags_NoTitleBar;
-		ImGuiWindowFlags windowFlags = sWindowFlags;
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
-		
-		// Draws the main window.
+		static bool optFullscreen = true;
+		static bool optPadding = false;
+
 		{
-			const ImGuiViewport* viewport = ImGui::GetMainViewport();
-			
-			ImGui::SetNextWindowPos(viewport->WorkPos);
-			ImGui::SetNextWindowSize(viewport->WorkSize);
-			ImGui::SetNextWindowViewport(viewport->ID);
-			
-			windowFlags |= ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-			windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+			if (optFullscreen)
+			{
+				const ImGuiViewport* viewport = ImGui::GetMainViewport();
+				ImGui::SetNextWindowPos(viewport->WorkPos);
+				ImGui::SetNextWindowSize(viewport->WorkSize);
+				ImGui::SetNextWindowViewport(viewport->ID);
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+				windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+				windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+			}
+			else
+			{
+				dockspaceFlags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+			}
+
+			if (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
+			{
+				windowFlags |= ImGuiWindowFlags_NoBackground;
+			}
+
+			if (!optPadding)
+			{
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+			}
 		}
 
 		// Draws the editor dockspace.
 		{
 			ImGui::Begin("Editor", nullptr, windowFlags);
+
+			if (!optPadding) ImGui::PopStyleVar();
+			if (optFullscreen) ImGui::PopStyleVar(2);
 
 			// Apply the dockspace.
 			{
@@ -120,14 +141,14 @@ namespace Editor
 
 			DrawMenuBar();
 
+			m_sceneHierarchy.Draw();
+			m_entityInspector.Draw();
+			m_projectMenu.Draw();
+			m_sceneView.Draw();
+			m_gameView.Draw();
+
 			ImGui::End();
 		}
-
-		m_sceneHierarchy.Draw();
-		m_entityInspector.Draw();
-		m_projectMenu.Draw();
-		m_sceneView.Draw();
-		m_gameView.Draw();
 	}
 
 	void EditorLayer::DrawMenuBar()

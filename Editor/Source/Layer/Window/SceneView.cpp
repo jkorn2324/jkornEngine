@@ -207,6 +207,7 @@ namespace Editor
 
 		m_frameBuffer->Bind();
 		Engine::SceneManager::Render(cameraConstants);
+		m_frameBuffer->UnBind();
 	}
 
 	

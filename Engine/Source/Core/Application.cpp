@@ -173,8 +173,7 @@ namespace Engine
 
 	bool Application::OnWindowResized(WindowResizedEvent& event)
 	{
-		GraphicsRenderer::GetRenderingAPI().SetResolution(
-			event.width, event.height);
+		GraphicsRenderer::OnWindowResized(event.width, event.height);
 		return true;
 	}
 }

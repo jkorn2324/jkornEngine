@@ -33,6 +33,11 @@ namespace Engine
 		static RenderingAPI& GetRenderingAPI();
 
 	private:
+		static void OnWindowResized(uint32_t x, uint32_t y);
+
+	private:
 		static RenderingAPI* s_renderingAPI;
+
+		friend class Application;
 	};
 }

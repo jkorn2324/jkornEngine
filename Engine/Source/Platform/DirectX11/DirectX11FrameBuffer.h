@@ -30,6 +30,7 @@ namespace Engine
 		~DirectX11FrameBuffer();
 
 		void Bind() const override;
+		void UnBind() const override;
 
 		class Texture* GetTexture(FrameBufferAttachmentType type) const override;
 

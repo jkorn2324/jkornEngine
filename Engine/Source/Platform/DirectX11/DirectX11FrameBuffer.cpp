@@ -210,11 +210,18 @@ namespace Engine
 			renderingAPI.m_deviceContext->OMSetDepthStencilState(
 				m_depthStencilState, 0);
 		}
-
 		renderingAPI.SetViewport(0.0f, 0.0f,
 			(float)m_frameBufferSpecification.width, (float)m_frameBufferSpecification.height);
 	}
 	
+	void DirectX11FrameBuffer::UnBind() const
+	{
+		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
+			GraphicsRenderer::GetRenderingAPI();
+		renderingAPI.SetRenderTarget(renderingAPI.m_backBufferRenderTargetView, nullptr);
+		renderingAPI.Clear();
+	}
+
 	Texture* DirectX11FrameBuffer::GetTexture(FrameBufferAttachmentType type) const
 	{
 		switch (type)

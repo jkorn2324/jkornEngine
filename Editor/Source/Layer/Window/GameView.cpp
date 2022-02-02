@@ -81,6 +81,7 @@ namespace Editor
 		
 		m_frameBuffer->Bind();
 		Engine::SceneManager::Render();
+		m_frameBuffer->UnBind();
 	}
 
 	void GameView::UpdateGameAspectRatio()

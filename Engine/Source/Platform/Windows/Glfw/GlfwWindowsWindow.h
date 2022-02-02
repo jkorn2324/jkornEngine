@@ -46,6 +46,7 @@ namespace Engine
 		 bool IsVSync() const override;
 
 		 HWND GetHWND() const;
+		 const GLFWwindow* GetGlfwWindow() const { return m_window; }
 
 	private:
 		void Initialize();

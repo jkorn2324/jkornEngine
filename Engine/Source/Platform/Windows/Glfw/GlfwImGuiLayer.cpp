@@ -40,10 +40,10 @@ namespace Engine
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			GLFWwindow* window = glfwGetCurrentContext();
+			GlfwWindowsWindow* window = (GlfwWindowsWindow*)&Application::Get().GetWindow();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(window);
+			glfwMakeContextCurrent((GLFWwindow*)window->GetGlfwWindow());
 		}
 	}
 }

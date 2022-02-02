@@ -69,4 +69,11 @@ namespace Engine
 		DebugAssert(s_renderingAPI != nullptr, "RenderingAPI wasn't initialized.");
 		return *s_renderingAPI;
 	}
+
+	void GraphicsRenderer::OnWindowResized(uint32_t x, uint32_t y)
+	{
+		GetRenderingAPI().SetViewport(
+			0.0f, 0.0f, (float)x, float(y));
+		GetRenderingAPI().SetResolution(x, y);
+	}
 }

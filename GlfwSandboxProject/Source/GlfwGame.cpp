@@ -185,11 +185,12 @@ namespace GlfwSandbox
 	void GlfwGame::Render()
 	{
 		m_frameBuffer->Bind();
-		Engine::SceneManager::GetActiveScene().Render();
+		Engine::SceneManager::Render();
 
 		{
 			Engine::GraphicsRenderer2D::DrawRect(MathLib::Vector2(20.0f, 0.0f),
 				MathLib::Vector2::One, m_subTexture);
 		}
+		m_frameBuffer->UnBind();
 	}
 }

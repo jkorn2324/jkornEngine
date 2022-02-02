@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Layer.h"
+#include "Source\Vector.h"
 
 #include <memory>
 
@@ -29,7 +30,6 @@ namespace Engine
 		bool OnWindowResized(class WindowResizedEvent& event);
 
 	private:
-		class FrameBuffer* m_frameBuffer;
 		std::unique_ptr<PlatformImGuiLayer> m_windowImGuiLayer;
 		std::unique_ptr<PlatformImGuiLayer> m_graphicsImGuiLayer;
 	};

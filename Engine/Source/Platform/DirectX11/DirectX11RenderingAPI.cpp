@@ -235,15 +235,14 @@ namespace Engine
 		m_width = width;
 		m_height = height;
 
-		DXGI_SWAP_CHAIN_DESC scDesc;
-		HRESULT res = m_swapChain->GetDesc(&scDesc);
-		DebugAssert(res == S_OK, "Failed to get the descriptor flags.");
-
-		DXGI_MODE_DESC desc;
-		std::memcpy(&desc, &(scDesc.BufferDesc), sizeof(DXGI_MODE_DESC));
-		desc.Width = width;
-		desc.Height = height;
-		m_swapChain->ResizeTarget(&desc);
+		if (m_backBufferRenderTargetView != nullptr)
+		{
+			m_backBufferRenderTargetView->Release();
+			m_backBufferRenderTargetView = nullptr;
+		}
+		DebugAssert(m_swapChain != nullptr, "Swap Chain doesn't exist.");
+		m_swapChain->ResizeBuffers(0, (UINT)m_width, (UINT)m_height, DXGI_FORMAT_UNKNOWN, 0);
+		CreateBackBuffer(m_swapChain, m_device, &m_backBufferRenderTargetView);
 	}
 
 	void DirectX11RenderingAPI::SetRenderTarget(ID3D11RenderTargetView* renderTargetView, ID3D11DepthStencilView* depthStencilView)
