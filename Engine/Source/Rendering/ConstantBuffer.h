@@ -21,7 +21,8 @@ namespace Engine
 		explicit ConstantBuffer(const void* buffer, size_t stride);
 		virtual ~ConstantBuffer() { }
 
-		virtual void SetData(const void* buffer, size_t stride)=0;
+		virtual void SetData(void* buffer, size_t stride)=0;
+		void SetData(const void* buffer, size_t stride);
 
 		virtual void Bind(const uint32_t& slot, int flags) const=0;
 		

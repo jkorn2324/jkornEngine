@@ -20,8 +20,11 @@ namespace Engine
 	struct WindowProperties
 	{
 		std::string windowTitle;
-		std::uint32_t width;
-		std::uint32_t height;
+		uint32_t width;
+		uint32_t height;
+
+		uint32_t minWidth;
+		uint32_t minHeight;
 
 		bool vsync = true;
 		bool resizable = false;
@@ -40,6 +43,10 @@ namespace Engine
 
 		virtual std::uint32_t GetWidth() const=0;
 		virtual std::uint32_t GetHeight() const=0;
+
+		virtual std::uint32_t GetMinWidth() const =0;
+		virtual std::uint32_t GetMinHeight() const =0;
+		virtual void SetMinSize(uint32_t w, uint32_t h) =0;
 
 		virtual void OnUpdate()=0;
 		virtual void Shutdown()=0;

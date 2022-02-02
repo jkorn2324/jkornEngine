@@ -52,6 +52,23 @@ namespace Engine
 		return m_windowData.properties.height;
 	}
 
+	uint32_t GlfwWindowsWindow::GetMinHeight() const
+	{
+		return m_windowData.properties.minHeight;
+	}
+
+	uint32_t GlfwWindowsWindow::GetMinWidth() const
+	{
+		return m_windowData.properties.minWidth;
+	}
+
+	void GlfwWindowsWindow::SetMinSize(uint32_t w, uint32_t h)
+	{
+		glfwSetWindowSizeLimits(m_window, (int)w, (int)h, GLFW_DONT_CARE, GLFW_DONT_CARE);
+		m_windowData.properties.minWidth = w;
+		m_windowData.properties.minHeight = h;
+	}
+
 	void GlfwWindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
@@ -126,6 +143,8 @@ namespace Engine
 		glfwSetWindowUserPointer(m_window, &m_windowData);
 
 		SetVSync(m_windowData.properties.vsync);
+		SetMinSize(
+			m_windowData.properties.minWidth, m_windowData.properties.minHeight);
 
 		// Sets the window close callback function.
 		{

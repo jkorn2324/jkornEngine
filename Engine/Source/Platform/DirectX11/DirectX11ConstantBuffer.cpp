@@ -31,7 +31,7 @@ namespace Engine
 			&subresourceData, &m_constantBuffer);
 		DebugAssert(result == S_OK, "Failed to create constant buffer.");
 
-		SetData(buffer, stride);
+		SetData((void*)buffer, stride);
 	}
 
 	DirectX11ConstantBuffer::~DirectX11ConstantBuffer()
@@ -42,7 +42,7 @@ namespace Engine
 		}
 	}
 
-	void DirectX11ConstantBuffer::SetData(const void* buffer, std::size_t stride)
+	void DirectX11ConstantBuffer::SetData(void* buffer, std::size_t stride)
 	{
 		if (m_constantBuffer != nullptr
 			&& buffer != nullptr)

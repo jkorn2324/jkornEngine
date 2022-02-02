@@ -32,6 +32,11 @@ namespace Engine
 		 std::uint32_t GetWidth() const override;
 		 std::uint32_t GetHeight() const override;
 
+		 uint32_t GetMinWidth() const override;
+		 uint32_t GetMinHeight() const override;
+
+		 void SetMinSize(uint32_t w, uint32_t h) override;
+
 		 void OnUpdate() override;
 		 void Shutdown() override;
 
@@ -48,6 +53,8 @@ namespace Engine
 	private:
 		GLFWwindow* m_window;
 		WindowData m_windowData;
+
+		uint32_t m_minWidth, m_minHeight;
 
 		friend class GlfwImGuiLayer;
 	};

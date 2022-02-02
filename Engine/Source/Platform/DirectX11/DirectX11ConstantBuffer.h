@@ -11,7 +11,7 @@ namespace Engine
 		explicit DirectX11ConstantBuffer(const void* buffer, std::size_t stride);
 		~DirectX11ConstantBuffer();
 
-		void SetData(const void* buffer, std::size_t stride) override;
+		void SetData(void* buffer, std::size_t stride) override;
 		void Bind(const std::uint32_t& slot, int flags) const override;
 
 	private:

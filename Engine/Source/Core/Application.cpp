@@ -27,6 +27,9 @@ namespace Engine
 	const std::uint32_t WINDOW_WIDTH = 1600;
 	const std::uint32_t WINDOW_HEIGHT = 900;
 
+	const uint32_t MIN_WINDOW_WIDTH = 1200;
+	const uint32_t MIN_WINDOW_HEIGHT = 675;
+
 	Application* Application::s_instance = nullptr;
 
 	Application& Application::Get()
@@ -50,7 +53,8 @@ namespace Engine
 
 		WindowProperties properties = 
 		{
-			name, WINDOW_WIDTH, WINDOW_HEIGHT, true
+			name, WINDOW_WIDTH, WINDOW_HEIGHT, 
+			MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT, true
 		};
 		m_window = Window::GenerateWindow(properties);
 		m_window->SetCallback(BIND_EVENT_FUNCTION(Application::OnEvent));

@@ -7,7 +7,12 @@
 
 namespace Engine
 {
-	ConstantBuffer::ConstantBuffer(const void* buffer, std::size_t stride) { }
+	ConstantBuffer::ConstantBuffer(const void* buffer, size_t stride) { }
+
+	void ConstantBuffer::SetData(const void* bufferData, size_t stride)
+	{
+		SetData((void*)bufferData, stride);
+	}
 
 	ConstantBuffer* ConstantBuffer::Create(const void* buffer, std::size_t stride)
 	{
