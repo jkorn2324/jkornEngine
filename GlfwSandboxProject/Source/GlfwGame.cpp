@@ -1,6 +1,7 @@
 #include "GlfwGame.h"
 
 #include "imgui.h"
+#include "CameraController.h"
 
 namespace GlfwSandbox
 {
@@ -61,6 +62,9 @@ namespace GlfwSandbox
 		Engine::Entity cameraEntity = scene.Find("CameraEntity");
 		if (cameraEntity.IsValid())
 		{
+			Engine::BehaviorComponent& component 
+				= cameraEntity.GetComponent<Engine::BehaviorComponent>();
+			component.Get().AddBehavior<CameraController>();
 			return;
 		}
 		cameraEntity = scene.CreateEntity("CameraEntity");
@@ -74,9 +78,14 @@ namespace GlfwSandbox
 				= cameraEntity.AddComponent<Engine::SceneCameraComponent>();
 			Engine::CameraProperties& properties
 				= camComponent.camera.GetProperties();
+			camComponent.camera.SetSceneCameraType(Engine::SceneCameraType::TYPE_ORTHOGRAPHIC);
 			Engine::Application& app = Engine::Application::Get();
 			properties.orthoWidth = (float)app.GetWindow().GetWidth();
 			properties.orthoHeight = (float)app.GetWindow().GetHeight();
+
+			Engine::BehaviorComponent& component
+				= cameraEntity.GetComponent<Engine::BehaviorComponent>();
+			component.Get().AddBehavior<CameraController>();
 		}
 
 		Engine::Entity entity = scene.CreateEntity("HappyFace");
@@ -92,6 +101,7 @@ namespace GlfwSandbox
 
 	void GlfwGame::OnUpdate(const Engine::Timestep& ts)
 	{
+		Engine::SceneManager::OnUpdate(ts);
 		Engine::SceneManager::OnRuntimeUpdate(ts);
 
 		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
@@ -134,8 +144,12 @@ namespace GlfwSandbox
 			}
 
 			MathLib::Vector2 screenPos = Engine::Input::GetMouseScreenPos();
-			position = scene.GetCamera()->ScreenToWorld(screenPos);
-			transformComponent.SetLocalPosition(position);
+			auto camera = scene.GetCamera();
+			if (camera != nullptr)
+			{
+				position = camera->ScreenToWorld(screenPos);
+				transformComponent.SetLocalPosition(position);
+			}
 		}
 		Render();
 	}
@@ -176,6 +190,7 @@ namespace GlfwSandbox
 			properties.orthoWidth = (float)event.width;
 			properties.orthoHeight = (float)event.height;
 		}
+		m_frameBuffer->Resize(event.width, event.height);
 		return true;
 	}
 
@@ -191,6 +206,5 @@ namespace GlfwSandbox
 			Engine::GraphicsRenderer2D::DrawRect(MathLib::Vector2(20.0f, 0.0f),
 				MathLib::Vector2::One, m_subTexture);
 		}
-		m_frameBuffer->UnBind();
 	}
 }

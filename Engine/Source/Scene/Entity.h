@@ -82,7 +82,6 @@ namespace Engine
 	T& Entity::AddComponent(Args && ...args)
 	{
 		T& component = m_scene->m_entityRegistry.emplace<T>(m_entity, std::forward<Args>(args)...);
-		
 		if (s_componentEventFunc != nullptr)
 		{
 			EntityComponentAddedEvent<T> event(*this, component);

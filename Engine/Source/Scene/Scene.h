@@ -36,8 +36,6 @@ namespace Engine
 
 		void OnEvent(Event& event);
 
-
-
 		Entity CreateEntity(const char* entityName);
 		Entity CreateEntity();
 		void DestroyEntity(const Entity& entity);

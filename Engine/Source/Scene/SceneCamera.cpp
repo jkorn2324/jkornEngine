@@ -8,7 +8,7 @@ namespace Engine
 	static const float DEFAULT_WIDTH = 600.0f;
 	static const float DEFAULT_HEIGHT = 800.0f;
 
-	static const float DEFAULT_NEAR_PLANE = 25.0f;
+	static const float DEFAULT_NEAR_PLANE = 0.5f;
 	static const float DEFAULT_FAR_PLANE = 10000.0f;
 
 	SceneCamera::SceneCamera()

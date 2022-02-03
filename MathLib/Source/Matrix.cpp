@@ -411,6 +411,11 @@ namespace MathLib
 		return Matrix4x4(mat);
 	}
 
+	Matrix4x4::Matrix4x4()
+	{
+		*this = Matrix4x4::Identity;
+	}
+
 	Matrix4x4::Matrix4x4(const float mat[4][4])
 	{
 		std::memcpy(matrix, mat, sizeof(float) * 16);

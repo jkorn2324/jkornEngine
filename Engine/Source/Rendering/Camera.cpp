@@ -19,7 +19,8 @@ namespace Engine
 		invertedProjMat.Invert();
 		MathLib::Vector4 worldSpace = MathLib::Vector4(camSpace, 0.0f, 1.0f)
 			* invertedProjMat;
-		return MathLib::Vector3(worldSpace.x, -worldSpace.y, worldSpace.z);
+		return MathLib::Vector3(worldSpace.x, -worldSpace.y, worldSpace.z) 
+			+ -m_viewMatrix.GetTranslation();
 	}
 	
 	MathLib::Vector2 Camera::WorldToScreen(const MathLib::Vector3& worldPos)

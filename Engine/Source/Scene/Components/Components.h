@@ -3,6 +3,7 @@
 #include "Source\Transform.h"
 
 #include "Entity.h"
+#include "BehaviorScriptContainer.h"
 #include "SceneCamera.h"
 #include "EntityHierarchyComponent.h"
 
@@ -39,10 +40,19 @@ namespace Engine
 		explicit SceneCameraComponent() = default;
 		explicit SceneCameraComponent(bool mainCam)
 			: mainCamera(mainCam), camera() { }
-		SceneCameraComponent(const SceneCameraComponent& component) = default;
-		SceneCameraComponent(bool mainCamera, SceneCameraType type,
+		explicit SceneCameraComponent(bool mainCam,
+			SceneCameraType cameraType)
+			: mainCamera(mainCam), enabled(true), camera()
+		{
+			camera.SetSceneCameraType(cameraType);
+		}
+
+		explicit SceneCameraComponent(bool mainCamera, SceneCameraType type,
 			const CameraProperties& properties)
 			: mainCamera(mainCamera), camera(type, properties) { }
+
+		SceneCameraComponent(const SceneCameraComponent& component) = default;
+
 	};
 
 	struct NameComponent
@@ -67,5 +77,51 @@ namespace Engine
 			: mesh(nullptr), material(nullptr) { }
 		explicit MeshComponent(class Mesh* mesh, class Material* material)
 			: mesh(mesh), material(material) { }
+	};
+
+	class BehaviorComponent
+	{
+	public:
+		BehaviorComponent()
+			: m_behaviorScriptContainer() { }
+		BehaviorComponent(const BehaviorComponent& component)
+			: m_behaviorScriptContainer() 
+		{
+			if (component.IsValid())
+			{
+				m_behaviorScriptContainer = std::unique_ptr<BehaviorScriptContainer>(
+					new BehaviorScriptContainer(component.Get()));
+			}
+		}
+		
+		BehaviorComponent& operator=(const BehaviorComponent& component)
+		{
+			if (component.IsValid())
+			{
+				m_behaviorScriptContainer = std::unique_ptr<BehaviorScriptContainer>(
+					new BehaviorScriptContainer(component.Get()));
+			}
+			return *this;
+		}
+
+		bool IsValid() const { return m_behaviorScriptContainer.get() != nullptr; }
+		BehaviorScriptContainer& Get() { return *m_behaviorScriptContainer.get(); }
+		const BehaviorScriptContainer& Get() const { return *m_behaviorScriptContainer.get(); }
+
+	private:
+		void Create(Entity& entity)
+		{
+			m_behaviorScriptContainer = std::make_unique<BehaviorScriptContainer>(entity);
+		}
+
+		void Destroy()
+		{
+			m_behaviorScriptContainer.release();
+		}
+
+	private:
+		std::unique_ptr<BehaviorScriptContainer> m_behaviorScriptContainer;
+
+		friend class Scene;
 	};
 }

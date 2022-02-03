@@ -3,6 +3,9 @@
 #include "Entity.h"
 #include "SceneManager.h"
 
+#include "AssetManager.h"
+#include "AssetCache.h"
+
 #include "SceneEvent.h"
 #include "Event.h"
 
@@ -68,8 +71,29 @@ namespace Engine
 	Scene* Scene::CreateDefaultScene()
 	{
 		Scene* scene = new Scene();
-		// TODO: Add Default Scene
 
+		// Creates the scene camera.
+		{
+			Entity entity = scene->CreateEntity("Main Camera");
+			Transform3DComponent& cameraTransform
+				= entity.AddComponent<Transform3DComponent>();
+			cameraTransform.SetLocalPosition(MathLib::Vector3{ 0.0f, 0.0f, -10.0f });
+			entity.AddComponent<SceneCameraComponent>(true,
+				SceneCameraType::TYPE_PERSPECTIVE);
+		}
+
+		// Creates the cube.
+		{
+			Entity entity = scene->CreateEntity("Cube");
+			entity.AddComponent<Transform3DComponent>();
+			MeshComponent& component =
+				entity.AddComponent<MeshComponent>();
+			component.mesh = AssetManager::GetMeshes().Get(L"DefaultCube");
+			component.material = AssetManager::GetMaterials().Get(L"Unlit - ColorUV");
+			component.enabled = true;
+		}
+
+		// TODO: Eventually set up directional light.
 		return scene;
 	}
 
@@ -114,16 +138,30 @@ namespace Engine
 
 	void Scene::OnUpdate(const Timestep& ts)
 	{
-		PROFILE_SCOPE(OnUpdate, Update);
+		PROFILE_SCOPE(OnUpdate, Scene);
 
 		// Destroys the entities if they are marked for destroy.
 		{
 			int32_t sizeOfVec = (int32_t)m_markedForDestroyEntities.size() - 1;
 			while (sizeOfVec >= 0)
 			{
+				{
+					Entity e = Entity{ m_markedForDestroyEntities[sizeOfVec], this };
+					e.GetComponent<BehaviorComponent>().Destroy();
+				}
 				m_entityRegistry.destroy(m_markedForDestroyEntities[sizeOfVec]);
 				m_markedForDestroyEntities.pop_back();
 				sizeOfVec--;
+			}
+		}
+
+		// Updates each behavior component generally.
+		{
+			auto entityView = m_entityRegistry.view<BehaviorComponent>();
+			for (auto entity : entityView)
+			{
+				auto behaviorComponent = entityView.get<BehaviorComponent>(entity);
+				behaviorComponent.Get().OnUpdate(ts);
 			}
 		}
 
@@ -167,16 +205,32 @@ namespace Engine
 
 	void Scene::OnRuntimeUpdate(const Timestep& ts)
 	{
-		PROFILE_SCOPE(RuntimeUpdate, Update);
+		PROFILE_SCOPE(RuntimeUpdate, Scene);
 
-		// TODO: Implement on runtime update.
+		// Updates each behavior component at runtime.
+		{
+			auto entityView = m_entityRegistry.view<BehaviorComponent>();
+			for (auto entity : entityView)
+			{
+				auto behaviorComponent = entityView.get<BehaviorComponent>(entity);
+				behaviorComponent.Get().OnRuntimeUpdate(ts);
+			}
+		}
 	}
 
 	void Scene::OnEditorUpdate(const Timestep& ts)
 	{
-		PROFILE_SCOPE(EditorUpdate, Update);
+		PROFILE_SCOPE(EditorUpdate, Scene);
 
-		// TODO: Implement editor update.
+		// Updates each behavior component.
+		{
+			auto entityView = m_entityRegistry.view<BehaviorComponent>();
+			for (auto entity : entityView)
+			{
+				auto behaviorComponent = entityView.get<BehaviorComponent>(entity);
+				behaviorComponent.Get().OnEditorUpdate(ts);
+			}
+		}
 	}
 
 	void Scene::Render(const CameraConstants& cameraConstants)
@@ -280,8 +334,17 @@ namespace Engine
 
 	Entity Scene::CreateEntity(const char* entityName)
 	{
+		PROFILE_SCOPE(CreateEntity, Scene);
+
 		Entity createdEntity = Entity(m_entityRegistry.create(), this);
 		createdEntity.AddComponent<NameComponent>(entityName);
+	
+		{
+			BehaviorComponent& entity
+				= createdEntity.AddComponent<BehaviorComponent>();
+			entity.Create(createdEntity);
+		}
+
 		EntityHierarchyComponent& ehc
 			= createdEntity.AddComponent<EntityHierarchyComponent>(createdEntity);
 
@@ -306,6 +369,8 @@ namespace Engine
 
 	void Scene::DestroyEntity(const Entity& entity)
 	{
+		PROFILE_SCOPE(DestroyEntity, Scene);
+
 		if (!entity.IsValid())
 		{
 			return;
@@ -313,7 +378,7 @@ namespace Engine
 		
 		// Destroys the entity's children.
 		{
-			EntityHierarchyComponent ehc =
+			EntityHierarchyComponent& ehc =
 				entity.GetComponent<EntityHierarchyComponent>();
 			if (ehc.HasChildren())
 			{
@@ -322,6 +387,13 @@ namespace Engine
 					DestroyEntity(e);
 				}
 			}
+		}
+
+		// Triggers on destroy for the children.
+		{
+			BehaviorComponent& bc =
+				entity.GetComponent<BehaviorComponent>();
+			bc.Get().OnDestroy();
 		}
 
 		const auto& find = std::find(m_markedForDestroyEntities.begin(), 
@@ -385,6 +457,14 @@ namespace Engine
 	bool Scene::OnComponentRemoved(EntityComponentRemovedEvent<T>& event)
 	{
 		static_assert(false);
+		return true;
+	}
+	
+	template<>
+	bool Scene::OnComponentRemoved(EntityComponentRemovedEvent<BehaviorComponent>& event)
+	{
+		event.component.Get().OnDestroy();
+		event.component.Destroy();
 		return true;
 	}
 

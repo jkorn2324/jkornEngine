@@ -51,7 +51,7 @@ namespace MathLib
 	public:
 		float matrix[4][4];
 
-		explicit Matrix4x4() = default;
+		explicit Matrix4x4();
 		explicit Matrix4x4(const float mat[4][4]);
 		Matrix4x4(const Matrix4x4& mat);
 

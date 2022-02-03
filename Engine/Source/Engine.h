@@ -39,6 +39,9 @@
 #include "Shader.h"
 #include "VertexBuffer.h"
 
+#include "BehaviorScript.h"
+#include "BehaviorScriptContainer.h"
+
 #include "Components.h"
 #include "Entity.h"
 #include "Scene.h"

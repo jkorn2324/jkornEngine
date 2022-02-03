@@ -12,7 +12,7 @@ General Rendering:
    -> Limits the amount of times that buffers need to be
       sent the GPU before a draw call is issued. []
 
--> Need to figure out depth buffer issue []
+-> Need to figure out depth buffer issue [x]
 
 3D Rendering:
 -> Can Render Basic Objects in API calls []
@@ -146,6 +146,8 @@ Editor:
    -> Should use C# []
 
 -> Make Prettier and Give it Style []
+
+-> Fixed issue with docking & window size [x]
 
 -> Entity Inspector Window
    -> Add Components [x]
