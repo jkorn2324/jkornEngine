@@ -9,7 +9,8 @@ namespace Engine
 	{
 	public:
 		GlfwSandboxApp()
-			: Application("GlfwSandboxApp")
+			: Application("GlfwSandboxApp",
+				Engine::FileUtils::GetWorkingDirectory())
 		{
 			AddLayer(new GlfwSandbox::GlfwGame());
 		}

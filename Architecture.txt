@@ -1,5 +1,5 @@
 TODOS:
--> Build Dependencies (ASAP)
+-> Build Dependencies [x]
 
 General Rendering:
 -> Per platform rendering
@@ -39,6 +39,18 @@ General Rendering:
 
 Shaders:
 -> Write a system for loading and running Compute Shaders []
+
+Lighting:
+-> Add 3D Lighting system into the engine []
+  	-> Point Light []
+	-> Spotlight []
+	-> Directional Light []
+	-> Ambient Light []
+
+-> Have materials react to the lighting in the game engine []
+	-> Phong Shading []
+		-> Specular Highlights []
+		-> Lambert Shading []
      
 ----------------------------------------------------------------
 
@@ -128,6 +140,17 @@ Scene Events:
     -> Event that gets triggered when an entity gets added [x]
     -> Event that gets triggered when a component gets added [x]
     -> Event that gets triggered when a component gets removed. [x]
+
+-------------------------------------------------------------
+
+Misc:
+-> Refactor backends so that files get compiled based on macros 
+	(ex: platform windows, only windows files should compile)
+
+Scripting:
+-> Add native c++ scripting for now so that we can start testing/making games with this engine [x]
+-> Add scripting using C# for the game engine []
+    -> Research Mono, etc... 
 
 -------------------------------------------------------------
 

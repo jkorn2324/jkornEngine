@@ -167,23 +167,32 @@ namespace Editor
 		if (texture != nullptr)
 		{
 			const void* textureID = texture->GetTextureID();
-			ImVec2 textureSize = { (float)m_aspectRatio.m_aspectWidth, (float)m_aspectRatio.m_aspectHeight };
-			
-			// Calculates the window size of the game view for the texture.
-			MathLib::Vector2 windowSizeDiff = m_windowSize;
-			windowSizeDiff.y -= m_windowMenuBarSpacing;
-			windowSizeDiff.y -= m_aspectRatio.m_aspectHeight;
-			windowSizeDiff.x -= m_aspectRatio.m_aspectWidth;
 
-			// Adjusts the uvs based on the texture height & texture width.
-			ImVec2 uv0 = { 0.0f, 0.0f };
-			ImVec2 uv1 = { m_aspectRatio.m_aspectWidth / (float)texture->GetWidth(), 
-				m_aspectRatio.m_aspectHeight / (float)texture->GetHeight() };
+			if (m_aspectRatioType != GameViewAspectRatioType::ASPECT_FREE)
+			{
+				ImVec2 textureSize = { (float)m_aspectRatio.m_aspectWidth, (float)m_aspectRatio.m_aspectHeight };
 
-			ImVec2 texturePos = { windowSizeDiff.x * 0.5f, windowSizeDiff.y * 0.5f };
+				// Calculates the window size of the game view for the texture.
+				MathLib::Vector2 windowSizeDiff = m_windowSize;
+				windowSizeDiff.y -= m_windowMenuBarSpacing;
+				windowSizeDiff.y -= m_aspectRatio.m_aspectHeight;
+				windowSizeDiff.x -= m_aspectRatio.m_aspectWidth;
 
-			ImGuiUtils::DrawImage(textureID,
-				texturePos, textureSize, uv0, uv1);
+				// Adjusts the uvs based on the texture height & texture width.
+				ImVec2 uv0 = { 0.0f, 0.0f };
+				ImVec2 uv1 = { m_aspectRatio.m_aspectWidth / (float)texture->GetWidth(),
+					m_aspectRatio.m_aspectHeight / (float)texture->GetHeight() };
+
+				ImVec2 texturePos = { windowSizeDiff.x * 0.5f, windowSizeDiff.y * 0.5f };
+
+				ImGuiUtils::DrawImage(textureID,
+					texturePos, textureSize, uv0, uv1);
+			}
+			else
+			{
+				ImVec2 textureSize = { (float)texture->GetWidth(), (float)texture->GetHeight() };
+				ImGui::Image((void*)textureID, textureSize);
+			}
 		}
 
 		ImGui::End();

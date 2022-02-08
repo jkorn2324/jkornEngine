@@ -7,16 +7,27 @@
 namespace Editor
 {
 
+	static const char* DRAG_DROP_FILE_PAYLOAD = "_fileDragDropPayload";
+
 	static const uint32_t NUM_FILES_PER_ROW = 5;
-	static const float FILE_SIZE = 30.0f;
+	static const float FILE_SIZE = 60.0f;
+
+	static const wchar_t* g_fileIconPath = L"";
+	static const wchar_t* g_folderIconPath = L"";
+
+	static Engine::Texture* s_fileIconTexture = nullptr;
+	static Engine::Texture* s_folderIconTexture = nullptr;
+
+	static int32_t s_numProjectMenus = 0;
 
 	static std::string s_searchedItem = "";
 	// TODO: Need to find a way to set the file path
 
+
 	ProjectMenu::ProjectMenu(const std::string& path)
 		: m_open(true),
-		m_rootPath(path),
 		m_currentPath(path),
+		m_draggingPath(),
 		m_selectedPathInFileMenu(),
 		m_windowSize(),
 		m_contentViewSize()
@@ -25,6 +36,24 @@ namespace Editor
 		const auto& window = Engine::Application::Get().GetWindow();
 		m_windowSize.x = (float)window.GetWidth();
 		m_windowSize.y = (float)window.GetHeight();
+
+		if (s_numProjectMenus <= 0)
+		{
+			s_fileIconTexture = Engine::Texture::StaticLoad(g_fileIconPath);
+			s_folderIconTexture = Engine::Texture::StaticLoad(g_folderIconPath);
+		}
+		s_numProjectMenus++;
+	}
+
+	ProjectMenu::~ProjectMenu()
+	{
+		s_numProjectMenus--;
+
+		if (s_numProjectMenus <= 0)
+		{
+			delete s_fileIconTexture;
+			delete s_folderIconTexture;
+		}
 	}
 
 	void ProjectMenu::OnUpdate(const Engine::Timestep& ts)
@@ -53,7 +82,7 @@ namespace Editor
 	{
 	}
 
-	void ProjectMenu::Draw()
+	void ProjectMenu::Draw(const std::string& rootPath)
 	{
 		if (!m_open)
 		{
@@ -88,7 +117,7 @@ namespace Editor
 				ImVec2(m_windowSize.x * 0.2f, 0.0f), true);
 
 			// Draws the file in the tree menu and then draws sub files.
-			DrawFileInTreeMenu(m_rootPath);
+			DrawFileInTreeMenu(rootPath);
 
 			ImGui::EndChild();
 		}
@@ -180,8 +209,59 @@ namespace Editor
 	
 	void ProjectMenu::DrawFileInContentView(const std::filesystem::path& path)
 	{
-		// TODO: Draw the files properly in icons.
-		ImGui::ColorButton("color-button", { 1.0f, 1.0f, 1.0f, 1.0f },
-			ImGuiColorEditFlags_DisplayRGB, ImVec2(FILE_SIZE, FILE_SIZE));
+		const auto& filename = path.filename().u8string();
+		bool isDirectory = std::filesystem::is_directory(path);
+		void* textureID = nullptr;
+
+		{
+			if (isDirectory)
+			{
+				if (s_folderIconTexture != nullptr)
+					textureID = (void*)s_folderIconTexture->GetTextureID();
+			}
+			else
+			{
+				if (s_fileIconTexture != nullptr)
+				{
+					textureID = (void*)s_fileIconTexture->GetTextureID();
+				}
+			}
+		}
+
+		ImGui::BeginGroup();
+
+		bool buttonPressed = ImGui::ImageButton(textureID, ImVec2(FILE_SIZE, FILE_SIZE));
+		if (!buttonPressed)
+		{
+		// Todo: Fix drag and drop.
+#if 0
+			if ((!std::filesystem::exists(m_draggingPath)
+				|| m_draggingPath == path)
+				&& ImGui::BeginDragDropSource())
+			{
+				m_draggingPath = path;
+				void* dragDropSourceData = (void*)&path;
+				ImGui::SetDragDropPayload(DRAG_DROP_FILE_PAYLOAD, dragDropSourceData, sizeof(path));
+				ImGui::Text(filename.c_str());
+				ImGui::EndDragDropSource();
+			}
+
+			if (isDirectory
+				&& m_draggingPath != path
+				&& ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* dragAndDropPayload
+					= ImGui::AcceptDragDropPayload(DRAG_DROP_FILE_PAYLOAD))
+				{
+					m_draggingPath = std::filesystem::path();
+				}
+				ImGui::EndDragDropTarget();
+			}
+#endif
+		}
+
+		ImGui::Text(filename.c_str());
+
+		ImGui::EndGroup();
 	}
 }

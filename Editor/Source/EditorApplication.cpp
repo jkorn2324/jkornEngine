@@ -10,8 +10,8 @@ namespace Engine
 	class EditorApplication : public Application
 	{
 	public:
-		EditorApplication()
-			: Application("Editor")
+		EditorApplication(const std::string& rootPath)
+			: Application("Editor", rootPath)
 		{
 			AddOverlay(new Editor::EditorLayer());
 		}
@@ -19,6 +19,6 @@ namespace Engine
 
 	Application* Create(const ApplicationArgs& args)
 	{
-		return new EditorApplication();
+		return new EditorApplication(Engine::FileUtils::GetWorkingDirectory());
 	}
 }

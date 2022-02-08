@@ -37,13 +37,14 @@ namespace Engine
 		return *s_instance;
 	}
 
-	Application::Application(const std::string& name)
+	Application::Application(const std::string& name, const std::string& rootPath)
 		: m_window(nullptr), 
 		m_running(true), 
 		m_windowLayerStack(),
 		m_prevTime(std::chrono::high_resolution_clock::now()),
 		m_graphicsRenderer(nullptr),
-		m_imguiLayer(nullptr)
+		m_imguiLayer(nullptr),
+		m_rootPath(rootPath)
 	{
 		DebugAssert(s_instance == nullptr, "Application is already running.");
 		s_instance = this;

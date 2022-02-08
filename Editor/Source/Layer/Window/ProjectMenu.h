@@ -16,6 +16,7 @@ namespace Editor
 
 	public:
 		ProjectMenu(const std::string& path);
+		~ProjectMenu();
 
 		void SetOpen(bool open) { m_open = open; }
 		bool IsOpen() const { return m_open; }
@@ -23,7 +24,7 @@ namespace Editor
 		void OnUpdate(const Engine::Timestep& ts);
 		void OnEvent(Engine::Event& event);
 
-		void Draw();
+		void Draw(const std::string& rootPath);
 
 		const MathLib::Vector2& GetContentViewSize() const { return m_contentViewSize; }
 
@@ -37,8 +38,8 @@ namespace Editor
 		MathLib::Vector2 m_contentViewSize;
 
 		std::filesystem::path m_currentPath;
-		std::filesystem::path m_rootPath;
 		std::filesystem::path m_selectedPathInFileMenu;
+		std::filesystem::path m_draggingPath;
 
 		// TODO: need to add a vector of path objects that match the search
 		bool m_open;

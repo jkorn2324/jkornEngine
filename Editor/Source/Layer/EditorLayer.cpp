@@ -40,7 +40,7 @@ namespace Editor
 		: Layer("Editor"),
 		m_sceneHierarchy(),
 		m_entityInspector(),
-		m_projectMenu(Engine::FileUtils::GetWorkingDirectory()),
+		m_projectMenu(Engine::Application::Get().GetRootPath()),
 		m_sceneView(),
 		m_gameView()
 	{
@@ -143,7 +143,7 @@ namespace Editor
 
 			m_sceneHierarchy.Draw();
 			m_entityInspector.Draw();
-			m_projectMenu.Draw();
+			m_projectMenu.Draw(Engine::Application::Get().GetRootPath());
 			m_sceneView.Draw();
 			m_gameView.Draw();
 

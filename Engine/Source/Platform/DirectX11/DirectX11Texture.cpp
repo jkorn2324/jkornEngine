@@ -72,6 +72,11 @@ namespace Engine
 
 		HRESULT result;
 		std::wstring wstringPath(texturePath);
+		if (wstringPath.size() <= 0)
+		{
+			return false;
+		}
+
 		std::wstring extension = wstringPath.substr(wstringPath.find_last_of('.'));
 		if (extension == L".dds"
 			|| extension == L".DDS")

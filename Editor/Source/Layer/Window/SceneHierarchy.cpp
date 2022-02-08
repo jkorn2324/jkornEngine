@@ -12,6 +12,8 @@
 namespace Editor
 {
 
+	static const char* ENTITY_SELECTION_DRAG_DROP = "_sceneHierarchyEntitySelection";
+
 	enum EntityCreationType
 	{
 		TYPE_EMPTY
@@ -86,7 +88,7 @@ namespace Editor
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* dragAndDropPayload
-					= ImGui::AcceptDragDropPayload("_sceneHierarchyEntitySelection"))
+					= ImGui::AcceptDragDropPayload(ENTITY_SELECTION_DRAG_DROP))
 				{
 					Engine::Entity* selectedEntityNode = (Engine::Entity*)dragAndDropPayload->Data;
 					if (selectedEntityNode != nullptr)
@@ -174,7 +176,7 @@ namespace Editor
 			&& ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* dragAndDropPayload
-				= ImGui::AcceptDragDropPayload("_sceneHierarchyEntitySelection"))
+				= ImGui::AcceptDragDropPayload(ENTITY_SELECTION_DRAG_DROP))
 			{
 				Engine::Entity* selectedEntityNode = (Engine::Entity*)dragAndDropPayload->Data;
 				if (selectedEntityNode != nullptr
@@ -193,7 +195,7 @@ namespace Editor
 			&& ImGui::BeginDragDropSource())
 		{
 			void* selectedEntityNode = &EditorSelection::GetSelectedEntity();
-			ImGui::SetDragDropPayload("_sceneHierarchyEntitySelection", selectedEntityNode, 
+			ImGui::SetDragDropPayload(ENTITY_SELECTION_DRAG_DROP, selectedEntityNode,
 				sizeof(Engine::Entity));
 			ImGui::Text(nameComponent.name.c_str());
 			ImGui::EndDragDropSource();
