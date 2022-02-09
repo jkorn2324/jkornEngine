@@ -13,6 +13,14 @@ namespace Engine
 namespace Editor
 {
 
+	enum class ProjectMenuPopupView
+	{
+		Popup_None,
+		Popup_ContentView,
+		Popup_FileView,
+		Popup_RenameFileView
+	};
+
 	class ProjectMenu
 	{
 
@@ -33,7 +41,8 @@ namespace Editor
 	private:
 		void DrawFileInTreeMenu(const std::filesystem::path& path);
 		void DrawFileInContentView(const std::filesystem::path& path, bool& rightClickedItem);
-		void DrawFilePopup();
+		void DrawContentViewPopup();
+		void DrawFilePopup(const std::filesystem::path& path);
 
 		void HandleDragDropPathPayload(const std::filesystem::path& path);
 
@@ -44,8 +53,11 @@ namespace Editor
 
 		std::filesystem::path m_currentPath;
 		std::filesystem::path m_selectedPathInFileMenu;
+		std::filesystem::path m_selectedFile;
 
 		// TODO: need to add a vector of path objects that match the search
 		bool m_open;
+
+		ProjectMenuPopupView m_popupView = ProjectMenuPopupView::Popup_None;
 	};
 }

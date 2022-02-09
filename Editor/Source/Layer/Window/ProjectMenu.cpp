@@ -8,6 +8,7 @@ namespace Editor
 {
 
 	static const char* DRAG_DROP_FILE_PAYLOAD = "_fileDragDropPayload";
+	static const char* CONTENT_VIEW_ID = "content_view_id";
 
 	static const uint32_t NUM_FILES_PER_ROW = 5;
 	static const float FILE_SIZE = 60.0f;
@@ -28,6 +29,7 @@ namespace Editor
 		: m_open(true),
 		m_currentPath(path),
 		m_selectedPathInFileMenu(),
+		m_selectedFile(),
 		m_windowSize(),
 		m_contentViewSize()
 	{
@@ -125,14 +127,20 @@ namespace Editor
 		ImGui::SameLine();
 		{
 			bool didRightClickItem = false;
-			ImGui::BeginChild("content_view",
-				ImVec2(0.0f, -ImGui::GetFrameHeightWithSpacing()));
-			
+			ImGui::BeginChild(CONTENT_VIEW_ID,
+				ImVec2(0.0f, 0.0f), true);
+
 			// Update Content Views Window Size.
+			bool isMouseInWindow = false;
 			{
 				ImGuiContext* context = ImGui::GetCurrentContext();
 				m_contentViewSize = *reinterpret_cast<MathLib::Vector2*>(
 					&context->NextWindowData.SizeVal);
+				isMouseInWindow
+					= ImGui::IsMouseHoveringRect(
+						context->NextWindowData.PosVal, 
+						{ context->NextWindowData.PosVal.x + context->NextWindowData.SizeVal.x,
+						  context->NextWindowData.PosVal.y + context->NextWindowData.SizeVal.y});
 			}
 
 			ImGui::BeginGroup();
@@ -140,7 +148,7 @@ namespace Editor
 			float columnLength = m_contentViewSize.x / FILE_SIZE;
 			int numColumns = MathLib::Max(1, (int)columnLength);
 			ImGui::Columns(numColumns, nullptr, false);
-			
+
 			float currentSize = 0.0f;
 			for (size_t i = 0; i < m_currentFiles.size(); i++)
 			{
@@ -154,10 +162,14 @@ namespace Editor
 				}
 			}
 
-			if (!didRightClickItem
-				&& ImGui::IsItemClicked(ImGuiMouseButton_Right))
+			ImGui::EndColumns();
+
+			if (m_popupView == ProjectMenuPopupView::Popup_ContentView
+				|| m_popupView == ProjectMenuPopupView::Popup_None
+				&& isMouseInWindow
+				&& ImGui::IsMouseReleased(ImGuiMouseButton_Right))
 			{
-				DrawFilePopup();
+				DrawContentViewPopup();
 			}
 
 			ImGui::EndGroup();
@@ -262,12 +274,16 @@ namespace Editor
 		bool isPathClicked = false;
 		if (ImGui::IsItemHovered())
 		{
-			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{
+				m_selectedFile = path;
+			}
+			if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+			{
+				m_selectedFile = path;
 				isPathClicked = true;
 				rightClickedItem |= true;
-
-				// TODO: Show popup menu
+				m_popupView = ProjectMenuPopupView::Popup_FileView;
 			}
 			else if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
@@ -275,12 +291,20 @@ namespace Editor
 				if (isDirectory)
 				{
 					m_currentPath = path;
+					m_selectedFile.clear();
 				}
 				else
 				{
+					m_selectedFile = path;
 					// Open path based on file extension.
 				}
 			}
+		}
+
+		if (m_popupView == ProjectMenuPopupView::Popup_FileView
+			&& m_selectedFile == path)
+		{
+			DrawFilePopup(path);
 		}
 
 		if (!isPathClicked)
@@ -302,29 +326,68 @@ namespace Editor
 			HandleDragDropPathPayload(path);
 			ImGui::EndDragDropTarget();
 		}
-		ImGui::Text(filename.c_str());
+
+		// Display Text.
+		{
+			ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+			if (m_selectedFile == path)
+			{
+				color.x = color.y = 0.0f;
+			}
+			ImGui::PushStyleColor(ImGuiCol_Text, color);
+			ImGui::Text(filename.c_str());
+			ImGui::PopStyleColor();
+		}
+
 		ImGui::EndGroup();
 	}
 
-	void ProjectMenu::DrawFilePopup()
+	void ProjectMenu::DrawContentViewPopup()
 	{
-		if (ImGui::BeginPopupContextItem())
+		bool contextWindowDisplayed
+			= ImGui::BeginPopupContextWindow("ContentViewPopup");
+		m_popupView = contextWindowDisplayed
+			? ProjectMenuPopupView::Popup_ContentView : ProjectMenuPopupView::Popup_None;
+
+		if (contextWindowDisplayed)
 		{
-			if (ImGui::MenuItem("Create"))
+			m_popupView = ProjectMenuPopupView::Popup_ContentView;
+			if (ImGui::BeginMenu("Create"))
 			{
-				if (ImGui::BeginPopupContextItem())
+				if (ImGui::MenuItem("Scene"))
 				{
-					if (ImGui::MenuItem("Scene"))
-					{
-						// TODO: Create new scene file.
-					}
-					if (ImGui::MenuItem("Folder"))
-					{
-						// TODO: Create new folder.
-					}
-					// TODO: Add other assets.
-					ImGui::EndPopup();
+					m_popupView = ProjectMenuPopupView::Popup_None;
 				}
+				if (ImGui::MenuItem("Folder"))
+				{
+					m_popupView = ProjectMenuPopupView::Popup_None;
+;					auto path = m_currentPath / "New Folder";
+					std::filesystem::create_directory(path);
+				}
+				ImGui::EndPopup();
+			}
+			ImGui::EndPopup();
+		}
+	}
+
+	void ProjectMenu::DrawFilePopup(const std::filesystem::path& path)
+	{
+		bool contextWindowDisplayed
+			= ImGui::BeginPopupContextItem("FileViewPopup");
+		m_popupView = contextWindowDisplayed
+			? ProjectMenuPopupView::Popup_FileView : ProjectMenuPopupView::Popup_None;
+
+		if (contextWindowDisplayed)
+		{
+			if (ImGui::MenuItem("Rename"))
+			{
+				m_popupView = ProjectMenuPopupView::Popup_None;
+				// TODO: Rename the file.
+			}
+			if (ImGui::MenuItem("Delete"))
+			{
+				m_popupView = ProjectMenuPopupView::Popup_None;
+				// Todo: delete the file.
 			}
 			ImGui::EndPopup();
 		}
