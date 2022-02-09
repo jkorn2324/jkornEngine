@@ -27,7 +27,6 @@ namespace Editor
 	ProjectMenu::ProjectMenu(const std::string& path)
 		: m_open(true),
 		m_currentPath(path),
-		m_draggingPath(),
 		m_selectedPathInFileMenu(),
 		m_windowSize(),
 		m_contentViewSize()
@@ -125,6 +124,7 @@ namespace Editor
 
 		ImGui::SameLine();
 		{
+			bool didRightClickItem = false;
 			ImGui::BeginChild("content_view",
 				ImVec2(0.0f, -ImGui::GetFrameHeightWithSpacing()));
 			
@@ -144,7 +144,7 @@ namespace Editor
 			float currentSize = 0.0f;
 			for (size_t i = 0; i < m_currentFiles.size(); i++)
 			{
-				DrawFileInContentView(m_currentFiles[i]);
+				DrawFileInContentView(m_currentFiles[i], didRightClickItem);
 				currentSize += FILE_SIZE;
 
 				if (currentSize >= columnLength)
@@ -152,6 +152,12 @@ namespace Editor
 					ImGui::NextColumn();
 					currentSize = 0.0f;
 				}
+			}
+
+			if (!didRightClickItem
+				&& ImGui::IsItemClicked(ImGuiMouseButton_Right))
+			{
+				DrawFilePopup();
 			}
 
 			ImGui::EndGroup();
@@ -166,6 +172,9 @@ namespace Editor
 		{
 			return;
 		}
+
+		const auto& fileName = path.filename();
+		const std::string& u8FileName = fileName.u8string();
 		bool isSelected = m_selectedPathInFileMenu == path;
 		ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow;
 		if (isSelected)
@@ -179,9 +188,14 @@ namespace Editor
 			nodeFlags |= ImGuiTreeNodeFlags_Leaf;
 		}
 
-		const auto& fileName = path.filename();
 		bool isOpened = ImGui::TreeNodeEx(
-			fileName.u8string().c_str(), nodeFlags);
+			u8FileName.c_str(), nodeFlags);
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			HandleDragDropPathPayload(path);
+			ImGui::EndDragDropTarget();
+		}
 
 		if (ImGui::IsItemClicked())
 		{
@@ -191,6 +205,19 @@ namespace Editor
 				m_currentPath = path;
 			}
 			m_selectedPathInFileMenu = path;
+		}
+		else
+		{
+			if (path != Engine::Application::Get().GetRootPath()
+				&& ImGui::BeginDragDropSource())
+			{
+				const std::wstring& fpwstr = path.wstring();
+				const wchar_t* filePath = fpwstr.c_str();
+				ImGui::SetDragDropPayload(DRAG_DROP_FILE_PAYLOAD,
+					(void*)filePath, fpwstr.size() * sizeof(wchar_t));
+				ImGui::Text(u8FileName.c_str());
+				ImGui::EndDragDropSource();
+			}
 		}
 
 		if (isOpened)
@@ -207,7 +234,8 @@ namespace Editor
 		}
 	}
 	
-	void ProjectMenu::DrawFileInContentView(const std::filesystem::path& path)
+	void ProjectMenu::DrawFileInContentView(const std::filesystem::path& path,
+		bool& rightClickedItem)
 	{
 		const auto& filename = path.filename().u8string();
 		bool isDirectory = std::filesystem::is_directory(path);
@@ -229,39 +257,99 @@ namespace Editor
 		}
 
 		ImGui::BeginGroup();
+		ImGui::Image(textureID, ImVec2(FILE_SIZE, FILE_SIZE));
 
-		bool buttonPressed = ImGui::ImageButton(textureID, ImVec2(FILE_SIZE, FILE_SIZE));
-		if (!buttonPressed)
+		bool isPathClicked = false;
+		if (ImGui::IsItemHovered())
 		{
-		// Todo: Fix drag and drop.
-#if 0
-			if ((!std::filesystem::exists(m_draggingPath)
-				|| m_draggingPath == path)
-				&& ImGui::BeginDragDropSource())
+			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 			{
-				m_draggingPath = path;
-				void* dragDropSourceData = (void*)&path;
-				ImGui::SetDragDropPayload(DRAG_DROP_FILE_PAYLOAD, dragDropSourceData, sizeof(path));
+				isPathClicked = true;
+				rightClickedItem |= true;
+
+				// TODO: Show popup menu
+			}
+			else if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+				isPathClicked = true;
+				if (isDirectory)
+				{
+					m_currentPath = path;
+				}
+				else
+				{
+					// Open path based on file extension.
+				}
+			}
+		}
+
+		if (!isPathClicked)
+		{
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+			{
+				const std::wstring& fpwstr = path.wstring();
+				const wchar_t* filePath = fpwstr.c_str();
+				ImGui::SetDragDropPayload(DRAG_DROP_FILE_PAYLOAD, 
+					(void*)filePath, fpwstr.size() * sizeof(wchar_t));
 				ImGui::Text(filename.c_str());
 				ImGui::EndDragDropSource();
 			}
-
-			if (isDirectory
-				&& m_draggingPath != path
-				&& ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* dragAndDropPayload
-					= ImGui::AcceptDragDropPayload(DRAG_DROP_FILE_PAYLOAD))
-				{
-					m_draggingPath = std::filesystem::path();
-				}
-				ImGui::EndDragDropTarget();
-			}
-#endif
 		}
 
+		if (isDirectory
+			&& ImGui::BeginDragDropTarget())
+		{
+			HandleDragDropPathPayload(path);
+			ImGui::EndDragDropTarget();
+		}
 		ImGui::Text(filename.c_str());
-
 		ImGui::EndGroup();
+	}
+
+	void ProjectMenu::DrawFilePopup()
+	{
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Create"))
+			{
+				if (ImGui::BeginPopupContextItem())
+				{
+					if (ImGui::MenuItem("Scene"))
+					{
+						// TODO: Create new scene file.
+					}
+					if (ImGui::MenuItem("Folder"))
+					{
+						// TODO: Create new folder.
+					}
+					// TODO: Add other assets.
+					ImGui::EndPopup();
+				}
+			}
+			ImGui::EndPopup();
+		}
+	}
+
+	void ProjectMenu::HandleDragDropPathPayload(const std::filesystem::path& path)
+	{
+		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(DRAG_DROP_FILE_PAYLOAD);
+		if (payload != nullptr)
+		{
+			std::wstring pathAsWstring = (const wchar_t*)payload->Data;
+			pathAsWstring.resize(payload->DataSize / sizeof(wchar_t));
+			std::filesystem::path currentPath(pathAsWstring);
+			if (currentPath != path)
+			{
+				std::filesystem::path newPath = path;
+				newPath /= currentPath.filename();
+				if (newPath != currentPath)
+				{
+					std::filesystem::copy(currentPath,
+						newPath, std::filesystem::copy_options::recursive);
+					std::filesystem::remove(currentPath);
+					m_currentPath = path;
+				}
+			}
+		}
 	}
 }

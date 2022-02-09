@@ -190,6 +190,7 @@ namespace Editor
 			}
 			else
 			{
+				// TODO: Fix this so that the image always fits within the game view for higher resolution devices.
 				ImVec2 textureSize = { (float)texture->GetWidth(), (float)texture->GetHeight() };
 				ImGui::Image((void*)textureID, textureSize);
 			}

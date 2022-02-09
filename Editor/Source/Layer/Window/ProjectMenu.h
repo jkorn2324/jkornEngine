@@ -2,6 +2,8 @@
 
 #include <filesystem>
 
+#include "Source\Vector.h"
+
 namespace Engine
 {
 	class Event;
@@ -30,7 +32,10 @@ namespace Editor
 
 	private:
 		void DrawFileInTreeMenu(const std::filesystem::path& path);
-		void DrawFileInContentView(const std::filesystem::path& path);
+		void DrawFileInContentView(const std::filesystem::path& path, bool& rightClickedItem);
+		void DrawFilePopup();
+
+		void HandleDragDropPathPayload(const std::filesystem::path& path);
 
 	private:
 		std::vector<std::filesystem::path> m_currentFiles;
@@ -39,7 +44,6 @@ namespace Editor
 
 		std::filesystem::path m_currentPath;
 		std::filesystem::path m_selectedPathInFileMenu;
-		std::filesystem::path m_draggingPath;
 
 		// TODO: need to add a vector of path objects that match the search
 		bool m_open;
