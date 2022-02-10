@@ -140,7 +140,7 @@ namespace GlfwSandbox
 			if (Engine::Input::IsMouseButtonHeld(Engine::MOUSE_BUTTON_MIDDLE))
 			{
 				s_rotation += 10.0f;
-				transformComponent.SetLocalRotation(MathLib::Quaternion::FromEuler(0.0f, 0.0f, s_rotation));
+				transformComponent.SetLocalEulerAngles(0.0f, 0.0f, s_rotation);
 			}
 
 			MathLib::Vector2 screenPos = Engine::Input::GetMouseScreenPos();

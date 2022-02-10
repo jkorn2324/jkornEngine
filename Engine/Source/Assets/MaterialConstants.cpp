@@ -23,8 +23,37 @@ namespace Engine
 		m_materialBuffer = new char[m_totalBufferSize];
 	}
 
+	MaterialConstants::MaterialConstants(const MaterialConstants& constants)
+		: m_totalBufferSize(constants.GetBufferSize()),
+		m_materialConstants(constants.m_materialConstants),
+		m_materialBuffer(nullptr)
+	{
+		m_materialBuffer = new char[m_totalBufferSize];
+		if (constants.m_materialBuffer != nullptr)
+		{
+			std::memcpy(m_materialBuffer, constants.GetRawBuffer(), m_totalBufferSize);
+		}
+	}
+
+	MaterialConstants& MaterialConstants::operator=(const MaterialConstants& constants)
+	{
+		if (m_materialBuffer != nullptr)
+		{
+			delete[] m_materialBuffer;
+		}
+		m_totalBufferSize = constants.GetBufferSize();
+		m_materialConstants = constants.m_materialConstants;
+		m_materialBuffer = new char[m_totalBufferSize];
+		if (constants.m_materialBuffer != nullptr)
+		{
+			std::memcpy(m_materialBuffer, constants.GetRawBuffer(), m_totalBufferSize);
+		}
+		return *this;
+	}
+
 	MaterialConstants::~MaterialConstants()
 	{
 		delete[] m_materialBuffer;
 	}
+
 }

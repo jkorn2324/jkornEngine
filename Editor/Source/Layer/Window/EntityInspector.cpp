@@ -126,16 +126,11 @@ namespace Editor
 					component.SetLocalPosition(pos);
 				}
 
-				MathLib::Quaternion quaternion = component.GetLocalRotation();
-				MathLib::Vector3 eulers = quaternion.ToEuler(true);
+				MathLib::Vector3 eulers = component.GetLocalEulerAngles();
 				if (ImGui::InputFloat3("Rotation", reinterpret_cast<float*>(&eulers), "%.3f",
 					ImGuiInputTextFlags_EnterReturnsTrue))
 				{
-					MathLib::Quaternion quaternionFromEulers = MathLib::Quaternion::FromEuler(eulers, true);
-					if (quaternionFromEulers != quaternion)
-					{
-						component.SetLocalRotation(quaternionFromEulers);
-					}
+					component.SetLocalEulerAngles(eulers);
 				}
 
 				MathLib::Vector3 scale = component.GetLocalScale();
@@ -200,6 +195,24 @@ namespace Editor
 				ImGui::Checkbox("Enabled", &component.enabled);
 				
 				// TODO: Implementation
+			});
+
+		DrawTreeNodeComponent<Engine::DirectionalLightComponent>(entity, "Directional Light", selectionType,
+			[=](Engine::DirectionalLightComponent& component) -> void
+			{
+				ImGui::Checkbox("Enabled", &component.enabled);
+				ImGui::ColorEdit3("Light Color", reinterpret_cast<float*>(&component.lightColor));
+				ImGui::InputFloat("Light Intensity", &component.lightIntensity);
+			});
+
+		DrawTreeNodeComponent<Engine::PointLightComponent>(entity, "Point Light", selectionType,
+			[=](Engine::PointLightComponent& component) -> void
+			{
+				ImGui::Checkbox("Enabled", &component.enabled);
+				ImGui::ColorEdit3("Light Color", reinterpret_cast<float*>(&component.lightColor));
+				ImGui::InputFloat("Light Intensity", &component.lightIntensity);
+				ImGui::InputFloat("Inner Radius", &component.innerRadius);
+				ImGui::InputFloat("Outer Radius", &component.outerRadius);
 			});
 	}
 
@@ -266,6 +279,8 @@ namespace Editor
 							});
 
 						DrawComponentInMenu<Engine::SceneCameraComponent>("Camera", entity);
+						DrawComponentInMenu<Engine::DirectionalLightComponent>("Directional Light", entity);
+						DrawComponentInMenu<Engine::PointLightComponent>("Point Light", entity);
 
 						ImGui::EndMenu();
 					}

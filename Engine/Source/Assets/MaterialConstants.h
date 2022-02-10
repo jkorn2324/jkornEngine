@@ -16,6 +16,8 @@ namespace Engine
 
 		MaterialConstantLayoutAttribute(const std::string& name, size_t layoutStride, bool pad = false)
 			: name(name), layoutStride(layoutStride), pad(pad) { }
+		MaterialConstantLayoutAttribute(size_t layoutStride)
+			: name(""), pad(true), layoutStride(layoutStride) { }
 	};
 
 	struct MaterialConstantsLayout
@@ -37,6 +39,9 @@ namespace Engine
 	public:
 		MaterialConstants(const MaterialConstantsLayout& materialConstantsLayout);
 		~MaterialConstants();
+
+		MaterialConstants(const MaterialConstants& constants);
+		MaterialConstants& operator=(const MaterialConstants& constants);
 
 		template<typename T>
 		void SetMaterialConstant(const std::string& name, T value)

@@ -129,7 +129,7 @@ namespace MathLib
 	Transform3D::Transform3D()
 		: m_position(0.0f, 0.0f, 0.0f),
 		m_scale(1.0f, 1.0f, 1.0f),
-		m_rotation(MathLib::Quaternion::Identity),
+		m_rotation(0.0f, 0.0f, 0.0f),
 		m_parentTransformMatrix(Mat4x4::Identity)
 	{
 	}
@@ -139,7 +139,7 @@ namespace MathLib
 		const Quaternion& rot, const Vector3& scale)
 		: m_position(pos),
 		m_scale(scale),
-		m_rotation(rot),
+		m_rotation(rot.ToEuler()),
 		m_parentTransformMatrix(Mat4x4::Identity)
 	{
 	}
@@ -191,29 +191,37 @@ namespace MathLib
 	MathLib::Matrix4x4 Transform3D::GetTransformMatrix() const
 	{
 		return m_parentTransformMatrix * Mat4x4::CreateScale(m_scale)
-			* Mat4x4::CreateFromQuaternion(m_rotation)
+			* Mat4x4::CreateEuler(m_rotation, false)
 			* Mat4x4::CreateTranslation(m_position);
 	}
 	
-	void Transform3D::SetLocalRotation(const Vector3& eulers, bool inDegrees)
+	void Transform3D::SetLocalEulerAngles(const Vector3& eulers, bool inDegrees)
 	{
-		SetLocalRotation(Quaternion::FromEuler(eulers, inDegrees));
+		SetLocalEulerAngles(eulers.y, eulers.x, eulers.z, inDegrees);
 	}
 
-	void Transform3D::SetLocalRotation(float yaw, float pitch, float roll, bool inDegrees)
+	void Transform3D::SetLocalEulerAngles(float yaw, float pitch, float roll, bool inDegrees)
 	{
-		SetLocalRotation(Quaternion::FromEuler(yaw, pitch, roll, inDegrees));
+		m_rotation.x = inDegrees ? MathLib::DEG2RAD * pitch : pitch;
+		m_rotation.y = inDegrees ? MathLib::DEG2RAD * yaw : yaw;
+		m_rotation.z = inDegrees ? MathLib::DEG2RAD * roll : roll;
+	}
+
+	const Vector3 Transform3D::GetLocalEulerAngles(bool inDegrees) const
+	{
+		if (!inDegrees) return m_rotation;
+		return Vector3(m_rotation.x * MathLib::RAD2DEG,
+			m_rotation.y * MathLib::RAD2DEG, m_rotation.z * MathLib::RAD2DEG);
 	}
 
 	void Transform3D::SetLocalRotation(const Quaternion& quat)
 	{
-		m_rotation = quat;
-		m_rotation.Normalize();
+		m_rotation = quat.ToEuler(false);
 	}
 
-	const Quaternion& Transform3D::GetLocalRotation() const
+	const Quaternion Transform3D::GetLocalRotation() const
 	{
-		return m_rotation;
+		return Quaternion::FromEuler(m_rotation, false);
 	}
 
 	Vector3 Transform3D::GetWorldPosition() const
@@ -228,17 +236,17 @@ namespace MathLib
 
 	MathLib::Vector3 Transform3D::GetLocalForward() const
 	{
-		return Rotate(m_rotation, MathLib::Vector3::UnitZ);
+		return Rotate(GetLocalRotation(), MathLib::Vector3::UnitZ);
 	}
 
 	MathLib::Vector3 Transform3D::GetLocalUp() const
 	{
-		return Rotate(m_rotation, MathLib::Vector3::UnitY);
+		return Rotate(GetLocalRotation(), MathLib::Vector3::UnitY);
 	}
 
 	MathLib::Vector3 Transform3D::GetLocalRight() const
 	{
-		return Rotate(m_rotation, MathLib::Vector3::UnitZ);
+		return Rotate(GetLocalRotation(), MathLib::Vector3::UnitZ);
 	}
 
 	Vector3 Transform3D::GetWorldForward() const
@@ -281,7 +289,7 @@ namespace MathLib
 			forwardAngle *= -1.0f;
 		}
 		Quaternion angleAxis = Quaternion(forwardNormal, forwardAngle);
-		m_rotation = Concatenate(angleAxis, m_rotation);
+		m_rotation = Concatenate(angleAxis, GetLocalRotation()).ToEuler();
 	}
 
 	void Transform3D::LookAt(const MathLib::Vector3& position)

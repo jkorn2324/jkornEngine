@@ -46,5 +46,4 @@ float4 PS(VertexShaderOut psIn) : SV_TARGET
         textureColor = DefaultTexture.Sample(DefaultSampler, psIn.uv);
     }
     return textureColor * c_materialColor;
-
 }

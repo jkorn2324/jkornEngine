@@ -71,10 +71,13 @@ namespace MathLib
 		void SetLocalScale(const Vector3& vec);
 		const Vector3& GetLocalScale() const;
 
-		void SetLocalRotation(const Vector3& eulers, bool inDegrees = true);
-		void SetLocalRotation(float yaw, float pitch, float roll, bool inDegrees = true);
+		void SetLocalEulerAngles(const Vector3& eulers, bool inDegrees = true);
+		void SetLocalEulerAngles(float yaw, float pitch, float roll, bool inDegrees = true);
+		const Vector3 GetLocalEulerAngles(bool inDegrees = true) const;
+
 		void SetLocalRotation(const Quaternion& quat);
-		const Quaternion& GetLocalRotation() const;
+		const Quaternion GetLocalRotation() const;
+
 
 		Vector3 GetWorldPosition() const;
 		Vector3 GetWorldScale() const;
@@ -95,7 +98,7 @@ namespace MathLib
 	private:
 		MathLib::Vector3 m_position;
 		MathLib::Vector3 m_scale;
-		MathLib::Quaternion m_rotation;
+		MathLib::Vector3 m_rotation;
 		MathLib::Matrix4x4 m_parentTransformMatrix;
 	};
 }

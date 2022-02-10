@@ -6,6 +6,7 @@
 #include "BehaviorScriptContainer.h"
 #include "SceneCamera.h"
 #include "EntityHierarchyComponent.h"
+#include "LightingComponents.h"
 
 namespace Engine
 {

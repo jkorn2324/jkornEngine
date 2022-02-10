@@ -93,7 +93,19 @@ namespace Engine
 			component.enabled = true;
 		}
 
-		// TODO: Eventually set up directional light.
+		// Creates a directional light.
+		{
+			Entity entity = scene->CreateEntity("Directional Light");
+			Transform3DComponent& transform
+				= entity.AddComponent<Transform3DComponent>();
+			transform.SetLocalEulerAngles(MathLib::Vector3 { 45, 0, 0 });
+
+			DirectionalLightComponent& directionalLight
+				= entity.AddComponent<DirectionalLightComponent>();
+			directionalLight.enabled = true;
+			directionalLight.lightColor = MathLib::Vector3::One;
+			directionalLight.lightIntensity = 1.0f;
+		}
 		return scene;
 	}
 
@@ -201,6 +213,39 @@ namespace Engine
 				}
 			}
 		}
+
+		// Applies the scene lights.
+		{
+			// Directional Light.
+			{
+				auto entityView = m_entityRegistry.view<DirectionalLightComponent>();
+				int32_t size = (int32_t)entityView.size() - 1;
+				for (int32_t back = size; back >= 0; back--)
+				{
+					Entity e = Entity{ entityView[back], this };
+					if (e.HasComponent<Engine::Transform3DComponent>())
+					{
+						GraphicsRenderer3D::SetDirectionalLight(
+							e.GetComponent<Engine::Transform3DComponent>().GetWorldForward(), 
+							entityView.raw()[back]);
+						break;
+					}
+				}
+			}
+
+			// Point Lights.
+			{
+				auto entityView = m_entityRegistry.view<PointLightComponent, Transform3DComponent>();
+				for (auto e : entityView)
+				{
+					auto [pointLight, transform3D] = entityView.get<PointLightComponent, Transform3DComponent>(e);
+					if (!GraphicsRenderer3D::AddPointLight(transform3D.GetWorldPosition(), pointLight))
+					{
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	void Scene::OnRuntimeUpdate(const Timestep& ts)
@@ -238,6 +283,16 @@ namespace Engine
 		PROFILE_SCOPE(SceneRender, Rendering);
 
 		GraphicsRenderer::BeginScene(cameraConstants);
+
+		// Apply the scene lights.
+		{
+
+
+			// Add the point lights.
+			{
+				// TODO: Implementation
+			}
+		}
 
 		// Render the meshes.
 		{

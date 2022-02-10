@@ -42,9 +42,9 @@ Shaders:
 
 Lighting:
 -> Add 3D Lighting system into the engine []
-  	-> Point Light []
+  	-> Point Light [x]
 	-> Spotlight []
-	-> Directional Light []
+	-> Directional Light [x]
 	-> Ambient Light []
 
 -> Have materials react to the lighting in the game engine []

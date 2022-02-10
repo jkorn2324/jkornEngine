@@ -14,6 +14,8 @@
 
 #include "Source\Vector.h"
 
+#include "GraphicsRenderer3D.h"
+
 namespace Engine
 {
 	RenderingAPI* GraphicsRenderer::s_renderingAPI = nullptr;
@@ -50,6 +52,9 @@ namespace Engine
 			sizeof(cameraConstants));
 		s_cameraConstantBuffer->Bind(0,
 			Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
+
+		// Binds the lights in the 3D Graphics Renderer.
+		GraphicsRenderer3D::BindLights();
 	}
 
 	void GraphicsRenderer::Draw(VertexBuffer* vBuffer,

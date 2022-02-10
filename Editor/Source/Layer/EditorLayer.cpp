@@ -56,6 +56,62 @@ namespace Editor
 
 		Engine::GraphicsRenderer::GetRenderingAPI().SetClearColor(
 			MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+		// Sets the ambient light for the scene.
+		Engine::GraphicsRenderer3D::SetAmbientLight(
+			MathLib::Vector3 { 0.25f, 0.25f, 0.25f });
+		
+		// Creates a cube to test phong lighting calculations.
+		{
+			Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
+			Engine::Entity e = scene.CreateEntity("Test Cube");
+			Engine::Transform3DComponent& component 
+				= e.AddComponent<Engine::Transform3DComponent>();
+			Engine::MeshComponent& meshComponent
+				= e.AddComponent<Engine::MeshComponent>();
+
+			meshComponent.material = Engine::AssetManager::GetMaterials().Cache(
+				L"LitShader");
+			meshComponent.material->SetConstantsLayout(
+			{
+				Engine::MaterialConstantLayoutAttribute { "c_diffuseColor", sizeof(MathLib::Vector4) },
+				Engine::MaterialConstantLayoutAttribute { "c_specularColor", sizeof(MathLib::Vector4) },
+				Engine::MaterialConstantLayoutAttribute { "c_specularPower", sizeof(float) },
+				Engine::MaterialConstantLayoutAttribute { sizeof(MathLib::Vector3) }
+			});
+
+			Engine::MaterialConstants& constants = meshComponent.material->GetMaterialConstants();
+			constants.SetMaterialConstant("c_diffuseColor", MathLib::Vector4::One);
+			constants.SetMaterialConstant("c_specularPower", 10.0f);
+			constants.SetMaterialConstant("c_specularColor", MathLib::Vector4::One);
+
+			meshComponent.material->SetTexture(0,
+				Engine::AssetManager::GetTextures().Load(L"Assets/brick-texture.png"));
+
+			{
+				// Ugly for now, but this will due for testing.
+				struct CubeMeshVert
+				{
+					MathLib::Vector3 pos;
+					MathLib::Vector3 normal;
+					MathLib::Vector2 uv;
+				};
+
+				std::unique_ptr<Engine::BufferLayout> bufferLayout = Engine::BufferLayout::Create({
+					{ "POSITION", offsetof(CubeMeshVert, pos),
+						sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
+					{ "NORMAL", offsetof(CubeMeshVert, normal),
+						sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
+					{ "TEXCOORD", offsetof(CubeMeshVert, uv),
+						sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2 }
+				});
+
+				Engine::Shader* shader = Engine::AssetManager::GetShaders().Load(
+					L"Shaders/LitShader.hlsl", bufferLayout);
+				meshComponent.material->SetShader(shader);
+			}
+
+			meshComponent.mesh = Engine::AssetManager::GetMeshes().Get(L"DefaultCube");
+		}
 	}
 
 	void EditorLayer::OnLayerRemoved()
