@@ -78,10 +78,13 @@ namespace Engine
 		void OnEditorUpdate(const Timestep& ts);
 		void OnDestroy();
 
+		void Deallocate();
+
 	private:
 		std::vector<class BehaviorScript*> m_scripts;
 		Entity m_entity;
 
 		friend class Scene;
+		friend class BehaviorComponent;
 	};
 }

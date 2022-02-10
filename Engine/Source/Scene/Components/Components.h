@@ -90,8 +90,7 @@ namespace Engine
 		{
 			if (component.IsValid())
 			{
-				m_behaviorScriptContainer = std::unique_ptr<BehaviorScriptContainer>(
-					new BehaviorScriptContainer(component.Get()));
+				m_behaviorScriptContainer = component.m_behaviorScriptContainer;
 			}
 		}
 		
@@ -99,8 +98,7 @@ namespace Engine
 		{
 			if (component.IsValid())
 			{
-				m_behaviorScriptContainer = std::unique_ptr<BehaviorScriptContainer>(
-					new BehaviorScriptContainer(component.Get()));
+				m_behaviorScriptContainer = component.m_behaviorScriptContainer;
 			}
 			return *this;
 		}
@@ -112,16 +110,16 @@ namespace Engine
 	private:
 		void Create(Entity& entity)
 		{
-			m_behaviorScriptContainer = std::make_unique<BehaviorScriptContainer>(entity);
+			m_behaviorScriptContainer = std::make_shared<BehaviorScriptContainer>(entity);
 		}
 
 		void Destroy()
 		{
-			m_behaviorScriptContainer.release();
+			m_behaviorScriptContainer->Deallocate();
 		}
 
 	private:
-		std::unique_ptr<BehaviorScriptContainer> m_behaviorScriptContainer;
+		std::shared_ptr<BehaviorScriptContainer> m_behaviorScriptContainer;
 
 		friend class Scene;
 	};

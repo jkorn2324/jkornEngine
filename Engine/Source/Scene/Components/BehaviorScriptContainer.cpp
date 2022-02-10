@@ -12,11 +12,6 @@ namespace Engine
 
 	BehaviorScriptContainer::~BehaviorScriptContainer()
 	{
-		for (BehaviorScript* script : m_scripts)
-		{
-			delete script;
-		}
-		m_scripts.clear();
 	}
 
 	void BehaviorScriptContainer::OnRuntimeUpdate(const Timestep& ts)
@@ -59,5 +54,14 @@ namespace Engine
 		{
 			a->OnDestroy();
 		}
+	}
+	
+	void BehaviorScriptContainer::Deallocate()
+	{
+		for (BehaviorScript* script : m_scripts)
+		{
+			delete script;
+		}
+		m_scripts.clear();
 	}
 }

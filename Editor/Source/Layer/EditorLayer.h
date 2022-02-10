@@ -17,6 +17,7 @@ namespace Engine
 
 namespace Editor
 {
+
 	class EditorLayer : public Engine::Layer
 	{
 	public:
@@ -32,7 +33,11 @@ namespace Editor
 		void OnEvent(Engine::Event& event) override;
 
 	private:
+		void DrawEditorTopWindow();
+		void DrawEditorMainWindow();
+
 		void DrawMenuBar();
+		void DrawEditorButtons();
 
 	private:
 		SceneHierarchy m_sceneHierarchy;

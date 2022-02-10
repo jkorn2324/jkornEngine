@@ -8,10 +8,14 @@
 #include "EditorUtils.h"
 #include "EditorCamera.h"
 
+#include "CameraController.h"
+
 #include <string>
 
 namespace Editor
 {
+	static const float TOP_WINDOW_HEIGHT = 60.0f;
+	static const float WINDOW_HEIGHT_DIFFERENCE = 15.0f;
 
 	static void SaveScene(const std::wstring& filePath)
 	{
@@ -63,6 +67,19 @@ namespace Editor
 		// Creates a cube to test phong lighting calculations.
 		{
 			Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
+
+			// Add Behavior script to camera.
+			{
+				Engine::Entity entity = scene.Find("Main Camera");
+				if (entity.IsValid())
+				{
+					Engine::BehaviorComponent& component
+						= entity.GetComponent<Engine::BehaviorComponent>();
+					component.Get().AddBehavior<CameraController>();
+				}
+			}
+
+
 			Engine::Entity e = scene.CreateEntity("Test Cube");
 			Engine::Transform3DComponent& component 
 				= e.AddComponent<Engine::Transform3DComponent>();
@@ -148,60 +165,28 @@ namespace Editor
 	{
 		DrawDemo();
 
-		static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
-		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		DrawEditorTopWindow();
+		DrawEditorMainWindow();
+	}
 
-		static bool optFullscreen = true;
-		static bool optPadding = false;
-
+	void EditorLayer::DrawEditorTopWindow()
+	{
+		// Draws the top mini-window with file menu & play button panels.
 		{
-			if (optFullscreen)
-			{
-				const ImGuiViewport* viewport = ImGui::GetMainViewport();
-				ImGui::SetNextWindowPos(viewport->WorkPos);
-				ImGui::SetNextWindowSize(viewport->WorkSize);
-				ImGui::SetNextWindowViewport(viewport->ID);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-				windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-				windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-			}
-			else
-			{
-				dockspaceFlags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-			}
+			ImGuiWindowFlags topMiniWindowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+			topMiniWindowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			topMiniWindowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus
+				| ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
-			if (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
-			{
-				windowFlags |= ImGuiWindowFlags_NoBackground;
-			}
+			const ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowPos(viewport->WorkPos);
+			ImGui::SetNextWindowSize({ viewport->WorkSize.x, TOP_WINDOW_HEIGHT });
+			ImGui::SetNextWindowViewport(viewport->ID);
 
-			if (!optPadding)
-			{
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-			}
-		}
-
-		// Draws the editor dockspace.
-		{
-			ImGui::Begin("Editor", nullptr, windowFlags);
-
-			if (!optPadding) ImGui::PopStyleVar();
-			if (optFullscreen) ImGui::PopStyleVar(2);
-
-			// Apply the dockspace.
-			{
-				ImGuiID dockspace_id = ImGui::GetID("editor-dockspace");
-				ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
-			}
+			ImGui::Begin("editor-top", nullptr, topMiniWindowFlags);
 
 			DrawMenuBar();
-
-			m_sceneHierarchy.Draw();
-			m_entityInspector.Draw();
-			m_projectMenu.Draw(Engine::Application::Get().GetRootPath());
-			m_sceneView.Draw();
-			m_gameView.Draw();
+			DrawEditorButtons();
 
 			ImGui::End();
 		}
@@ -252,6 +237,89 @@ namespace Editor
 			}
 
 			ImGui::EndMenuBar();
+		}
+	}
+
+	void EditorLayer::DrawEditorButtons()
+	{
+		ImGui::BeginGroup();
+
+		float windowHeight = ImGui::GetContentRegionAvail().y - 4.0f;
+		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (windowHeight * 0.5f));
+		if (ImGui::ImageButton(nullptr, ImVec2{ windowHeight, windowHeight }))
+		{
+			if (EditorSceneManager::IsPlaying())
+			{
+				EditorSceneManager::SetPlaying(false);
+			}
+			else
+			{
+				EditorSceneManager::SetPlaying(true);
+			}
+		}
+		ImGui::EndGroup();
+	}
+
+	void EditorLayer::DrawEditorMainWindow()
+	{
+		static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
+		static bool optFullscreen = true;
+		static bool optPadding = false;
+
+		{
+			if (optFullscreen)
+			{
+				const ImGuiViewport* viewport = ImGui::GetMainViewport();
+				ImGui::SetNextWindowPos({ viewport->WorkPos.x,
+					viewport->WorkPos.y + TOP_WINDOW_HEIGHT - WINDOW_HEIGHT_DIFFERENCE });
+				ImGui::SetNextWindowSize({ viewport->WorkSize.x,
+					viewport->WorkSize.y - TOP_WINDOW_HEIGHT + WINDOW_HEIGHT_DIFFERENCE });
+				ImGui::SetNextWindowViewport(viewport->ID);
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+				windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+				windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+			}
+			else
+			{
+				dockspaceFlags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+			}
+
+			if (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
+			{
+				windowFlags |= ImGuiWindowFlags_NoBackground;
+			}
+
+			if (!optPadding)
+			{
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+			}
+		}
+
+		// Draws the editor dockspace.
+		{
+			ImGui::Begin("editor-main", nullptr, windowFlags);
+
+			if (!optPadding) ImGui::PopStyleVar();
+			if (optFullscreen) ImGui::PopStyleVar(2);
+
+			// Apply the dockspace.
+			{
+				ImGuiID dockspace_id = ImGui::GetID("editor-dockspace");
+				ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
+			}
+
+			m_sceneHierarchy.Draw();
+			m_entityInspector.Draw();
+			m_projectMenu.Draw(Engine::Application::Get().GetRootPath());
+			m_sceneView.Draw();
+			m_gameView.Draw();
+
+			DrawEditorButtons();
+
+			ImGui::End();
 		}
 	}
 	

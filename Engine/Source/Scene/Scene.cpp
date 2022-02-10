@@ -128,6 +128,12 @@ namespace Engine
 
 	Scene::~Scene()
 	{
+		auto entityView = m_entityRegistry.view<BehaviorComponent>();
+		for (auto e : entityView)
+		{
+			auto behaviorComponent = entityView.get<Engine::BehaviorComponent>(e);
+			behaviorComponent.Destroy();
+		}
 	}
 
 	void Scene::OnEvent(Event& event)
@@ -283,16 +289,6 @@ namespace Engine
 		PROFILE_SCOPE(SceneRender, Rendering);
 
 		GraphicsRenderer::BeginScene(cameraConstants);
-
-		// Apply the scene lights.
-		{
-
-
-			// Add the point lights.
-			{
-				// TODO: Implementation
-			}
-		}
 
 		// Render the meshes.
 		{
