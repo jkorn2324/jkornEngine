@@ -1,14 +1,11 @@
 --premake5.lua
 
-project "Editor"
+project "UnitTests"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
 	staticruntime "off"
 
-	pchheader "EditorPCH.h"
-	pchsource "%{prj.location}/Source/EditorPCH.cpp"
-	
 	targetdir "%{wks.location}/%{prj.name}/Builds/%{cfg.buildcfg}/%{cfg.platform}/"
 	objdir "%{wks.location}/%{prj.name}/Builds-Int/%{cfg.buildcfg}/%{cfg.platform}/"
 
@@ -61,7 +58,3 @@ project "Editor"
 		defines { "RELEASE", "NDEBUG" }
 		optimize "On"
 		runtime "Release"
-	
-	filter "files:Source/EditorApplication.cpp"
-		flags "NoPCH"
-

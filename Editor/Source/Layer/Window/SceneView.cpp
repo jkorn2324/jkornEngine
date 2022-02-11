@@ -6,6 +6,7 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <ImGuizmo.h>
 
 namespace Editor
 {
@@ -16,8 +17,11 @@ namespace Editor
 		m_prevMousePos(),
 		m_mouseScroll(),
 		m_windowSize(),
-		m_windowBarSpacing(0.0f)
+		m_windowBarSpacing(0.0f),
+		m_transformationWidget()
 	{
+		m_transformationWidget.SetEnabled(false);
+
 		Engine::FrameBufferSpecification editorSpecifications(
 			{
 				Engine::FrameBufferAttachmentType::DEPTH_STENCIL,
@@ -45,6 +49,13 @@ namespace Editor
 
 	void SceneView::OnUpdate(const Engine::Timestep& ts)
 	{
+		if (!m_open)
+		{
+			return;
+		}
+
+		UpdateTransformationWidget(ts);
+
 		if (!m_focused)
 		{
 			return;
@@ -62,14 +73,6 @@ namespace Editor
 
 		Engine::PlatformInput& platformInput = Engine::Input::GetPlatformInput();
 		EditorCamera& editorCamera = EditorSceneManager::GetEditorCamera();
-		if (ImGui::IsKeyPressed(
-			platformInput.FromKeyCode(Engine::InputKeyCode::KEY_CODE_R)))
-		{
-			editorCamera.ResetCamera();
-			m_prevMousePos = currentPos;
-			return;
-		}
-
 		// Focuses the camera.
 		if (ImGui::IsKeyPressed(
 			platformInput.FromKeyCode(Engine::InputKeyCode::KEY_CODE_F)))
@@ -140,6 +143,66 @@ namespace Editor
 		m_prevMousePos = currentPos;
 	}
 
+	void SceneView::UpdateTransformationWidget(const Engine::Timestep& ts)
+	{
+		m_transformationWidget.SetEnabled(EditorSelection::HasSelectedEntity());
+		if (EditorSelection::HasSelectedEntity())
+		{
+			Engine::Entity entity = EditorSelection::GetSelectedEntity();
+			if (entity.HasComponent<Engine::Transform3DComponent>())
+			{
+				Engine::Transform3DComponent& transform3D
+					= entity.GetComponent<Engine::Transform3DComponent>();
+				if (entity != m_prevSelectedEntity)
+				{
+					m_transformationWidget.SetTransform(transform3D);
+					m_prevSelectedEntity = entity;
+					return;
+				}
+
+				if (m_entityWidgetChanged)
+				{
+					transform3D.SetLocalPosition(
+						m_transformationWidget.GetTransform().GetLocalPosition());
+					transform3D.SetLocalEulerAngles(
+						m_transformationWidget.GetTransform().GetLocalEulerAngles());
+					transform3D.SetLocalScale(
+						m_transformationWidget.GetTransform().GetLocalScale());
+				}
+				else
+				{
+					m_transformationWidget.SetTransform(transform3D);
+				}
+			}
+			else if (entity.HasComponent<Engine::Transform2DComponent>())
+			{
+				Engine::Transform2DComponent& transform2D
+					= entity.GetComponent<Engine::Transform2DComponent>();
+				if (entity != m_prevSelectedEntity)
+				{
+					m_transformationWidget.SetTransform(transform2D);
+					m_prevSelectedEntity = entity;
+					return;
+				}
+
+				if (m_entityWidgetChanged)
+				{
+					const auto& transform = m_transformationWidget.GetTransform();
+					transform2D.SetLocalPosition(
+						transform.GetLocalPosition().x, transform.GetLocalPosition().y);
+					transform2D.SetLocalRotation(
+						transform.GetLocalEulerAngles(false).z, false);
+					transform2D.SetLocalScale(transform.GetLocalScale().x, transform.GetLocalScale().y);
+				}
+				else
+				{
+					m_transformationWidget.SetTransform(transform2D);
+				}
+			}
+		}
+		m_prevSelectedEntity = EditorSelection::GetSelectedEntity();
+	}
+
 	bool SceneView::GetCameraDirection(MathLib::Vector3& outputDirection,
 		const EditorCamera& editorCamera, const Engine::PlatformInput& platformInput) const
 	{
@@ -183,6 +246,13 @@ namespace Editor
 		return hasInput;
 	}
 
+	const MathLib::Vector2 SceneView::GetResizedWindow() const
+	{
+		MathLib::Vector2 windowSize = m_windowSize;
+		windowSize.y -= m_windowBarSpacing;
+		return windowSize;
+	}
+
 	void SceneView::RenderScene()
 	{
 		if (!m_open)
@@ -192,9 +262,10 @@ namespace Editor
 		EditorCamera& editorCamera = EditorSceneManager::GetEditorCamera();
 		// Sets the editor camera properties based on the window size.
 		{
+			MathLib::Vector2 windowSize = GetResizedWindow();
 			EditorCameraProperties& properties = editorCamera.GetCameraProperties();
-			properties.width = m_windowSize.x;
-			properties.height = m_windowSize.y - m_windowBarSpacing;
+			properties.width = windowSize.x;
+			properties.height = windowSize.y;
 			m_frameBuffer->Resize((uint32_t)properties.width, (uint32_t)properties.height);
 		}
 
@@ -238,6 +309,40 @@ namespace Editor
 			ImGui::Image((void*)frameTexture->GetTextureID(),
 				ImVec2((float)frameTexture->GetWidth(), (float)frameTexture->GetHeight()));
 		}
+
+		DrawTransformationWidgetInput();
+
 		ImGui::End();
+	}
+
+	void SceneView::DrawTransformationWidgetInput()
+	{
+		if (m_focused)
+		{
+			Engine::PlatformInput& platformInput = Engine::Input::GetPlatformInput();
+			if (ImGui::IsKeyDown(
+				platformInput.FromKeyCode(Engine::InputKeyCode::KEY_CODE_W)))
+			{
+				m_transformationWidget.m_widgetOperation
+					= ImGuizmo::OPERATION::TRANSLATE;
+			}
+			else if (ImGui::IsKeyDown(
+				platformInput.FromKeyCode(Engine::InputKeyCode::KEY_CODE_E)))
+			{
+				m_transformationWidget.m_widgetOperation
+					= ImGuizmo::OPERATION::ROTATE;
+			}
+			else if (ImGui::IsKeyDown(
+				platformInput.FromKeyCode(Engine::InputKeyCode::KEY_CODE_R)))
+			{
+				m_transformationWidget.m_widgetOperation
+					= ImGuizmo::OPERATION::SCALE;
+			}
+		}
+
+		m_entityWidgetChanged
+			= m_transformationWidget.OnImGuiRender(
+				*(MathLib::Vector2*)&ImGui::GetWindowPos(),
+				GetResizedWindow());
 	}
 }

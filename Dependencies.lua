@@ -6,6 +6,7 @@ IncludeDirectories["glfw"] = "%{wks.location}/Engine/Libraries/glfw/include/"
 IncludeDirectories["ImGui"] = "%{wks.location}/Engine/Libraries/ImGui/"
 IncludeDirectories["spdlog"] = "%{wks.location}/Engine/Libraries/spdlog/include/"
 IncludeDirectories["rapidjson"] = "%{wks.location}/Engine/Libraries/rapidjson/include/"
+IncludeDirectories["ImGuizmo"] = "%{wks.location}/Engine/Libraries/ImGuizmo/"
 
 LibraryDirectories = {}
 

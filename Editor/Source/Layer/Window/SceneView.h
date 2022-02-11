@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EditorCamera.h"
+#include "EditorWidgets.h"
 
 namespace Engine
 {
@@ -32,19 +33,30 @@ namespace Editor
 
 		const MathLib::Vector2& GetWindowSize() const { return m_windowSize; }
 
+		TransformationWidget& GetTransformationWidget() { return m_transformationWidget; }
+		const TransformationWidget& GetTransformationWidget() const { return m_transformationWidget; }
+
 	private:
 		void HandleCameraInput(const Engine::Timestep& ts);
+		void UpdateTransformationWidget(const Engine::Timestep& ts);
+
 		bool GetCameraDirection(MathLib::Vector3& cameraDirection,
 			const EditorCamera& editorCamera, const Engine::PlatformInput& platformInput) const;
+		const MathLib::Vector2 GetResizedWindow() const;
+
+		void DrawTransformationWidgetInput();
 
 	private:
 		Engine::FrameBuffer* m_frameBuffer;
+		TransformationWidget m_transformationWidget;
+
 		MathLib::Vector2 m_windowSize;
 		float m_windowBarSpacing;
+		
 		MathLib::Vector2 m_prevMousePos;
 		MathLib::Vector2 m_mouseScroll;
-		bool m_open, m_focused;
-
-		// TODO: Separate into an editor input system.
+		
+		Engine::Entity m_prevSelectedEntity;
+		bool m_open, m_focused, m_entityWidgetChanged;
 	};
 }

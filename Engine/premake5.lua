@@ -23,7 +23,19 @@ project "Engine"
 		"%{IncludeDirectories.entt}**.cpp",
 		"%{IncludeDirectories.entt}**.hpp",
 
-		"%{IncludeDirectories.rapidjson}**.h"
+		"%{IncludeDirectories.rapidjson}**.h",
+
+		"%{IncludeDirectories.ImGuizmo}GraphEditor.cpp",
+		"%{IncludeDirectories.ImGuizmo}GraphEditor.h",
+		"%{IncludeDirectories.ImGuizmo}ImCurveEdit.cpp",
+		"%{IncludeDirectories.ImGuizmo}ImCurveEdit.h",
+		"%{IncludeDirectories.ImGuizmo}ImGradient.cpp",
+		"%{IncludeDirectories.ImGuizmo}ImGradient.h",
+		"%{IncludeDirectories.ImGuizmo}ImGuizmo.cpp",
+		"%{IncludeDirectories.ImGuizmo}ImGuizmo.h",
+		"%{IncludeDirectories.ImGuizmo}ImSequencer.cpp",
+		"%{IncludeDirectories.ImGuizmo}ImSequencer.h",
+		"%{IncludeDirectories.ImGuizmo}ImZoomSlider.h"
 	}
 
 	filter { "system:Windows" }
@@ -49,8 +61,12 @@ project "Engine"
 		"%{IncludeDirectories.glfw}",
 		"%{IncludeDirectories.spdlog}",
 		"%{IncludeDirectories.rapidjson}",
-		"%{IncludeDirectories.ImGui}"
+		"%{IncludeDirectories.ImGui}",
+		"%{IncludeDirectories.ImGuizmo}"
 	}
+
+	-- ImGuizmo macros.
+	defines { "USE_IMGUI_API "}
 
 	-- Linking Libraries.
 	links

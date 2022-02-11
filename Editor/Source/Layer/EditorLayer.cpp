@@ -7,6 +7,7 @@
 #include "Source\Vector.h"
 #include "EditorUtils.h"
 #include "EditorCamera.h"
+#include "ImGuizmo.h"
 
 #include "CameraController.h"
 

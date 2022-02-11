@@ -3,6 +3,7 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <ImGuizmo.h>
 
 #include "Application.h"
 #include "Window.h"
@@ -14,6 +15,7 @@
 
 #include "Event.h"
 #include "ApplicationEvent.h"
+
 
 namespace Engine
 {
@@ -75,6 +77,7 @@ namespace Engine
 		m_graphicsImGuiLayer->BeginFrame();
 		m_windowImGuiLayer->BeginFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::EndRender()

@@ -3,9 +3,11 @@
 #include "Vector.h"
 #include "Quaternion.h"
 #include "Matrix.h"
+#include "Math.h"
 
 namespace MathLib
 {
+	class Transform3D;
 
 	class Transform2D
 	{
@@ -15,6 +17,9 @@ namespace MathLib
 		explicit Transform2D();
 		explicit Transform2D(const Vector2& pos,
 			float rot, const Vector2& scale);
+		explicit Transform2D(const Transform3D& transform);
+
+		Transform2D& operator=(const Transform3D& transform);
 
 		void SetParentTransformMatrix(const Matrix4x4& mat);
 
@@ -41,6 +46,8 @@ namespace MathLib
 		Vector2 GetWorldScale() const;
 
 		Matrix4x4 GetTransformMatrix() const;
+		const Matrix4x4& GetParentTransformMatrix() const { return m_parentTransformMatrix; }
+		Matrix4x4 GetLocalTransformMatrix() const;
 
 	private:
 		Vector2 m_position;
@@ -52,6 +59,27 @@ namespace MathLib
 
 	class Transform3D
 	{
+		struct TransformRotator
+		{
+			Quaternion quaternion = Quaternion::Identity;
+			Vector3 eulers = Vector3::Zero;
+
+			TransformRotator() {}
+
+			TransformRotator(const Quaternion& quat)
+				: quaternion(quat), eulers(quat.ToEuler(false))
+			{
+
+			}
+
+			TransformRotator(float yaw, float pitch, float roll, bool inDegrees = false)
+				: quaternion(Quaternion::FromEuler(yaw, pitch, roll, inDegrees)),
+				eulers(inDegrees ? pitch * DEG2RAD : pitch,
+					inDegrees ? yaw * DEG2RAD : yaw,
+					inDegrees ? roll * DEG2RAD : roll)
+			{
+			}
+		};
 
 		using Mat4x4 = MathLib::Matrix4x4;
 
@@ -59,6 +87,9 @@ namespace MathLib
 		explicit Transform3D();
 		explicit Transform3D(const Vector3& pos,
 			const Quaternion& rot, const Vector3& scale);
+		explicit Transform3D(const Transform2D& transform);
+
+		Transform3D& operator=(const Transform2D& transform);
 
 		void SetParentTransformMatrix(const Matrix4x4& matrix);
 
@@ -76,8 +107,7 @@ namespace MathLib
 		const Vector3 GetLocalEulerAngles(bool inDegrees = true) const;
 
 		void SetLocalRotation(const Quaternion& quat);
-		const Quaternion GetLocalRotation() const;
-
+		const Quaternion& GetLocalRotation() const;
 
 		Vector3 GetWorldPosition() const;
 		Vector3 GetWorldScale() const;
@@ -94,11 +124,16 @@ namespace MathLib
 		void LookAt(const MathLib::Vector3& position);
 
 		Mat4x4 GetTransformMatrix() const;
+		Mat4x4 GetLocalTransformMatrix() const;
+
+		const Mat4x4& GetParentTransformMatrix() const { return m_parentTransformMatrix; }
+		bool HasParentTransformMatrix() const { return m_hasParentTransformMatrix; }
 
 	private:
 		MathLib::Vector3 m_position;
 		MathLib::Vector3 m_scale;
-		MathLib::Vector3 m_rotation;
+		TransformRotator m_rotator;
 		MathLib::Matrix4x4 m_parentTransformMatrix;
+		bool m_hasParentTransformMatrix;
 	};
 }

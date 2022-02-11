@@ -13,3 +13,6 @@
 [submodule "Engine/Libraries/rapidjson"]
 	path = Engine/Libraries/rapidjson
 	url = https://github.com/Tencent/rapidjson
+[submodule "Engine/Libraries/ImGuizmo"]
+	path = Engine/Libraries/ImGuizmo
+	url = https://github.com/jkorn2324/ImGuizmo.git

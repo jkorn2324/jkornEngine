@@ -2,9 +2,9 @@
 //
 
 #include <iostream>
+
 #include "MathUnitTests.h"
-#include "Source\DebugAssert.h"
-#include "Source\Matrix.h"
+#include "DebugAssert.h"
 #include "StringUtils.h"
 
 bool RunWideStringUnitTests();

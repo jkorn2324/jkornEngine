@@ -78,7 +78,9 @@ namespace Engine
 		s_spriteObjectConstants.c_worldPosition = transform.GetTranslation();
 
 		// Bind Per Object Constants.
-		s_spriteObjectConstantBuffer->SetData(&s_spriteObjectConstants, sizeof(GraphicsObjectConstants));
+		s_spriteObjectConstantBuffer->SetData(&s_spriteObjectConstants, 
+			sizeof(GraphicsObjectConstants));
+
 		s_spriteObjectConstantBuffer->Bind(1, ConstantBufferFlags::PIXEL_SHADER
 			| ConstantBufferFlags::VERTEX_SHADER);
 
@@ -123,9 +125,8 @@ namespace Engine
 			s_spriteMaterial->SetShader(s_spriteShader);
 		}
 
-		Mat4x4 identity = Mat4x4::Identity;
 		s_spriteObjectConstantBuffer = ConstantBuffer::Create(
-			&identity, sizeof(Mat4x4));
+			&s_spriteObjectConstants, sizeof(GraphicsObjectConstants));
 	}
 
 	void GraphicsRenderer2D::Release()
