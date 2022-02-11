@@ -48,6 +48,8 @@ namespace Engine
 		virtual std::uint32_t GetMinHeight() const =0;
 		virtual void SetMinSize(uint32_t w, uint32_t h) =0;
 
+		virtual float GetWindowDPIScale() const =0;
+
 		virtual void OnUpdate()=0;
 		virtual void Shutdown()=0;
 

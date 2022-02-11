@@ -27,7 +27,8 @@ namespace Engine
 	GlfwWindowsWindow::GlfwWindowsWindow(const WindowProperties& properties)
 		: Window(properties),
 		m_window(nullptr),
-		m_windowData(properties)
+		m_windowData(properties),
+		m_dpiScale(1.0f)
 	{
 		Initialize();
 	}
@@ -64,9 +65,17 @@ namespace Engine
 
 	void GlfwWindowsWindow::SetMinSize(uint32_t w, uint32_t h)
 	{
+		w *= (uint32_t)m_dpiScale;
+		h *= (uint32_t)m_dpiScale;
+
 		glfwSetWindowSizeLimits(m_window, (int)w, (int)h, GLFW_DONT_CARE, GLFW_DONT_CARE);
 		m_windowData.properties.minWidth = w;
 		m_windowData.properties.minHeight = h;
+	}
+
+	float GlfwWindowsWindow::GetWindowDPIScale() const
+	{
+		return m_dpiScale;
 	}
 
 	void GlfwWindowsWindow::OnUpdate()
@@ -142,9 +151,16 @@ namespace Engine
 		glfwMakeContextCurrent(m_window);
 		glfwSetWindowUserPointer(m_window, &m_windowData);
 
+		{
+			float dpiScaleX, dpiScaleY;
+			glfwGetWindowContentScale(m_window, &dpiScaleX, &dpiScaleY);
+			m_dpiScale = dpiScaleX;
+		}
+
 		SetVSync(m_windowData.properties.vsync);
 		SetMinSize(
-			m_windowData.properties.minWidth, m_windowData.properties.minHeight);
+			m_windowData.properties.minWidth, 
+			m_windowData.properties.minHeight);
 
 		// Sets the window close callback function.
 		{

@@ -15,11 +15,18 @@ namespace Engine
 
 		~DirectX11ViewTexture()
 		{
+			Deallocate();
+		}
+
+		void Deallocate()
+		{
 			if (m_view != nullptr)
 			{
 				m_view->Release();
+				m_view = nullptr;
 			}
 			delete texture;
+			texture = nullptr;
 		}
 	};
 
@@ -33,6 +40,9 @@ namespace Engine
 		void UnBind() const override;
 
 		class Texture* GetTexture(FrameBufferAttachmentType type) const override;
+
+		void ReGenerateTextures() override;
+		void Resize(uint32_t width, uint32_t height) override;
 
 	private:
 		void CreateBuffers();

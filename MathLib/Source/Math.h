@@ -79,6 +79,11 @@ namespace MathLib
 		return Min(max, Max(min, val));
 	}
 
+	static float Clamp01(float val)
+	{
+		return Clamp(0.0f, 1.0f, val);
+	}
+
 	static float LerpUnclamped(float a, float b, float alpha)
 	{
 		return a + (b - a) * alpha;

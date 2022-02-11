@@ -266,6 +266,7 @@ namespace Editor
 			EditorCameraProperties& properties = editorCamera.GetCameraProperties();
 			properties.width = windowSize.x;
 			properties.height = windowSize.y;
+			
 			m_frameBuffer->Resize((uint32_t)properties.width, (uint32_t)properties.height);
 		}
 

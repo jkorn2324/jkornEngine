@@ -162,8 +162,6 @@ namespace Editor
 				}
 			}
 
-			ImGui::EndColumns();
-
 			if (m_popupView == ProjectMenuPopupView::Popup_ContentView
 				|| m_popupView == ProjectMenuPopupView::Popup_None
 				&& isMouseInWindow

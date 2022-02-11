@@ -276,7 +276,7 @@ namespace Editor
 				ImGui::SetNextWindowPos({ viewport->WorkPos.x,
 					viewport->WorkPos.y + TOP_WINDOW_HEIGHT - WINDOW_HEIGHT_DIFFERENCE });
 				ImGui::SetNextWindowSize({ viewport->WorkSize.x,
-					viewport->WorkSize.y - TOP_WINDOW_HEIGHT + WINDOW_HEIGHT_DIFFERENCE });
+					(viewport->WorkSize.y - TOP_WINDOW_HEIGHT + WINDOW_HEIGHT_DIFFERENCE) });
 				ImGui::SetNextWindowViewport(viewport->ID);
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);

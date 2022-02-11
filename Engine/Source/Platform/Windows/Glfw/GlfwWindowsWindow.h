@@ -37,6 +37,8 @@ namespace Engine
 
 		 void SetMinSize(uint32_t w, uint32_t h) override;
 
+		 float GetWindowDPIScale() const override;
+
 		 void OnUpdate() override;
 		 void Shutdown() override;
 
@@ -56,6 +58,7 @@ namespace Engine
 		WindowData m_windowData;
 
 		uint32_t m_minWidth, m_minHeight;
+		float m_dpiScale;
 
 		friend class GlfwImGuiLayer;
 	};

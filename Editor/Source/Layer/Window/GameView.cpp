@@ -74,7 +74,6 @@ namespace Editor
 				camera.orthoHeight = m_aspectRatio.m_aspectWidth;
 				camera.perspAspectRatio = m_aspectRatio.m_aspectHeight / m_aspectRatio.m_aspectWidth;
 			}
-
 			m_frameBuffer->Resize(
 				(uint32_t)m_aspectRatio.m_aspectWidth, (uint32_t)m_aspectRatio.m_aspectHeight);
 		}
@@ -90,8 +89,8 @@ namespace Editor
 		{
 			case ASPECT_FREE:
 			{
-				m_aspectRatio.m_aspectWidth = m_windowSize.x;
-				m_aspectRatio.m_aspectHeight = m_windowSize.y - m_windowMenuBarSpacing;
+				ConstrainToAspectRatio(m_windowSize.x, 
+					m_windowSize.y - m_windowMenuBarSpacing);
 				break;
 			}
 			case ASPECT_16_9:
@@ -129,7 +128,7 @@ namespace Editor
 		float windowAspectRatio = windowSizeY / m_windowSize.x;
 		float windowY = windowAspectRatio * x;
 
-		// If the y is greater than 9, than it means that the aspect ratio should
+		// If the y is greater than y input, than it means that the aspect ratio should
 		// be constrained to the x.
 		if (windowY > y)
 		{
@@ -168,32 +167,35 @@ namespace Editor
 		{
 			const void* textureID = texture->GetTextureID();
 
-			if (m_aspectRatioType != GameViewAspectRatioType::ASPECT_FREE)
+			ImVec2 textureSize = { (float)m_aspectRatio.m_aspectWidth, (float)m_aspectRatio.m_aspectHeight };
+
+			// Calculates the window size of the game view for the texture.
+			MathLib::Vector2 windowSizeDiff = m_windowSize;
+			windowSizeDiff.y -= m_windowMenuBarSpacing;
+			windowSizeDiff.y -= m_aspectRatio.m_aspectHeight;
+			windowSizeDiff.x -= m_aspectRatio.m_aspectWidth;
+
+
+			float texWidth = (float)texture->GetWidth();
+			float texHeight = (float)texture->GetHeight();
+
+			// Adjusts the uvs based on the texture height & texture width.
+			ImVec2 uv0 = { 0.0f, 0.0f };
+			ImVec2 uv1 = { MathLib::Clamp01(m_aspectRatio.m_aspectWidth / texWidth),
+					MathLib::Clamp01(m_aspectRatio.m_aspectHeight / texHeight) };
+
+			if (m_aspectRatio.m_aspectWidth > texWidth
+				|| m_aspectRatio.m_aspectHeight > texHeight)
 			{
-				ImVec2 textureSize = { (float)m_aspectRatio.m_aspectWidth, (float)m_aspectRatio.m_aspectHeight };
-
-				// Calculates the window size of the game view for the texture.
-				MathLib::Vector2 windowSizeDiff = m_windowSize;
-				windowSizeDiff.y -= m_windowMenuBarSpacing;
-				windowSizeDiff.y -= m_aspectRatio.m_aspectHeight;
-				windowSizeDiff.x -= m_aspectRatio.m_aspectWidth;
-
-				// Adjusts the uvs based on the texture height & texture width.
-				ImVec2 uv0 = { 0.0f, 0.0f };
-				ImVec2 uv1 = { m_aspectRatio.m_aspectWidth / (float)texture->GetWidth(),
-					m_aspectRatio.m_aspectHeight / (float)texture->GetHeight() };
-
-				ImVec2 texturePos = { windowSizeDiff.x * 0.5f, windowSizeDiff.y * 0.5f };
-
-				ImGuiUtils::DrawImage(textureID,
-					texturePos, textureSize, uv0, uv1);
+				if (m_aspectRatio.m_aspectWidth > m_aspectRatio.m_aspectHeight)
+				{
+					uv0.x = MathLib::Clamp01((m_aspectRatio.m_aspectWidth - texWidth * 2.0f) / texWidth);
+					uv1.x = 1.0f - uv0.x;
+				}
 			}
-			else
-			{
-				// TODO: Fix this so that the image always fits within the game view for higher resolution devices.
-				ImVec2 textureSize = { (float)texture->GetWidth(), (float)texture->GetHeight() };
-				ImGui::Image((void*)textureID, textureSize);
-			}
+
+			ImVec2 texturePos = { windowSizeDiff.x * 0.5f, windowSizeDiff.y * 0.5f };
+			ImGuiUtils::DrawImage(textureID, texturePos, textureSize, uv0, uv1);
 		}
 
 		ImGui::End();

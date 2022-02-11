@@ -222,6 +222,52 @@ namespace Engine
 		renderingAPI.Clear();
 	}
 
+	void DirectX11FrameBuffer::Resize(uint32_t width, uint32_t height)
+	{
+		FrameBuffer::Resize(width, height);
+
+		bool shouldRegenerate = false;
+		if (m_renderTargetTexture.texture != nullptr)
+		{
+			shouldRegenerate |= height > m_renderTargetTexture.texture->GetHeight()
+				|| width > m_renderTargetTexture.texture->GetWidth();
+		}
+		if (m_depthTexture.texture != nullptr)
+		{
+			shouldRegenerate |= height > m_depthTexture.texture->GetHeight()
+				|| width > m_depthTexture.texture->GetHeight();
+		}
+		if (shouldRegenerate)
+			ReGenerateTextures();
+	}
+
+	void DirectX11FrameBuffer::ReGenerateTextures()
+	{
+		// Regenerate Render Texture.
+		{
+			m_renderTargetTexture.Deallocate();
+
+			DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
+			if (m_renderTargetSpecification.textureType
+				!= FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE)
+			{
+				CreateViewTexture(&m_renderTargetTexture, &renderingAPI, m_renderTargetSpecification);
+			}
+		}
+
+		// Regenerate Depth Texture.
+		{
+			m_depthTexture.Deallocate();
+
+			DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
+			if (m_depthStencilSpecification.textureType
+				!= FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE)
+			{
+				CreateViewTexture(&m_depthTexture, &renderingAPI, m_depthStencilSpecification);
+			}
+		}
+	}
+
 	Texture* DirectX11FrameBuffer::GetTexture(FrameBufferAttachmentType type) const
 	{
 		switch (type)
