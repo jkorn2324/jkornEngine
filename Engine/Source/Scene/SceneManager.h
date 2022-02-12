@@ -19,6 +19,7 @@ namespace Engine
 		static void OnEvent(Event& event);
 		static void LoadScene(const wchar_t* filePath);
 
+		static void SetActiveScene(Scene* scene);
 		static Scene& GetActiveScene();
 
 		static void OnUpdate(const Timestep& ts);

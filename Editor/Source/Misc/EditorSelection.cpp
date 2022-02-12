@@ -1,52 +1,10 @@
 #include "EditorPCH.h"
-#include "EditorUtils.h"
+#include "EditorSelection.h"
 
 #include "EditorCamera.h"
 
 namespace Editor
 {
-
-	static EditorCamera s_editorCamera;
-	static bool s_paused = false, s_playing = false;
-
-	static bool OnWindowSizeChanged(Engine::WindowResizedEvent& event)
-	{
-		return true;
-	}
-
-	void EditorSceneManager::Init() { }
-
-	void EditorSceneManager::OnEvent(Engine::Event& event)
-	{
-		Engine::EventDispatcher dispatcher(event);
-		dispatcher.Invoke<Engine::WindowResizedEvent>(
-			BIND_STATIC_EVENT_FUNCTION(OnWindowSizeChanged));
-	}
-	
-	bool EditorSceneManager::IsPlaying()
-	{
-		return s_playing;
-	}
-
-	void EditorSceneManager::SetPlaying(bool playing)
-	{
-		s_playing = playing;
-	}
-
-	bool EditorSceneManager::IsPaused()
-	{
-		return s_paused;
-	}
-
-	void EditorSceneManager::SetPaused(bool paused)
-	{
-		s_paused = paused;
-	}
-	
-	EditorCamera& EditorSceneManager::GetEditorCamera()
-	{
-		return s_editorCamera;
-	}
 
 	static Engine::Entity s_selectedEntity;
 

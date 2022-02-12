@@ -36,6 +36,8 @@ namespace Engine
 
 		void OnEvent(Event& event);
 
+		Entity CreateEntity(const std::string& entityName, const Engine::Entity& parent);
+		Entity CreateEntity(const std::string& entityName);
 		Entity CreateEntity(const char* entityName);
 		Entity CreateEntity();
 		void DestroyEntity(const Entity& entity);
@@ -46,6 +48,8 @@ namespace Engine
 		const std::vector<Entity>& GetRootEntities() const;
 		uint32_t GetNumEntities() const { return (uint32_t)m_entityRegistry.size(); }
 		const std::wstring& GetSceneName() const;
+
+		Scene* CopyScene();
 
 	private:
 		void OnUpdate(const Timestep& ts);

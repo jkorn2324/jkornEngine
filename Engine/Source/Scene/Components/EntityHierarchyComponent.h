@@ -9,6 +9,8 @@ namespace Engine
 	class EntityHierarchyComponent
 	{
 	public:
+		explicit EntityHierarchyComponent()
+			: m_parentEntity(), m_children(), m_owner() { }
 		explicit EntityHierarchyComponent(const Entity& owner)
 			: m_parentEntity(), m_children(), m_owner(owner) { }
 

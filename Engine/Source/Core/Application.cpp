@@ -104,15 +104,15 @@ namespace Engine
 			float timestep = (float)diff.count() * 0.000000001f;
 			Timestep ts = { timestep, Time::GetTimeScale() };
 
-			// Update the window layer stack.
+			if (!m_window->IsMinimized())
 			{
+				// Update the window layer stack.
 				for (Layer* layer : m_windowLayerStack)
 				{
 					layer->OnUpdate(ts);
 				}
-			}
 
-			{
+				// Update ImGui Layer.
 				m_imguiLayer->BeginRender();
 				{
 					for (Layer* layer : m_windowLayerStack)

@@ -29,6 +29,8 @@ namespace Engine
 			return nullptr;
 		}
 
+		const std::vector<BehaviorScript*>& GetBehaviors() const { return m_scripts; }
+
 		template<typename T>
 		bool HasBehavior() const
 		{
@@ -73,6 +75,8 @@ namespace Engine
 		const Entity& GetEntity() const { return m_entity; }
 
 	private:
+		void CopyBehavior(BehaviorScript* behaviorScript);
+
 		void OnUpdate(const Timestep& ts);
 		void OnRuntimeUpdate(const Timestep& ts);
 		void OnEditorUpdate(const Timestep& ts);
@@ -83,6 +87,7 @@ namespace Engine
 	private:
 		std::vector<class BehaviorScript*> m_scripts;
 		Entity m_entity;
+		bool m_runtime = false;
 
 		friend class Scene;
 		friend class BehaviorComponent;

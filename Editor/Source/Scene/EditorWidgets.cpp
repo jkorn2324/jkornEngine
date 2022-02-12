@@ -1,8 +1,8 @@
 #include "EditorPCH.h"
 #include "EditorWidgets.h"
 
-#include "EditorUtils.h"
 #include "EditorCamera.h"
+#include "EditorSceneManager.h"
 
 #include "imgui.h"
 
@@ -40,6 +40,9 @@ namespace Editor
             reinterpret_cast<const float*>(&camera.GetViewMatrix()),
                 reinterpret_cast<const float*>(&camera.GetProjectionMatrix()),
                     m_widgetOperation, m_widgetMode, (float*)transformMatrix.matrix, nullptr, nullptr);
+        
+        if (!m_movable) return false;
+
         if (manipulated)
         {
             if (m_transform.HasParentTransformMatrix())

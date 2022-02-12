@@ -1,7 +1,7 @@
 #include "EditorPCH.h"
 #include "GameView.h"
 
-#include "EditorUtils.h"
+#include "EditorSelection.h"
 #include "ImGuiUtils.h"
 
 #include <imgui.h>
@@ -57,6 +57,11 @@ namespace Editor
 	GameView::~GameView()
 	{
 		delete m_frameBuffer;
+	}
+
+	void GameView::OnUpdate(const Engine::Timestep& ts)
+	{
+		Engine::Input::SetEnabled(m_focused && m_open);
 	}
 
 	void GameView::RenderScene()
@@ -158,6 +163,7 @@ namespace Editor
 			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(
 				&ImGui::GetWindowSize());
 			m_windowMenuBarSpacing = ImGui::GetTextLineHeightWithSpacing() * 3.0f;
+			m_focused = ImGui::IsWindowFocused();
 		}
 
 		DrawMenuBar();

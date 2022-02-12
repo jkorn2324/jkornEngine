@@ -45,7 +45,17 @@ namespace Engine
 		SceneSerializer serializer(s_activeScene);
 		serializer.Deserialize(filePath);
 	}
-	
+
+	void SceneManager::SetActiveScene(Scene* scene)
+	{
+		if (s_activeScene != nullptr)
+		{
+			delete s_activeScene;
+		}
+		s_activeScene = scene;
+		s_activeScene->BindEventFunc(s_eventFunc);
+	}
+
 	Scene& SceneManager::GetActiveScene()
 	{
 		return *s_activeScene;

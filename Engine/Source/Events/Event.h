@@ -7,7 +7,7 @@ namespace Engine
 
 	enum class EventType
 	{
-		WindowClosedEvent, WindowResizedEvent,
+		WindowClosedEvent, WindowResizedEvent, WindowFocusEvent,
 
 		InputKeyEvent, InputKeyPressedEvent, InputKeyReleasedEvent,
 		InputMouseButtonEvent, InputMouseButtonPressedEvent, InputMouseButtonReleasedEvent,

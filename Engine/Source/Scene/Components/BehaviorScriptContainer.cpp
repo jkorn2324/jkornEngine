@@ -16,23 +16,52 @@ namespace Engine
 
 	void BehaviorScriptContainer::OnRuntimeUpdate(const Timestep& ts)
 	{
+		bool callOnCreate = !m_runtime;
+		m_runtime = true;
+
 		for (const auto& a : m_scripts)
 		{
-			if (a->IsEnabled())
+			if (callOnCreate)
 			{
-				a->OnRuntimeUpdate(ts);
+				a->OnCreate();
+				a->m_triggeredOnCreate = true;
+			}
+			else
+			{
+				if (a->IsEnabled())
+				{
+					a->OnRuntimeUpdate(ts);
+				}
 			}
 		}
 	}
 
 	void BehaviorScriptContainer::OnEditorUpdate(const Timestep& ts)
 	{
+		m_runtime = false;
+
 		for (const auto& a : m_scripts)
 		{
 			if (a->IsEnabled())
 			{
 				a->OnEditorUpdate(ts);
 			}
+		}
+	}
+
+	void BehaviorScriptContainer::CopyBehavior(BehaviorScript* behaviorScript)
+	{
+		BehaviorScript* newBehaviorScript = behaviorScript->CopyTo();
+		if (newBehaviorScript != nullptr)
+		{
+			const auto& found = std::find(m_scripts.begin(), m_scripts.end(), newBehaviorScript);
+			if (found != m_scripts.end())
+			{
+				delete newBehaviorScript;
+				return;
+			}
+			newBehaviorScript->SetOwningContainer(this);
+			m_scripts.push_back(newBehaviorScript);
 		}
 	}
 

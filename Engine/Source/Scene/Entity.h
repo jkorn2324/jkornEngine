@@ -34,6 +34,8 @@ namespace Engine
 
 		const entt::entity& GetID() const { return m_entity; }
 
+		const class Scene& GetScene() const { return *m_scene; }
+
 		friend bool operator==(const Entity& a, const Entity& b)
 		{
 			return a.m_entity == b.m_entity;
@@ -43,6 +45,8 @@ namespace Engine
 		{
 			return a.m_entity != b.m_entity;
 		}
+
+		friend void CopyEntity(const Entity& from, Entity& to, bool copyName = true);
 
 	private:
 		static void BindEventFunc(const EventFunc& func);

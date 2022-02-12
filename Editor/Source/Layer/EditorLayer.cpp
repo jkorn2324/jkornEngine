@@ -5,7 +5,9 @@
 #include <imgui.h>
 
 #include "Source\Vector.h"
-#include "EditorUtils.h"
+
+#include "EditorSelection.h"
+#include "EditorSceneManager.h"
 #include "EditorCamera.h"
 #include "ImGuizmo.h"
 
@@ -15,6 +17,13 @@
 
 namespace Editor
 {
+
+	class TestBehavior : public Engine::BehaviorScript
+	{
+		MathLib::Vector2 m_direction;
+		MathLib::Vector3 m_position;
+	};
+
 	static const float TOP_WINDOW_HEIGHT = 60.0f;
 	static const float WINDOW_HEIGHT_DIFFERENCE = 15.0f;
 
@@ -53,6 +62,7 @@ namespace Editor
 
 	EditorLayer::~EditorLayer()
 	{
+		EditorSceneManager::Release();
 	}
 
 	void EditorLayer::OnLayerAdded()
@@ -134,12 +144,12 @@ namespace Editor
 
 	void EditorLayer::OnLayerRemoved()
 	{
-		// TODO: Implementation
 	}
 
 	void EditorLayer::OnUpdate(const Engine::Timestep& timestep)
 	{
 		m_projectMenu.OnUpdate(timestep);
+		m_gameView.OnUpdate(timestep);
 		
 		// Updates the scene view.
 		{
@@ -249,22 +259,21 @@ namespace Editor
 		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (windowHeight * 0.5f));
 		if (ImGui::ImageButton(nullptr, ImVec2{ windowHeight, windowHeight }))
 		{
-			if (EditorSceneManager::IsPlaying())
-			{
-				EditorSceneManager::SetPlaying(false);
-			}
-			else
-			{
-				EditorSceneManager::SetPlaying(true);
-			}
+			OnSceneRuntimeButtonSelected(!EditorSceneManager::IsPlaying());
 		}
 		ImGui::EndGroup();
+	}
+
+	void EditorLayer::OnSceneRuntimeButtonSelected(bool play)
+	{
+		EditorSceneManager::SetPlaying(play);
 	}
 
 	void EditorLayer::DrawEditorMainWindow()
 	{
 		static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
-		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
+			| ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
 		static bool optFullscreen = true;
 		static bool optPadding = false;

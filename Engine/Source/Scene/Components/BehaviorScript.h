@@ -30,6 +30,8 @@ namespace Engine
 		virtual void OnRuntimeUpdate(const Timestep& ts) { }
 		virtual void OnEditorUpdate(const Timestep& ts) { }
 
+		virtual BehaviorScript* CopyTo()=0;
+
 	private:
 		void SetOwningContainer(class BehaviorScriptContainer* container)
 		{
@@ -39,9 +41,8 @@ namespace Engine
 	private:
 		BehaviorScriptContainer* m_owningContainer;
 		bool m_enabled = true;
-		bool m_triggeredOnCreate = true;
+		bool m_triggeredOnCreate = false;
 
 		friend class BehaviorScriptContainer;
 	};
-
 }

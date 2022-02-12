@@ -187,6 +187,8 @@ namespace Engine
 
 					windowData.properties.width = (std::uint32_t)width;
 					windowData.properties.height = (std::uint32_t)height;
+					windowData.minimized = windowData.properties.width == 0
+						&& windowData.properties.height == 0;
 
 					WindowResizedEvent event(windowData.properties.width,
 						windowData.properties.height);
@@ -253,6 +255,23 @@ namespace Engine
 					{
 						windowData.callback(mouseScrollEvent);
 					}
+				});
+
+			glfwSetWindowFocusCallback(m_window, [](GLFWwindow* window, int focused) -> void
+				{
+					WindowData& windowData = *reinterpret_cast<WindowData*>(
+						glfwGetWindowUserPointer(window));
+					
+					bool newFocused = focused == GLFW_TRUE;
+					if (newFocused != windowData.focused)
+					{
+						WindowFocusEvent event(windowData.focused);
+						if (windowData.callback != nullptr)
+						{
+							windowData.callback(event);
+						}
+					}
+					windowData.focused = newFocused;
 				});
 		}
 	}

@@ -1,7 +1,8 @@
 #include "EditorPCH.h"
 #include "EditorCamera.h"
 
-#include "EditorUtils.h"
+#include "EditorSelection.h"
+
 #include "Source\Matrix.h"
 
 namespace Editor

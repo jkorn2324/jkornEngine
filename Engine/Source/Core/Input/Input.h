@@ -275,6 +275,9 @@ namespace Engine
 		static void Init();
 		static void Release();
 
+		static void SetEnabled(bool enabled);
+		static bool IsEnabled();
+
 		static bool IsKeyPressed(InputKeyCode keyCode);
 		static bool IsKeyPressed(InputKeyCode keyCode,
 			const float maxTime);

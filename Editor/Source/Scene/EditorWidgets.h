@@ -24,9 +24,12 @@ namespace Editor
 		void SetEnabled(bool enabled) { m_enabled = enabled; }
 		bool IsEnabled() const { return m_enabled; }
 
+		void SetMovable(bool movable) { m_movable = movable; }
+		bool IsMovable() const { return m_movable; }
+
 	private:
 		MathLib::Transform3D m_transform;
-		bool m_enabled = true;
+		bool m_enabled = true, m_movable = true;
 
 	public:
 		ImGuizmo::MODE m_widgetMode = ImGuizmo::MODE::LOCAL;

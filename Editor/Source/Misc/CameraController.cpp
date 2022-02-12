@@ -55,6 +55,12 @@ namespace Editor
 	
 	void CameraController::OnDestroy()
 	{
-		DEBUG_LOG_EXTERNAL("Camera Controller was destroyed.");
+	}
+
+	Engine::BehaviorScript* CameraController::CopyTo()
+	{
+		CameraController* cameraController = new CameraController();
+		cameraController->m_direction = m_direction;
+		return cameraController;
 	}
 }

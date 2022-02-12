@@ -25,4 +25,16 @@ namespace Engine
 
 		std::uint32_t width, height;
 	};
+
+	class WindowFocusEvent : public Event
+	{
+	public:
+		explicit WindowFocusEvent(bool focus)
+			: Event(), focused(focus) { }
+
+		EVENT_TYPE_CLASS(WindowFocusEvent)
+		EVENT_CATEGORY_CLASS(Application)
+
+		bool focused;
+	};
 }

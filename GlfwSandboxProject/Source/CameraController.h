@@ -11,6 +11,8 @@ namespace GlfwSandbox
 		void OnCreate() override;
 		void OnRuntimeUpdate(const Engine::Timestep& ts) override;
 		void OnDestroy() override;
+		
+		Engine::BehaviorScript* CopyTo() override;
 
 	private:
 		void HandleInput();

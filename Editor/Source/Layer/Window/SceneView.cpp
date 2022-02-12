@@ -1,7 +1,8 @@
 #include "EditorPCH.h"
 
 #include "SceneView.h"
-#include "EditorUtils.h"
+#include "EditorSceneManager.h"
+#include "EditorSelection.h"
 #include "PlatformInput.h"
 
 #include <imgui.h>
@@ -92,9 +93,12 @@ namespace Editor
 			editorCamera.MoveCamera(dir * MOUSE_CAMERA_MULTIPLIER, true);
 		}
 
+		bool isLeftAltPressed = ImGui::IsKeyDown(
+			platformInput.FromKeyCode(Engine::KEY_CODE_LEFT_ALT));
+		m_transformationWidget.SetMovable(!isLeftAltPressed);
+
 		bool handledZoom = false;
-		if (ImGui::IsKeyDown(
-			platformInput.FromKeyCode(Engine::KEY_CODE_LEFT_ALT)))
+		if (isLeftAltPressed)
 		{
 			float altKeyHeld = io.KeysDownDuration[
 				platformInput.FromKeyCode(Engine::KEY_CODE_LEFT_ALT)];
@@ -301,6 +305,7 @@ namespace Editor
 			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(&ImGui::GetWindowSize());
 			m_focused = ImGui::IsWindowFocused();
 			m_mouseScroll = MathLib::Vector2{ io.MouseWheelH, io.MouseWheel };
+			float width = ImGui::GetColumnWidth();
 			m_windowBarSpacing = ImGui::GetTextLineHeightWithSpacing() * 2.0f;
 		}
 
@@ -340,10 +345,16 @@ namespace Editor
 					= ImGuizmo::OPERATION::SCALE;
 			}
 		}
+		
+		// Adjusts the window position so that the transformation widget fits in the middle
+		// of the corresponding transform.
+		MathLib::Vector2 windowPosition = *(MathLib::Vector2*)&ImGui::GetWindowPos();
+		windowPosition.x += (m_windowSize.x - ImGui::GetContentRegionAvail().x) * 0.5f;
+		windowPosition.y += ImGui::GetTextLineHeight() * 2.0f;
 
 		m_entityWidgetChanged
 			= m_transformationWidget.OnImGuiRender(
-				*(MathLib::Vector2*)&ImGui::GetWindowPos(),
+				windowPosition,
 				GetResizedWindow());
 	}
 }

@@ -2,12 +2,11 @@
 
 #include "SceneHierarchy.h"
 #include "Application.h"
-#include "EditorUtils.h"
+#include "EditorSceneManager.h"
+#include "EditorSelection.h"
 
 #include <imgui.h>
 #include <sstream>
-
-#include "EditorUtils.h"
 
 namespace Editor
 {
@@ -105,11 +104,24 @@ namespace Editor
 			{
 				const std::vector<Engine::Entity>& entities = 
 					Engine::SceneManager::GetActiveScene().GetRootEntities();
+				Engine::Entity duplicatedEntity;
 				for (uint32_t i = 0; i < entities.size(); i++)
 				{
-					DrawEntity(entities[i]);
+					DrawEntity((Engine::Entity&)entities[i], duplicatedEntity);
 				}
 				ImGui::TreePop();
+
+				if (duplicatedEntity.IsValid())
+				{
+					// TODO: Fix bug where scene hierarchy generates an
+					// entity in the same scene (why we are getting random mesh renderer fail errors).
+#if 0
+					Engine::Entity createdEntity =
+						Engine::SceneManager::GetActiveScene().CreateEntity(
+							duplicatedEntity.GetComponent<Engine::NameComponent>().name + " (Clone)");
+					Engine::CopyEntity(duplicatedEntity, createdEntity, false);
+#endif
+				}
 			}
 		}
 		ImGui::End();
@@ -120,8 +132,20 @@ namespace Editor
 		return true;
 	}
 	
-	void SceneHierarchy::DrawEntity(const Engine::Entity& entity)
+	void SceneHierarchy::DrawEntity(Engine::Entity& entity, Engine::Entity& duplicatedEntity)
 	{
+		enum EntitySelectionMode
+		{
+			None,
+			Delete,
+			Duplicate
+		};
+
+		if (!entity.IsValid())
+		{
+			return;
+		}
+
 		ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
 
 		bool isEntitySameAsSelection = EditorSelection::GetSelectedEntity()
@@ -156,7 +180,7 @@ namespace Editor
 			m_selectionType = TYPE_VIEW_POPUP;
 		}
 
-		bool deleted = false;
+		EntitySelectionMode selectionMode = None;
 		switch (m_selectionType)
 		{
 		case TYPE_VIEW_POPUP:
@@ -164,7 +188,9 @@ namespace Editor
 			if (ImGui::BeginPopupContextItem())
 			{
 				if (ImGui::MenuItem("Delete"))
-					deleted = true;
+					selectionMode = Delete;
+				if (ImGui::MenuItem("Duplicate"))
+					selectionMode = Duplicate;
 
 				ImGui::EndPopup();
 			}
@@ -208,7 +234,7 @@ namespace Editor
 				auto children = ehc.GetChildren();
 				for (int i = 0; i < children.size(); i++)
 				{
-					DrawEntity(children[i]);
+					DrawEntity(children[i], duplicatedEntity);
 				}
 			}
 			ImGui::TreePop();
@@ -216,10 +242,17 @@ namespace Editor
 
 		ImGui::Unindent();
 
-		if (deleted)
+		switch (selectionMode)
 		{
+		case Delete:
 			Engine::SceneManager::GetActiveScene().DestroyEntity(
 				entity);
+			break;
+		case Duplicate:
+		{
+			duplicatedEntity = entity;
+			break;
+		}
 		}
 	}
 }

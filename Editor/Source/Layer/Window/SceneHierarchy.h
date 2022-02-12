@@ -33,7 +33,7 @@ namespace Editor
 	private:
 		bool OnEntityDestroyed(Engine::EntityDestroyedEvent& event);
 		
-		void DrawEntity(const Engine::Entity& entity);
+		void DrawEntity(Engine::Entity& entity, Engine::Entity& duplicatedEntity);
 
 	private:
 		EntitySelectionType m_selectionType = TYPE_NONE;

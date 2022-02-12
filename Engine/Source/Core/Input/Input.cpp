@@ -53,6 +53,7 @@ namespace Engine
 	static std::unordered_map<InputKeyCode, InputKeyCodeData> s_keyCodes
 		= std::unordered_map<InputKeyCode, InputKeyCodeData>();
 	static InputMouseData s_mouseInputData;
+	static bool s_inputEnabled = true;
 
 	Input::EventFunc s_inputEventFunc = nullptr;
 	PlatformInput* s_platformInput = nullptr;
@@ -85,6 +86,16 @@ namespace Engine
 		delete s_platformInput;
 	}
 
+	void Input::SetEnabled(bool enabled)
+	{
+		s_inputEnabled = enabled;
+	}
+
+	bool Input::IsEnabled()
+	{
+		return s_inputEnabled;
+	}
+
 	void Input::BindInputEventFunc(const Input::EventFunc& func)
 	{
 		s_inputEventFunc = func;
@@ -110,6 +121,8 @@ namespace Engine
 
 	bool Input::IsKeyPressed(InputKeyCode keyCode, const float maxTime)
 	{
+		if (!s_inputEnabled) return false;
+
 		const auto& found = s_keyCodes.find(keyCode);
 		if (found != s_keyCodes.end()
 			&& found->second.isPressed)
@@ -121,11 +134,13 @@ namespace Engine
 	
 	bool Input::IsKeyHeld(InputKeyCode keyCode)
 	{
-		return GetTimeKeyHeld(keyCode) >= MIN_KEY_HELD_TIME;
+		return s_inputEnabled && GetTimeKeyHeld(keyCode) >= MIN_KEY_HELD_TIME;
 	}
 
 	float Input::GetTimeKeyHeld(InputKeyCode keyCode)
 	{
+		if (!s_inputEnabled) return 0.0f;
+
 		const auto& found = s_keyCodes.find(keyCode);
 		if (found != s_keyCodes.end()
 			&& found->second.isPressed)
@@ -137,11 +152,13 @@ namespace Engine
 
 	bool Input::IsMouseButtonPressed(InputMouseButton button)
 	{
-		return IsMouseButtonPressed(button, MIN_MOUSE_HELD_TIME);
+		return s_inputEnabled && IsMouseButtonPressed(button, MIN_MOUSE_HELD_TIME);
 	}
 
 	bool Input::IsMouseButtonPressed(InputMouseButton button, const float maxPressedTime)
 	{
+		if (!s_inputEnabled) return false;
+
 		InputMouseData::MouseButtonData* mouseButtonData = GetInputMouseButtonData(button);
 		if (mouseButtonData == nullptr) return false;
 
@@ -153,11 +170,12 @@ namespace Engine
 
 	bool Input::IsMouseButtonHeld(InputMouseButton button)
 	{
-		return GetMouseButtonTimeHeld(button) >= MIN_MOUSE_HELD_TIME;
+		return s_inputEnabled && GetMouseButtonTimeHeld(button) >= MIN_MOUSE_HELD_TIME;
 	}
 
 	float Input::GetMouseButtonTimeHeld(InputMouseButton button)
 	{
+		if (!s_inputEnabled) return 0.0f;
 		InputMouseData::MouseButtonData* mouseButtonData = GetInputMouseButtonData(button);
 		if (mouseButtonData == nullptr) return false;
 		Timestep outDiff = CalculateTimestepDiff(mouseButtonData->lastTimeClicked);
@@ -175,6 +193,7 @@ namespace Engine
 
 	MathLib::Vector2 Input::GetMouseScrollOffset()
 	{
+		if (!s_inputEnabled) return MathLib::Vector2::Zero;
 		Timestep diff = CalculateTimestepDiff(s_mouseInputData.scrollTime);
 		if (diff > MAX_SCROLL_TIME)
 		{
@@ -191,7 +210,7 @@ namespace Engine
 
 	bool Input::OnInputKeyEvent(InputKeyEvent& event)
 	{
-		if (event.keyCode == KEY_CODE_UNKNOWN)
+		if (!s_inputEnabled || event.keyCode == KEY_CODE_UNKNOWN)
 		{
 			return true;
 		}
@@ -252,7 +271,7 @@ namespace Engine
 	bool Input::OnInputMouseButtonEvent(InputMouseButtonEvent& event)
 	{
 		InputMouseData::MouseButtonData* mouseButtonData = GetInputMouseButtonData(event.mouseButton);
-		if (mouseButtonData == nullptr) return true;
+		if (!s_inputEnabled || mouseButtonData == nullptr) return true;
 		
 		mouseButtonData->buttonState = event.inputAction;
 		if (mouseButtonData->buttonState == ACTION_PRESSED)

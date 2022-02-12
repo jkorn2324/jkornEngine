@@ -35,6 +35,7 @@ namespace Editor
 
 		const MathLib::Vector2& GetWindowSize() const { return m_windowSize; }
 
+		void OnUpdate(const Engine::Timestep& ts);
 		void RenderScene();
 		void Draw();
 
@@ -50,6 +51,6 @@ namespace Editor
 		float m_windowMenuBarSpacing;
 		GameViewAspectRatio m_aspectRatio;
 		GameViewAspectRatioType m_aspectRatioType = ASPECT_FREE;
-		bool m_open;
+		bool m_open, m_focused;
 	};
 }

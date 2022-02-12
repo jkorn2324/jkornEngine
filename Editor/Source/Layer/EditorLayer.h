@@ -39,6 +39,8 @@ namespace Editor
 		void DrawMenuBar();
 		void DrawEditorButtons();
 
+		void OnSceneRuntimeButtonSelected(bool play);
+
 	private:
 		SceneHierarchy m_sceneHierarchy;
 		EntityInspector m_entityInspector;

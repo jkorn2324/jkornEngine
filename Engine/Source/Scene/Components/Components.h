@@ -7,6 +7,7 @@
 #include "SceneCamera.h"
 #include "EntityHierarchyComponent.h"
 #include "LightingComponents.h"
+#include "BehaviorScript.h"
 
 namespace Engine
 {
@@ -60,6 +61,7 @@ namespace Engine
 	{
 		std::string name;
 
+		explicit NameComponent() : name() { }
 		explicit NameComponent(const std::string& name)
 			: name(name) { }
 		explicit NameComponent(const char* name)
@@ -107,7 +109,23 @@ namespace Engine
 		BehaviorScriptContainer& Get() { return *m_behaviorScriptContainer.get(); }
 		const BehaviorScriptContainer& Get() const { return *m_behaviorScriptContainer.get(); }
 
+		friend void Copy(const BehaviorComponent& from, BehaviorComponent& to)
+		{
+			to.Copy(from);
+		}
+
 	private:
+		void Copy(const BehaviorComponent& from)
+		{
+			if (from.IsValid())
+			{
+				for (const auto& behavior : from.m_behaviorScriptContainer->GetBehaviors())
+				{
+					m_behaviorScriptContainer->CopyBehavior(behavior);
+				}
+			}
+		}
+
 		void Create(Entity& entity)
 		{
 			m_behaviorScriptContainer = std::make_shared<BehaviorScriptContainer>(entity);

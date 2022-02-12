@@ -44,7 +44,10 @@ namespace Engine
 	public:
 		explicit Material();
 		explicit Material(const MaterialConstantsLayout& layout);
+		explicit Material(const Material& material);
 		~Material();
+
+		Material& operator=(const Material& material);
 
 		void SetConstantsLayout(const MaterialConstantsLayout& layout);
 

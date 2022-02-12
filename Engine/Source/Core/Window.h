@@ -53,6 +53,8 @@ namespace Engine
 		virtual void OnUpdate()=0;
 		virtual void Shutdown()=0;
 
+		virtual bool IsMinimized() const =0;
+		virtual bool IsFocused() const =0;
 		virtual bool IsValid() const=0;
 
 		virtual void SetVSync(bool vsync)=0;

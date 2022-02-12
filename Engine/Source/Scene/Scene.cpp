@@ -149,6 +149,21 @@ namespace Engine
 
 	const std::wstring& Scene::GetSceneName() const { return m_sceneName; }
 
+	Scene* Scene::CopyScene()
+	{
+		Scene* cpyScene = new Scene(m_sceneName);
+		for (const auto& e : m_rootEntities)
+		{
+			if (e.IsValid())
+			{
+				Entity copiedEntity
+					= cpyScene->CreateEntity();
+				CopyEntity(e, copiedEntity);
+			}
+		}
+		return cpyScene;
+	}
+
 	void Scene::BindEventFunc(const EventFunc& func)
 	{
 		m_eventFunc = func;
@@ -383,13 +398,13 @@ namespace Engine
 		return m_rootEntities;
 	}
 
-	Entity Scene::CreateEntity(const char* entityName)
+	Entity Scene::CreateEntity(const std::string& entityName, const Engine::Entity& parent)
 	{
 		PROFILE_SCOPE(CreateEntity, Scene);
 
 		Entity createdEntity = Entity(m_entityRegistry.create(), this);
 		createdEntity.AddComponent<NameComponent>(entityName);
-	
+
 		{
 			BehaviorComponent& entity
 				= createdEntity.AddComponent<BehaviorComponent>();
@@ -398,6 +413,10 @@ namespace Engine
 
 		EntityHierarchyComponent& ehc
 			= createdEntity.AddComponent<EntityHierarchyComponent>(createdEntity);
+		if (parent.IsValid())
+		{
+			ehc.SetParent(parent);
+		}
 
 		// Appends the entity back to the root entities.
 		if (!ehc.HasParent())
@@ -411,6 +430,16 @@ namespace Engine
 			m_eventFunc(createdEvent);
 		}
 		return createdEntity;
+	}
+
+	Entity Scene::CreateEntity(const std::string& entityName)
+	{
+		return CreateEntity(entityName.c_str());
+	}
+
+	Entity Scene::CreateEntity(const char* entityName)
+	{
+		return CreateEntity(entityName, Entity());
 	}
 
 	Entity Scene::CreateEntity()

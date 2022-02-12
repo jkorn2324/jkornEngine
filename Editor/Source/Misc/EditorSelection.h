@@ -13,21 +13,6 @@ namespace Editor
 {
 	using EventFunc = std::function<void(Engine::Event&)>;
 
-	class EditorSceneManager
-	{
-	public:
-		static void Init();
-		static void OnEvent(Engine::Event& event);
-
-		static bool IsPlaying();
-		static void SetPlaying(bool playing);
-
-		static bool IsPaused();
-		static void SetPaused(bool paused);
-
-		static class EditorCamera& GetEditorCamera();
-	};
-
 	class EditorSelection
 	{
 	public:

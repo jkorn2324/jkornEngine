@@ -1,7 +1,7 @@
 #include "EditorPCH.h"
 #include "EntityInspector.h"
 
-#include "EditorUtils.h"
+#include "EditorSelection.h"
 
 #include <imgui.h>
 #include <functional>

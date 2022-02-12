@@ -16,9 +16,11 @@ namespace Engine
 		{
 			WindowProperties properties;
 			WindowEventCallback callback;
+			bool minimized, focused;
 
 			WindowData(const WindowProperties& props)
-				: properties(props), callback(nullptr)
+				: properties(props), callback(nullptr), 
+				minimized(false), focused(true)
 			{
 			}
 		};
@@ -43,6 +45,8 @@ namespace Engine
 		 void Shutdown() override;
 
 		 bool IsValid() const override;
+		 bool IsMinimized() const override { return m_windowData.minimized; }
+		 bool IsFocused() const override { return m_windowData.focused; }
 
 		 void SetVSync(bool vsync) override;
 		 bool IsVSync() const override;
