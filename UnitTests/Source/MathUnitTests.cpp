@@ -2,6 +2,8 @@
 #include "Source\Math.h"
 #include "Source\Vector.h"
 #include "Source\Matrix.h"
+#include "Source\Geometry3D.h"
+#include "Source\Geometry2D.h"
 
 using namespace MathLib;
 
@@ -189,4 +191,58 @@ bool RunMatrix4UnitTests()
 	}
 	// TODO: 
 	return isWorking;
+}
+
+bool Run2DIntersectionUnitTests()
+{
+	bool isValid = true;
+
+	// Line Segments interesect.
+	{
+		Vector2 intersectedPoint;
+		
+		LineSegment2D a = { -Vector2::One, Vector2::One };
+		LineSegment2D b = { -Vector2::UnitY, Vector2::UnitY };
+		isValid &= Intersects(a, b , intersectedPoint);
+
+		a = { Vector2::UnitX, -Vector2::UnitX };
+		b = { Vector2::UnitY, -Vector2::UnitY };
+		isValid &= Intersects(a, b, intersectedPoint);
+
+		a = { Vector2::One * 3.0f, Vector2::UnitX};
+		b = { Vector2::UnitY, -Vector2::UnitY };
+		isValid &= !Intersects(a, b, intersectedPoint);
+
+		// TODO: Colinear unit tests.
+	}
+	return isValid;
+}
+
+bool Run3DIntersectionUnitTests()
+{
+	bool isValid = true;
+
+	// Ray intersects with plane.
+	{
+		Vector3 intersectedPoint;
+
+		Plane3D plane;
+		plane.normal = Vector3::UnitY;
+
+		// Tests if it intersects.
+		Ray3D ray(Vector3(0.0f, 1.0f, 1.0f), -MathLib::Vector3::UnitY);
+		isValid &= Intersects(plane, ray, intersectedPoint);
+
+		// Tests dot is 1.0f.
+		ray.direction = MathLib::Vector3::UnitY;
+		isValid &= !Intersects(plane, ray, intersectedPoint);
+
+		ray.direction = Normalize(MathLib::Vector3::One);
+		isValid &= !Intersects(plane, ray, intersectedPoint);
+
+		ray.distance = 10.0f;
+		ray.direction = -ray.direction;
+		isValid &= Intersects(plane, ray, intersectedPoint);
+	}
+	return isValid;
 }

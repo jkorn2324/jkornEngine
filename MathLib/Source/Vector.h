@@ -1,10 +1,12 @@
 #pragma once
 
-#include <smmintrin.h>
 #include <cstdint>
 
 namespace MathLib
 {
+
+	// TODO: Add SIMD/intrinsic support (Reason why we don't use SIMD as its different based on platform
+	// ARM, x64, etc...)
 
 #pragma region vector2
 
@@ -16,8 +18,13 @@ namespace MathLib
 
 		explicit Vector2();
 		explicit Vector2(float x, float y);
+		
 		Vector2(const Vector2& vec);
-		Vector2(const class SIMDVector2& vec);
+		Vector2(const class Vector3& vec);
+		Vector2(const class Vector4& vec);
+
+		Vector2& operator=(const class Vector3& vec);
+		Vector2& operator=(const class Vector4& vec);
 
 		float Length() const;
 		float LengthSquared() const;
@@ -28,10 +35,14 @@ namespace MathLib
 		friend bool IsNormalized(const Vector2& vec);
 
 		friend float Dot(const Vector2& a, const Vector2& b);
+		friend float Cross(const Vector2& a, const Vector2& b);
 		friend Vector2 Reflect(const Vector2& vec, const Vector2& normal);
 
 		friend Vector2 Lerp(const Vector2& a, const Vector2& b, float alpha);
 		friend Vector2 LerpClamped(const Vector2& a, const Vector2& b, float alpha);
+		
+		friend Vector2 Min(const Vector2& a, const Vector2& b);
+		friend Vector2 Max(const Vector2& a, const Vector2& b);
 
 		friend bool operator==(const Vector2& a, const Vector2& b);
 		friend bool operator!=(const Vector2& a, const Vector2& b);
@@ -59,36 +70,6 @@ namespace MathLib
 		static const Vector2 One;
 	};
 
-	// Optimized Version of a Vector2, Utilizes SIMD.
-	class SIMDVector2
-	{
-	public:
-		// TODO: Implementation
-		union
-		{
-			__m128 vec;
-			struct
-			{
-				float x;
-				float y;
-			};
-		};
-
-		explicit SIMDVector2();
-		explicit SIMDVector2(float x, float y);
-		SIMDVector2(const SIMDVector2& vec);
-		SIMDVector2(__m128 vec);
-		SIMDVector2(const Vector2& vec);
-
-		float Length() const;
-		float LengthSquared() const;
-		void Normalize();
-		bool IsNormalized() const;
-
-		friend float Dot(const SIMDVector2& a, const SIMDVector2& b);
-		friend SIMDVector2 Reflect(const SIMDVector2& vec, const SIMDVector2& normal);
-	};
-
 	class Vector2Int
 	{
 	public:
@@ -113,8 +94,13 @@ namespace MathLib
 
 		explicit Vector3();
 		explicit Vector3(float x, float y, float z);
-		explicit Vector3(const Vector2& vec, float z);
+		
 		Vector3(const Vector3& vec);
+		Vector3(const Vector2& vec, float z = 0.0f);
+		Vector3(const class Vector4& vec);
+
+		Vector3& operator=(const Vector2& vec);
+		Vector3& operator=(const Vector4& vec);
 
 		float Length() const;
 		float LengthSquared() const;
@@ -176,12 +162,6 @@ namespace MathLib
 		static const Vector3 Zero;
 	};
 
-	// Optimized version of a Vector3, utilizes SIMD.
-	class SIMDVector3
-	{
-		// TODO: Implementation
-	};
-
 	class Vector3Int
 	{
 	public:
@@ -206,9 +186,13 @@ namespace MathLib
 
 		explicit Vector4();
 		explicit Vector4(float x, float y, float z, float w);
-		explicit Vector4(const Vector2& vec, float z, float w);
-		explicit Vector4(const Vector3& vec, float w);
+		
 		Vector4(const Vector4& vec);
+		Vector4(const Vector3& vec, float w = 0.0f);
+		Vector4(const Vector2& vec, float z = 0.0f, float w = 0.0f);
+
+		Vector4& operator=(const Vector3& vec);
+		Vector4& operator=(const Vector2& vec);
 
 		float Length() const;
 		float LengthSquared() const;
@@ -252,11 +236,5 @@ namespace MathLib
 
 		static const Vector4 One;
 		static const Vector4 Zero;
-	};
-
-	// Optimized version of a Vector4, utilizes SIMD.
-	class SIMDVector4
-	{
-		// TODO: Implementation
 	};
 }

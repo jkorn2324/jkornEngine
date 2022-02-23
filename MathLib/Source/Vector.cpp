@@ -21,19 +21,33 @@ namespace MathLib
 	Vector2::Vector2()
 		: x(0.0f), y(0.0f) { }
 
-
 	Vector2::Vector2(const Vector2& vec)
 		: x(vec.x), y(vec.y) { }
 
-	Vector2::Vector2(const SIMDVector2& vec)
-	{
-		// TODO: Implementation
-	}
+	Vector2::Vector2(const Vector3& vec)
+		: x(vec.x), y(vec.y) { }
 
+	Vector2::Vector2(const Vector4& vec)
+		: x(vec.x), y(vec.y)
+	{
+	}
 
 	Vector2::Vector2(float x, float y)
 		: x(x), y(y) { }
 
+	Vector2& Vector2::operator=(const Vector3& vec)
+	{
+		x = vec.x;
+		y = vec.y;
+		return *this;
+	}
+
+	Vector2& Vector2::operator=(const Vector4& vec)
+	{
+		x = vec.x;
+		y = vec.y;
+		return *this;
+	}
 
 	float Vector2::Length() const
 	{
@@ -144,6 +158,11 @@ namespace MathLib
 		return a.x * b.x + a.y * b.y;
 	}
 
+	float Cross(const Vector2& a, const Vector2& b)
+	{
+		return a.x * b.y - a.y * b.x;
+	}
+
 	bool operator==(const Vector2& a, const Vector2& b)
 	{
 		return IsCloseEnough(a.x, b.x)
@@ -228,10 +247,27 @@ namespace MathLib
 	Vector3::Vector3(const Vector2& vec, float z)
 		: x(vec.x), y(vec.y), z(z) { }
 
-
 	Vector3::Vector3(const Vector3& vec)
 		: x(vec.x), y(vec.y), z(vec.z) { }
 
+	Vector3::Vector3(const Vector4& vec)
+		: x(vec.x), y(vec.y), z(vec.z) { }
+
+	Vector3& Vector3::operator=(const Vector2& vec)
+	{
+		x = vec.x;
+		y = vec.y;
+		z = 0.0f;
+		return *this;
+	}
+
+	Vector3& Vector3::operator=(const Vector4& vec)
+	{
+		x = vec.x;
+		y = vec.y;
+		z = vec.z;
+		return *this;
+	}
 
 	float Vector3::Length() const
 	{
@@ -493,6 +529,24 @@ namespace MathLib
 		: x(vec.x), y(vec.y), z(vec.z), w(vec.w) { }
 
 
+	Vector4& Vector4::operator=(const Vector3& vec)
+	{
+		x = vec.x;
+		y = vec.y;
+		z = vec.z;
+		w = 0.0f;
+		return *this;
+	}
+
+	Vector4& Vector4::operator=(const Vector2& vec)
+	{
+		x = vec.x;
+		y = vec.y;
+		z = 0.0f;
+		w = 0.0f;
+		return *this;
+	}
+
 	float Vector4::Length() const
 	{
 		return Sqrt(LengthSquared());
@@ -682,71 +736,6 @@ namespace MathLib
 	}
 
 #pragma endregion
-
-#pragma region simd_vector2
-
-	SIMDVector2::SIMDVector2()
-	{
-		vec = _mm_setzero_ps();
-	}
-
-	SIMDVector2::SIMDVector2(float x, float y)
-	{
-		vec = _mm_set_ps(x, y, 0.0f, 0.0f);
-	}
-
-	SIMDVector2::SIMDVector2(const Vector2& v)
-	{
-		vec = _mm_setr_ps(v.x, v.y, 0.0f, 0.0f);
-	}
-
-	SIMDVector2::SIMDVector2(__m128 value)
-	{
-		vec = value;
-	}
-
-	SIMDVector2::SIMDVector2(const SIMDVector2& v)
-	{
-		vec = v.vec;
-	}
-
-	float SIMDVector2::Length() const
-	{
-		SIMDVector2 vec(_mm_rsqrt_ps(_mm_dp_ps(vec, vec, 0x33)));
-		return vec.x;
-	}
-
-	float SIMDVector2::LengthSquared() const
-	{
-		SIMDVector2 vec(_mm_dp_ps(vec, vec, 0x33));
-		return vec.x;
-	}
-
-	void SIMDVector2::Normalize()
-	{
-		__m128 lengthSquared = _mm_dp_ps(vec, vec, 0x33);
-		lengthSquared = _mm_rsqrt_ps(lengthSquared);
-		vec = _mm_mul_ps(vec, lengthSquared);
-	}
-
-	bool SIMDVector2::IsNormalized() const
-	{
-		return IsCloseEnough(1.0f, Length());
-	}
-
-	float Dot(const SIMDVector2& a, const SIMDVector2& b)
-	{
-		SIMDVector2 vec(_mm_dp_ps(a.vec, b.vec, 0x33));
-		return vec.x;
-	}
-
-	SIMDVector2 Reflect(const SIMDVector2& vec, const SIMDVector2& normal)
-	{
-		__m128 two = _mm_setr_ps(-2.0f, -2.0f, 0.0f, 0.0f);
-		__m128 output = _mm_mul_ps(_mm_dp_ps(vec.vec, normal.vec, 0x33), normal.vec);
-		output = _mm_add_ps(vec.vec, _mm_mul_ps(two, output));
-		return SIMDVector2(output);
-	}
 
 #pragma endregion
 	

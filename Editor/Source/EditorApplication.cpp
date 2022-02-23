@@ -19,6 +19,13 @@ namespace Engine
 
 	Application* Create(const ApplicationArgs& args)
 	{
+#if DEBUG
+		std::string editorProjectPath = "..\\EditorSandboxProject";
+		if (std::filesystem::is_directory(editorProjectPath))
+		{
+			return new EditorApplication(editorProjectPath);
+		}
+#endif
 		return new EditorApplication(Engine::FileUtils::GetWorkingDirectory());
 	}
 }

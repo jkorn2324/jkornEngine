@@ -24,6 +24,10 @@ int main()
 		"Matrix3x3 UnitTest Failed.");
 	DebugAssert(RunMatrix4UnitTests() == true,
 		"Matrix4x4 UnitTest Failed.");
+	DebugAssert(Run2DIntersectionUnitTests() == true,
+		"2D Intersection UnitTests Failed");
+	DebugAssert(Run3DIntersectionUnitTests() == true,
+		"2D Intersection UnitTests Failed");
 
 	std::printf("Unit Tests Passed!\n");
 	return 0;
