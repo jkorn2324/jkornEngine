@@ -102,8 +102,24 @@ namespace MathLib
 
 	bool Circle2D::Intersects(const LineSegment2D& lineSegment, Vector2& point) const
 	{
-		// TODO: Implementation
-		return false;
+		Vector2 segmentDirection = lineSegment.GetDirection();
+		Vector2 differenceToStart = lineSegment.start - center;
+		float sProjected = Dot(differenceToStart, segmentDirection);
+		Vector2 comparedPoint = lineSegment.start + segmentDirection * sProjected;
+		if (!lineSegment.IsPointOnSegment(comparedPoint))
+		{
+			return false;
+		}
+		float distanceSquared = (center - comparedPoint).LengthSquared();
+		float radiusSquared = radius * radius;
+		if (distanceSquared > radiusSquared)
+		{
+			return false;
+		}
+		// Gets the collided point from the distance to the collision points.
+		float differenceToCollisionPoints = Sqrt(radiusSquared - distanceSquared);
+		point = comparedPoint - segmentDirection * differenceToCollisionPoints;
+		return true;
 	}
 
 	bool Circle2D::Intersects(const Ray2D& ray) const
@@ -114,8 +130,23 @@ namespace MathLib
 
 	bool Circle2D::Intersects(const Ray2D& ray, Vector2& point) const
 	{
-		// TODO: Implementation
-		return false;
+		Vector2 differenceToStart = ray.startPoint - center;
+		float sProjected = Dot(differenceToStart, ray.direction);
+		Vector2 pointOnRay = ray.startPoint + ray.direction * sProjected;
+		if (!ray.IsPointWithin(pointOnRay))
+		{
+			return false;
+		}
+		float distanceSquared = (center - pointOnRay).LengthSquared();
+		float radiusSquared = radius * radius;
+		if (distanceSquared > radiusSquared)
+		{
+			return false;
+		}
+		// Gets the collided point from the distance to the collision points.
+		float differenceToCollisionPoints = Sqrt(radiusSquared - distanceSquared);
+		point = pointOnRay - ray.direction * differenceToCollisionPoints;
+		return true;
 	}
 
 	bool IsPointWithin(const Circle2D& circle, const Vector2& point)

@@ -26,8 +26,14 @@ namespace MathLib
 			return difference.Length();
 		}
 
+		bool IsPointWithin(const Vector2& point) const;
+		bool IsPointOnSegment(const Vector2& point) const;
+
 		friend bool Intersects(const LineSegment2D& a, const LineSegment2D& b);
 		friend bool Intersects(const LineSegment2D& a, const LineSegment2D& b, Vector2& intersectedPoint);
+
+		friend bool IsPointWithin(const LineSegment2D& a, const Vector2& point);
+		friend bool IsPointOnSegment(const LineSegment2D& a, const Vector2& point);
 	};
 
 	struct Ray2D
@@ -43,7 +49,13 @@ namespace MathLib
 
 		bool IsInfinite() const { return distance <= 0.0f; }
 
+		bool IsPointWithin(const Vector2& point) const;
+		bool IsPointOnRay(const Vector2& point) const;
+
 		friend bool Intersects(const Ray2D& a, const Ray2D& b);
 		friend bool Intersects(const Ray2D& a, const Ray2D& b, Vector2& intersectedPoint);
+
+		friend bool IsPointWithin(const Ray2D& a, const Vector2& point);
+		friend bool IsPointOnRay(const Ray2D& a, const Vector2& point);
 	};
 }

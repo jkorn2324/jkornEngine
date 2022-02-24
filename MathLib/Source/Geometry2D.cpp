@@ -6,31 +6,26 @@
 namespace MathLib
 {
 
-	static bool IsWithinSegment(const LineSegment2D& segment, const Vector2& point)
+	bool LineSegment2D::IsPointWithin(const Vector2& point) const
 	{
-		Vector2 min = Min(segment.start, segment.end);
-		Vector2 max = Max(segment.start, segment.end);
+		Vector2 min = Min(start, end);
+		Vector2 max = Max(start, end);
 		return point.x >= min.x
 			&& point.x <= max.x
 			&& point.y >= min.y
 			&& point.y <= max.y;
 	}
 
-	static bool IsWithinRay(const Ray2D& ray, const Vector2& point)
+	bool LineSegment2D::IsPointOnSegment(const Vector2& point) const
 	{
-		if (ray.IsInfinite())
+		if (!IsPointWithin(point))
 		{
-			// TODO: Implementation
 			return false;
 		}
-
-		Vector2 endPoint = ray.startPoint + ray.direction * ray.distance;
-		Vector2 min = Min(ray.startPoint, endPoint);
-		Vector2 max = Max(ray.startPoint, endPoint);
-		return point.x >= min.x
-			&& point.x <= max.x
-			&& point.y >= min.y
-			&& point.y <= max.y;
+		Vector2 startToPoint = Normalize(point - start);
+		Vector2 direction = GetDirection();
+		float dotPoint = Dot(direction, startToPoint);
+		return Abs(dotPoint) >= 1.0f;
 	}
 
 	bool Intersects(const LineSegment2D& a, const LineSegment2D& b)
@@ -92,8 +87,18 @@ namespace MathLib
 			float t = numerator / denominator;
 			intersectedPoint = Vector2{ t, segmentASlope * t + segmentAYStart };
 		}
-		return IsWithinSegment(a, intersectedPoint)
-			&& IsWithinSegment(b, intersectedPoint);
+		return a.IsPointWithin(intersectedPoint)
+			&& b.IsPointWithin(intersectedPoint);
+	}
+
+	bool IsPointWithin(const LineSegment2D& a, const Vector2& point)
+	{
+		return a.IsPointWithin(point);
+	}
+
+	bool IsPointOnSegment(const LineSegment2D& a, const Vector2& point)
+	{
+		return a.IsPointOnSegment(point);
 	}
 	
 	bool Intersects(const Ray2D& a, const Ray2D& b)
@@ -113,5 +118,42 @@ namespace MathLib
 		}
 		// TODO: Implementation
 		return false;
+	}
+
+	bool Ray2D::IsPointWithin(const Vector2& point) const
+	{
+		if (IsInfinite())
+		{
+			// TODO: Implementation
+			return false;
+		}
+		Vector2 endPoint = startPoint + direction * distance;
+		Vector2 min = Min(startPoint, endPoint);
+		Vector2 max = Max(startPoint, endPoint);
+		return point.x >= min.x
+			&& point.x <= max.x
+			&& point.y >= min.y
+			&& point.y <= max.y;
+	}
+
+	bool Ray2D::IsPointOnRay(const Vector2& point) const
+	{
+		if (!IsPointWithin(point))
+		{
+			return false;
+		}
+		Vector2 difference = Normalize(point - startPoint);
+		float dotWithDirection = Dot(difference, direction);
+		return Abs(dotWithDirection) >= 1.0f;
+	}
+
+	bool IsPointWithin(const Ray2D& a, const Vector2& point)
+	{
+		return a.IsPointWithin(point);
+	}
+
+	bool IsPointOnRay(const Ray2D& a, const Vector2& point)
+	{
+		return a.IsPointOnRay(point);
 	}
 }
