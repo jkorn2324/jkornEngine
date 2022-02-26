@@ -4,6 +4,7 @@
 
 namespace MathLib
 {
+	struct Ray2D;
 
 	struct LineSegment2D
 	{
@@ -29,8 +30,15 @@ namespace MathLib
 		bool IsPointWithin(const Vector2& point) const;
 		bool IsPointOnSegment(const Vector2& point) const;
 
+		bool Intersects(const LineSegment2D& segment) const;
+		bool Intersects(const LineSegment2D& segment, Vector2& point) const;
+		bool Intersects(const Ray2D& ray) const;
+		bool Intersects(const Ray2D& ray, Vector2& point) const;
+
 		friend bool Intersects(const LineSegment2D& a, const LineSegment2D& b);
 		friend bool Intersects(const LineSegment2D& a, const LineSegment2D& b, Vector2& intersectedPoint);
+		friend bool Intersects(const LineSegment2D& a, const Ray2D& b);
+		friend bool Intersects(const LineSegment2D& a, const Ray2D& b, Vector2& point);
 
 		friend bool IsPointWithin(const LineSegment2D& a, const Vector2& point);
 		friend bool IsPointOnSegment(const LineSegment2D& a, const Vector2& point);
@@ -52,10 +60,17 @@ namespace MathLib
 		bool IsPointWithin(const Vector2& point) const;
 		bool IsPointOnRay(const Vector2& point) const;
 
-		friend bool Intersects(const Ray2D& a, const Ray2D& b);
-		friend bool Intersects(const Ray2D& a, const Ray2D& b, Vector2& intersectedPoint);
+		bool Intersects(const Ray2D& ray) const;
+		bool Intersects(const Ray2D& ray, Vector2& point) const;
+		bool Intersects(const LineSegment2D& segment) const;
+		bool Intersects(const LineSegment2D& segment, Vector2& point) const;
 
 		friend bool IsPointWithin(const Ray2D& a, const Vector2& point);
 		friend bool IsPointOnRay(const Ray2D& a, const Vector2& point);
+
+		friend bool Intersects(const Ray2D& a, const Ray2D& b);
+		friend bool Intersects(const Ray2D& a, const Ray2D& b, Vector2& intersectedPoint);
+		friend bool Intersects(const Ray2D& a, const LineSegment2D& b);
+		friend bool Intersects(const Ray2D& a, const LineSegment2D& b, Vector2& intersectedPoint);
 	};
 }

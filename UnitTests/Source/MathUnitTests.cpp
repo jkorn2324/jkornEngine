@@ -197,23 +197,80 @@ bool Run2DIntersectionUnitTests()
 {
 	bool isValid = true;
 
-	// Line Segments interesect.
+	// Line Segments vs Line Segment intersections.
 	{
 		Vector2 intersectedPoint;
-		
+
 		LineSegment2D a = { -Vector2::One, Vector2::One };
 		LineSegment2D b = { -Vector2::UnitY, Vector2::UnitY };
-		isValid &= Intersects(a, b , intersectedPoint);
+		isValid &= Intersects(a, b, intersectedPoint);
 
 		a = { Vector2::UnitX, -Vector2::UnitX };
 		b = { Vector2::UnitY, -Vector2::UnitY };
 		isValid &= Intersects(a, b, intersectedPoint);
 
-		a = { Vector2::One * 3.0f, Vector2::UnitX};
+		a = { Vector2::One * 3.0f, Vector2::UnitX };
 		b = { Vector2::UnitY, -Vector2::UnitY };
 		isValid &= !Intersects(a, b, intersectedPoint);
 
-		// TODO: Colinear unit tests.
+		// Checks if two colinear lines intersect.
+		a = { -Vector2::UnitX, Vector2::UnitX * 5.0f };
+		b = { -Vector2::UnitX, Vector2::UnitX * 5.0f };
+
+		isValid &= Intersects(a, b, intersectedPoint);
+
+		a = { -Vector2::UnitX, Vector2::UnitX * 5.0f };
+		b = { -Vector2::UnitX * 3.0f, Vector2::UnitX * 3.0f };
+
+		isValid &= Intersects(a, b, intersectedPoint);
+	}
+
+	// Ray vs Ray Intersections.
+	{
+		Vector2 intersectedPoint;
+
+		Ray2D a = { -Vector2::One, Normalize(Vector2::One) };
+		Ray2D b = { -Vector2::UnitY, Vector2::UnitY };
+		isValid &= Intersects(a, b, intersectedPoint);
+
+		a = { Vector2::UnitX, -Vector2::UnitX };
+		b = { Vector2::UnitY, -Vector2::UnitY };
+		isValid &= Intersects(a, b, intersectedPoint);
+
+		a = { Vector2::One * 3.0f, Vector2::UnitX };
+		b = { Vector2::UnitY, -Vector2::UnitY };
+		isValid &= !Intersects(a, b, intersectedPoint);
+
+		// Checks if two colinear lines intersect.
+		a = { -Vector2::UnitX, Vector2::UnitX };
+		b = { -Vector2::UnitX, Vector2::UnitX };
+
+		isValid &= Intersects(a, b, intersectedPoint);
+
+		a = { -Vector2::UnitX, Vector2::UnitX };
+		b = { -Vector2::UnitX * 3.0f, Vector2::UnitX };
+
+		isValid &= Intersects(a, b, intersectedPoint);
+	}
+
+	// TODO: Check ray vs segment intersections
+	{
+
+	}
+
+	// TODO: Check rect2D vs segment/ray/rect2D intersections
+	{
+
+	}
+
+	// TODO: Check circle2D vs segment/ray/circle2D intersections
+	{
+
+	}
+
+	// TODO: Check triangle2D vs segment/ray intersections
+	{
+
 	}
 	return isValid;
 }

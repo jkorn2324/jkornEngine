@@ -16,8 +16,8 @@ namespace MathLib
 		float x;
 		float y;
 
-		explicit Vector2();
-		explicit Vector2(float x, float y);
+		Vector2();
+		Vector2(float x, float y);
 		
 		Vector2(const Vector2& vec);
 		Vector2(const class Vector3& vec);
@@ -92,8 +92,8 @@ namespace MathLib
 		float y;
 		float z;
 
-		explicit Vector3();
-		explicit Vector3(float x, float y, float z);
+		Vector3();
+		Vector3(float x, float y, float z);
 		
 		Vector3(const Vector3& vec);
 		Vector3(const Vector2& vec, float z = 0.0f);
@@ -109,15 +109,18 @@ namespace MathLib
 
 		friend float Dot(const Vector3& a, const Vector3& b);
 		friend Vector3 Cross(const Vector3& a, const Vector3& b);
-		friend Vector3 Normalize(const Vector3& vec);
 		friend Vector3 Reflect(const Vector3& dir, const Vector3& normal);
+
+		friend bool IsNormalized(const Vector3& vec);
+		friend Vector3 Normalize(const Vector3& vec);
 
 		friend Vector3 Lerp(const Vector3& a, const Vector3& b, float alpha);
 		friend Vector3 LerpClamped(const Vector3& a, const Vector3& b, float alpha);
 
 		friend Vector3 Rotate(const class Quaternion& quat, const Vector3& direction);
 
-		friend bool IsNormalized(const Vector3& vec);
+		friend Vector3 Min(const Vector3& a, const Vector3& b);
+		friend Vector3 Max(const Vector3& a, const Vector3& b);
 
 		friend bool operator==(const Vector3& a, const Vector3& b);
 		friend bool operator!=(const Vector3& a, const Vector3& b);
@@ -184,8 +187,8 @@ namespace MathLib
 		float z;
 		float w;
 
-		explicit Vector4();
-		explicit Vector4(float x, float y, float z, float w);
+		Vector4();
+		Vector4(float x, float y, float z, float w);
 		
 		Vector4(const Vector4& vec);
 		Vector4(const Vector3& vec, float w = 0.0f);
@@ -200,12 +203,15 @@ namespace MathLib
 		bool IsNormalized() const;
 
 		friend float Dot(const Vector4& a, const Vector4& b);
-		friend Vector4 Normalize(const Vector4& vec);
 		friend Vector4 Reflect(const Vector4& vec, const Vector4& normal);
 		friend Vector4 Lerp(const Vector4& a, const Vector4& b, float alpha);
 		friend Vector4 LerpClamped(const Vector4& a, const Vector4& b, float alpha);
 
+		friend Vector4 Normalize(const Vector4& vec);
 		friend bool IsNormalized(const Vector4& vec);
+
+		friend Vector4 Min(const Vector4& a, const Vector4& b);
+		friend Vector4 Max(const Vector4& a, const Vector4& b);
 
 		friend bool operator==(const Vector4& a, const Vector4& b);
 		friend bool operator!=(const Vector4& a, const Vector4& b);

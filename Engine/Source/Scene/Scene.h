@@ -49,6 +49,12 @@ namespace Engine
 		uint32_t GetNumEntities() const { return (uint32_t)m_entityRegistry.size(); }
 		const std::wstring& GetSceneName() const;
 
+		template<typename ...T>
+		auto GetEntitiesWithComponents() const
+		{
+			return m_entityRegistry.view<T...>();
+		}
+
 		Scene* CopyScene();
 
 	private:

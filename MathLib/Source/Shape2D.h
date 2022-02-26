@@ -13,9 +13,10 @@ namespace MathLib
 		Vector2 size;
 		Vector2 center;
 
-		explicit Rect2D(const Vector2& min, const Vector2& max);
-		explicit Rect2D(const Vector2& center, float size);
-		explicit Rect2D(const Vector2& center, float sizeX, float sizeY);
+		Rect2D() = default;
+		Rect2D(const Vector2& min, const Vector2& max);
+		Rect2D(const Vector2& center, float size);
+		Rect2D(const Vector2& center, float sizeX, float sizeY);
 
 		const Vector2 GetNormal() const;
 		Vector2 GetMin() const;
@@ -25,6 +26,8 @@ namespace MathLib
 		bool Intersects(const LineSegment2D& lineSegment, Vector2& point) const;
 		bool Intersects(const Ray2D& ray) const;
 		bool Intersects(const Ray2D& ray, Vector2& point) const;
+		bool Intersects(const Rect2D& rect) const;
+		bool Intersects(const Rect2D& rect, Rect2D& intersectionRect) const;
 
 		bool IsPointWithin(const Vector2& point) const;
 		friend bool IsPointWithin(const Rect2D& box, const Vector2& point);
@@ -36,8 +39,8 @@ namespace MathLib
 		Vector2 center = Vector2::Zero;
 		float radius = 1.0f;
 
-		explicit Circle2D() = default;
-		explicit Circle2D(const Vector2& center, float radius);
+		Circle2D() = default;
+		Circle2D(const Vector2& center, float radius);
 
 		bool IsPointWithin(const Vector2& point) const;
 		const Vector3 GetNormal() const;
@@ -46,6 +49,9 @@ namespace MathLib
 		bool Intersects(const LineSegment2D& lineSegment, Vector2& point) const;
 		bool Intersects(const Ray2D& ray) const;
 		bool Intersects(const Ray2D& ray, Vector2& point) const;
+
+		bool Intersects(const Circle2D& circle) const;
+		bool Intersects(const Circle2D& circle, Vector2& pointA, Vector2& pointB) const;
 
 		friend bool IsPointWithin(const Circle2D& circle, const Vector2& point);
 
@@ -62,14 +68,20 @@ namespace MathLib
 		Vector2 point2 = Vector2::Zero;
 		Vector2 point3 = Vector2::Zero;
 
-		explicit Triangle2D() = default;
-		explicit Triangle2D(const Vector2& p1, const Vector2& p2, const Vector2& p3);
+		Triangle2D() = default;
+		Triangle2D(const Vector2& p1, const Vector2& p2, const Vector2& p3);
 
 		const Vector2 GetCenter() const;
 		void SetCenter(const Vector2& centerPosition);
 		const Vector3 GetNormal() const;
 
 		bool IsPointWithin(const Vector2& point) const;
+
+		bool Intersects(const Ray2D& ray) const;
+		bool Intersects(const Ray2D& ray, Vector2& point) const;
+		bool Intersects(const LineSegment2D& lineSegment) const;
+		bool Intersects(const LineSegment2D& lineSegment, Vector2& point) const;
+
 		friend bool IsPointWithin(const Triangle2D& triangle, const Vector2& point);
 	};
 }

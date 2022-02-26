@@ -329,6 +329,18 @@ namespace MathLib
 		return Vector3(outQuat.x, outQuat.y, outQuat.z);
 	}
 
+	Vector3 Min(const Vector3& a, const Vector3& b)
+	{
+		return Vector3(Min(a.x, b.x),
+			Min(a.y, b.y), Min(a.z, b.z));
+	}
+
+	Vector3 Max(const Vector3& a, const Vector3& b)
+	{
+		return Vector3(Max(a.x, b.x),
+			Max(a.y, b.y), Max(a.z, b.z));
+	}
+
 	Vector3 Normalize(const Vector3& in)
 	{
 		Vector3 out(in);
@@ -595,6 +607,18 @@ namespace MathLib
 	{
 		alpha = Clamp(0.0f, 1.0f, alpha);
 		return Lerp(a, b, alpha);
+	}
+
+	Vector4 Min(const Vector4& a, const Vector4& b)
+	{
+		return Vector4(
+			Min(a.x, b.x), Min(a.y, b.y), Min(a.z, b.z), Min(a.w, b.w));
+	}
+
+	Vector4 Max(const Vector4& a, const Vector4& b)
+	{
+		return Vector4(
+			Max(a.x, b.x), Max(a.y, b.y), Max(a.z, b.z), Max(a.w, b.w));
 	}
 
 	Vector4 Normalize(const Vector4& in)
