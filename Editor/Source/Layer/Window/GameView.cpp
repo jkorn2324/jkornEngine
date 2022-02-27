@@ -129,8 +129,8 @@ namespace Editor
 
 	void GameView::ConstrainToAspectRatio(float x, float y)
 	{
-		float windowSizeY = m_windowSize.y - m_windowMenuBarSpacing;
-		float candidateAspectRatio = y / x;
+		float windowSizeY = MathLib::Abs(m_windowSize.y - m_windowMenuBarSpacing);
+		float candidateAspectRatio = MathLib::Abs(y) / x;
 		float windowAspectRatio = windowSizeY / m_windowSize.x;
 		float windowY = windowAspectRatio * x;
 
@@ -161,9 +161,13 @@ namespace Editor
 
 		// Updates the window properties.
 		{
+			ImGuiWindow* window = ImGui::GetCurrentWindow();
 			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(
 				&ImGui::GetWindowSize());
-			m_windowMenuBarSpacing = ImGui::GetTextLineHeightWithSpacing() * 3.0f;
+			bool isNotHidden = !window->DockNode->IsHiddenTabBar();
+			float textLineHeightSpacing = ImGui::GetTextLineHeightWithSpacing();
+			m_windowMenuBarSpacing = isNotHidden
+				* textLineHeightSpacing + textLineHeightSpacing * 2.0f;
 			m_focused = ImGui::IsWindowFocused();
 		}
 

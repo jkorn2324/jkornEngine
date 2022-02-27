@@ -305,7 +305,6 @@ namespace Editor
 			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(&ImGui::GetWindowSize());
 			m_focused = ImGui::IsWindowFocused();
 			m_mouseScroll = MathLib::Vector2{ io.MouseWheelH, io.MouseWheel };
-			float width = ImGui::GetColumnWidth();
 			m_windowBarSpacing = ImGui::GetTextLineHeightWithSpacing() * 2.0f;
 		}
 
