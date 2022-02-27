@@ -51,6 +51,7 @@ namespace Editor
 		float m_windowMenuBarSpacing;
 		GameViewAspectRatio m_aspectRatio;
 		GameViewAspectRatioType m_aspectRatioType = ASPECT_FREE;
+		Engine::SceneCameraType m_sceneCameraType = Engine::SceneCameraType::TYPE_PERSPECTIVE;
 		bool m_open, m_focused;
 	};
 }

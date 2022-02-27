@@ -185,6 +185,15 @@ namespace Editor
 				{
 					camera.SetSceneCameraType((Engine::SceneCameraType)cameraType);
 				}
+
+				switch (camera.GetSceneCameraType())
+				{
+				case Engine::SceneCameraType::TYPE_ORTHOGRAPHIC:
+				{
+					ImGui::InputFloat("Size", &cameraProperties.orthoSize);
+					break;
+				}
+				}
 				ImGui::InputFloat("Near Plane", &cameraProperties.nearPlane);
 				ImGui::InputFloat("Far Plane", &cameraProperties.farPlane);
 			});

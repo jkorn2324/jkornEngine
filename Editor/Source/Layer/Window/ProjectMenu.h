@@ -37,6 +37,7 @@ namespace Editor
 		void Draw(const std::string& rootPath);
 
 		const MathLib::Vector2& GetContentViewSize() const { return m_contentViewSize; }
+		const std::filesystem::path& GetCurrentPath() const { return m_currentPath; }
 
 	private:
 		void DrawFileInTreeMenu(const std::filesystem::path& path);
@@ -45,6 +46,7 @@ namespace Editor
 		void DrawFilePopup(const std::filesystem::path& path);
 
 		void HandleDragDropPathPayload(const std::filesystem::path& path);
+		void OpenFileBasedOnExtension(const std::filesystem::path& selectedFile);
 
 	private:
 		std::vector<std::filesystem::path> m_currentFiles;

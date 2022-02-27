@@ -15,6 +15,7 @@ namespace Engine
 {
 	class Entity;
 	class Event;
+	class GUID;
 
 	template<typename T>
 	class EntityComponentAddedEvent;
@@ -36,12 +37,18 @@ namespace Engine
 
 		void OnEvent(Event& event);
 
+		Entity CreateEntity(const GUID& guid, const std::string& entityName, const Engine::Entity& parent);
 		Entity CreateEntity(const std::string& entityName, const Engine::Entity& parent);
 		Entity CreateEntity(const std::string& entityName);
 		Entity CreateEntity(const char* entityName);
+		Entity CreateEntity(const GUID& guid);
+		Entity CreateEntity(const GUID& guid, const Engine::Entity& parent);
+		Entity CreateEntity(const GUID& guid, const std::string& entityName);
 		Entity CreateEntity();
+
 		void DestroyEntity(const Entity& entity);
 		Entity Find(const std::string& entityName) const;
+		Entity Find(const GUID& guid) const;
 
 		class Camera* GetCamera() const;
 

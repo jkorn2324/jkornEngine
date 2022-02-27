@@ -1,6 +1,9 @@
 #include "EnginePCH.h"
 #include "Material.h"
 
+#include "JsonFileParser.h"
+#include "JsonUtils.h"
+
 namespace Engine
 {
 	static ConstantBuffer* s_internalMaterialConstantBuffer = nullptr;
@@ -196,6 +199,13 @@ namespace Engine
 
 	bool Material::Load(const std::wstring& path)
 	{
+		JsonFileParser parser(path);
+		if (!parser.IsValid())
+		{
+			return false;
+		}
+		rapidjson::Document& document = parser.GetDocument();
+		// TODO: Read
 		return false;
 	}
 	

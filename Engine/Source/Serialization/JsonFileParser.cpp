@@ -4,8 +4,7 @@
 namespace Engine
 {
 	JsonFileParser::JsonFileParser(const char* fileName)
-		: m_buffer(nullptr), m_document(),
-		m_bufferSize(0)
+		: m_buffer(nullptr), m_document(), m_bufferSize(0)
 	{
 		FILE* filePath;
 		fopen_s(&filePath, fileName, "rb");
@@ -17,6 +16,22 @@ namespace Engine
 	{
 		FILE* filePath;
 		_wfopen_s(&filePath, fileName, L"rb");
+		Parse(filePath);
+	}
+
+	JsonFileParser::JsonFileParser(const std::wstring& fileName)
+		: m_buffer(nullptr), m_document(), m_bufferSize(0)
+	{
+		FILE* filePath;
+		_wfopen_s(&filePath, fileName.c_str(), L"rb");
+		Parse(filePath);
+	}
+
+	JsonFileParser::JsonFileParser(const std::string& fileName)
+		: m_buffer(nullptr), m_document(), m_bufferSize(0)
+	{
+		FILE* filePath;
+		fopen_s(&filePath, fileName.c_str(), "rb");
 		Parse(filePath);
 	}
 

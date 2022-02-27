@@ -20,8 +20,12 @@ namespace Engine
 		writer.StartObject();
 
 		// UUID Component
-		WriteString(writer, "Entity");
-		WriteString(writer, "");
+		WriteString(writer, "GUID");
+		if (entity.HasComponent<IDComponent>())
+		{
+			IDComponent& component = entity.GetComponent<IDComponent>();
+			WriteUint64(writer, component.guid);
+		}
 
 		// Name Component.
 		if (entity.HasComponent<NameComponent>())
@@ -94,6 +98,21 @@ namespace Engine
 			writer.EndObject();
 		}
 
+		// Mesh Component.
+		if (entity.HasComponent<MeshComponent>())
+		{
+			MeshComponent& meshComponent =
+				entity.GetComponent<MeshComponent>();
+			WriteString(writer, "MeshComponent");
+			writer.StartObject();
+
+			// TODO: Material, Mesh
+			WriteString(writer, "enabled");
+			writer.Bool(meshComponent.enabled);
+
+			writer.EndObject();
+		}
+
 		// Scene Camera Component.
 		if (entity.HasComponent<SceneCameraComponent>())
 		{
@@ -118,10 +137,52 @@ namespace Engine
 			writer.Double((double)properties.perspFOV);
 			WriteString(writer, "PerspAspectRatio");
 			writer.Double((double)properties.perspAspectRatio);
+			WriteString(writer, "OrthoSize");
+			writer.Double((double)properties.orthoSize);
 			WriteString(writer, "OrthoWidth");
 			writer.Double((double)properties.orthoWidth);
 			WriteString(writer, "OrthoHeight");
 			writer.Double((double)properties.orthoHeight);
+
+			writer.EndObject();
+		}
+
+		// Directional Light Component
+		if(entity.HasComponent<DirectionalLightComponent>())
+		{
+			DirectionalLightComponent& component
+				= entity.GetComponent<DirectionalLightComponent>();
+			WriteString(writer, "DirectionalLightComponent");
+			writer.StartObject();
+
+			WriteString(writer, "lightColor");
+			WriteVector3(writer, component.lightColor);
+			WriteString(writer, "lightIntensity");
+			writer.Double(component.lightIntensity);
+			WriteString(writer, "enabled");
+			writer.Bool(component.enabled);
+
+			writer.EndObject();
+		}
+
+		// Point Light Component
+		if(entity.HasComponent<PointLightComponent>())
+		{
+			PointLightComponent& component
+				= entity.GetComponent<PointLightComponent>();
+			WriteString(writer, "PointLightComponent");
+			writer.StartObject();
+
+			WriteString(writer, "lightColor");
+			WriteVector3(writer, component.lightColor);
+			WriteString(writer, "innerRadius");
+			writer.Double(component.innerRadius);
+			WriteString(writer, "outerRadius");
+			writer.Double(component.outerRadius);
+			WriteString(writer, "lightIntensity");
+			writer.Double(component.lightIntensity);
+			WriteString(writer, "enabled");
+			writer.Bool(component.enabled);
 
 			writer.EndObject();
 		}
@@ -135,8 +196,15 @@ namespace Engine
 		PROFILE_SCOPE(DeserializeEntity, Serialization);
 
 		// UUID Component.
-		std::string uuid;
-		ReadString(value, "UUID", uuid);
+		GUID guid;
+		if (ReadUint64(value, "GUID", *(uint64_t*)&guid))
+		{
+			if (entity.HasComponent<IDComponent>())
+			{
+				IDComponent& component = entity.GetComponent<IDComponent>();
+				component.guid = guid;
+			}
+		}
 
 		// Name Component.
 		std::string name;
@@ -221,6 +289,14 @@ namespace Engine
 			entity.AddComponent<SpriteComponent>(enabled, color);
 		}
 
+		// Mesh Component
+		if (value.HasMember("MeshComponent"))
+		{
+			// TODO: Implementation
+			MeshComponent& meshComponent 
+				= entity.AddComponent<MeshComponent>();
+		}
+
 		// Scene Camera Component.
 		if (value.HasMember("SceneCameraComponent"))
 		{
@@ -241,12 +317,34 @@ namespace Engine
 			ReadFloat(value["SceneCameraComponent"],
 				"PerspAspectRatio", cameraProperties.perspAspectRatio);
 			ReadFloat(value["SceneCameraComponent"],
+				"OrthoSize", cameraProperties.orthoSize);
+			ReadFloat(value["SceneCameraComponent"],
 				"OrthoWidth", cameraProperties.orthoWidth);
 			ReadFloat(value["SceneCameraComponent"],
 				"OrthoHeight", cameraProperties.orthoHeight);
 
 			entity.AddComponent<SceneCameraComponent>(mainCamera,
 				(SceneCameraType)cameraType, cameraProperties);
+		}
+
+		if (value.HasMember("DirectionalLightComponent"))
+		{
+			DirectionalLightComponent& component =
+				entity.AddComponent<DirectionalLightComponent>();
+			ReadVector3(value["DirectionalLightComponent"], "lightColor", component.lightColor);
+			ReadFloat(value["DirectionalLightComponent"], "lightIntensity", component.lightIntensity);
+			ReadBool(value["DirectionalLightComponent"], "enabled", component.enabled);
+		}
+
+		if (value.HasMember("PointLightComponent"))
+		{
+			PointLightComponent& component =
+				entity.AddComponent<PointLightComponent>();
+			ReadVector3(value["PointLightComponent"], "lightColor", component.lightColor);
+			ReadFloat(value["PointLightComponent"], "innerRadius", component.innerRadius);
+			ReadFloat(value["PointLightComponent"], "outerRadius", component.outerRadius);
+			ReadFloat(value["PointLightComponent"], "lightIntensity", component.lightIntensity);
+			ReadBool(value["PointLightComponent"], "enabled", component.enabled);
 		}
 	}
 

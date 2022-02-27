@@ -37,6 +37,14 @@ namespace Editor
 			BIND_STATIC_EVENT_FUNCTION(OnWindowSizeChanged));
 	}
 
+	void EditorSceneManager::OpenScene(const std::filesystem::path& path)
+	{
+		if (!IsPlaying())
+		{
+			Engine::SceneManager::LoadScene(path);
+		}
+	}
+
 	void EditorSceneManager::SaveScene(const std::filesystem::path& path)
 	{
 		if (!s_playing)

@@ -3,6 +3,7 @@
 #include "Source\Transform.h"
 
 #include "Entity.h"
+#include "GUID.h"
 #include "BehaviorScriptContainer.h"
 #include "SceneCamera.h"
 #include "EntityHierarchyComponent.h"
@@ -13,6 +14,15 @@ namespace Engine
 {
 	using Transform2DComponent = MathLib::Transform2D;
 	using Transform3DComponent = MathLib::Transform3D;
+
+	struct IDComponent
+	{
+		GUID guid;
+
+		IDComponent() = default;
+		IDComponent(const GUID& guid)
+			: guid(guid) { }
+	};
 
 	struct SpriteComponent
 	{

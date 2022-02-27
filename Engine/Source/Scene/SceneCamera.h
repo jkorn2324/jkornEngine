@@ -20,6 +20,7 @@ namespace Engine
 		float perspFOV; 
 		float perspAspectRatio;
 
+		float orthoSize;
 		float orthoWidth;
 		float orthoHeight;
 	};

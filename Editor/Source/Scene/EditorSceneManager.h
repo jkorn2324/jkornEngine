@@ -22,6 +22,7 @@ namespace Editor
 
 		static void OnEvent(Engine::Event& event);
 
+		static void OpenScene(const std::filesystem::path& path);
 		static void SaveScene(const std::filesystem::path& path);
 
 		static bool IsPlaying();

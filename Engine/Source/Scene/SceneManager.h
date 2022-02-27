@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <filesystem>
 
 namespace Engine
 {
@@ -17,6 +18,7 @@ namespace Engine
 		static void Release();
 
 		static void OnEvent(Event& event);
+		static void LoadScene(const std::filesystem::path& path);
 		static void LoadScene(const wchar_t* filePath);
 
 		static void SetActiveScene(Scene* scene);

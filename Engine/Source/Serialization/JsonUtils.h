@@ -17,6 +17,12 @@ namespace Engine
 {
 
 #pragma region write_funcs
+
+	static void WriteUint64(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer,
+		const uint64_t& uint64)
+	{
+		writer.Uint64(uint64);
+	}
 	
 	static void WriteString(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer,
 		const std::string& string)
@@ -118,6 +124,17 @@ namespace Engine
 			&& value[key].IsInt())
 		{
 			output = value[key].GetInt();
+			return true;
+		}
+		return false;
+	}
+
+	static bool ReadUint64(rapidjson::Value& value, const char* key, uint64_t& output)
+	{
+		if (value.HasMember(key)
+			&& value[key].IsUint64())
+		{
+			output = value[key].GetUint64();
 			return true;
 		}
 		return false;

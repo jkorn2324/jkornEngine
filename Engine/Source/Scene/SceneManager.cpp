@@ -32,6 +32,20 @@ namespace Engine
 		}
 	}
 
+	void SceneManager::LoadScene(const std::filesystem::path& path)
+	{
+		if (s_activeScene != nullptr)
+		{
+			delete s_activeScene;
+		}
+
+		s_activeScene = new Scene();
+		s_activeScene->BindEventFunc(s_eventFunc);
+
+		SceneSerializer serializer(s_activeScene);
+		serializer.Deserialize(path);
+	}
+
 	void SceneManager::LoadScene(const wchar_t* filePath)
 	{
 		if (s_activeScene != nullptr)

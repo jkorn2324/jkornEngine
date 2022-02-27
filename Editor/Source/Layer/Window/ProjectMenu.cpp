@@ -4,6 +4,8 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
+#include "EditorSceneManager.h"
+
 namespace Editor
 {
 
@@ -250,7 +252,6 @@ namespace Editor
 		const auto& filename = path.filename().u8string();
 		bool isDirectory = std::filesystem::is_directory(path);
 		void* textureID = nullptr;
-
 		{
 			if (isDirectory)
 			{
@@ -294,7 +295,7 @@ namespace Editor
 				else
 				{
 					m_selectedFile = path;
-					// Open path based on file extension.
+					OpenFileBasedOnExtension(m_selectedFile);
 				}
 			}
 		}
@@ -411,6 +412,15 @@ namespace Editor
 					m_currentPath = path;
 				}
 			}
+		}
+	}
+
+	void ProjectMenu::OpenFileBasedOnExtension(const std::filesystem::path& selectedFile)
+	{
+		std::filesystem::path extension = selectedFile.extension();
+		if (extension == L".scene")
+		{
+			EditorSceneManager::OpenScene(selectedFile);
 		}
 	}
 }

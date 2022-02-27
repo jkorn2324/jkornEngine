@@ -76,8 +76,9 @@ namespace Editor
 			{
 				Engine::CameraProperties& camera = sceneCamera->GetProperties();
 				camera.orthoWidth = m_aspectRatio.m_aspectWidth;
-				camera.orthoHeight = m_aspectRatio.m_aspectWidth;
+				camera.orthoHeight = m_aspectRatio.m_aspectHeight;
 				camera.perspAspectRatio = m_aspectRatio.m_aspectHeight / m_aspectRatio.m_aspectWidth;
+				m_sceneCameraType = sceneCamera->GetSceneCameraType();
 			}
 			m_frameBuffer->Resize(
 				(uint32_t)m_aspectRatio.m_aspectWidth, (uint32_t)m_aspectRatio.m_aspectHeight);
@@ -172,7 +173,6 @@ namespace Editor
 		if (texture != nullptr)
 		{
 			const void* textureID = texture->GetTextureID();
-
 			ImVec2 textureSize = { (float)m_aspectRatio.m_aspectWidth, (float)m_aspectRatio.m_aspectHeight };
 
 			// Calculates the window size of the game view for the texture.
@@ -180,7 +180,6 @@ namespace Editor
 			windowSizeDiff.y -= m_windowMenuBarSpacing;
 			windowSizeDiff.y -= m_aspectRatio.m_aspectHeight;
 			windowSizeDiff.x -= m_aspectRatio.m_aspectWidth;
-
 
 			float texWidth = (float)texture->GetWidth();
 			float texHeight = (float)texture->GetHeight();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <rapidjson\document.h>
+#include <string>
 
 namespace Engine
 {
@@ -9,6 +10,8 @@ namespace Engine
 	public:
 		JsonFileParser(const char* fileName);
 		JsonFileParser(const wchar_t* fileName);
+		JsonFileParser(const std::wstring& fileName);
+		JsonFileParser(const std::string& fileName);
 		~JsonFileParser();
 
 		rapidjson::Document& GetDocument() { return m_document; }

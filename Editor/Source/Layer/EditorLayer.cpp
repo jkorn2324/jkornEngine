@@ -31,15 +31,9 @@ namespace Editor
 	{
 		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
 		Engine::SceneSerializer sceneSerializer(&scene);
-		sceneSerializer.Serialize(filePath + 
+		sceneSerializer.Serialize(filePath + L"/" +
 			scene.GetSceneName() + L".scene");
 	}
-
-	static void SaveScene()
-	{
-		SaveScene(L"");
-	}
-
 
 	static void DrawDemo()
 	{
@@ -211,7 +205,12 @@ namespace Editor
 			{
 				if (ImGui::MenuItem("Save"))
 				{
-					SaveScene();
+					std::filesystem::path currentPath(Engine::Application::Get().GetRootPath());
+					if (m_projectMenu.IsOpen())
+					{
+						currentPath = m_projectMenu.GetCurrentPath();
+					}
+					SaveScene(currentPath);
 				}
 				// TODO: Loading Scenes
 
