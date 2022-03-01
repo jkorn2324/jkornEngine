@@ -29,15 +29,12 @@ namespace Engine
 
 			void OnRun() override
 			{
-				m_mutex.lock();
 				m_assetCache.Load(m_path);
-				m_mutex.unlock();
 			}
 
 		private:
 			AssetCache<TAsset>& m_assetCache;
 			std::wstring m_path;
-			std::mutex m_mutex;
 		};
 
 	public:

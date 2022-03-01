@@ -1,0 +1,122 @@
+{
+    "Entities": [
+        {
+            "GUID": 10561227971544700730,
+            "NameComponent": "Main Camera",
+            "Transform3DComponent": {
+                "Position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -10.0
+                },
+                "Rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "Scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "SceneCameraComponent": {
+                "MainCamera": true,
+                "CameraType": 0,
+                "NearPlane": 0.5,
+                "FarPlane": 10000.0,
+                "PerspFOV": 70.0,
+                "PerspAspectRatio": 1.1386138200759888,
+                "OrthoSize": 1.0,
+                "OrthoWidth": 505.0,
+                "OrthoHeight": 575.0
+            }
+        },
+        {
+            "GUID": 178090139754979881,
+            "NameComponent": "Cube",
+            "Transform3DComponent": {
+                "Position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "Rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "Scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "MeshComponent": {
+                "enabled": true
+            }
+        },
+        {
+            "GUID": 15725759673581542639,
+            "NameComponent": "Directional Light",
+            "Transform3DComponent": {
+                "Position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "Rotation": {
+                    "x": 0.3826834559440613,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.9238795042037964
+                },
+                "Scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "DirectionalLightComponent": {
+                "lightColor": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "lightIntensity": 1.0,
+                "enabled": true
+            }
+        },
+        {
+            "GUID": 17351810722888638209,
+            "NameComponent": "Test Cube",
+            "Transform3DComponent": {
+                "Position": {
+                    "x": 2.0418736934661865,
+                    "y": 0.10905807465314865,
+                    "z": -2.1472628116607666
+                },
+                "Rotation": {
+                    "x": 0.025370147079229355,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.9996781349182129
+                },
+                "Scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "MeshComponent": {
+                "enabled": true
+            }
+        },
+        {
+            "GUID": 6174698064578873039,
+            "NameComponent": "Entity"
+        }
+    ]
+}
