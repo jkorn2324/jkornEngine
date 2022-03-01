@@ -17,7 +17,7 @@ namespace Engine
 		return s_meshAssets;
 	}
 
-	AssetCache<Texture> s_textureAssets = AssetCache<Texture>();
+	AssetCache<Texture> s_textureAssets = AssetCache<Texture>(false);
 
 	AssetCache<Texture>& AssetManager::GetTextures()
 	{

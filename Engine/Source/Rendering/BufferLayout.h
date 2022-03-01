@@ -46,18 +46,13 @@ namespace Engine
 		}
 	};
 
-	class BufferLayout
+	struct BufferLayout
 	{
-	public:
-		// Deletes the buffer layout equivalent constructor.
-		BufferLayout(const BufferLayout& layout) = delete;
+		std::vector<BufferLayoutParam> parameters;
 
-		explicit BufferLayout(const std::initializer_list<BufferLayoutParam>& initializerList);
-		virtual ~BufferLayout() { }
+		BufferLayout(const std::initializer_list<BufferLayoutParam>& initializerList)
+			: parameters(initializerList) { }
 
-		virtual uint32_t GetNumElements() const =0;
-
-	public:
-		static std::unique_ptr<BufferLayout> Create(const std::initializer_list<BufferLayoutParam>& initializerList);
+		uint32_t GetNumElements() const { return (uint32_t)parameters.size(); }
 	};
 }

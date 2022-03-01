@@ -54,6 +54,8 @@ namespace Engine
 		void SetShader(class Shader* shader);
 		void SetTexture(uint32_t slot, Texture* texture);
 
+		bool HasShader() const { return m_shader != nullptr; }
+
 		const MaterialTextureData& GetTextureData(uint32_t slot) const { return m_textures[slot]; }
 		const MaterialConstants& GetMaterialConstants() const { return m_materialConstants; }
 		MaterialConstants& GetMaterialConstants() { return m_materialConstants; }

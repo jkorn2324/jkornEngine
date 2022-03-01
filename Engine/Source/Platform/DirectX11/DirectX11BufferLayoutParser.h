@@ -7,13 +7,13 @@ struct D3D11_INPUT_ELEMENT_DESC;
 namespace Engine
 {
 
-	class DirectX11BufferLayout : public BufferLayout
+	class DirectX11BufferLayoutParser
 	{
 	public:
-		explicit DirectX11BufferLayout(const std::initializer_list<BufferLayoutParam>& params);
-		~DirectX11BufferLayout();
+		explicit DirectX11BufferLayoutParser(const BufferLayout& bufferlayout);
+		~DirectX11BufferLayoutParser();
 		
-		uint32_t GetNumElements() const override;
+		uint32_t GetNumElements() const { return m_numElements; }
 		const D3D11_INPUT_ELEMENT_DESC* GetD3D11InputElementDesc() const;
 
 	private:

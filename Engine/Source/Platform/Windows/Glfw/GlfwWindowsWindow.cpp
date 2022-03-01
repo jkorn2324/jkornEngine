@@ -135,7 +135,6 @@ namespace Engine
 
 		s_numWindows++;
 
-		// TODO: Use macros here
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
 		case RenderingAPIType::DIRECTX11:

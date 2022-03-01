@@ -52,6 +52,7 @@ namespace Editor
 		m_sceneView(),
 		m_gameView()
 	{
+		// Ugly for now, but this will due for testing.
 	}
 
 	EditorLayer::~EditorLayer()
@@ -105,12 +106,11 @@ namespace Editor
 			constants.SetMaterialConstant("c_diffuseColor", MathLib::Vector4::One);
 			constants.SetMaterialConstant("c_specularPower", 10.0f);
 			constants.SetMaterialConstant("c_specularColor", MathLib::Vector4::One);
-
+			
 			meshComponent.material->SetTexture(0,
 				Engine::AssetManager::GetTextures().Load(L"Assets/brick-texture.png"));
 
 			{
-				// Ugly for now, but this will due for testing.
 				struct CubeMeshVert
 				{
 					MathLib::Vector3 pos;
@@ -118,14 +118,14 @@ namespace Editor
 					MathLib::Vector2 uv;
 				};
 
-				std::unique_ptr<Engine::BufferLayout> bufferLayout = Engine::BufferLayout::Create({
+				Engine::BufferLayout bufferLayout = { {
 					{ "POSITION", offsetof(CubeMeshVert, pos),
 						sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
 					{ "NORMAL", offsetof(CubeMeshVert, normal),
 						sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
 					{ "TEXCOORD", offsetof(CubeMeshVert, uv),
 						sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2 }
-				});
+				} };
 
 				Engine::Shader* shader = Engine::AssetManager::GetShaders().Load(
 					L"Shaders/LitShader.hlsl", bufferLayout);
@@ -142,6 +142,7 @@ namespace Editor
 
 	void EditorLayer::OnUpdate(const Engine::Timestep& timestep)
 	{
+		// For testing purposes.
 		m_projectMenu.OnUpdate(timestep);
 		m_gameView.OnUpdate(timestep);
 		

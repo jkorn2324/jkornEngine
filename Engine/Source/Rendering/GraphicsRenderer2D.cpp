@@ -104,18 +104,18 @@ namespace Engine
 
 		// Loads the Sprite Shader.
 		{
-			std::unique_ptr<Engine::BufferLayout> bufferLayout = Engine::BufferLayout::Create({
-					{ "POSITION", offsetof(GraphicsSpriteVertex, position),
+			Engine::BufferLayout bufferLayout = 
+				{{ "POSITION", offsetof(GraphicsSpriteVertex, position),
 						sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
 					{ "TEXCOORD", offsetof(GraphicsSpriteVertex, uv),
 						sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2 }
-				});
+				};
 
 			Engine::AssetCache<Engine::Shader>& shaderAssetCache =
 				Engine::AssetManager::GetShaders();
 
 			s_spriteShader = shaderAssetCache.Load<const Engine::BufferLayout&>(
-				L"Shaders/SpriteShader.hlsl", *bufferLayout.get());
+				L"Shaders/SpriteShader.hlsl", bufferLayout);
 
 			// Defines the sprite material.
 			s_spriteMaterial = Engine::AssetManager::GetMaterials().Cache(

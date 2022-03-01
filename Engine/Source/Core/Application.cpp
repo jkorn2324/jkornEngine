@@ -19,6 +19,7 @@
 #include "SceneManager.h"
 #include "Entity.h"
 #include "EntityHierarchyComponent.h"
+#include "JobManager.h"
 
 namespace Engine
 {
@@ -51,6 +52,7 @@ namespace Engine
 
 		Logger::Init();
 		Profiler::Init();
+		JobManager::Init();
 
 		WindowProperties properties = 
 		{
@@ -88,7 +90,7 @@ namespace Engine
 		GraphicsRenderer2D::Release();
 		GraphicsRenderer::Release();
 		Input::Release();
-
+		JobManager::Release();
 		Profiler::Release();
 	}
 
@@ -111,6 +113,9 @@ namespace Engine
 				{
 					layer->OnUpdate(ts);
 				}
+
+				// Allows for the job manager to catch up.
+				JobManager::Wait();
 
 				// Update ImGui Layer.
 				m_imguiLayer->BeginRender();

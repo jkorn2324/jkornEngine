@@ -16,7 +16,7 @@ namespace Engine
 		void Bind() const;
 
 	protected:
-		bool Load(const wchar_t* shaderPath, const class BufferLayout& bufferLayout) override;
+		bool Load(const wchar_t* shaderPath, const struct BufferLayout& bufferLayout) override;
 
 	private:
 		ID3D11VertexShader* m_vertexShader;

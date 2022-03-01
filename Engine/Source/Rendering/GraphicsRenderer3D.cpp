@@ -207,14 +207,14 @@ namespace Engine
 					{"c_materialColor", sizeof(MathLib::Vector4) }
 				});
 
-			std::unique_ptr<Engine::BufferLayout> bufferLayout = BufferLayout::Create({
+			Engine::BufferLayout bufferLayout = {{
 				{ "POSITION", offsetof(GraphicsCubeMeshVertex, pos),
 					sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
 				{ "NORMAL", offsetof(GraphicsCubeMeshVertex, normal),
 					sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
 				{ "TEXCOORD", offsetof(GraphicsCubeMeshVertex, uv),
 					sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2 }
-			});
+			}};
 
 			Engine::Shader* shader = 
 				AssetManager::GetShaders().Load(

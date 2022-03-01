@@ -1,5 +1,5 @@
 #include "EnginePCH.h"
-#include "DirectX11BufferLayout.h"
+#include "DirectX11BufferLayoutParser.h"
 
 #include <d3d11.h>
 
@@ -154,16 +154,15 @@ namespace Engine
 		return DXGI_FORMAT_UNKNOWN;
 	}
 
-	DirectX11BufferLayout::DirectX11BufferLayout(const std::initializer_list<BufferLayoutParam>& params)
-		: BufferLayout(params),
-		m_numElements((uint32_t)params.size()),
+	DirectX11BufferLayoutParser::DirectX11BufferLayoutParser(const BufferLayout& bufferLayout)
+		: m_numElements((uint32_t)bufferLayout.parameters.size()),
 		m_inputElementDesc(nullptr)
 	{
 		m_inputElementDesc = new D3D11_INPUT_ELEMENT_DESC[m_numElements];
 		// Creates the input element description.
 		for (std::uint32_t i = 0; i < m_numElements; i++)
 		{
-			const BufferLayoutParam& param = *(params.begin() + i);
+			const BufferLayoutParam& param = *(bufferLayout.parameters.begin() + i);
 			D3D11_INPUT_ELEMENT_DESC description;
 			ZeroMemory(&description, sizeof(description));
 
@@ -182,9 +181,8 @@ namespace Engine
 			m_inputElementDesc[i] = description;
 		}
 	}
-
 	
-	DirectX11BufferLayout::~DirectX11BufferLayout()
+	DirectX11BufferLayoutParser::~DirectX11BufferLayoutParser()
 	{
 		for (std::uint32_t i = 0; i < m_numElements; i++)
 		{
@@ -194,12 +192,7 @@ namespace Engine
 		delete[] m_inputElementDesc;
 	}
 	
-	uint32_t DirectX11BufferLayout::GetNumElements() const
-	{
-		return m_numElements;
-	}
-	
-	const D3D11_INPUT_ELEMENT_DESC* DirectX11BufferLayout::GetD3D11InputElementDesc() const
+	const D3D11_INPUT_ELEMENT_DESC* DirectX11BufferLayoutParser::GetD3D11InputElementDesc() const
 	{
 		return m_inputElementDesc;
 	}
