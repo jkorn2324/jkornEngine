@@ -3,7 +3,9 @@
 
 namespace Engine
 {
-	AssetCache<Shader> s_shaderAssets = AssetCache<Shader>();
+	// TODO: Need to support multithreading in the asset manager.
+
+	AssetCache<Shader> s_shaderAssets = AssetCache<Shader>(false);
 
 	AssetCache<Shader>& AssetManager::GetShaders()
 	{

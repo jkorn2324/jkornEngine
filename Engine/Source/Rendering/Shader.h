@@ -1,9 +1,15 @@
 #pragma once
 
 #include "BufferLayout.h"
+#include "EngineMacros.h"
 
 namespace Engine
 {
+	template<typename T>
+	class AssetSerializer;
+	template<typename T>
+	class AssetCache;
+
 	class Shader
 	{
 	public:
@@ -16,10 +22,8 @@ namespace Engine
 	protected:
 		virtual bool Load(const wchar_t* fileName, const BufferLayout& bufferLayout)=0;
 
-	public:
-		static Shader* StaticLoad(const std::wstring& fileName, const BufferLayout& bufferLayout);
-		
 	private:
-		static Shader* Create();
+		static bool DeserializeFromFile(Shader& shader, struct AssetDeserializationFileData& deserializeData, const BufferLayout& bufferLayout);
+		SERIALIZABLE_ASSET(Shader);
 	};
 }

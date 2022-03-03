@@ -8,6 +8,7 @@
 
 #include "Job.h"
 #include "JobManager.h"
+#include "AssetSerializer.h"
 
 namespace Engine
 {
@@ -119,7 +120,12 @@ namespace Engine
 			m_mutex.unlock();
 			return found;
 		}
-		TAsset* asset = new TAsset();
+		TAsset* asset = TAsset::Create();
+		if (asset == nullptr)
+		{
+			m_mutex.unlock();
+			return nullptr;
+		}
 		m_cachedAssets.emplace(name, asset);
 		m_mutex.unlock();
 		return asset;
@@ -136,7 +142,12 @@ namespace Engine
 			m_mutex.unlock();
 			return found;
 		}
-		TAsset* created = new TAsset(std::forward<Args>(args)...);
+		TAsset* created = TAsset::Create(std::forward<Args>(args)...);
+		if (created == nullptr)
+		{
+			m_mutex.unlock();
+			return nullptr;
+		}
 		m_cachedAssets.emplace(name, created);
 		m_mutex.unlock();
 		return created;
@@ -162,11 +173,22 @@ namespace Engine
 			m_mutex.unlock();
 			return found->second;
 		}
-		TAsset* outputAsset = TAsset::StaticLoad(name);
-		if (outputAsset != nullptr)
+
+		TAsset* outputAsset = TAsset::Create();
+		if (outputAsset == nullptr)
 		{
-			m_cachedAssets.emplace(name, outputAsset);
+			m_mutex.unlock();
+			return nullptr;
 		}
+
+		AssetSerializer<TAsset> assetSerializer(*outputAsset);
+		if (!assetSerializer.DeserializeFromFile(name))
+		{
+			m_mutex.unlock();
+			delete outputAsset;
+			return nullptr;
+		}
+		m_cachedAssets.emplace(name, outputAsset);
 		m_mutex.unlock();
 		return outputAsset;
 	}
@@ -182,11 +204,22 @@ namespace Engine
 			m_mutex.unlock();
 			return found->second;
 		}
-		TAsset* outputAsset = TAsset::StaticLoad(name, std::forward<Args>(args)...);
-		if (outputAsset != nullptr)
+		
+		TAsset* outputAsset = TAsset::Create();
+		if (outputAsset == nullptr)
 		{
-			m_cachedAssets.emplace(name, outputAsset);
+			m_mutex.unlock();
+			return nullptr;
 		}
+
+		AssetSerializer<TAsset> assetSerializer(*outputAsset);
+		if (!assetSerializer.DeserializeFromFile(name, std::forward<Args>(args)...))
+		{
+			m_mutex.unlock();
+			delete outputAsset;
+			return false;
+		}
+		m_cachedAssets.emplace(name, outputAsset);
 		m_mutex.unlock();
 		return outputAsset;
 	}

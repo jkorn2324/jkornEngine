@@ -84,6 +84,8 @@ namespace Engine
 	};
 
 #define PROFILE_SCOPE(name, category) Engine::ProfileScope newScope_##name(#name, #category)
+#define PROFILE_SCOPE_FUNC(name, func, category) Engine::ProfileScope newScope_##name##func(#name#func, #category)
+
 #define BEGIN_PROFILE(name) Engine::Profiler::BeginProfile(name)
 #define END_PROFILE(name) Engine::Profiler::EndProfile(name)
 }

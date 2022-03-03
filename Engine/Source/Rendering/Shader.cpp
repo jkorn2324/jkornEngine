@@ -5,21 +5,31 @@
 #include "DirectX11Shader.h"
 #include "Rendering\BufferLayout.h"
 
+#include "AssetSerializer.h"
+
 namespace Engine
 {
 
-	Shader* Shader::StaticLoad(const std::wstring& fileName, const BufferLayout& bufferLayout)
+	void Shader::SerializeToMetaFile(Shader& shader, AssetSerializationMetaData& prettyWriter)
 	{
-		Shader* shader = Create();
-		DebugAssert(shader != nullptr, "Shader failed to be created.");
+		// TODO: Write to meta file.
+	}
 
-		const wchar_t* cstrFileName = fileName.c_str();
-		if (!shader->Load(cstrFileName, bufferLayout))
-		{
-			delete shader;
-			return nullptr;
-		}
-		return shader;
+
+	bool Shader::DeserializeFromMetaFile(Shader& shader, AssetDeserializationMetaData& value)
+	{
+		// TODO: Read from a meta file.
+		return false;
+	}
+
+	bool Shader::DeserializeFromFile(Shader& shader, AssetDeserializationFileData& value)
+	{
+		return false;
+	}
+
+	bool Shader::DeserializeFromFile(Shader& shader, AssetDeserializationFileData& value, const BufferLayout& bufferLayout)
+	{
+		return shader.Load(value.filePath.c_str(), bufferLayout);
 	}
 
 	Shader* Shader::Create()

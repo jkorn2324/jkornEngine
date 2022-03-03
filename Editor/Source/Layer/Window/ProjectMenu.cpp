@@ -42,8 +42,8 @@ namespace Editor
 
 		if (s_numProjectMenus <= 0)
 		{
-			s_fileIconTexture = Engine::Texture::StaticLoad(g_fileIconPath);
-			s_folderIconTexture = Engine::Texture::StaticLoad(g_folderIconPath);
+			s_fileIconTexture = Engine::Texture::CreateTexture(g_fileIconPath);
+			s_folderIconTexture = Engine::Texture::CreateTexture(g_folderIconPath);
 		}
 		s_numProjectMenus++;
 	}

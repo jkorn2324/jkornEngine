@@ -6,15 +6,21 @@
 #include "ConstantBuffer.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "MaterialConstants.h"
+#include "EngineMacros.h"
+#include "GUID.h"
 
 #include <stdint.h>
-
-#include "MaterialConstants.h"
 
 namespace Engine
 {
 	const uint32_t MATERIAL_CONSTANTS_SLOT = 2;
 	const uint32_t PER_SHADER_CONSTANTS_SLOT = 3;
+
+	template<typename T>
+	class AssetSerializer;
+	template<typename T>
+	class AssetCache;
 
 	struct MaterialTextureData
 	{
@@ -73,19 +79,16 @@ namespace Engine
 			return a.m_shader != b.m_shader;
 		}
 
-		static Material* StaticLoad(const std::wstring& path);
-
-	private:
-		bool Load(const std::wstring& path);
-
 	private:
 		Shader* m_shader;
 		ConstantBuffer* m_materialConstantBuffer;
 		MaterialTextureData* m_textures;
 		MaterialConstants m_materialConstants;
 		InternalMaterialConstants m_internalMaterialConstants;
+		GUID m_assetGUID;
 		uint32_t m_numTextures;
 
-		// TODO: Add material based slots
+		static Material* Create(const MaterialConstantsLayout& constants);
+		SERIALIZABLE_ASSET(Material);
 	};
 }

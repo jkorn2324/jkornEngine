@@ -29,7 +29,8 @@ project "GlfwSandboxProject"
 
 		"%{IncludeDirectories.entt}",
 		"%{IncludeDirectories.ImGui}",
-		"%{IncludeDirectories.spdlog}"
+		"%{IncludeDirectories.spdlog}",
+		"%{IncludeDirectories.rapidjson}"
 	}
 
 	links

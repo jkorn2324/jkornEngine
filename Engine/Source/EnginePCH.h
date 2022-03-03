@@ -55,3 +55,4 @@
 
 #include "DebugAssert.h"
 #include "Logger.h"
+#include "EngineMacros.h"

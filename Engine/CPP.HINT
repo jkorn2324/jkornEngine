@@ -1,1 +1,2 @@
 #define EVENT_TYPE_CLASS(type) static EventType GetStaticEventType() { return EventType::type; } \ virtual EventType GetEventType() const override { return EventType::type; } \ virtual const char* GetName() const override { return #type; }
+#define SERIALIZABLE_ASSET(name) private: static void Serialize(##name& asset, rapidjson::PrettyWriter<rapidjson::StringBuffer>& prettyWriter); static bool Deserialize(##name& asset, struct AssetDeserializeData& deserializeData); static name* Create(); template<typename T> class AssetSerializer; friend class AssetSerializer<name>

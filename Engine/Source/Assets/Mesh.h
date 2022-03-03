@@ -3,12 +3,19 @@
 #include <string>
 
 #include "Source\Vector.h"
+#include "EngineMacros.h"
+
+#include <string>
 
 namespace Engine
 {
-
 	class VertexBuffer;
 	class IndexBuffer;
+
+	template<typename T>
+	class AssetSerializer;
+	template<typename T>
+	class AssetCache;
 
 	class Mesh
 	{
@@ -35,11 +42,6 @@ namespace Engine
 		void SetSkinned(bool skinned) { m_skinned = skinned; }
 		bool IsSkinned() const { return m_skinned; }
 
-		static Mesh* StaticLoad(const std::wstring& path);
-
-	private:
-		bool Load(const std::wstring& path);
-
 	private:	
 		char* m_vertices;
 		std::uint32_t* m_indices;
@@ -51,5 +53,7 @@ namespace Engine
 		std::uint32_t m_indexCount;
 
 		bool m_skinned;
+
+		SERIALIZABLE_ASSET(Mesh);
 	};
 }

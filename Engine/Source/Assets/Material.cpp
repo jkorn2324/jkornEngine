@@ -4,6 +4,8 @@
 #include "JsonFileParser.h"
 #include "JsonUtils.h"
 
+#include <rapidjson\stringbuffer.h>
+
 namespace Engine
 {
 	static ConstantBuffer* s_internalMaterialConstantBuffer = nullptr;
@@ -37,7 +39,8 @@ namespace Engine
 		m_textures(nullptr),
 		m_numTextures(1),
 		m_materialConstants(layout),
-		m_internalMaterialConstants({})
+		m_internalMaterialConstants({}),
+		m_assetGUID()
 	{
 		if (s_numMaterials <= 0)
 		{
@@ -62,7 +65,8 @@ namespace Engine
 		m_textures(nullptr),
 		m_numTextures(material.m_numTextures),
 		m_materialConstants(material.m_materialConstants),
-		m_internalMaterialConstants(material.m_internalMaterialConstants)
+		m_internalMaterialConstants(material.m_internalMaterialConstants),
+		m_assetGUID()
 	{
 		s_numMaterials++;
 		m_textures = new MaterialTextureData[m_numTextures];
@@ -197,27 +201,32 @@ namespace Engine
 		}
 	}
 
-	bool Material::Load(const std::wstring& path)
+	void Material::SerializeToMetaFile(Material& material, AssetSerializationMetaData& prettyWriter)
 	{
-		JsonFileParser parser(path);
-		if (!parser.IsValid())
-		{
-			return false;
-		}
-		rapidjson::Document& document = parser.GetDocument();
-		// TODO: Read
-		return false;
-	}
-	
-	Material* Material::StaticLoad(const std::wstring& path)
-	{
-		Material* material = new Material();
-		if (!material->Load(path))
-		{
-			delete material;
-			return nullptr;
-		}
-		return material;
+		// TODO: Read from meta file.
 	}
 
+
+	bool Material::DeserializeFromMetaFile(Material& material, AssetDeserializationMetaData& value)
+	{
+		// TODO: Write to a meta file.
+		return false;
+	}
+
+
+	bool Material::DeserializeFromFile(Material& material, AssetDeserializationFileData& value)
+	{
+		// TODO: Write to a meta file.
+		return false;
+	}
+
+	Material* Material::Create(const MaterialConstantsLayout& constants)
+	{
+		return new Material(constants);
+	}
+
+	Material* Material::Create()
+	{
+		return new Material;
+	}
 }

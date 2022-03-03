@@ -1,7 +1,7 @@
 #pragma once
 
-#include <rapidjson\document.h>
 #include <string>
+#include <rapidjson\document.h>
 
 namespace Engine
 {

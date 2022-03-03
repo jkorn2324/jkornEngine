@@ -82,20 +82,27 @@ namespace Engine
 		return m_indexCount;
 	}
 
-	bool Mesh::Load(const std::wstring& path)
+	void Mesh::SerializeToMetaFile(Mesh& mesh, AssetSerializationMetaData& prettyWriter)
 	{
-		// TODO: Implementation
+		// TODO: Write to meta file.
+	}
+
+
+	bool Mesh::DeserializeFromMetaFile(Mesh& mesh, AssetDeserializationMetaData& value)
+	{
+		// TODO: Read from a meta file.
 		return false;
 	}
-	
-	Mesh* Mesh::StaticLoad(const std::wstring& path)
+
+
+	bool Mesh::DeserializeFromFile(Mesh& mesh, AssetDeserializationFileData& value)
 	{
-		Mesh* mesh = new Mesh();
-		if (!mesh->Load(path))
-		{
-			delete mesh;
-			return nullptr;
-		}
-		return mesh;
+		// TODO: Read from a normal file.
+		return true;
+	}
+
+	Mesh* Mesh::Create()
+	{
+		return new Mesh();
 	}
 }

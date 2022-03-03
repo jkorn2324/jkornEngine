@@ -17,7 +17,7 @@ project "Editor"
 		"%{prj.location}/Source/",
 		"%{prj.location}/Source/**.h",
 		"%{prj.location}/Source/**.cpp",
-		"%{prj.location}/Source/**.hpp",
+		"%{prj.location}/Source/**.hpp"
 	}
 
 	includedirs
@@ -33,7 +33,9 @@ project "Editor"
 		"%{IncludeDirectories.entt}",
 		"%{IncludeDirectories.ImGui}",
 		"%{IncludeDirectories.spdlog}",
-		"%{IncludeDirectories.ImGuizmo}"
+		"%{IncludeDirectories.ImGuizmo}",
+
+		"%{IncludeDirectories.rapidjson}"
 	}
 
 	links
