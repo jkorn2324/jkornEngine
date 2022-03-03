@@ -27,7 +27,7 @@ namespace Editor
 	// TODO: Need to find a way to set the file path
 
 
-	ProjectMenu::ProjectMenu(const std::string& path)
+	ProjectMenu::ProjectMenu(const std::filesystem::path& path)
 		: m_open(true),
 		m_currentPath(path),
 		m_selectedPathInFileMenu(),
@@ -85,7 +85,7 @@ namespace Editor
 	{
 	}
 
-	void ProjectMenu::Draw(const std::string& rootPath)
+	void ProjectMenu::Draw(const std::filesystem::path& rootPath)
 	{
 		if (!m_open)
 		{
@@ -356,6 +356,13 @@ namespace Editor
 				if (ImGui::MenuItem("Scene"))
 				{
 					m_popupView = ProjectMenuPopupView::Popup_None;
+					// Creates a scene serializer.
+					{
+						// TODO: May need to async this.
+						Engine::SceneSerializer serializer = EditorSceneManager::GetDefaultSceneSerializer();
+						auto path = m_currentPath / "New Scene.scene";
+						serializer.Serialize(path);
+					}
 				}
 				if (ImGui::MenuItem("Folder"))
 				{
@@ -406,6 +413,12 @@ namespace Editor
 				newPath /= currentPath.filename();
 				if (newPath != currentPath)
 				{
+					if (std::filesystem::exists(newPath))
+					{
+						// TODO: Ask user if they want to replace the file, if so than replace it,
+						// otherwise make a duplicate.
+						return;
+					}
 					std::filesystem::copy(currentPath,
 						newPath, std::filesystem::copy_options::recursive);
 					std::filesystem::remove(currentPath);

@@ -10,7 +10,7 @@ namespace Engine
 	class EditorApplication : public Application
 	{
 	public:
-		EditorApplication(const std::string& rootPath)
+		EditorApplication(const std::filesystem::path& rootPath)
 			: Application("Editor", rootPath)
 		{
 			AddOverlay(new Editor::EditorLayer());
@@ -20,7 +20,7 @@ namespace Engine
 	Application* Create(const ApplicationArgs& args)
 	{
 #if DEBUG
-		std::string editorProjectPath = "..\\EditorSandboxProject";
+		std::filesystem::path editorProjectPath = "..\\EditorSandboxProject";
 		if (std::filesystem::is_directory(editorProjectPath))
 		{
 			return new EditorApplication(editorProjectPath);

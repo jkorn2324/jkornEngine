@@ -3,12 +3,11 @@
 #include <string>
 #include <memory>
 #include <chrono>
+#include <filesystem>
 
 #include "LayerStack.h"
 
 int main(int argsc, char** argsv);
-
-
 
 namespace Engine
 {
@@ -23,7 +22,7 @@ namespace Engine
 	class Application
 	{
 	public:
-		Application(const std::string& name, const std::string& rootPath);
+		Application(const std::string& name, const std::filesystem::path& rootPath);
 		virtual ~Application();
 
 		void Run();
@@ -33,7 +32,7 @@ namespace Engine
 		void RemoveLayer(class Layer* layer);
 		void RemoveOverlay(class Layer* overlay);
 
-		const std::string& GetRootPath() const { return m_rootPath; }
+		const std::filesystem::path& GetRootPath() const { return m_rootPath; }
 		class Window& GetWindow() const;
 
 	private:
@@ -48,7 +47,7 @@ namespace Engine
 		class GraphicsRenderer* m_graphicsRenderer;
 
 		LayerStack m_windowLayerStack;
-		std::string m_rootPath;
+		std::filesystem::path m_rootPath;
 		std::chrono::high_resolution_clock::time_point m_prevTime;
 
 		bool m_running;

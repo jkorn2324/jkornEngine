@@ -25,7 +25,7 @@ namespace Editor
 	{
 
 	public:
-		ProjectMenu(const std::string& path);
+		ProjectMenu(const std::filesystem::path& path);
 		~ProjectMenu();
 
 		void SetOpen(bool open) { m_open = open; }
@@ -34,7 +34,7 @@ namespace Editor
 		void OnUpdate(const Engine::Timestep& ts);
 		void OnEvent(Engine::Event& event);
 
-		void Draw(const std::string& rootPath);
+		void Draw(const std::filesystem::path& rootPath);
 
 		const MathLib::Vector2& GetContentViewSize() const { return m_contentViewSize; }
 		const std::filesystem::path& GetCurrentPath() const { return m_currentPath; }

@@ -3,6 +3,8 @@
 #include <string>
 #include <functional>
 
+#include "SceneSerializer.h"
+
 namespace Engine
 {
 	class Event;
@@ -32,5 +34,6 @@ namespace Editor
 		static void SetPaused(bool paused);
 
 		static class EditorCamera& GetEditorCamera();
+		static Engine::SceneSerializer GetDefaultSceneSerializer();
 	};
 }

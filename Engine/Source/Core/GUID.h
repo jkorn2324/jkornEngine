@@ -17,6 +17,8 @@ namespace Engine
 
 		operator uint64_t() { return m_guid; }
 		operator const uint64_t() const { return m_guid; }
+		
+		friend std::wstring ToWString(const GUID& guid);
 
 	private:
 		uint64_t m_guid;

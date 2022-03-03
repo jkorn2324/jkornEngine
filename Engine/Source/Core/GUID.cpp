@@ -15,4 +15,9 @@ namespace Engine
 	{
 
 	}
+	
+	std::wstring ToWString(const GUID& guid)
+	{
+		return std::to_wstring(guid);
+	}
 }

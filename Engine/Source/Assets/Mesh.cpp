@@ -82,19 +82,6 @@ namespace Engine
 		return m_indexCount;
 	}
 
-	void Mesh::SerializeToMetaFile(Mesh& mesh, AssetSerializationMetaData& prettyWriter)
-	{
-		// TODO: Write to meta file.
-	}
-
-
-	bool Mesh::DeserializeFromMetaFile(Mesh& mesh, AssetDeserializationMetaData& value)
-	{
-		// TODO: Read from a meta file.
-		return false;
-	}
-
-
 	bool Mesh::DeserializeFromFile(Mesh& mesh, AssetDeserializationFileData& value)
 	{
 		// TODO: Read from a normal file.

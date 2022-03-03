@@ -201,22 +201,9 @@ namespace Engine
 		}
 	}
 
-	void Material::SerializeToMetaFile(Material& material, AssetSerializationMetaData& prettyWriter)
-	{
-		// TODO: Read from meta file.
-	}
-
-
-	bool Material::DeserializeFromMetaFile(Material& material, AssetDeserializationMetaData& value)
-	{
-		// TODO: Write to a meta file.
-		return false;
-	}
-
-
 	bool Material::DeserializeFromFile(Material& material, AssetDeserializationFileData& value)
 	{
-		// TODO: Write to a meta file.
+		// TODO: Read from a default file.
 		return false;
 	}
 

@@ -10,18 +10,6 @@
 namespace Engine
 {
 
-	void Shader::SerializeToMetaFile(Shader& shader, AssetSerializationMetaData& prettyWriter)
-	{
-		// TODO: Write to meta file.
-	}
-
-
-	bool Shader::DeserializeFromMetaFile(Shader& shader, AssetDeserializationMetaData& value)
-	{
-		// TODO: Read from a meta file.
-		return false;
-	}
-
 	bool Shader::DeserializeFromFile(Shader& shader, AssetDeserializationFileData& value)
 	{
 		return false;

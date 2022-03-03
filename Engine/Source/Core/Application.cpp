@@ -38,7 +38,7 @@ namespace Engine
 		return *s_instance;
 	}
 
-	Application::Application(const std::string& name, const std::string& rootPath)
+	Application::Application(const std::string& name, const std::filesystem::path& rootPath)
 		: m_window(nullptr), 
 		m_running(true), 
 		m_windowLayerStack(),
@@ -69,6 +69,8 @@ namespace Engine
 		GraphicsRenderer2D::Init();
 		GraphicsRenderer3D::Init();
 
+		AssetManager::Init(m_rootPath);
+
 		SceneManager::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 		SceneManager::Init();
 
@@ -85,7 +87,7 @@ namespace Engine
 		m_windowLayerStack.Clear();
 
 		SceneManager::Release();
-		AssetManager::UncacheAssets();
+		AssetManager::Release();
 		GraphicsRenderer3D::Release();
 		GraphicsRenderer2D::Release();
 		GraphicsRenderer::Release();

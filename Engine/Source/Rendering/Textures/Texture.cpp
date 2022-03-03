@@ -41,18 +41,6 @@ namespace Engine
 		return nullptr;
 	}
 
-	void Texture::SerializeToMetaFile(Texture& texture, AssetSerializationMetaData& prettyWriter)
-	{
-		// TODO: Write to meta file.
-	}
-
-
-	bool Texture::DeserializeFromMetaFile(Texture& texture, AssetDeserializationMetaData& value)
-	{
-		// TODO: Read from a meta file.
-		return false;
-	}
-
 
 	bool Texture::DeserializeFromFile(Texture& texture, AssetDeserializationFileData& value)
 	{

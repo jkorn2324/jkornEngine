@@ -8,6 +8,7 @@ namespace Editor
 	struct ActiveSceneData
 	{
 		Engine::Scene* editorSceneWhilePlaying = nullptr;
+		Engine::Scene* defaultScene = nullptr;
 	};
 
 	static EditorCamera s_editorCamera;
@@ -20,10 +21,18 @@ namespace Editor
 		return true;
 	}
 
-	void EditorSceneManager::Init() { }
+	void EditorSceneManager::Init() 
+	{
+		s_activeSceneData.defaultScene = Engine::Scene::CreateDefaultScene();
+	}
 
 	void EditorSceneManager::Release()
 	{
+		if (s_activeSceneData.defaultScene)
+		{
+			delete s_activeSceneData.defaultScene;
+		}
+
 		if (s_activeSceneData.editorSceneWhilePlaying)
 		{
 			delete s_activeSceneData.editorSceneWhilePlaying;
@@ -95,5 +104,10 @@ namespace Editor
 	EditorCamera& EditorSceneManager::GetEditorCamera()
 	{
 		return s_editorCamera;
+	}
+	
+	Engine::SceneSerializer EditorSceneManager::GetDefaultSceneSerializer()
+	{
+		return Engine::SceneSerializer(s_activeSceneData.defaultScene);
 	}
 }

@@ -10,8 +10,6 @@ namespace Engine
 // Must forward declare the AssetSerializer & AssetCache classes as a template before using this macro.
 #define SERIALIZABLE_ASSET(name) \
 	private: \
-    static void SerializeToMetaFile(##name& asset, struct AssetSerializationMetaData& prettyWriter); \
-	static bool DeserializeFromMetaFile(##name& asset, struct AssetDeserializationMetaData& deserializeData); \
 	static bool DeserializeFromFile(##name& asset, struct AssetDeserializationFileData& deserializeData); \
 	static name* Create(); \
 	friend class Engine::AssetSerializer<name>; \
