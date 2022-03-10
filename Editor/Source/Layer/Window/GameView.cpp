@@ -164,7 +164,7 @@ namespace Editor
 			ImGuiWindow* window = ImGui::GetCurrentWindow();
 			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(
 				&ImGui::GetWindowSize());
-			bool isNotHidden = !window->DockNode->IsHiddenTabBar();
+			bool isNotHidden = window->DockNode != nullptr && !window->DockNode->IsHiddenTabBar();
 			float textLineHeightSpacing = ImGui::GetTextLineHeightWithSpacing();
 			m_windowMenuBarSpacing = isNotHidden
 				* textLineHeightSpacing + textLineHeightSpacing * 2.0f;
