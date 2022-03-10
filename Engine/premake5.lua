@@ -127,10 +127,12 @@ project "Engine"
 			"%{LibraryDirectories.DirectXTK}Bin/Desktop_2019/Win32/%{cfg.buildcfg}/",
 			"C:/Program Files/Autodesk/FBX/FBX SDK/2020.2/lib/vs2019/x86/%{cfg.buildcfg}/"
 		}
-		-- Pre Build Commands so that glfw & DirectXTK gets built before the Engine lib.
+		-- Pre Build Commands so that glfw, imgui & DirectXTK gets built before the Engine lib.
 		prebuildcommands
 		{
-			"msbuild ..\\Engine\\Libraries\\DirectXTK\\DirectXTK_Desktop_2019.vcxproj /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
+			"msbuild \"..\\Engine\\Libraries\\DirectXTK\\DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
+			"msbuild \"..\\Engine\\Libraries\\glfw\\glfw.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
+			"msbuild \"..\\Engine\\Libraries\\ImGui\\ImGui.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32"
 		}
 
 		postbuildcommands
@@ -149,10 +151,12 @@ project "Engine"
 			"%{LibraryDirectories.DirectXTK}Bin/Desktop_2019/x64/%{cfg.buildcfg}/",
 			"C:/Program Files/Autodesk/FBX/FBX SDK/2020.2/lib/vs2019/x64/%{cfg.buildcfg}/"
 		}
-		-- Pre Build Commands so that glfw & DirectXTK gets built before the Engine lib.
+		-- Pre Build Commands so that glfw, imgui & DirectXTK gets built before the Engine lib.
 		prebuildcommands
 		{
 			"msbuild \"..\\Engine\\Libraries\\DirectXTK\\DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
+			"msbuild \"..\\Engine\\Libraries\\glfw\\glfw.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
+			"msbuild \"..\\Engine\\Libraries\\ImGui\\ImGui.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64"
 		}
 		postbuildcommands
 		{
