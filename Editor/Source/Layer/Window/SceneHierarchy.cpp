@@ -113,14 +113,10 @@ namespace Editor
 
 				if (duplicatedEntity.IsValid())
 				{
-					// TODO: Fix bug where scene hierarchy generates an
-					// entity in the same scene (why we are getting random mesh renderer fail errors).
-#if 0
 					Engine::Entity createdEntity =
 						Engine::SceneManager::GetActiveScene().CreateEntity(
 							duplicatedEntity.GetComponent<Engine::NameComponent>().name + " (Clone)");
 					Engine::CopyEntity(duplicatedEntity, createdEntity, false);
-#endif
 				}
 			}
 		}

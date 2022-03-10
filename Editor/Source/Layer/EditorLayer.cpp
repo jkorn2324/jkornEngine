@@ -85,15 +85,14 @@ namespace Editor
 				}
 			}
 
-
 			Engine::Entity e = scene.CreateEntity("Test Cube");
 			Engine::Transform3DComponent& component 
 				= e.AddComponent<Engine::Transform3DComponent>();
 			Engine::MeshComponent& meshComponent
 				= e.AddComponent<Engine::MeshComponent>();
 
-			meshComponent.material = Engine::AssetManager::GetMaterials().Cache(
-				L"LitShader");
+			Engine::AssetManager::GetMaterials().Cache(
+				L"LitShader", meshComponent.material);
 			meshComponent.material->SetConstantsLayout(
 			{
 				Engine::MaterialConstantLayoutAttribute { "c_diffuseColor", sizeof(MathLib::Vector4) },
@@ -107,8 +106,9 @@ namespace Editor
 			constants.SetMaterialConstant("c_specularPower", 10.0f);
 			constants.SetMaterialConstant("c_specularColor", MathLib::Vector4::One);
 			
-			meshComponent.material->SetTexture(0,
-				Engine::AssetManager::GetTextures().Load(L"Assets/brick-texture.png"));
+			Engine::AssetRef<Engine::Texture> texture;
+			Engine::AssetManager::GetTextures().Load(L"Assets/brick-texture.png", texture);
+			meshComponent.material->SetTexture(0, texture);
 
 			{
 				struct CubeMeshVert
@@ -127,12 +127,14 @@ namespace Editor
 						sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2 }
 				} };
 
-				Engine::Shader* shader = Engine::AssetManager::GetShaders().Load(
-					L"Shaders/LitShader.hlsl", bufferLayout);
+				Engine::AssetRef<Engine::Shader> shader;
+				Engine::AssetManager::GetShaders().Load(
+					L"Shaders/LitShader.hlsl", shader, bufferLayout);
 				meshComponent.material->SetShader(shader);
 			}
 
-			meshComponent.mesh = Engine::AssetManager::GetMeshes().Get(L"DefaultCube");
+			Engine::AssetManager::GetMeshes().Get(L"DefaultCube",
+				meshComponent.mesh);
 		}
 	}
 

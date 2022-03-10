@@ -32,7 +32,7 @@ namespace Engine
         }
     }
 
-    const Entity Entity::None = Entity(entt::null, nullptr);
+    const Entity Entity::None = Entity();
 
     EventFunc Entity::s_componentEventFunc = nullptr;
 
@@ -44,8 +44,11 @@ namespace Engine
 
     bool Entity::IsValid() const
     {
-        return m_scene != nullptr
-            && m_scene->m_entityRegistry.valid(m_entity);
+        if (m_scene == nullptr)
+        {
+            return false;
+        }
+        return m_scene->m_entityRegistry.valid(m_entity);
     }
     
     void Entity::BindEventFunc(const EventFunc& func)

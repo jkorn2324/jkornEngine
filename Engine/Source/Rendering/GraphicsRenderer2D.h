@@ -5,6 +5,10 @@
 
 namespace Engine
 {
+	template<typename T>
+	class AssetRef;
+	class Texture;
+	class SubTexture;
 
 	class GraphicsRenderer2D
 	{
@@ -13,12 +17,12 @@ namespace Engine
 		static void Release();
 
 		static void DrawRect(const MathLib::Vector2& pos,
-			const MathLib::Vector2& scale, class Texture* texture);
+			const MathLib::Vector2& scale, const AssetRef<Texture>& texture);
 		static void DrawRect(const MathLib::Matrix4x4& transformMat,
-			const MathLib::Vector4& color, class Texture* texture);
+			const MathLib::Vector4& color, const AssetRef<Texture>& texture);
 		static void DrawRect(const MathLib::Vector2& pos,
-			const MathLib::Vector2& scale, class SubTexture* texture);
+			const MathLib::Vector2& scale, SubTexture* texture);
 		static void DrawRect(const MathLib::Matrix4x4& transformMat,
-			const MathLib::Vector4& color, class SubTexture* texture);
+			const MathLib::Vector4& color, SubTexture* texture);
 	};
 }

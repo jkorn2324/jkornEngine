@@ -68,13 +68,27 @@ namespace Engine
 		}
 	}
 
-	Scene* Scene::CreateDefaultScene()
+	void Scene::CreateDefaultScene(Scene*& scene)
 	{
-		Scene* scene = new Scene();
+		if (scene == nullptr)
+		{
+			scene = new Scene;
+		}
+		CreateDefaultScene(*scene);
+	}
 
+	void Scene::CreateDefaultScene(std::shared_ptr<Scene>& scene)
+	{
+		scene.reset();
+		scene = std::make_shared<Scene>();
+		CreateDefaultScene(*scene.get());
+	}
+
+	void Scene::CreateDefaultScene(Scene& scene)
+	{
 		// Creates the scene camera.
 		{
-			Entity entity = scene->CreateEntity("Main Camera");
+			Entity entity = scene.CreateEntity("Main Camera");
 			Transform3DComponent& cameraTransform
 				= entity.AddComponent<Transform3DComponent>();
 			cameraTransform.SetLocalPosition(MathLib::Vector3{ 0.0f, 0.0f, -10.0f });
@@ -84,21 +98,21 @@ namespace Engine
 
 		// Creates the cube.
 		{
-			Entity entity = scene->CreateEntity("Cube");
+			Entity entity = scene.CreateEntity("Cube");
 			entity.AddComponent<Transform3DComponent>();
 			MeshComponent& component =
 				entity.AddComponent<MeshComponent>();
-			component.mesh = AssetManager::GetMeshes().Get(L"DefaultCube");
-			component.material = AssetManager::GetMaterials().Get(L"Unlit - ColorUV");
+			AssetManager::GetMeshes().Get(L"DefaultCube", component.mesh);
+			AssetManager::GetMaterials().Get(L"Unlit - ColorUV", component.material);
 			component.enabled = true;
 		}
 
 		// Creates a directional light.
 		{
-			Entity entity = scene->CreateEntity("Directional Light");
+			Entity entity = scene.CreateEntity("Directional Light");
 			Transform3DComponent& transform
 				= entity.AddComponent<Transform3DComponent>();
-			transform.SetLocalEulerAngles(MathLib::Vector3 { 45, 0, 0 });
+			transform.SetLocalEulerAngles(MathLib::Vector3{ 45, 0, 0 });
 
 			DirectionalLightComponent& directionalLight
 				= entity.AddComponent<DirectionalLightComponent>();
@@ -106,8 +120,8 @@ namespace Engine
 			directionalLight.lightColor = MathLib::Vector3::One;
 			directionalLight.lightIntensity = 1.0f;
 		}
-		return scene;
 	}
+
 
 	Scene::Scene()
 		: m_entityRegistry(),
@@ -312,10 +326,10 @@ namespace Engine
 				{
 					if (!mesh.enabled) return;
 
-					if (mesh.mesh != nullptr)
+					if (mesh.mesh)
 					{
 						// Draws the mesh with a material.
-						if (mesh.material != nullptr)
+						if (mesh.material)
 						{
 							GraphicsRenderer3D::DrawMesh(transform.GetTransformMatrix(),
 								*mesh.mesh, *mesh.material);

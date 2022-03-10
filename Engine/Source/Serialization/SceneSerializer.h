@@ -1,5 +1,7 @@
 #pragma once
 
+#include <filesystem>
+
 namespace Engine
 {
 	class Scene;
@@ -11,11 +13,8 @@ namespace Engine
 	public:
 		SceneSerializer(Scene* scene);
 
-		void Serialize(const std::wstring& filePath);
-		void Serialize(const std::string& filePath);
-
-		void Deserialize(const std::wstring& filePath);
-		void Deserialize(const std::string& filePath);
+		void Serialize(const std::filesystem::path& filePath);
+		void Deserialize(const std::filesystem::path& filePath);
 
 	private:
 		void Deserialize(const JsonFileParser& jsonParser);

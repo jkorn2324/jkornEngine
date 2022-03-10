@@ -9,11 +9,17 @@
 #include "EntityHierarchyComponent.h"
 #include "LightingComponents.h"
 #include "BehaviorScript.h"
+#include "AssetReferenceManager.h"
 
 namespace Engine
 {
 	using Transform2DComponent = MathLib::Transform2D;
 	using Transform3DComponent = MathLib::Transform3D;
+
+	class Mesh;
+	class Texture;
+	class Material;
+	class Shader;
 
 	struct IDComponent
 	{
@@ -26,21 +32,21 @@ namespace Engine
 
 	struct SpriteComponent
 	{
-		class Texture* texture = nullptr;
+		AssetRef<Texture> texture;
 		MathLib::Vector4 color = MathLib::Vector4::One;
 		bool enabled = true;
 
 		explicit SpriteComponent() = default;
 		explicit SpriteComponent(const MathLib::Vector4& color)
-			: color(color), texture(nullptr), enabled(true) { }
-		explicit SpriteComponent(class Texture* texture, const MathLib::Vector4& color)
+			: color(color), texture(), enabled(true) { }
+		explicit SpriteComponent(const AssetRef<Texture> texture, const MathLib::Vector4& color)
 			: color(color), texture(texture), enabled(true) { }
-		explicit SpriteComponent(class Texture* texture)
+		explicit SpriteComponent(const AssetRef<Texture> texture)
 			: color(MathLib::Vector4::One), texture(texture), enabled(true) { }
 		explicit SpriteComponent(bool enabled)
-			: color(MathLib::Vector4::One), texture(nullptr), enabled(enabled) { }
+			: color(MathLib::Vector4::One), texture(), enabled(enabled) { }
 		explicit SpriteComponent(bool enabled, const MathLib::Vector4& color)
-			: color(color), enabled(enabled), texture(nullptr) { }
+			: color(color), enabled(enabled), texture() { }
 	};
 
 	struct SceneCameraComponent
@@ -83,12 +89,12 @@ namespace Engine
 		// TODO: Generate a default material.
 
 		bool enabled = true;
-		class Mesh* mesh;
-		class Material* material;
+		AssetRef<Mesh> mesh;
+		AssetRef<Material> material;
 
 		explicit MeshComponent()
-			: mesh(nullptr), material(nullptr) { }
-		explicit MeshComponent(class Mesh* mesh, class Material* material)
+			: mesh(), material() { }
+		explicit MeshComponent(const AssetRef<Mesh>& mesh, const AssetRef<Material>& material)
 			: mesh(mesh), material(material) { }
 	};
 

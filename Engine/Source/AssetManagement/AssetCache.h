@@ -13,64 +13,12 @@
 namespace Engine
 {
 
+	// Responsible for loading and unloading assets.
+	// This doesn't determine how many times the asset is loaded;
+	// that is determined by the reference manager.
 	template<typename TAsset>
 	class AssetCache
 	{
-#pragma region jobs
-
-	public:
-		class AsyncLoadAssetNoArgsJob : public Job
-		{
-		public:
-			AsyncLoadAssetNoArgsJob(const std::wstring& path, AssetCache<TAsset>& assetCache)
-				: m_assetCache(assetCache), m_path(path)
-			{
-
-			}
-
-			void OnRun() override
-			{
-				m_assetCache.Load(m_path);
-			}
-
-		private:
-			AssetCache<TAsset>& m_assetCache;
-			std::wstring m_path;
-		};
-
-	public:
-		template<typename ...Args>
-		class AsyncLoadAssetArgsJob : public Job
-		{
-			typedef std::tuple<Args...> JobArgs;
-
-		public:
-			AsyncLoadAssetArgsJob(const std::wstring& path, AssetCache<TAsset>& assetCache, Args... args)
-				: m_path(path), m_assetCache(assetCache), m_args(std::forward<Args>(args)...)
-			{
-			}
-
-
-			void OnRun() override
-			{
-				LoadAsset(std::index_sequence_for<Args...>());
-			}
-
-		private:
-			template<std::size_t... Sq>
-			void LoadAsset(std::index_sequence<Sq...>)
-			{
-				m_assetCache.Load(m_path, std::get<Sq>(m_args)...);
-			}
-
-		private:
-			AssetCache<TAsset>& m_assetCache;
-			JobArgs m_args;
-			std::wstring m_path;
-		};
-
-#pragma endregion
-
 	public:
 		explicit AssetCache()
 			: m_cachedAssets(), m_supportsMultithreading(true) { }
@@ -87,9 +35,8 @@ namespace Engine
 		template<typename... Args>
 		TAsset* Load(const std::wstring& name, Args&& ...args);
 
-		void AsyncLoad(const std::wstring& name);
-		template<typename...Args>
-		void AsyncLoad(const std::wstring& name, Args ...args);
+		void Unload(const std::wstring& name);
+		void Unload(const std::wstring& name, bool save);
 
 		void Clear();
 
@@ -225,33 +172,14 @@ namespace Engine
 	}
 
 	template<typename TAsset>
-	inline void AssetCache<TAsset>::AsyncLoad(const std::wstring& name)
+	inline void AssetCache<TAsset>::Unload(const std::wstring& name)
 	{
-		if (m_supportsMultithreading)
-		{
-			JobManager::Add<AssetCache<TAsset>::AsyncLoadAssetNoArgsJob>(name, *this);
-		}
-		else
-		{
-			Load(name);
-		}
+		Unload(name, false);
 	}
 
-	// Args are copied so that they can be added to a tuple and read on another thread.
-
 	template<typename TAsset>
-	template<typename... Args>
-	inline void AssetCache<TAsset>::AsyncLoad(const std::wstring& name, Args... args)
+	inline void AssetCache<TAsset>::Unload(const std::wstring& name, bool save)
 	{
-		typedef AssetCache<TAsset>::AsyncLoadAssetArgsJob<Args...> JobType;
-
-		if (m_supportsMultithreading)
-		{
-			JobManager::Add<JobType>(name, *this, args...);
-		}
-		else
-		{
-			Load(name, std::forward<Args>(args)...);
-		}
+		// TODO: Implementation
 	}
 }

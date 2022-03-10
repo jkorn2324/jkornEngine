@@ -3,6 +3,7 @@
 
 #include "JsonFileParser.h"
 #include "JsonUtils.h"
+#include "AssetSerializer.h"
 
 #include <rapidjson\stringbuffer.h>
 
@@ -12,7 +13,7 @@ namespace Engine
 	static uint32_t s_numMaterials = 0;
 
 	Material::Material()
-		: m_shader(nullptr),
+		: m_shader(),
 		m_materialConstantBuffer(nullptr),
 		m_textures(nullptr),
 		m_numTextures(1),
@@ -29,18 +30,17 @@ namespace Engine
 		m_textures = new MaterialTextureData[m_numTextures];
 		for (uint32_t i = 0; i < m_numTextures; i++)
 		{
-			m_textures[i] = MaterialTextureData(nullptr);
+			m_textures[i] = MaterialTextureData();
 		}
 	}
 
 	Material::Material(const MaterialConstantsLayout& layout)
-		: m_shader(nullptr),
+		: m_shader(),
 		m_materialConstantBuffer(nullptr),
 		m_textures(nullptr),
 		m_numTextures(1),
 		m_materialConstants(layout),
-		m_internalMaterialConstants({}),
-		m_assetGUID()
+		m_internalMaterialConstants({})
 	{
 		if (s_numMaterials <= 0)
 		{
@@ -52,7 +52,7 @@ namespace Engine
 		m_textures = new MaterialTextureData[m_numTextures];
 		for (uint32_t i = 0; i < m_numTextures; i++)
 		{
-			m_textures[i] = MaterialTextureData(nullptr);
+			m_textures[i] = MaterialTextureData();
 		}
 		m_materialConstantBuffer = ConstantBuffer::Create(
 			m_materialConstants.GetRawBuffer(),
@@ -65,8 +65,7 @@ namespace Engine
 		m_textures(nullptr),
 		m_numTextures(material.m_numTextures),
 		m_materialConstants(material.m_materialConstants),
-		m_internalMaterialConstants(material.m_internalMaterialConstants),
-		m_assetGUID()
+		m_internalMaterialConstants(material.m_internalMaterialConstants)
 	{
 		s_numMaterials++;
 		m_textures = new MaterialTextureData[m_numTextures];
@@ -128,12 +127,12 @@ namespace Engine
 			m_materialConstants.GetBufferSize());
 	}
 
-	void Material::SetShader(Shader* shader)
+	void Material::SetShader(const AssetRef<Shader>& shader)
 	{
 		m_shader = shader;
 	}
 
-	void Material::SetTexture(uint32_t slot, Texture* texture)
+	void Material::SetTexture(uint32_t slot, const AssetRef<Texture>& texture)
 	{
 		if (slot >= m_numTextures)
 		{
@@ -145,7 +144,7 @@ namespace Engine
 		// Default Texture Slot.
 		case 0:
 		{
-			if (texture == nullptr)
+			if (!texture)
 			{
 				// Removes the flag only if it exists.
 				if (m_internalMaterialConstants.c_materialFlags & MaterialFlag_DefaultTexture)
@@ -173,11 +172,10 @@ namespace Engine
 	void Material::Bind(uint32_t constantBufferSlot) const
 	{
 		if (m_materialConstantBuffer == nullptr
-			|| m_shader == nullptr)
+			|| !m_shader)
 		{
 			return;
 		}
-
 
 		m_shader->Bind();
 		
@@ -194,7 +192,7 @@ namespace Engine
 		for (uint32_t i = 0; i < m_numTextures; i++)
 		{
 			const auto& texture = m_textures[i];
-			if (texture.texture != nullptr)
+			if (texture.texture)
 			{
 				texture.texture->Bind(i);
 			}
@@ -203,7 +201,9 @@ namespace Engine
 
 	bool Material::DeserializeFromFile(Material& material, AssetDeserializationFileData& value)
 	{
-		// TODO: Read from a default file.
+		JsonFileParser jsonFileParser(value.filePath);
+		// TODO: Implementation: read from a file path.
+		
 		return false;
 	}
 

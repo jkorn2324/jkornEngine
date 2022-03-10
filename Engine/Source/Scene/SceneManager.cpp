@@ -15,7 +15,7 @@ namespace Engine
 
 	void SceneManager::Init()
 	{
-		s_activeScene = Scene::CreateDefaultScene();
+		Scene::CreateDefaultScene(s_activeScene);
 		s_activeScene->BindEventFunc(s_eventFunc);
 	}
 	
@@ -37,6 +37,7 @@ namespace Engine
 		if (s_activeScene != nullptr)
 		{
 			delete s_activeScene;
+			s_activeScene = nullptr;
 		}
 
 		s_activeScene = new Scene();

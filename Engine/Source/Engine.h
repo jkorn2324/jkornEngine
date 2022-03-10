@@ -7,6 +7,8 @@
 #include "Profiler.h"
 
 #include "AssetCache.h"
+#include "AssetReferenceManager.h"
+#include "AssetSerializer.h"
 #include "AssetManager.h"
 #include "Material.h"
 #include "Mesh.h"

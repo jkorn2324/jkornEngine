@@ -29,10 +29,11 @@ namespace Engine
 		std::wstring filePath;
 	};
 
+	// Used so that the implementations can be defined in a cpp file.
 	struct AssetSerializerFuncs
 	{
 	private:
-		static GUID GetGUID(const std::wstring& filePath);
+		static bool GetAssetPathFromGUID(const GUID& guid, std::filesystem::path& path);
 		
 		template<typename T>
 		friend class AssetSerializer;
@@ -48,35 +49,33 @@ namespace Engine
 		// TODO: Need to deserialize from a GUID
 		bool DeserializeFromGUID(const GUID& guid)
 		{
-			// TODO: Convert the GUID to an asset path given by the asset manager and load it from there.
-			return true;
+			std::filesystem::path outputPath;
+			if (!AssetSerializerFuncs::GetFilePathFromGUID(guid, outputPath))
+			{
+				return false;
+			}
+			return DeserializeFromFile(outputPath);
 		}
 
 		template<typename...Args>
 		bool DeserializeFromGUID(const GUID& guid, Args&&...args)
 		{
-			// TODO: Convert the GUID to an asset path given by the asset manager and then call deserializeFromFileFinal
-			return true;
+			std::filesystem::path outputPath;
+			if (!AssetSerializerFuncs::GetFilePathFromGUID(guid, outputPath))
+			{
+				return false;
+			}
+			return DeserializeFromFile(outputPath, std::forward<Args>(args)...);
 		}
 
 		bool DeserializeFromFile(const std::filesystem::path& filePath)
 		{
-			// TODO: Remove macro, only here because we want to ignore this code.
-#ifdef LOAD_FROM_GUID
-			const GUID guid = AssetSerializerFuncs::GetGUID(filePath);
-			return DeserializeFromGUID(guid, std::forward<Args>(args)...);
-#endif
 			return DeserializeFromFilePanel(filePath);
 		}
 
 		template<typename...Args>
 		bool DeserializeFromFile(const std::wstring& filePath, Args&&...args)
 		{
-			// TODO: Remove macro, only here because we want to ignore this code.
-#ifdef LOAD_FROM_GUID
-			const GUID guid = AssetSerializerFuncs::GetGUID(filePath);
-			return DeserializeFromGUID(guid, std::forward<Args>(args)...);
-#endif
 			return DeserializeFromFileFinal(filePath, std::forward<Args>(args)...);
 		}
 

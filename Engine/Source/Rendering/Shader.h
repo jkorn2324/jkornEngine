@@ -2,6 +2,7 @@
 
 #include "BufferLayout.h"
 #include "EngineMacros.h"
+#include "GUID.h"
 
 namespace Engine
 {

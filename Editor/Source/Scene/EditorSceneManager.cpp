@@ -23,7 +23,7 @@ namespace Editor
 
 	void EditorSceneManager::Init() 
 	{
-		s_activeSceneData.defaultScene = Engine::Scene::CreateDefaultScene();
+		Engine::Scene::CreateDefaultScene(s_activeSceneData.defaultScene);
 	}
 
 	void EditorSceneManager::Release()

@@ -274,13 +274,13 @@ namespace Editor
 							[=](Engine::MeshComponent& meshComponent) -> void
 							{
 								// TODO: Remove this, as this is temporary.
-								Engine::AssetCache<Engine::Mesh>& meshes
+								Engine::TypedAssetManager<Engine::Mesh>& meshes
 									= Engine::AssetManager::GetMeshes();
-								meshComponent.mesh = meshes.Get(L"DefaultCube");
+								meshes.Get(L"DefaultCube", meshComponent.mesh);
 
-								Engine::AssetCache<Engine::Material>& materials
+								Engine::TypedAssetManager<Engine::Material>& materials
 									= Engine::AssetManager::GetMaterials();
-								meshComponent.material = materials.Get(L"Unlit-ColorUV");
+								materials.Get(L"Unlit-ColorUV", meshComponent.material);
 								Engine::MaterialConstants& constants
 									= meshComponent.material->GetMaterialConstants();
 								constants.SetMaterialConstant(

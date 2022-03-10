@@ -5,7 +5,7 @@
 
 namespace Engine
 {
-	SubTexture::SubTexture(Texture* texture)
+	SubTexture::SubTexture(const AssetRef<Texture>& texture)
 		: m_texture(texture), 
 		m_defaultUVs(true), 
 		m_size((float)texture->GetWidth(), (float)texture->GetHeight())
@@ -16,7 +16,7 @@ namespace Engine
 		m_uvs[3] = Vec2(0.0f, 0.0f);
 	}
 
-	SubTexture::SubTexture(Texture* texture, const Vec2& minUV, const Vec2& maxUV)
+	SubTexture::SubTexture(const AssetRef<Texture>& texture, const Vec2& minUV, const Vec2& maxUV)
 		: m_texture(texture), m_defaultUVs(false), m_size()
 	{
 		m_uvs[0] = Vec2(minUV.x, maxUV.y);
@@ -51,12 +51,12 @@ namespace Engine
 		return m_size;
 	}
 
-	Texture* SubTexture::GetTexture() const
+	const AssetRef<Texture>& SubTexture::GetTexture() const
 	{
 		return m_texture;
 	}
 	
-	SubTexture* SubTexture::CreateFromTexCoords(Texture* texture, const Vec2& minTextureCoord, const Vec2& maxTextureCoord)
+	SubTexture* SubTexture::CreateFromTexCoords(const AssetRef<Texture>& texture, const Vec2& minTextureCoord, const Vec2& maxTextureCoord)
 	{
 		Vec2 min = Vec2(minTextureCoord.x / (float)texture->GetWidth(),
 			minTextureCoord.y / (float)texture->GetHeight());
@@ -65,12 +65,12 @@ namespace Engine
 		return new SubTexture(texture, min, max);
 	}
 	
-	SubTexture* SubTexture::CreateFromSizeAndTexCoord(Texture* texture, const Vec2& texturePos, const Vec2& size)
+	SubTexture* SubTexture::CreateFromSizeAndTexCoord(const AssetRef<Texture>& texture, const Vec2& texturePos, const Vec2& size)
 	{
 		return CreateFromTexCoords(texture, texturePos, texturePos + size);
 	}
 	
-	SubTexture* SubTexture::CreateFromTextureAtlas(Texture* texture, const Vec2& cellSize, const Vec2Int& atlasRowCol, const Vec2& scale)
+	SubTexture* SubTexture::CreateFromTextureAtlas(const AssetRef<Texture>& texture, const Vec2& cellSize, const Vec2Int& atlasRowCol, const Vec2& scale)
 	{
 		Vec2 minTex = Vec2((cellSize.x * (float)atlasRowCol.x) / (float)texture->GetWidth(),
 			(cellSize.y * (float)atlasRowCol.y) / (float)texture->GetHeight());

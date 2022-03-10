@@ -3,6 +3,7 @@
 #include "ConstantBuffer.h"
 #include "GraphicsRenderer.h"
 
+#include "AssetReferenceManager.h"
 #include "ConstantBuffer.h"
 #include "Texture.h"
 #include "Shader.h"
@@ -24,11 +25,11 @@ namespace Engine
 
 	struct MaterialTextureData
 	{
-		Texture* texture = nullptr;
+		AssetRef<Texture> texture;
 
 		MaterialTextureData()
-			: texture(nullptr) { }
-		MaterialTextureData(Texture* texture)
+			: texture() { }
+		MaterialTextureData(const AssetRef<Texture>& texture)
 			: texture(texture) { }
 	};
 
@@ -57,10 +58,10 @@ namespace Engine
 
 		void SetConstantsLayout(const MaterialConstantsLayout& layout);
 
-		void SetShader(class Shader* shader);
-		void SetTexture(uint32_t slot, Texture* texture);
+		void SetShader(const AssetRef<Shader>& shader);
+		void SetTexture(uint32_t slot, const AssetRef<Texture>& texture);
 
-		bool HasShader() const { return m_shader != nullptr; }
+		bool HasShader() const { return m_shader; }
 
 		const MaterialTextureData& GetTextureData(uint32_t slot) const { return m_textures[slot]; }
 		const MaterialConstants& GetMaterialConstants() const { return m_materialConstants; }
@@ -80,12 +81,11 @@ namespace Engine
 		}
 
 	private:
-		Shader* m_shader;
+		AssetRef<Shader> m_shader;
 		ConstantBuffer* m_materialConstantBuffer;
 		MaterialTextureData* m_textures;
 		MaterialConstants m_materialConstants;
 		InternalMaterialConstants m_internalMaterialConstants;
-		GUID m_assetGUID;
 		uint32_t m_numTextures;
 
 		static Material* Create(const MaterialConstantsLayout& constants);

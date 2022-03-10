@@ -7,32 +7,40 @@
 
 #include "JsonUtils.h"
 #include "JsonFileParser.h"
+#include "JsonFileWriter.h"
+
 #include "Profiler.h"
 
 namespace Engine
 {
 
-	static void SerializeEntity(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer,
+	static void SerializeEntity(JsonFileWriter& fileWriter,
 		Entity& entity)
 	{
 		PROFILE_SCOPE(SerializeEntity, Serialization);
 
-		writer.StartObject();
+		fileWriter.BeginObject();
 
 		// UUID Component
-		WriteString(writer, "GUID");
 		if (entity.HasComponent<IDComponent>())
 		{
 			IDComponent& component = entity.GetComponent<IDComponent>();
-			WriteUint64(writer, component.guid);
+			fileWriter.Write("GUID", component.guid);
+		}
+		else
+		{
+			fileWriter.Write("GUID", (uint64_t)0);
 		}
 
 		// Name Component.
 		if (entity.HasComponent<NameComponent>())
 		{
 			NameComponent& nameComponent = entity.GetComponent<NameComponent>();
-			WriteString(writer, "NameComponent");
-			WriteString(writer, nameComponent.name);
+			fileWriter.Write("NameComponent", nameComponent.name);
+		}
+		else
+		{
+			fileWriter.Write("NameComponent", (std::string)"");
 		}
 
 		if (entity.HasComponent<EntityHierarchyComponent>())
@@ -47,17 +55,11 @@ namespace Engine
 			Transform3DComponent& transform3D = 
 				entity.GetComponent<Transform3DComponent>();
 
-			WriteString(writer, "Transform3DComponent");
-			writer.StartObject();
-
-			WriteString(writer, "Position");
-			WriteVector3(writer, transform3D.GetLocalPosition());
-			WriteString(writer, "Rotation");
-			WriteQuaternion(writer, transform3D.GetLocalRotation());
-			WriteString(writer, "Scale");
-			WriteVector3(writer, transform3D.GetLocalScale());
-
-			writer.EndObject();
+			fileWriter.BeginObject("Transform3DComponent");
+			fileWriter.Write("Position", transform3D.GetLocalPosition());
+			fileWriter.Write("Rotation", transform3D.GetLocalRotation());
+			fileWriter.Write("Scale", transform3D.GetLocalScale());
+			fileWriter.EndObject();
 		}
 
 		// Transform 2D Component.
@@ -66,17 +68,11 @@ namespace Engine
 			Transform2DComponent& transform2D =
 				entity.GetComponent<Transform2DComponent>();
 
-			WriteString(writer, "Transform2DComponent");
-			writer.StartObject();
-
-			WriteString(writer, "Position");
-			WriteVector2(writer, transform2D.GetLocalPosition());
-			WriteString(writer, "Rotation");
-			writer.Double(transform2D.GetLocalRotation());
-			WriteString(writer, "Scale");
-			WriteVector2(writer, transform2D.GetLocalScale());
-
-			writer.EndObject();
+			fileWriter.BeginObject("Transform2DComponent");
+			fileWriter.Write("Position", transform2D.GetLocalPosition());
+			fileWriter.Write("Rotation", transform2D.GetLocalRotation());
+			fileWriter.Write("Scale", transform2D.GetLocalScale());
+			fileWriter.EndObject();
 		}
 
 		// Sprite Component.
@@ -85,17 +81,11 @@ namespace Engine
 			SpriteComponent& spriteComponent =
 				entity.GetComponent<SpriteComponent>();
 
-			WriteString(writer, "SpriteComponent");
-			writer.StartObject();
-
-			WriteString(writer, "Enabled");
-			writer.Bool(spriteComponent.enabled);
-			WriteString(writer, "Color");
-			WriteVector4(writer, spriteComponent.color);
-
-			// TODO: Implement GUIDs for Assets
-
-			writer.EndObject();
+			fileWriter.BeginObject("SpriteComponent");
+			// TODO: Texture 2D GUID
+			fileWriter.Write("Enabled", spriteComponent.enabled);
+			fileWriter.Write("Color", spriteComponent.color);
+			fileWriter.EndObject();
 		}
 
 		// Mesh Component.
@@ -103,14 +93,11 @@ namespace Engine
 		{
 			MeshComponent& meshComponent =
 				entity.GetComponent<MeshComponent>();
-			WriteString(writer, "MeshComponent");
-			writer.StartObject();
 
-			// TODO: Material, Mesh
-			WriteString(writer, "enabled");
-			writer.Bool(meshComponent.enabled);
-
-			writer.EndObject();
+			fileWriter.BeginObject("MeshComponent");
+			// TODO: Material, Mesh (comes with GUIDs)
+			fileWriter.Write("Enabled", meshComponent.enabled);
+			fileWriter.EndObject();
 		}
 
 		// Scene Camera Component.
@@ -121,30 +108,18 @@ namespace Engine
 			CameraProperties& properties = 
 				cameraComponent.camera.GetProperties();
 
-			WriteString(writer, "SceneCameraComponent");
-			writer.StartObject();
-
-			WriteString(writer, "MainCamera");
-			writer.Bool(cameraComponent.mainCamera);
-			
-			WriteString(writer, "CameraType");
-			writer.Uint((uint32_t)cameraComponent.camera.GetSceneCameraType());
-			WriteString(writer, "NearPlane");
-			writer.Double((double)properties.nearPlane);
-			WriteString(writer, "FarPlane");
-			writer.Double((double)properties.farPlane);
-			WriteString(writer, "PerspFOV");
-			writer.Double((double)properties.perspFOV);
-			WriteString(writer, "PerspAspectRatio");
-			writer.Double((double)properties.perspAspectRatio);
-			WriteString(writer, "OrthoSize");
-			writer.Double((double)properties.orthoSize);
-			WriteString(writer, "OrthoWidth");
-			writer.Double((double)properties.orthoWidth);
-			WriteString(writer, "OrthoHeight");
-			writer.Double((double)properties.orthoHeight);
-
-			writer.EndObject();
+			fileWriter.BeginObject("SceneCameraComponent");
+			fileWriter.Write("MainCamera", cameraComponent.mainCamera);
+			fileWriter.Write("Enabled", cameraComponent.enabled);
+			fileWriter.Write("CameraType", (uint32_t)cameraComponent.camera.GetSceneCameraType());
+			fileWriter.Write("NearPlane", properties.nearPlane);
+			fileWriter.Write("FarPlane", properties.farPlane);
+			fileWriter.Write("PerspFOV", properties.perspFOV);
+			fileWriter.Write("PerspAspectRatio", properties.perspAspectRatio);
+			fileWriter.Write("OrthoSize", properties.perspAspectRatio);
+			fileWriter.Write("OrthoWidth", properties.orthoWidth);
+			fileWriter.Write("OrthoHeight", properties.orthoHeight);
+			fileWriter.EndObject();
 		}
 
 		// Directional Light Component
@@ -152,17 +127,12 @@ namespace Engine
 		{
 			DirectionalLightComponent& component
 				= entity.GetComponent<DirectionalLightComponent>();
-			WriteString(writer, "DirectionalLightComponent");
-			writer.StartObject();
 
-			WriteString(writer, "lightColor");
-			WriteVector3(writer, component.lightColor);
-			WriteString(writer, "lightIntensity");
-			writer.Double(component.lightIntensity);
-			WriteString(writer, "enabled");
-			writer.Bool(component.enabled);
-
-			writer.EndObject();
+			fileWriter.BeginObject("DirectionalLightComponent");
+			fileWriter.Write("LightColor", component.lightColor);
+			fileWriter.Write("LightIntensity", component.lightIntensity);
+			fileWriter.Write("Enabled", component.enabled);
+			fileWriter.EndObject();
 		}
 
 		// Point Light Component
@@ -170,24 +140,16 @@ namespace Engine
 		{
 			PointLightComponent& component
 				= entity.GetComponent<PointLightComponent>();
-			WriteString(writer, "PointLightComponent");
-			writer.StartObject();
 
-			WriteString(writer, "lightColor");
-			WriteVector3(writer, component.lightColor);
-			WriteString(writer, "innerRadius");
-			writer.Double(component.innerRadius);
-			WriteString(writer, "outerRadius");
-			writer.Double(component.outerRadius);
-			WriteString(writer, "lightIntensity");
-			writer.Double(component.lightIntensity);
-			WriteString(writer, "enabled");
-			writer.Bool(component.enabled);
-
-			writer.EndObject();
+			fileWriter.BeginObject("PointLightComponent");
+			fileWriter.Write("LightColor", component.lightColor);
+			fileWriter.Write("InnerRadius", component.innerRadius);
+			fileWriter.Write("OuterRadius", component.outerRadius);
+			fileWriter.Write("LightIntensity", component.lightIntensity);
+			fileWriter.Write("Enabled", component.enabled);
+			fileWriter.EndObject();
 		}
-
-		writer.EndObject();
+		fileWriter.EndObject();
 	}
 
 
@@ -300,12 +262,15 @@ namespace Engine
 		// Scene Camera Component.
 		if (value.HasMember("SceneCameraComponent"))
 		{
+			bool enabled = true;
 			bool mainCamera = false;
 			uint32_t cameraType;
 			CameraProperties cameraProperties;
 
 			ReadBool(value["SceneCameraComponent"],
 				"MainCamera", mainCamera);
+			ReadBool(value["SceneCameraComponent"],
+				"Enabled", enabled);
 			ReadUInt32(value["SceneCameraComponent"],
 				"CameraType", cameraType);
 			ReadFloat(value["SceneCameraComponent"],
@@ -331,20 +296,20 @@ namespace Engine
 		{
 			DirectionalLightComponent& component =
 				entity.AddComponent<DirectionalLightComponent>();
-			ReadVector3(value["DirectionalLightComponent"], "lightColor", component.lightColor);
-			ReadFloat(value["DirectionalLightComponent"], "lightIntensity", component.lightIntensity);
-			ReadBool(value["DirectionalLightComponent"], "enabled", component.enabled);
+			ReadVector3(value["DirectionalLightComponent"], "LightColor", component.lightColor);
+			ReadFloat(value["DirectionalLightComponent"], "LightIntensity", component.lightIntensity);
+			ReadBool(value["DirectionalLightComponent"], "Enabled", component.enabled);
 		}
 
 		if (value.HasMember("PointLightComponent"))
 		{
 			PointLightComponent& component =
 				entity.AddComponent<PointLightComponent>();
-			ReadVector3(value["PointLightComponent"], "lightColor", component.lightColor);
-			ReadFloat(value["PointLightComponent"], "innerRadius", component.innerRadius);
-			ReadFloat(value["PointLightComponent"], "outerRadius", component.outerRadius);
-			ReadFloat(value["PointLightComponent"], "lightIntensity", component.lightIntensity);
-			ReadBool(value["PointLightComponent"], "enabled", component.enabled);
+			ReadVector3(value["PointLightComponent"], "LightColor", component.lightColor);
+			ReadFloat(value["PointLightComponent"], "InnerRadius", component.innerRadius);
+			ReadFloat(value["PointLightComponent"], "OuterRadius", component.outerRadius);
+			ReadFloat(value["PointLightComponent"], "LightIntensity", component.lightIntensity);
+			ReadBool(value["PointLightComponent"], "Enabled", component.enabled);
 		}
 	}
 
@@ -353,17 +318,12 @@ namespace Engine
 		: m_scene(scene) { }
 
 
-	void SceneSerializer::Serialize(const std::wstring& filePath)
+	void SceneSerializer::Serialize(const std::filesystem::path& filePath)
 	{
 		PROFILE_SCOPE(SerializeScene, Serialization);
 
-		rapidjson::StringBuffer sceneBuffer;
-		rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(sceneBuffer);
-
-		prettyWriter.StartObject();
-
-		WriteString(prettyWriter, "Entities");
-		prettyWriter.StartArray();
+		JsonFileWriter jsonFileWriter(filePath);
+		jsonFileWriter.BeginArray("Entities");
 
 		m_scene->m_entityRegistry.each([&](auto id)
 			{
@@ -372,68 +332,21 @@ namespace Engine
 				{
 					return;
 				}
-				SerializeEntity(prettyWriter, entity);
+				SerializeEntity(jsonFileWriter, entity);
 			});
 
-		prettyWriter.EndArray();
-		prettyWriter.EndObject();
-
-		FILE* file;
-		_wfopen_s(&file, filePath.c_str(), L"w");
-		DebugAssert(file != nullptr, "Something went wrong with serializing to a file.");
-		fprintf_s(file, "%s", sceneBuffer.GetString());
-		fclose(file);
+		jsonFileWriter.EndArray();
+		jsonFileWriter.Flush();
 	}
 
-	void SceneSerializer::Serialize(const std::string& filePath)
-	{
-		PROFILE_SCOPE(SerializeScene, Serialization);
-
-		rapidjson::StringBuffer sceneBuffer;
-		rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(sceneBuffer);
-
-		prettyWriter.StartObject();
-
-		WriteString(prettyWriter, "Entities");
-		prettyWriter.StartArray();
-
-		m_scene->m_entityRegistry.each([&](auto id)
-		{
-			Entity entity(id, m_scene);
-			if (!entity.IsValid())
-			{
-				return;
-			}
-			SerializeEntity(prettyWriter, entity);
-		});
-
-		prettyWriter.EndArray();
-		prettyWriter.EndObject();
-
-		FILE* file;
-		fopen_s(&file, filePath.c_str(), "w");
-		DebugAssert(file != nullptr, "Something went wrong with serializing to a file.");
-		fprintf_s(file, "%s", sceneBuffer.GetString());
-		fclose(file);
-	}
-
-
-	void SceneSerializer::Deserialize(const std::wstring& filePath)
+	void SceneSerializer::Deserialize(const std::filesystem::path& filePath)
 	{
 		PROFILE_SCOPE(DeserializeScene, Serialization);
 
-		JsonFileParser parser = { filePath.c_str() };
+		JsonFileParser parser = { filePath };
 		Deserialize(parser);
 	}
 
-	void SceneSerializer::Deserialize(const std::string& filePath)
-	{
-		PROFILE_SCOPE(DeserializeScene, Serialization);
-
-		JsonFileParser parser = { filePath.c_str() };
-		Deserialize(parser);
-	}
-	
 	void SceneSerializer::Deserialize(const JsonFileParser& jsonParser)
 	{
 		if (jsonParser.IsValid())

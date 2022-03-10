@@ -102,8 +102,8 @@ namespace Engine
 	static GraphicsObjectConstants s_objectConstants;
 	static ConstantBuffer* s_objectConstantBuffer = nullptr;
 
-	static Mesh* s_cubeMesh = nullptr;
-	static Material* s_defaultMaterial = nullptr;
+	static AssetRef<Mesh> s_cubeMesh;
+	static AssetRef<Material> s_defaultMaterial;
 
 	static LightingData s_lightingData;
 	static ConstantBuffer* s_lightingConstantBuffer = nullptr;
@@ -202,7 +202,8 @@ namespace Engine
 
 		// Initializes the default material.
 		{
-			s_defaultMaterial = AssetManager::GetMaterials().Cache(L"Unlit-ColorUV",
+			AssetManager::GetMaterials().Cache(L"Unlit-ColorUV",
+				s_defaultMaterial,
 				MaterialConstantsLayout {
 					{"c_materialColor", sizeof(MathLib::Vector4) }
 				});
@@ -216,10 +217,10 @@ namespace Engine
 					sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2 }
 			}};
 
-			Engine::Shader* shader = 
-				AssetManager::GetShaders().Load(
+			AssetRef<Shader> defaultShader;
+			AssetManager::GetShaders().Load(defaultShader,
 					L"Shaders/Unlit-VertUvPosShader.hlsl", bufferLayout);
-			s_defaultMaterial->SetShader(shader);
+			s_defaultMaterial->SetShader(defaultShader);
 		}
 
 		// Initialize the constant buffer and buffer layout.
@@ -230,7 +231,7 @@ namespace Engine
 
 		// Generates the cube mesh, but should be stored in asset manager.
 		{
-			s_cubeMesh = AssetManager::GetMeshes().Cache(L"DefaultCube");
+			AssetManager::GetMeshes().Cache(s_cubeMesh, L"DefaultCube");
 			s_cubeMesh->SetVertices(cubeMeshVertices,
 				sizeof(GraphicsCubeMeshVertex), 
 				sizeof(cubeMeshVertices) / sizeof(cubeMeshVertices[0]));

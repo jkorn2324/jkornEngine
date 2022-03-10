@@ -2,32 +2,38 @@
 #include "AssetMapper.h"
 
 #include "JobManager.h"
-#include <sstream>
+#include "JsonFileParser.h"
+#include "JsonUtils.h"
 
 namespace Engine
 {
-	GUID AssetMapper::GetGUID(const std::filesystem::path& path)
+	std::filesystem::path AssetMapper::GetPath(const GUID& guid)
 	{
 		m_mutex.lock();
-		const auto& found = m_assetGUIDs.find(path);
-		if (found != m_assetGUIDs.end())
+		const auto& outputPath = m_assetGUIDs.find(guid);
+		if(outputPath != m_assetGUIDs.end())
 		{
 			m_mutex.unlock();
-			return found->second;
+			return outputPath->second;
 		}
-		GUID guid;
-		m_assetGUIDs.emplace(path, guid);
 		m_mutex.unlock();
-		return guid;
-	}
-
-	// File Path should be {path}/{guid[0-2]}/guid/
-	std::filesystem::path AssetMapper::GetPathFromGUID(const GUID& guid)
-	{
-		// TODO: Implementation
-		return "";
+		return std::filesystem::path();
 	}
 	
+	void AssetMapper::SetPath(const GUID& guid, const std::filesystem::path& path)
+	{
+		m_mutex.lock();
+		const auto& outputPath = m_assetGUIDs.find(guid);
+		if (outputPath != m_assetGUIDs.end())
+		{
+			m_assetGUIDs[guid] = path;
+			m_mutex.unlock();
+			return;
+		}
+		m_assetGUIDs.emplace(guid, path);
+		m_mutex.unlock();
+	}
+
 	void AssetMapper::BeginLoad()
 	{
 		JobManager::Add<LoadAssetMapperJob>(*this);
@@ -37,9 +43,14 @@ namespace Engine
 	{
 		m_mutex.lock();
 
-		// TODO: Read the Asset GUIDs.
 		{
-
+			JsonFileParser fileParser(m_path);
+			if (!fileParser.IsValid())
+			{
+				m_mutex.unlock();
+				return;
+			}
+			// TODO: Load the Asset GUIDs.
 		}
 
 		m_mutex.unlock();
@@ -48,10 +59,15 @@ namespace Engine
 	void AssetMapper::UnLoad()
 	{
 		m_mutex.lock();
-
-		// TODO: Unload the Asset GUIDs.
+		
 		{
+			rapidjson::PrettyWriter<rapidjson::StringBuffer> jsonWriter;
 
+
+			for (const auto& pair : m_assetGUIDs)
+			{
+
+			}
 		}
 
 		m_mutex.unlock();

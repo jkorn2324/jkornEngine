@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Source\Vector.h"
+#include "GUID.h"
 #include "EngineMacros.h"
 
 #include <string>

@@ -9,7 +9,6 @@
 
 namespace Engine
 {
-
 	class AssetManager;
 
 	class AssetMapper
@@ -20,8 +19,8 @@ namespace Engine
 		{
 		}
 
-		GUID GetGUID(const std::filesystem::path& path);
-		std::filesystem::path GetPathFromGUID(const GUID& guid);
+		std::filesystem::path GetPath(const GUID& guid);
+		void SetPath(const GUID& guid, const std::filesystem::path& path);
 
 	private:
 		void BeginLoad();
@@ -29,7 +28,7 @@ namespace Engine
 		void UnLoad();
 
 	private:
-		std::unordered_map<std::wstring, GUID> m_assetGUIDs;
+		std::unordered_map<GUID, std::filesystem::path> m_assetGUIDs;
 		std::wstring m_path;
 		std::mutex m_mutex;
 

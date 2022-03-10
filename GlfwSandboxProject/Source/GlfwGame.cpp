@@ -35,11 +35,11 @@ namespace GlfwSandbox
 
 	void GlfwGame::InitializeRenderBuffers()
 	{
-		Engine::AssetCache<Engine::Texture>& textureAssetCache =
+		Engine::TypedAssetManager<Engine::Texture>& textureAssetManager =
 			Engine::AssetManager::GetTextures();
 		{
-			textureAssetCache.Load(L"Assets/Textures/happy-face.png");
-			Engine::Texture* texture = textureAssetCache.Load(CARDS_LARGE_TILEMAP);
+			Engine::AssetRef<Engine::Texture> texture;
+			textureAssetManager.Load(CARDS_LARGE_TILEMAP, texture);
 			m_subTexture = Engine::SubTexture::CreateFromTexCoords(texture,
 				MathLib::Vector2(11.0f, 2.0f), MathLib::Vector2(51.0f, 61.0f));
 		}
@@ -90,12 +90,14 @@ namespace GlfwSandbox
 
 		Engine::Entity entity = scene.CreateEntity("HappyFace");
 		{
+			Engine::TypedAssetManager<Engine::Texture>& textureAssetManager =
+				Engine::AssetManager::GetTextures();
 			Engine::Transform3DComponent& component
 				= entity.AddComponent<Engine::Transform3DComponent>();
 			component.SetLocalScale(200.0f, 200.0f, 1.0f);
-			entity.AddComponent<Engine::SpriteComponent>();
-			/* entity.AddComponent<Engine::SpriteComponent>(
-				Engine::AssetManager::GetTextures().Get(L"Assets/Textures/happy-face.png")); */
+			Engine::SpriteComponent& sprite
+				= entity.AddComponent<Engine::SpriteComponent>();
+			textureAssetManager.Load(L"Assets/Textures/happy-face.png", sprite.texture);
 		}
 	}
 

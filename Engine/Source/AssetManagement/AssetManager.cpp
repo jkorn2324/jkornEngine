@@ -6,25 +6,22 @@
 
 namespace Engine
 {
-	// TODO: Need to support multithreading in the asset manager.
-
-
 	AssetMapper* s_assetMapper = nullptr;
-	AssetCache<Shader> s_shaderAssets = AssetCache<Shader>(false);
+	TypedAssetManager<Shader> s_shaderAssets = TypedAssetManager<Shader>();
 
-	AssetCache<Shader>& AssetManager::GetShaders()
+	TypedAssetManager<Shader>& AssetManager::GetShaders()
 	{
 		return s_shaderAssets;
 	}
 
-	AssetCache<Mesh> s_meshAssets = AssetCache<Mesh>();
+	TypedAssetManager<Mesh> s_meshAssets = TypedAssetManager<Mesh>();
 
-	AssetCache<Mesh>& AssetManager::GetMeshes()
+	TypedAssetManager<Mesh>& AssetManager::GetMeshes()
 	{
 		return s_meshAssets;
 	}
 
-	AssetCache<Texture> s_textureAssets = AssetCache<Texture>(false);
+	TypedAssetManager<Texture> s_textureAssets = TypedAssetManager<Texture>();
 
 	void AssetManager::Init(const std::filesystem::path& guidsDatabasePath)
 	{
@@ -32,14 +29,14 @@ namespace Engine
 		s_assetMapper->BeginLoad();
 	}
 
-	AssetCache<Texture>& AssetManager::GetTextures()
+	TypedAssetManager<Texture>& AssetManager::GetTextures()
 	{
 		return s_textureAssets;
 	}
 
-	AssetCache<Material> s_materialAssets = AssetCache<Material>();
+	TypedAssetManager<Material> s_materialAssets = TypedAssetManager<Material>();
 
-	AssetCache<Material>& AssetManager::GetMaterials()
+	TypedAssetManager<Material>& AssetManager::GetMaterials()
 	{
 		return s_materialAssets;
 	}
@@ -56,7 +53,7 @@ namespace Engine
 		s_meshAssets.Clear();
 		s_materialAssets.Clear();
 
-		// Delets the assets.
+		// Deletes the assets.
 		{
 			s_assetMapper->UnLoad();
 			delete s_assetMapper;

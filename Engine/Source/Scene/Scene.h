@@ -90,7 +90,11 @@ namespace Engine
 		EventFunc m_eventFunc;
 
 	public:
-		static Scene* CreateDefaultScene();
+		static void CreateDefaultScene(Scene*& scene);
+		static void CreateDefaultScene(std::shared_ptr<Scene>& sharedPointer);
+
+	private:
+		static void CreateDefaultScene(Scene& scene);
 
 		friend class Entity;
 		friend class SceneSerializer;
