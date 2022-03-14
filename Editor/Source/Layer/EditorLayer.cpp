@@ -95,10 +95,10 @@ namespace Editor
 				L"LitShader", meshComponent.material);
 			meshComponent.material->SetConstantsLayout(
 			{
-				Engine::MaterialConstantLayoutAttribute { "c_diffuseColor", sizeof(MathLib::Vector4) },
-				Engine::MaterialConstantLayoutAttribute { "c_specularColor", sizeof(MathLib::Vector4) },
-				Engine::MaterialConstantLayoutAttribute { "c_specularPower", sizeof(float) },
-				Engine::MaterialConstantLayoutAttribute { sizeof(MathLib::Vector3) }
+				{ "c_diffuseColor", Engine::LayoutType_Vector4 },
+				{ "c_specularColor", Engine::LayoutType_Vector4 },
+				{ "c_specularPower", Engine::LayoutType_Float },
+				{ Engine::LayoutType_Vector3 }
 			});
 
 			Engine::MaterialConstants& constants = meshComponent.material->GetMaterialConstants();
@@ -119,12 +119,9 @@ namespace Editor
 				};
 
 				Engine::BufferLayout bufferLayout = { {
-					{ "POSITION", offsetof(CubeMeshVert, pos),
-						sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
-					{ "NORMAL", offsetof(CubeMeshVert, normal),
-						sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
-					{ "TEXCOORD", offsetof(CubeMeshVert, uv),
-						sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2 }
+					{ "POSITION", offsetof(CubeMeshVert, pos), Engine::BufferLayoutType::FLOAT3 },
+					{ "NORMAL", offsetof(CubeMeshVert, normal), Engine::BufferLayoutType::FLOAT3 },
+					{ "TEXCOORD", offsetof(CubeMeshVert, uv), Engine::BufferLayoutType::FLOAT2 }
 				} };
 
 				Engine::AssetRef<Engine::Shader> shader;

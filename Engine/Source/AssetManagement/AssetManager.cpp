@@ -6,6 +6,17 @@
 
 namespace Engine
 {
+
+	bool TypedAssetManagerFuncs::GetGUID(const std::wstring& name, GUID& guid)
+	{
+		return AssetManager::GetAssetMapper().GetGUID(name, guid);
+	}
+
+	void TypedAssetManagerFuncs::SetPath(const std::filesystem::path& path, const GUID& guid)
+	{
+		AssetManager::GetAssetMapper().SetPath(guid, path);
+	}
+
 	AssetMapper* s_assetMapper = nullptr;
 	TypedAssetManager<Shader> s_shaderAssets = TypedAssetManager<Shader>();
 

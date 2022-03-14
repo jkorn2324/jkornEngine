@@ -12,12 +12,19 @@ namespace Engine
 
 	bool Shader::DeserializeFromFile(Shader& shader, AssetDeserializationFileData& value)
 	{
+		// TODO: Load buffer layout from meta file with GUID.
 		return false;
 	}
 
 	bool Shader::DeserializeFromFile(Shader& shader, AssetDeserializationFileData& value, const BufferLayout& bufferLayout)
 	{
 		return shader.Load(value.filePath.c_str(), bufferLayout);
+	}
+
+	bool Shader::SerializeToFile(Shader& shader, AssetSerializationMetaData& metaData)
+	{
+		// TODO: Write to a meta file. Should really only contain the GUID.
+		return true;
 	}
 
 	Shader* Shader::Create()

@@ -2,8 +2,8 @@
 
 #include <string>
 
-// Here is messes it up, may need to add Rapidjson as a library to Editor.
 #include "JsonFileParser.h"
+#include "JsonFileWriter.h"
 #include "JsonUtils.h"
 #include "Profiler.h"
 
@@ -13,11 +13,6 @@ namespace Engine
 {
 	class GUID;
 
-	struct AssetDeserializationMetaData
-	{
-		rapidjson::Value& value;
-	};
-
 	struct AssetDeserializationFileData
 	{
 		std::filesystem::path filePath;
@@ -25,8 +20,7 @@ namespace Engine
 
 	struct AssetSerializationMetaData
 	{
-		rapidjson::PrettyWriter<rapidjson::StringBuffer>& prettyWriter;
-		std::wstring filePath;
+		std::filesystem::path filePath;
 	};
 
 	// Used so that the implementations can be defined in a cpp file.
@@ -42,15 +36,31 @@ namespace Engine
 	template<typename T>
 	class AssetSerializer
 	{
+		// TODO: Separate In Editor stuff from outside of editor (possible in-editor macro?)
+
 	public:
 		AssetSerializer(T& asset)
 			: m_asset(asset) { }
 
-		// TODO: Need to deserialize from a GUID
+		bool SerializeToFile(const std::filesystem::path& path)
+		{
+			return SerializeToFileInternal(path);
+		}
+
+		bool SerializeFromGUID(const GUID& guid)
+		{
+			std::filesystem::path outputPath;
+			if (!AssetSerializerFuncs::GetAssetPathFromGUID(guid, outputPath))
+			{
+				return false;
+			}
+			return SerializeToFile(outputPath);
+		}
+
 		bool DeserializeFromGUID(const GUID& guid)
 		{
 			std::filesystem::path outputPath;
-			if (!AssetSerializerFuncs::GetFilePathFromGUID(guid, outputPath))
+			if (!AssetSerializerFuncs::GetAssetPathFromGUID(guid, outputPath))
 			{
 				return false;
 			}
@@ -61,7 +71,7 @@ namespace Engine
 		bool DeserializeFromGUID(const GUID& guid, Args&&...args)
 		{
 			std::filesystem::path outputPath;
-			if (!AssetSerializerFuncs::GetFilePathFromGUID(guid, outputPath))
+			if (!AssetSerializerFuncs::GetAssetPathFromGUID(guid, outputPath))
 			{
 				return false;
 			}
@@ -70,29 +80,36 @@ namespace Engine
 
 		bool DeserializeFromFile(const std::filesystem::path& filePath)
 		{
-			return DeserializeFromFilePanel(filePath);
+			return DeserializeFromFileInternal(filePath);
 		}
 
 		template<typename...Args>
-		bool DeserializeFromFile(const std::wstring& filePath, Args&&...args)
+		bool DeserializeFromFile(const std::filesystem::path& filePath, Args&&...args)
 		{
-			return DeserializeFromFileFinal(filePath, std::forward<Args>(args)...);
+			return DeserializeFromFileInternal(filePath, std::forward<Args>(args)...);
 		}
 
 	private:
 		template<typename...Args>
-		bool DeserializeFromFileFinal(const std::wstring& filePath, Args&&...args)
+		bool DeserializeFromFileInternal(const std::filesystem::path& filePath, Args&&...args)
 		{
 			PROFILE_SCOPE_FUNC(T, DeserializeFromFile, Serialization);
 			AssetDeserializationFileData deserializerData = { filePath };
 			return T::DeserializeFromFile(m_asset, deserializerData, std::forward<Args>(args)...);
 		}
 
-		bool DeserializeFromFileFinal(const std::wstring& filePath)
+		bool DeserializeFromFileInternal(const std::filesystem::path& filePath)
 		{
 			PROFILE_SCOPE_FUNC(T, DeserializeFromFile, Serialization);
 			AssetDeserializationFileData deserializerData = { filePath };
 			return T::DeserializeFromFile(m_asset, deserializerData);
+		}
+
+		bool SerializeToFileInternal(const std::filesystem::path& filePath)
+		{
+			PROFILE_SCOPE_FUNC(T, SerializeToFile, Serialization);
+			AssetSerializationMetaData serializerData = { filePath };
+			return T::SerializeToFile(m_asset, serializerData);
 		}
 
 	private:

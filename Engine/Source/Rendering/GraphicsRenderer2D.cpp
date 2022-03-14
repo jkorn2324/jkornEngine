@@ -121,8 +121,8 @@ namespace Engine
 			// Defines the sprite material.
 			materialCache.Cache(s_spriteMaterial, 
 				L"SpriteMaterial", 
-				MaterialConstantsLayout{
-					{ "c_spriteColor", sizeof(MathLib::Vector4) }
+				MaterialConstantsLayout {
+					{ "c_spriteColor", LayoutType_Vector4 }
 				});
 			s_spriteMaterial->SetShader(s_spriteShader);
 		}

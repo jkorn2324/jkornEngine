@@ -4,6 +4,7 @@ project "ImGui"
 	kind "StaticLib"
 	language "C++"
 	staticruntime "off"
+	cppdialect "C++17"
 
     location "%{wks.location}/Engine/Libraries/ImGui/"
 

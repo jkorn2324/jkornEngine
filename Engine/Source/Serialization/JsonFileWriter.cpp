@@ -79,6 +79,22 @@ namespace Engine
 		static_assert(false);
 	}
 
+	// Writes an unsigned int 16.
+	template<>
+	void JsonFileWriter::Write(const std::string& name, const uint16_t& value)
+	{
+		WriteString(m_prettyWriter, name);
+		m_prettyWriter.Uint((uint32_t)value);
+	}
+
+	// Writes a int 16.
+	template<>
+	void JsonFileWriter::Write(const std::string& name, const int16_t& value)
+	{
+		WriteString(m_prettyWriter, name);
+		m_prettyWriter.Int((int32_t)value);
+	}
+
 	// Writes an unsigned int 32.
 	template<>
 	void JsonFileWriter::Write(const std::string& name, const uint32_t& value)

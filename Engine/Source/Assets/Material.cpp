@@ -3,7 +3,11 @@
 
 #include "JsonFileParser.h"
 #include "JsonUtils.h"
+
 #include "AssetSerializer.h"
+#include "AssetManager.h"
+#include "AssetCache.h"
+#include "AssetMapper.h"
 
 #include <rapidjson\stringbuffer.h>
 
@@ -199,13 +203,288 @@ namespace Engine
 		}
 	}
 
+#pragma region serialization
+
+	static MaterialConstantLayoutAttribute LoadMaterialAttributeConstantLayoutType(rapidjson::Value& value,
+		char*& valueBuffer, size_t& offset)
+	{
+		std::string name;
+		MaterialConstantLayoutType layoutType;
+		bool padding = false;
+
+		ReadString(value, "Name", name);
+		ReadEnum<MaterialConstantLayoutType>(value, "Type", layoutType);
+		ReadBool(value, "Pad", padding);
+
+		MaterialConstantLayoutAttribute attribute = { name, layoutType, padding };
+
+		// Appends the attribute data to the value buffer.
+		char* ptrValue = valueBuffer + offset;
+		switch (layoutType)
+		{
+		case LayoutType_Bool:
+		{
+			bool boolValue;
+			ReadBool(value, "Value", boolValue);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&boolValue), attribute.layoutStride);
+			break;
+		}
+		case LayoutType_Float:
+		{
+			float floatValue;
+			ReadFloat(value, "Value", floatValue);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&floatValue), attribute.layoutStride);
+			break;
+		}
+		case LayoutType_Int16:
+		{
+			int16_t int16Value;
+			ReadInt16(value, "Value", int16Value);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&int16Value), attribute.layoutStride);
+			break;
+		}
+		case LayoutType_Int32:
+		{
+			int32_t int32Value;
+			ReadInt32(value, "Value", int32Value);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&int32Value), attribute.layoutStride);
+			break;
+		}
+		case LayoutType_Int64:
+		{
+			int64_t int64Value;
+			ReadInt64(value, "Value", int64Value);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&int64Value), attribute.layoutStride);
+			break;
+		}
+		case LayoutType_Uint16:
+		{
+			uint16_t int16Value;
+			ReadUint16(value, "Value", int16Value);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&int16Value), attribute.layoutStride);
+			break;
+		}
+		case LayoutType_Uint32:
+		{
+			uint32_t int32Value;
+			ReadUint32(value, "Value", int32Value);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&int32Value), attribute.layoutStride);
+			break;
+		}
+		case LayoutType_Uint64:
+		{
+			uint64_t int64Value;
+			ReadUint64(value, "Value", int64Value);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&int64Value), attribute.layoutStride);
+			break;
+		}
+		case LayoutType_Vector2:
+		{
+			MathLib::Vector2 vector2Value;
+			ReadVector2(value, "Value", vector2Value);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&vector2Value), attribute.layoutStride);
+			break;
+		}
+		case LayoutType_Vector3:
+		{
+			MathLib::Vector3 vector3Value;
+			ReadVector3(value, "Value", vector3Value);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&vector3Value), attribute.layoutStride);
+			break;
+		}
+		case LayoutType_Vector4:
+		{
+			MathLib::Vector4 vector4Value;
+			ReadVector4(value, "Value", vector4Value);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&vector4Value), attribute.layoutStride);
+			break;
+		}
+		case LayoutType_Quaternion:
+		{
+			MathLib::Quaternion quaternionValue;
+			ReadQuaternion(value, "Value", quaternionValue);
+			std::memcpy(ptrValue, reinterpret_cast<char*>(&quaternionValue), attribute.layoutStride);
+			break;
+		}
+		}
+
+		offset += attribute.layoutStride;
+		return attribute;
+	}
+
 	bool Material::DeserializeFromFile(Material& material, AssetDeserializationFileData& value)
 	{
 		JsonFileParser jsonFileParser(value.filePath);
-		// TODO: Implementation: read from a file path.
+		if (!jsonFileParser.IsValid())
+		{
+			return false;
+		}
 		
-		return false;
+		MaterialConstantsLayout layout;
+		char* materialConstantBuffer = nullptr;
+		rapidjson::Document& document = jsonFileParser.GetDocument();
+		
+		// Deserializes the buffer layout with values.
+		if (document.HasMember("Layout"))
+		{
+			rapidjson::Value& layoutValue = document["Layout"].GetObject();
+			size_t layoutByteSize = 0;
+			if (!ReadSize(document, "Size", layoutByteSize)
+				|| layoutByteSize <= 0)
+			{
+				return false;
+			}
+			materialConstantBuffer = new char[layoutByteSize];
+			size_t currentOffset = 0;
+			if (layoutValue.HasMember("Attributes"))
+			{
+				rapidjson::Value& attributes = document["Attributes"].GetArray();
+				for (rapidjson::SizeType i = 0; i < attributes.Size(); i++)
+				{
+					rapidjson::Value& attributeValue = attributes[i].GetObject();
+					MaterialConstantLayoutAttribute attribute
+						= LoadMaterialAttributeConstantLayoutType(attributeValue, materialConstantBuffer, currentOffset);
+					layout.layoutAttributes.push_back(attribute);
+				}
+			}
+		}
+
+		// Applies the material constants.
+		{
+			material.SetConstantsLayout(layout);
+			MaterialConstants& constants = material.GetMaterialConstants();
+			constants.SetRawBuffer(materialConstantBuffer);
+			delete[] materialConstantBuffer;
+		}
+
+		// Reads & Loads the shader from its GUID.
+		{
+			uint64_t shaderGUID;
+			ReadUint64(document, "Shader", shaderGUID);
+
+			std::filesystem::path assetPath = AssetManager::GetAssetMapper().GetPath(shaderGUID);
+			if (std::filesystem::exists(assetPath))
+			{
+				AssetManager::GetShaders().Load(material.m_shader, assetPath);
+			}
+		}
+
+		// TODO: Read and load the textures from their GUIDs.
+		{
+
+		}
+		return true;
 	}
+
+	bool Material::SerializeToFile(Material& material, AssetSerializationMetaData& metaData)
+	{
+		JsonFileWriter fileWriter(metaData.filePath);
+		
+		// Writes the constant buffer attribute layout.
+		{
+			fileWriter.BeginObject("Layout");
+			fileWriter.Write("Size", material.m_materialConstants.m_totalBufferSize);
+			fileWriter.BeginArray("Attributes");
+
+			for (auto& pair : material.m_materialConstants.m_materialConstants)
+			{
+				fileWriter.BeginObject();
+				fileWriter.Write("Name", pair.first);
+				fileWriter.Write<uint32_t>("Type", pair.second.layoutType);
+				fileWriter.Write<bool>("Pad", pair.second.pad);
+				
+				// Writes the Value of the given type.
+				switch (pair.second.layoutType)
+				{
+				case LayoutType_Bool:
+				{
+					fileWriter.Write("Value", 
+						*material.m_materialConstants.GetMaterialConstant<bool>(pair.first));
+					break;
+				}
+				case LayoutType_Float:
+				{
+					fileWriter.Write("Value", 
+						*material.m_materialConstants.GetMaterialConstant<float>(pair.first));
+					break;
+				}
+				case LayoutType_Int16:
+				{
+					fileWriter.Write("Value", 
+						*material.m_materialConstants.GetMaterialConstant<int16_t>(pair.first));
+					break;
+				}
+				case LayoutType_Int32:
+				{
+					fileWriter.Write("Value", 
+						*material.m_materialConstants.GetMaterialConstant<int32_t>(pair.first));
+					break;
+				}
+				case LayoutType_Int64:
+				{
+					fileWriter.Write("Value", 
+						*material.m_materialConstants.GetMaterialConstant<int64_t>(pair.first));
+					break;
+				}
+				case LayoutType_Uint16:
+				{
+					fileWriter.Write("Value", 
+						*material.m_materialConstants.GetMaterialConstant<uint16_t>(pair.first));
+					break;
+				}
+				case LayoutType_Uint32:
+				{
+					fileWriter.Write("Value", 
+						*material.m_materialConstants.GetMaterialConstant<uint32_t>(pair.first));
+					break;
+				}
+				case LayoutType_Uint64:
+				{
+					fileWriter.Write("Value", 
+						*material.m_materialConstants.GetMaterialConstant<uint64_t>(pair.first));
+					break;
+				}
+				case LayoutType_Quaternion:
+				{
+					fileWriter.Write("Value", 
+						*material.m_materialConstants.GetMaterialConstant<MathLib::Quaternion>(pair.first));
+					break;
+				}
+				case LayoutType_Vector2:
+				{
+					fileWriter.Write("Value",
+						*material.m_materialConstants.GetMaterialConstant<MathLib::Vector2>(pair.first));
+					break;
+				}
+				case LayoutType_Vector3:
+				{
+					fileWriter.Write("Value",
+						*material.m_materialConstants.GetMaterialConstant<MathLib::Vector3>(pair.first));
+					break;
+				}
+				case LayoutType_Vector4:
+				{
+					fileWriter.Write("Value",
+						*material.m_materialConstants.GetMaterialConstant<MathLib::Vector4>(pair.first));
+					break;
+				}
+				}
+				fileWriter.EndObject();
+			}
+
+			fileWriter.EndArray();
+			fileWriter.EndObject();
+		}
+
+		if (material.HasShader())
+		{
+			// TODO: Get the Shader GUID.
+			fileWriter.Write("Shader", 0);
+		}
+		return true;
+	}
+
+#pragma endregion
 
 	Material* Material::Create(const MaterialConstantsLayout& constants)
 	{

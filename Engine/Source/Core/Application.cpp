@@ -53,6 +53,7 @@ namespace Engine
 		Logger::Init();
 		Profiler::Init();
 		JobManager::Init();
+		AssetManager::Init(m_rootPath);
 
 		WindowProperties properties = 
 		{
@@ -64,13 +65,11 @@ namespace Engine
 		
 		Input::BindInputEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 		Input::Init();
-		
+
 		GraphicsRenderer::Init();
 		GraphicsRenderer2D::Init();
 		GraphicsRenderer3D::Init();
-
-		AssetManager::Init(m_rootPath);
-
+		
 		SceneManager::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
 		SceneManager::Init();
 

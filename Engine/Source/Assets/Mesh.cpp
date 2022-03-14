@@ -88,6 +88,12 @@ namespace Engine
 		return true;
 	}
 
+	bool Mesh::SerializeToFile(Mesh& mesh, AssetSerializationMetaData& metaData)
+	{
+		// TODO: Write to a file.
+		return true;
+	}
+
 	Mesh* Mesh::Create()
 	{
 		return new Mesh();

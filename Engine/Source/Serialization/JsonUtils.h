@@ -106,8 +106,29 @@ namespace Engine
 
 #pragma region read_funcs
 
+	static bool ReadUint16(rapidjson::Value& value, const char* key, uint16_t& output)
+	{
+		if (value.HasMember(key)
+			&& value[key].IsUint())
+		{
+			output = (uint16_t)value[key].GetUint();
+			return true;
+		}
+		return false;
+	}
 
-	static bool ReadUInt32(rapidjson::Value& value, const char* key, uint32_t& output)
+	static bool ReadInt16(rapidjson::Value& value, const char* key, int16_t& output)
+	{
+		if (value.HasMember(key)
+			&& value[key].IsInt())
+		{
+			output = (uint16_t)value[key].GetInt();
+			return true;
+		}
+		return false;
+	}
+
+	static bool ReadUint32(rapidjson::Value& value, const char* key, uint32_t& output)
 	{
 		if (value.HasMember(key)
 			&& value[key].IsUint())
@@ -174,6 +195,63 @@ namespace Engine
 			else if (value[key].IsFloat())
 			{
 				output = (float)value[key].GetFloat();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	static bool ReadSize(rapidjson::Value& value, const char* key, size_t& output)
+	{
+		if (value.HasMember(key))
+		{
+			if (value[key].IsInt())
+			{
+				output = (size_t)value[key].GetInt();
+				return true;
+			}
+			else if (value[key].IsInt64())
+			{
+				output = (size_t)value[key].GetInt64();
+				return true;
+			}
+			else if (value[key].IsUint())
+			{
+				output = (size_t)value[key].GetUint();
+				return true;
+			}
+			else if (value[key].IsUint64())
+			{
+				output = (size_t)value[key].GetUint64();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	template<typename T>
+	static bool ReadEnum(rapidjson::Value& value, const char* key, T& output)
+	{
+		if (value.HasMember(key))
+		{
+			if (value[key].IsInt())
+			{
+				output = (T)value[key].GetInt();
+				return true;
+			}
+			else if (value[key].IsInt64())
+			{
+				output = (T)value[key].GetInt64();
+				return true;
+			}
+			else if (value[key].IsUint())
+			{
+				output = (T)value[key].GetUint();
+				return true;
+			}
+			else if (value[key].IsUint64())
+			{
+				output = (T)value[key].GetUint64();
 				return true;
 			}
 		}

@@ -8,19 +8,7 @@ namespace Engine
 		m_materialConstants(),
 		m_materialBuffer(nullptr)
 	{
-		for (size_t i = 0; i < materialConstantsLayout.layoutAttributes.size(); i++)
-		{
-			MaterialConstantLayoutAttribute attribute = materialConstantsLayout.layoutAttributes[i];
-			uint32_t offset = (uint32_t)m_totalBufferSize;
-			m_totalBufferSize += attribute.layoutStride;
-
-			if (!attribute.pad)
-			{
-				m_materialConstants.emplace(attribute.name,
-					MaterialConstantBufferData{ offset, attribute.layoutStride });
-			}
-		}
-		m_materialBuffer = new char[m_totalBufferSize];
+		SetLayout(materialConstantsLayout);
 	}
 
 	MaterialConstants::MaterialConstants(const MaterialConstants& constants)
@@ -51,9 +39,39 @@ namespace Engine
 		return *this;
 	}
 
-	MaterialConstants::~MaterialConstants()
+	void MaterialConstants::SetLayout(const MaterialConstantsLayout& layout)
 	{
-		delete[] m_materialBuffer;
+		ReleaseBuffer();
+
+		m_totalBufferSize = 0;
+		m_materialConstants.clear();
+
+		for (size_t i = 0; i < layout.layoutAttributes.size(); i++)
+		{
+			MaterialConstantLayoutAttribute attribute = layout.layoutAttributes[i];
+			uint32_t offset = (uint32_t)m_totalBufferSize;
+			m_totalBufferSize += attribute.layoutStride;
+
+			if (!attribute.pad)
+			{
+				m_materialConstants.emplace(attribute.name,
+					MaterialConstantBufferData{ offset, attribute.layoutStride, attribute.layoutType, attribute.pad });
+			}
+		}
+		m_materialBuffer = new char[m_totalBufferSize];
 	}
 
+	MaterialConstants::~MaterialConstants()
+	{
+		ReleaseBuffer();
+	}
+
+	void MaterialConstants::ReleaseBuffer()
+	{
+		if (m_materialBuffer != nullptr)
+		{
+			delete[] m_materialBuffer;
+			m_materialBuffer = nullptr;
+		}
+	}
 }

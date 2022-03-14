@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GUID.h"
+
 #include <cstdint>
 #include <unordered_map>
 #include <string>
@@ -14,21 +16,20 @@ namespace Engine
 	template<typename TAsset>
 	class AssetRef
 	{
+
 	public:
 		AssetRef()
 			: m_referenceManager(nullptr),
-			m_asset(nullptr),
-			m_assetName(L"")
+			m_asset(nullptr)
 		{
 
 		}
 
-		AssetRef(const std::wstring& assetName, TAsset* asset, AssetReferenceManager<TAsset>* referenceManager)
+		AssetRef(TAsset* asset, const GUID& guid, const std::wstring& name, AssetReferenceManager<TAsset>* referenceManager)
 			: m_asset(asset),
-			m_referenceManager(referenceManager),
-			m_assetName(assetName)
+			m_referenceManager(referenceManager)
 		{
-			m_referenceManager->AddReference(asset);
+			m_referenceManager->AddReference(asset, name, guid);
 		}
 		
 		~AssetRef()
@@ -38,8 +39,7 @@ namespace Engine
 
 		AssetRef(const AssetRef& assetRef)
 			: m_asset(assetRef.m_asset),
-			m_referenceManager(assetRef.m_referenceManager),
-			m_assetName(assetRef.m_assetName)
+			m_referenceManager(assetRef.m_referenceManager)
 		{
 			m_referenceManager->AddReference(m_asset);
 		}
@@ -52,12 +52,20 @@ namespace Engine
 			}
 			m_referenceManager = assetRef.m_referenceManager;
 			m_asset = assetRef.m_asset;
-			m_assetName = assetRef.m_assetName;
 			if (m_referenceManager != nullptr)
 			{
 				m_referenceManager->AddReference(m_asset);
 			}
 			return *this;
+		}
+		
+		bool GetGUID(GUID& guid) const
+		{
+			if (m_referenceManager == nullptr)
+			{
+				return false;
+			}
+			return m_referenceManager->GetGUID(m_asset, guid);
 		}
 
 		TAsset* Get() const { return m_asset; }
@@ -99,7 +107,7 @@ namespace Engine
 		{
 			if (m_referenceManager != nullptr)
 			{
-				m_referenceManager->RemoveReference(m_asset, m_assetName);
+				m_referenceManager->RemoveReference(m_asset);
 			}
 			m_asset = nullptr;
 		}
@@ -107,12 +115,13 @@ namespace Engine
 	private:
 		TAsset* m_asset;
 		AssetReferenceManager<TAsset>* m_referenceManager;
-		std::wstring m_assetName;
 	};
 
 	// Reference counted structure.
 	struct RefCount
 	{
+		std::wstring name;
+		GUID guid;
 		uint32_t referenceCount;
 	};
 
@@ -129,7 +138,7 @@ namespace Engine
 			: m_referenceCountedAssets(capacity) { }
 
 	public:
-		void AddReference(TAsset* asset)
+		void AddReference(TAsset* asset, const std::wstring& name, const GUID& guid)
 		{
 			if (asset == nullptr) return;
 			const auto& found = m_referenceCountedAssets.find(asset);
@@ -138,10 +147,32 @@ namespace Engine
 				found->second.referenceCount++;
 				return;
 			}
-			m_referenceCountedAssets.emplace(asset, RefCount{ 1 });
+			m_referenceCountedAssets.emplace(asset, RefCount{ name, guid, 1 });
 		}
 
-		void RemoveReference(TAsset* asset, const std::wstring& assetName)
+		void AddReference(TAsset* asset)
+		{
+			if (asset == nullptr) return;
+			const auto& found = m_referenceCountedAssets.find(asset);
+			if (found != m_referenceCountedAssets.end())
+			{
+				found->second.referenceCount++;
+			}
+		}
+
+		bool GetGUID(TAsset* asset, GUID& guid) const
+		{
+			if (asset == nullptr) return false;
+			const auto& found = m_referenceCountedAssets.find(asset);
+			if (found != m_referenceCountedAssets.end())
+			{
+				guid = m_referenceCountedAssets->second.guid;
+				return true;
+			}
+			return false;
+		}
+
+		void RemoveReference(TAsset* asset)
 		{
 			if (asset == nullptr) return;
 			const auto& found = m_referenceCountedAssets.find(asset);
@@ -149,11 +180,14 @@ namespace Engine
 			{
 				found->second.referenceCount--;
 				if (found->second.referenceCount <= 0)
-				{
+				{ 
+					std::wstring name = found->second.name;
+					GUID guid = found->second.guid;
+
 					m_referenceCountedAssets.erase(found);
 					if (m_assetRemovedAllReferencesEvent != nullptr)
 					{
-						m_assetRemovedAllReferencesEvent(assetName);
+						m_assetRemovedAllReferencesEvent(guid, name);
 					}
 				}
 			}
@@ -164,13 +198,13 @@ namespace Engine
 			m_referenceCountedAssets.clear();
 		}
 
-		void SetAssetRemovedAllReferencesCallback(const std::function<void(const std::wstring&)>& event)
+		void SetAssetRemovedAllReferencesCallback(const std::function<void(const GUID&, const std::wstring&)>& event)
 		{
 			m_assetRemovedAllReferencesEvent = event;
 		}
 
 	private:
 		std::unordered_map<TAsset*, RefCount> m_referenceCountedAssets;
-		std::function<void(const std::wstring&)> m_assetRemovedAllReferencesEvent = nullptr;
+		std::function<void(const GUID&, const std::wstring&)> m_assetRemovedAllReferencesEvent = nullptr;
 	};
 }

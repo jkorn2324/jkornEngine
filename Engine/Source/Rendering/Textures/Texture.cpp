@@ -48,6 +48,12 @@ namespace Engine
 		return texture.Load(value.filePath.c_str());
 	}
 
+	bool Texture::SerializeToFile(Texture& texture, AssetSerializationMetaData& metaData)
+	{
+		// TODO: 
+		return true;
+	}
+
 	Texture* Texture::Create()
 	{
 		switch (RenderingAPI::GetRenderingAPIType())

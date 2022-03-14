@@ -205,7 +205,7 @@ namespace Engine
 			AssetManager::GetMaterials().Cache(L"Unlit-ColorUV",
 				s_defaultMaterial,
 				MaterialConstantsLayout {
-					{"c_materialColor", sizeof(MathLib::Vector4) }
+					{"c_materialColor", LayoutType_Vector4 }
 				});
 
 			Engine::BufferLayout bufferLayout = {{

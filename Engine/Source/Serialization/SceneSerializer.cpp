@@ -271,7 +271,7 @@ namespace Engine
 				"MainCamera", mainCamera);
 			ReadBool(value["SceneCameraComponent"],
 				"Enabled", enabled);
-			ReadUInt32(value["SceneCameraComponent"],
+			ReadUint32(value["SceneCameraComponent"],
 				"CameraType", cameraType);
 			ReadFloat(value["SceneCameraComponent"],
 				"NearPlane", cameraProperties.nearPlane);

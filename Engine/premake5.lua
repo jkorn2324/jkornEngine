@@ -131,8 +131,8 @@ project "Engine"
 		prebuildcommands
 		{
 			"msbuild \"..\\Engine\\Libraries\\DirectXTK\\DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
-			"msbuild \"..\\Engine\\Libraries\\glfw\\glfw.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
-			"msbuild \"..\\Engine\\Libraries\\ImGui\\ImGui.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32"
+			"msbuild \"..\\Engine\\Libraries\\glfw\\glfw.vcxproj\" /p:Configuration=\"%{cfg.buildcfg}\" /p:platform=win32",
+			"msbuild \"..\\Engine\\Libraries\\ImGui\\ImGui.vcxproj\" /p:Configuration=\"%{cfg.buildcfg}\" /p:platform=win32"
 		}
 
 		postbuildcommands
@@ -155,8 +155,8 @@ project "Engine"
 		prebuildcommands
 		{
 			"msbuild \"..\\Engine\\Libraries\\DirectXTK\\DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
-			"msbuild \"..\\Engine\\Libraries\\glfw\\glfw.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
-			"msbuild \"..\\Engine\\Libraries\\ImGui\\ImGui.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64"
+			"msbuild \"..\\Engine\\Libraries\\glfw\\glfw.vcxproj\" /p:Configuration=\"%{cfg.buildcfg} Win64\" /p:platform=x64",
+			"msbuild \"..\\Engine\\Libraries\\ImGui\\ImGui.vcxproj\" /p:Configuration=\"%{cfg.buildcfg} Win64\" /p:platform=x64"
 		}
 		postbuildcommands
 		{

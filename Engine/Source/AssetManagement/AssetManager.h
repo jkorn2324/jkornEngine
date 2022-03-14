@@ -6,7 +6,6 @@
 #include "Texture.h"
 #include "Mesh.h"
 #include "Material.h"
-#include "GUID.h"
 
 #include <filesystem>
 #include <memory>
@@ -14,6 +13,18 @@
 namespace Engine
 {
 	class AssetMapper;
+	class GUID;
+
+	// Asset Manager funcs struct namespace.
+	struct TypedAssetManagerFuncs
+	{
+	private:
+		static bool GetGUID(const std::wstring& name, GUID& guid);
+		static void SetPath(const std::filesystem::path& path, const GUID& guid);
+
+		template<typename T>
+		friend class TypedAssetManager;
+	};
 
 	// An asset manager that gets defined for each type of the data.
 	template<typename TAsset>
@@ -30,12 +41,17 @@ namespace Engine
 
 		bool Get(const std::wstring& name, AssetRef<TAsset>& assetReference)
 		{
-			TAsset* asset = m_assetCache.Get(name);
+			GUID guid;
+			if (!GetGUID(guid, name))
+			{
+				return false;
+			}
+			TAsset* asset = m_assetCache.Get(guid);
 			if (asset == nullptr)
 			{
 				return false;
 			}
-			assetReference = AssetRef<TAsset>(name, asset, &m_assetReferenceManager);
+			assetReference = AssetRef<TAsset>(asset, guid, name, &m_assetReferenceManager);
 			return true;
 		}
 
@@ -47,12 +63,19 @@ namespace Engine
 		// Caches the asset to the asset manager based on default parameters.
 		bool Cache(const std::wstring& name, AssetRef<TAsset>& assetReference)
 		{
-			TAsset* asset = m_assetCache.Cache(name);
+			GUID guid;
+			GetGUID(guid, name);
+			TAsset* asset = m_assetCache.Cache(guid);
 			if (asset == nullptr)
 			{
 				return false;
 			}
-			assetReference = AssetRef<TAsset>(name, asset, &m_assetReferenceManager);
+			assetReference = AssetRef<TAsset>(asset, guid, name, &m_assetReferenceManager);
+			const auto& found = m_namesToGUIDs.find(name);
+			if (found == m_namesToGUIDs.end())
+			{
+				m_namesToGUIDs.emplace(name, guid);
+			}
 			return true;
 		}
 
@@ -65,46 +88,83 @@ namespace Engine
 		template<typename...Args>
 		bool Cache(const std::wstring& name, AssetRef<TAsset>& assetReference, Args&&...args)
 		{
-			TAsset* asset = m_assetCache.Cache(name, std::forward<Args>(args)...);
+			GUID guid;
+			GetGUID(guid, name);
+			TAsset* asset = m_assetCache.Cache(guid, std::forward<Args>(args)...);
 			if (asset == nullptr)
 			{
 				return false;
 			}
-			assetReference = AssetRef<TAsset>(name, asset, &m_assetReferenceManager);
+			assetReference = AssetRef<TAsset>(asset, guid, name, &m_assetReferenceManager);
+			const auto& found = m_namesToGUIDs.find(name);
+			if (found == m_namesToGUIDs.end())
+			{
+				m_namesToGUIDs.emplace(name, guid);
+			}
 			return true;
 		}
 
-		bool Load(const std::wstring& filePath, AssetRef<TAsset>& assetReference)
+		bool Load(const std::filesystem::path& filePath, AssetRef<TAsset>& assetReference)
 		{
 			return Load(assetReference, filePath);
 		}
 
-		bool Load(AssetRef<TAsset>& assetReference, const std::wstring& filePath)
+		bool Load(AssetRef<TAsset>& assetReference, const std::filesystem::path& filePath)
 		{
-			TAsset* asset = m_assetCache.Load(filePath);
+			GUID guid;
+			bool guidExists = GetGUID(guid, filePath);
+
+			TAsset* asset = m_assetCache.Load(guid, filePath);
 			if (asset == nullptr)
 			{
 				return false;
 			}
-			assetReference = AssetRef<TAsset>(filePath, asset, &m_assetReferenceManager);
+
+			if (!guidExists)
+			{
+				TypedAssetManagerFuncs::SetPath(filePath, guid);
+			}
+			assetReference = AssetRef<TAsset>(asset, guid, filePath, &m_assetReferenceManager);
+			const auto& found = m_namesToGUIDs.find(filePath);
+			if (found == m_namesToGUIDs.end())
+			{
+				m_namesToGUIDs.emplace(filePath, guid);
+			}
+			if (!GetGUID(guid, filePath))
+			{
+				TypedAssetManagerFuncs::SetPath(filePath, guid);
+			}
 			return true;
 		}
 
 		template<typename...Args>
-		bool Load(const std::wstring& filePath, AssetRef<TAsset>& assetReference, Args&&...args)
+		bool Load(const std::filesystem::path& filePath, AssetRef<TAsset>& assetReference, Args&&...args)
 		{
 			return Load(assetReference, filePath, std::forward<Args>(args)...);
 		}
 
 		template<typename...Args>
-		bool Load(AssetRef<TAsset>& assetReference, const std::wstring& fileName, Args&&...args)
+		bool Load(AssetRef<TAsset>& assetReference, const std::filesystem::path& fileName, Args&&...args)
 		{
-			TAsset* asset = m_assetCache.Load(fileName, std::forward<Args>(args)...);
+			GUID guid;
+			bool guidExists = GetGUID(guid, fileName);
+			TAsset* asset = m_assetCache.Load(guid, fileName, std::forward<Args>(args)...);
 			if (asset == nullptr)
 			{
 				return false;
 			}
-			assetReference = AssetRef<TAsset>(fileName, asset, &m_assetReferenceManager);
+
+			if (!guidExists)
+			{
+				TypedAssetManagerFuncs::SetPath(fileName, guid);
+			}
+			assetReference = AssetRef<TAsset>(asset, guid, fileName, &m_assetReferenceManager);
+			
+			const auto& found = m_namesToGUIDs.find(fileName);
+			if (found == m_namesToGUIDs.end())
+			{
+				m_namesToGUIDs.emplace(fileName, guid);
+			}
 			return true;
 		}
 
@@ -115,14 +175,32 @@ namespace Engine
 		}
 
 	private:
-		void UnLoad(const std::wstring& filePath)
+		void UnLoad(const GUID& guid, const std::wstring& name)
 		{
-			m_assetCache.Unload(filePath);
+			const auto& found = m_namesToGUIDs.find(name);
+			if (found != m_namesToGUIDs.end())
+			{
+				m_namesToGUIDs.erase(name);
+			}
+			m_assetCache.Unload(guid);
+		}
+
+		bool GetGUID(GUID& guid, const std::wstring& name)
+		{
+			const auto& guidFound = m_namesToGUIDs.find(name);
+			if (guidFound != m_namesToGUIDs.end())
+			{
+				guid = guidFound->second;
+				return true;
+			}
+			TypedAssetManagerFuncs::GetGUID(name, guid);
+			return false;
 		}
 
 	private:
 		AssetCache<TAsset> m_assetCache;
 		AssetReferenceManager<TAsset> m_assetReferenceManager;
+		std::unordered_map<std::wstring, GUID> m_namesToGUIDs;
 	};
 
 	// The static main asset manager class.
@@ -137,9 +215,9 @@ namespace Engine
 		static TypedAssetManager<Mesh>& GetMeshes();
 		static TypedAssetManager<Material>& GetMaterials();
 
-	private:
 		static AssetMapper& GetAssetMapper();
 
+	private:
 		friend struct AssetSerializerFuncs;
 	};
 }

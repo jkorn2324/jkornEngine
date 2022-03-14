@@ -9,12 +9,9 @@ namespace Engine
 // Defines the serializable asset macro along with functions.
 // Must forward declare the AssetSerializer & AssetCache classes as a template before using this macro.
 #define SERIALIZABLE_ASSET(name) \
-	public: \
-	const GUID& GetGUID() const; \
-	protected: \
-	GUID m_guid; \
 	private: \
 	static bool DeserializeFromFile(##name& asset, struct AssetDeserializationFileData& deserializeData); \
+	static bool SerializeToFile(##name& asset, struct AssetSerializationMetaData& serializeData); \
 	static name* Create(); \
 	friend class Engine::AssetSerializer<name>; \
 	friend class Engine::AssetCache<name>
