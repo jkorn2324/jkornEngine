@@ -49,6 +49,7 @@ namespace Engine
 		void DestroyEntity(const Entity& entity);
 		Entity Find(const std::string& entityName) const;
 		Entity Find(const GUID& guid) const;
+		Entity Find(const uint64_t& guid) const;
 
 		class Camera* GetCamera() const;
 

@@ -416,6 +416,20 @@ namespace Engine
 		return Entity::None;
 	}
 
+	Entity Scene::Find(const uint64_t& guid) const
+	{
+		const auto entityView = m_entityRegistry.view<const IDComponent>();
+		for (auto entity : entityView)
+		{
+			auto idComponent = entityView.get(entity);
+			if (idComponent.guid == guid)
+			{
+				return Entity(entity, (Scene*)this);
+			}
+		}
+		return Entity::None;
+	}
+
 	Camera* Scene::GetCamera() const
 	{
 		return m_camera;

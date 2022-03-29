@@ -1,0 +1,42 @@
+{
+    "Layout": {
+        "Size": 48,
+        "Attributes": [
+            {
+                "Name": "c_diffuseColor",
+                "Type": 11,
+                "Pad": false,
+                "Value": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                }
+            },
+            {
+                "Name": "c_specularColor",
+                "Type": 11,
+                "Pad": false,
+                "Value": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                }
+            },
+            {
+                "Name": "c_specularPower",
+                "Type": 7,
+                "Pad": false,
+                "Value": 10.0
+            }
+        ]
+    },
+    "Shader": 14425131940031641814,
+    "NumTextures": 1,
+    "Textures": [
+        {
+            "GUID": 14150779838740192162
+        }
+    ]
+}

@@ -58,9 +58,11 @@ namespace Editor
 	{
 		if (!s_playing)
 		{
-			Engine::SceneSerializer sceneSerializer(
-				&Engine::SceneManager::GetActiveScene());
-			sceneSerializer.Serialize(path);
+			Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
+			std::filesystem::path cpyPath = path;
+			cpyPath += L"/" + scene.GetSceneName() + L".scene";
+			Engine::SceneSerializer sceneSerializer(&scene);
+			sceneSerializer.Serialize(cpyPath);
 		}
 	}
 

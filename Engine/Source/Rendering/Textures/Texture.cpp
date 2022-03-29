@@ -1,6 +1,8 @@
 #include "EnginePCH.h"
 #include "Texture.h"
 
+#include <filesystem>
+
 #include "RenderingAPI.h"
 #include "DirectX11Texture.h"
 #include "AssetSerializer.h"
@@ -41,16 +43,29 @@ namespace Engine
 		return nullptr;
 	}
 
-
 	bool Texture::DeserializeFromFile(Texture& texture, AssetDeserializationFileData& value)
 	{
-		// TODO: Read from a normal file.
 		return texture.Load(value.filePath.c_str());
 	}
 
-	bool Texture::SerializeToFile(Texture& texture, AssetSerializationMetaData& metaData)
+	bool Texture::SerializeToFile(Texture& texture, AssetSerializationFileData& metaData)
 	{
-		// TODO: 
+		return true;
+	}
+
+	bool Texture::SerializeToMetaFile(Texture& texture, AssetSerializationMetaFileData& metaData)
+	{
+		// Writes to a file path.
+		{
+			JsonFileWriter fileWriter(metaData.metaFilePath);
+			fileWriter.Write<uint64_t>("GUID", (uint64_t)metaData.guid);
+			fileWriter.Flush();
+		}
+		return true;
+	}
+
+	bool Texture::DeserializeMetaFile(Texture& texture, AssetDeserializationMetaFileData& metaData)
+	{
 		return true;
 	}
 

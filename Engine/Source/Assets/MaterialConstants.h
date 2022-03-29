@@ -89,12 +89,14 @@ namespace Engine
 	{
 	public:
 		MaterialConstants(const MaterialConstantsLayout& materialConstantsLayout);
+		MaterialConstants(const MaterialConstantsLayout& materialConstantsLayout, size_t totalBufferSize);
 		~MaterialConstants();
 
 		MaterialConstants(const MaterialConstants& constants);
 		MaterialConstants& operator=(const MaterialConstants& constants);
 
 		void SetLayout(const MaterialConstantsLayout& materialConstantsLayout);
+		void SetLayout(const MaterialConstantsLayout& materialConstantsLayout, size_t totalBufferSize);
 
 		template<typename T>
 		void SetMaterialConstant(const std::string& name, const T& value)

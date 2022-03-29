@@ -11,7 +11,9 @@ namespace Engine
 #define SERIALIZABLE_ASSET(name) \
 	private: \
 	static bool DeserializeFromFile(##name& asset, struct AssetDeserializationFileData& deserializeData); \
-	static bool SerializeToFile(##name& asset, struct AssetSerializationMetaData& serializeData); \
+	static bool SerializeToFile(##name& asset, struct AssetSerializationFileData& serializeData); \
+	static bool DeserializeMetaFile(##name& asset, struct AssetDeserializationMetaFileData& metaFileData); \
+	static bool SerializeToMetaFile(##name& asset, struct AssetSerializationMetaFileData& metaFileData); \
 	static name* Create(); \
 	friend class Engine::AssetSerializer<name>; \
 	friend class Engine::AssetCache<name>

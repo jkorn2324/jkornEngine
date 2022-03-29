@@ -9,6 +9,9 @@
 #include "JsonFileParser.h"
 #include "JsonFileWriter.h"
 
+#include "AssetManager.h"
+#include "AssetMapper.h"
+
 #include "Profiler.h"
 
 namespace Engine
@@ -17,139 +20,186 @@ namespace Engine
 	static void SerializeEntity(JsonFileWriter& fileWriter,
 		Entity& entity)
 	{
-		PROFILE_SCOPE(SerializeEntity, Serialization);
-
-		fileWriter.BeginObject();
-
-		// UUID Component
-		if (entity.HasComponent<IDComponent>())
+		std::vector<Entity> children;
 		{
-			IDComponent& component = entity.GetComponent<IDComponent>();
-			fileWriter.Write("GUID", component.guid);
-		}
-		else
-		{
-			fileWriter.Write("GUID", (uint64_t)0);
-		}
+			PROFILE_SCOPE(SerializeEntity, Serialization);
 
-		// Name Component.
-		if (entity.HasComponent<NameComponent>())
-		{
-			NameComponent& nameComponent = entity.GetComponent<NameComponent>();
-			fileWriter.Write("NameComponent", nameComponent.name);
-		}
-		else
-		{
-			fileWriter.Write("NameComponent", (std::string)"");
-		}
+			fileWriter.BeginObject();
 
-		if (entity.HasComponent<EntityHierarchyComponent>())
-		{
-			EntityHierarchyComponent& ehc = entity.GetComponent<EntityHierarchyComponent>();
-			// TODO: Write the parent Guid and Children Guid
-		}
+			// UUID Component
+			if (entity.HasComponent<IDComponent>())
+			{
+				IDComponent& component = entity.GetComponent<IDComponent>();
+				fileWriter.Write("GUID", component.guid);
+			}
+			else
+			{
+				fileWriter.Write("GUID", (uint64_t)0);
+			}
 
-		// Transform 3D Component.
-		if (entity.HasComponent<Transform3DComponent>())
-		{
-			Transform3DComponent& transform3D = 
-				entity.GetComponent<Transform3DComponent>();
+			// Name Component.
+			if (entity.HasComponent<NameComponent>())
+			{
+				NameComponent& nameComponent = entity.GetComponent<NameComponent>();
+				fileWriter.Write("NameComponent", nameComponent.name);
+			}
+			else
+			{
+				fileWriter.Write("NameComponent", (std::string)"");
+			}
 
-			fileWriter.BeginObject("Transform3DComponent");
-			fileWriter.Write("Position", transform3D.GetLocalPosition());
-			fileWriter.Write("Rotation", transform3D.GetLocalRotation());
-			fileWriter.Write("Scale", transform3D.GetLocalScale());
+			// Transform 3D Component.
+			if (entity.HasComponent<Transform3DComponent>())
+			{
+				Transform3DComponent& transform3D =
+					entity.GetComponent<Transform3DComponent>();
+
+				fileWriter.BeginObject("Transform3DComponent");
+				fileWriter.Write("Position", transform3D.GetLocalPosition());
+				fileWriter.Write("Rotation", transform3D.GetLocalRotation());
+				fileWriter.Write("Scale", transform3D.GetLocalScale());
+				fileWriter.EndObject();
+			}
+
+			// Transform 2D Component.
+			if (entity.HasComponent<Transform2DComponent>())
+			{
+				Transform2DComponent& transform2D =
+					entity.GetComponent<Transform2DComponent>();
+
+				fileWriter.BeginObject("Transform2DComponent");
+				fileWriter.Write("Position", transform2D.GetLocalPosition());
+				fileWriter.Write("Rotation", transform2D.GetLocalRotation());
+				fileWriter.Write("Scale", transform2D.GetLocalScale());
+				fileWriter.EndObject();
+			}
+
+			// Sprite Component.
+			if (entity.HasComponent<SpriteComponent>())
+			{
+				SpriteComponent& spriteComponent =
+					entity.GetComponent<SpriteComponent>();
+
+				fileWriter.BeginObject("SpriteComponent");
+
+				if (spriteComponent.texture)
+				{
+					GUID guid;
+					spriteComponent.texture.GetGUID(guid);
+					fileWriter.Write("Texture", (uint64_t)guid);
+				}
+				else
+				{
+					fileWriter.Write("Texture", 0);
+				}
+
+				fileWriter.Write("Enabled", spriteComponent.enabled);
+				fileWriter.Write("Color", spriteComponent.color);
+				fileWriter.EndObject();
+			}
+
+			// Mesh Component.
+			if (entity.HasComponent<MeshComponent>())
+			{
+				MeshComponent& meshComponent =
+					entity.GetComponent<MeshComponent>();
+
+				fileWriter.BeginObject("MeshComponent");
+
+				if (meshComponent.material)
+				{
+					GUID guid;
+					meshComponent.material.GetGUID(guid);
+					fileWriter.Write("Material", (uint64_t)guid);
+				}
+				else
+				{
+					fileWriter.Write("Material", 0);
+				}
+				// TODO: Write Mesh
+				fileWriter.Write("Enabled", meshComponent.enabled);
+				fileWriter.EndObject();
+			}
+
+			// Scene Camera Component.
+			if (entity.HasComponent<SceneCameraComponent>())
+			{
+				SceneCameraComponent& cameraComponent =
+					entity.GetComponent<SceneCameraComponent>();
+				CameraProperties& properties =
+					cameraComponent.camera.GetProperties();
+
+				fileWriter.BeginObject("SceneCameraComponent");
+				fileWriter.Write("MainCamera", cameraComponent.mainCamera);
+				fileWriter.Write("Enabled", cameraComponent.enabled);
+				fileWriter.Write("CameraType", (uint32_t)cameraComponent.camera.GetSceneCameraType());
+				fileWriter.Write("NearPlane", properties.nearPlane);
+				fileWriter.Write("FarPlane", properties.farPlane);
+				fileWriter.Write("PerspFOV", properties.perspFOV);
+				fileWriter.Write("PerspAspectRatio", properties.perspAspectRatio);
+				fileWriter.Write("OrthoSize", properties.perspAspectRatio);
+				fileWriter.Write("OrthoWidth", properties.orthoWidth);
+				fileWriter.Write("OrthoHeight", properties.orthoHeight);
+				fileWriter.EndObject();
+			}
+
+			// Directional Light Component
+			if (entity.HasComponent<DirectionalLightComponent>())
+			{
+				DirectionalLightComponent& component
+					= entity.GetComponent<DirectionalLightComponent>();
+
+				fileWriter.BeginObject("DirectionalLightComponent");
+				fileWriter.Write("LightColor", component.lightColor);
+				fileWriter.Write("LightIntensity", component.lightIntensity);
+				fileWriter.Write("Enabled", component.enabled);
+				fileWriter.EndObject();
+			}
+
+			// Point Light Component
+			if (entity.HasComponent<PointLightComponent>())
+			{
+				PointLightComponent& component
+					= entity.GetComponent<PointLightComponent>();
+
+				fileWriter.BeginObject("PointLightComponent");
+				fileWriter.Write("LightColor", component.lightColor);
+				fileWriter.Write("InnerRadius", component.innerRadius);
+				fileWriter.Write("OuterRadius", component.outerRadius);
+				fileWriter.Write("LightIntensity", component.lightIntensity);
+				fileWriter.Write("Enabled", component.enabled);
+				fileWriter.EndObject();
+			}
+
+			if (entity.HasComponent<EntityHierarchyComponent>())
+			{
+				EntityHierarchyComponent& ehc = entity.GetComponent<EntityHierarchyComponent>();
+				fileWriter.BeginObject("EntityHierarchyComponent");
+
+				// Write the parent entity component.
+				if (ehc.HasParent())
+				{
+					const Entity& entity = ehc.GetParent();
+					fileWriter.Write("Parent", (uint64_t)entity.GetComponent<IDComponent>().guid);
+				}
+				else
+				{
+					fileWriter.Write("Parent", 0);
+				}
+				children = ehc.GetChildren();
+				fileWriter.EndObject();
+			}
 			fileWriter.EndObject();
 		}
 
-		// Transform 2D Component.
-		if (entity.HasComponent<Transform2DComponent>())
+		// Serializes the entity's children.
+		if (children.size() > 0)
 		{
-			Transform2DComponent& transform2D =
-				entity.GetComponent<Transform2DComponent>();
-
-			fileWriter.BeginObject("Transform2DComponent");
-			fileWriter.Write("Position", transform2D.GetLocalPosition());
-			fileWriter.Write("Rotation", transform2D.GetLocalRotation());
-			fileWriter.Write("Scale", transform2D.GetLocalScale());
-			fileWriter.EndObject();
+			for (auto e : children)
+			{
+				if (e.IsValid()) SerializeEntity(fileWriter, e);
+			}
 		}
-
-		// Sprite Component.
-		if (entity.HasComponent<SpriteComponent>())
-		{
-			SpriteComponent& spriteComponent =
-				entity.GetComponent<SpriteComponent>();
-
-			fileWriter.BeginObject("SpriteComponent");
-			// TODO: Texture 2D GUID
-			fileWriter.Write("Enabled", spriteComponent.enabled);
-			fileWriter.Write("Color", spriteComponent.color);
-			fileWriter.EndObject();
-		}
-
-		// Mesh Component.
-		if (entity.HasComponent<MeshComponent>())
-		{
-			MeshComponent& meshComponent =
-				entity.GetComponent<MeshComponent>();
-
-			fileWriter.BeginObject("MeshComponent");
-			// TODO: Material, Mesh (comes with GUIDs)
-			fileWriter.Write("Enabled", meshComponent.enabled);
-			fileWriter.EndObject();
-		}
-
-		// Scene Camera Component.
-		if (entity.HasComponent<SceneCameraComponent>())
-		{
-			SceneCameraComponent& cameraComponent =
-				entity.GetComponent<SceneCameraComponent>();
-			CameraProperties& properties = 
-				cameraComponent.camera.GetProperties();
-
-			fileWriter.BeginObject("SceneCameraComponent");
-			fileWriter.Write("MainCamera", cameraComponent.mainCamera);
-			fileWriter.Write("Enabled", cameraComponent.enabled);
-			fileWriter.Write("CameraType", (uint32_t)cameraComponent.camera.GetSceneCameraType());
-			fileWriter.Write("NearPlane", properties.nearPlane);
-			fileWriter.Write("FarPlane", properties.farPlane);
-			fileWriter.Write("PerspFOV", properties.perspFOV);
-			fileWriter.Write("PerspAspectRatio", properties.perspAspectRatio);
-			fileWriter.Write("OrthoSize", properties.perspAspectRatio);
-			fileWriter.Write("OrthoWidth", properties.orthoWidth);
-			fileWriter.Write("OrthoHeight", properties.orthoHeight);
-			fileWriter.EndObject();
-		}
-
-		// Directional Light Component
-		if(entity.HasComponent<DirectionalLightComponent>())
-		{
-			DirectionalLightComponent& component
-				= entity.GetComponent<DirectionalLightComponent>();
-
-			fileWriter.BeginObject("DirectionalLightComponent");
-			fileWriter.Write("LightColor", component.lightColor);
-			fileWriter.Write("LightIntensity", component.lightIntensity);
-			fileWriter.Write("Enabled", component.enabled);
-			fileWriter.EndObject();
-		}
-
-		// Point Light Component
-		if(entity.HasComponent<PointLightComponent>())
-		{
-			PointLightComponent& component
-				= entity.GetComponent<PointLightComponent>();
-
-			fileWriter.BeginObject("PointLightComponent");
-			fileWriter.Write("LightColor", component.lightColor);
-			fileWriter.Write("InnerRadius", component.innerRadius);
-			fileWriter.Write("OuterRadius", component.outerRadius);
-			fileWriter.Write("LightIntensity", component.lightIntensity);
-			fileWriter.Write("Enabled", component.enabled);
-			fileWriter.EndObject();
-		}
-		fileWriter.EndObject();
 	}
 
 
@@ -180,24 +230,6 @@ namespace Engine
 			else
 			{
 				entity.AddComponent<NameComponent>(name);
-			}
-		}
-
-		if (value.HasMember("EntityHierarchyComponent"))
-		{
-			if (entity.HasComponent<EntityHierarchyComponent>())
-			{
-				// TODO: Load the owning entity's Guid.
-				// TODO: Load the children entity Guids.
-				EntityHierarchyComponent component 
-					= entity.GetComponent<EntityHierarchyComponent>();
-			}
-			else
-			{
-				// TODO: Load the owning entity's Guid.
-				// TODO: Load the children entity Guids.
-				EntityHierarchyComponent component
-					= entity.AddComponent<EntityHierarchyComponent>(entity);
 			}
 		}
 
@@ -254,9 +286,17 @@ namespace Engine
 		// Mesh Component
 		if (value.HasMember("MeshComponent"))
 		{
-			// TODO: Implementation
+			// TODO: Load a mesh.
+
 			MeshComponent& meshComponent 
 				= entity.AddComponent<MeshComponent>();
+			uint64_t materialGUID;
+
+			ReadBool(value["MeshComponent"], "Enabled", meshComponent.enabled);
+			ReadUint64(value["MeshComponent"], "Material", materialGUID);
+
+			AssetManager::GetMaterials().Load(meshComponent.material,
+				AssetManager::GetAssetMapper().GetPath(GUID(materialGUID)));
 		}
 
 		// Scene Camera Component.
@@ -292,6 +332,7 @@ namespace Engine
 				(SceneCameraType)cameraType, cameraProperties);
 		}
 
+		// Directional Light Component.
 		if (value.HasMember("DirectionalLightComponent"))
 		{
 			DirectionalLightComponent& component =
@@ -301,6 +342,7 @@ namespace Engine
 			ReadBool(value["DirectionalLightComponent"], "Enabled", component.enabled);
 		}
 
+		// Point Light Component
 		if (value.HasMember("PointLightComponent"))
 		{
 			PointLightComponent& component =
@@ -310,6 +352,35 @@ namespace Engine
 			ReadFloat(value["PointLightComponent"], "OuterRadius", component.outerRadius);
 			ReadFloat(value["PointLightComponent"], "LightIntensity", component.lightIntensity);
 			ReadBool(value["PointLightComponent"], "Enabled", component.enabled);
+		}
+
+		// Entity Hierarchy Component.
+		if (value.HasMember("EntityHierarchyComponent"))
+		{
+			rapidjson::Value& hierarchyComponent = value["EntityHierarchyComponent"].GetObject();
+			uint64_t entityOwnerID;
+			ReadUint64(hierarchyComponent, "Parent", entityOwnerID);
+
+			if (entity.HasComponent<EntityHierarchyComponent>())
+			{
+				EntityHierarchyComponent& component
+					= entity.GetComponent<EntityHierarchyComponent>();
+				if (entityOwnerID != 0)
+				{
+					Entity e = entity.GetScene().Find(entityOwnerID);
+					if (e.IsValid()) component.SetParent(e);
+				}
+			}
+			else
+			{
+				EntityHierarchyComponent& component
+					= entity.AddComponent<EntityHierarchyComponent>(entity);
+				if (entityOwnerID != 0)
+				{
+					Entity e = entity.GetScene().Find(entityOwnerID);
+					if (e.IsValid()) component.SetParent(e);
+				}
+			}
 		}
 	}
 

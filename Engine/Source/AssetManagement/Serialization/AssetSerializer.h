@@ -18,9 +18,21 @@ namespace Engine
 		std::filesystem::path filePath;
 	};
 
-	struct AssetSerializationMetaData
+	struct AssetSerializationFileData
 	{
 		std::filesystem::path filePath;
+		uint64_t guid;
+	};
+
+	struct AssetSerializationMetaFileData
+	{
+		std::filesystem::path metaFilePath;
+		uint64_t guid;
+	};
+
+	struct AssetDeserializationMetaFileData
+	{
+		std::filesystem::path metaFilePath;
 	};
 
 	// Used so that the implementations can be defined in a cpp file.
@@ -28,6 +40,7 @@ namespace Engine
 	{
 	private:
 		static bool GetAssetPathFromGUID(const GUID& guid, std::filesystem::path& path);
+		static void SetAssetPath(const GUID& guid, const std::filesystem::path& path);
 		
 		template<typename T>
 		friend class AssetSerializer;
@@ -42,9 +55,28 @@ namespace Engine
 		AssetSerializer(T& asset)
 			: m_asset(asset) { }
 
+		AssetSerializer(T& asset, bool useMetaFile)
+			: m_asset(asset), m_useMetaFile(useMetaFile) { }
+
+		void SetUseMetaFile(bool useMetaFile)
+		{
+			m_useMetaFile = useMetaFile;
+		}
+
+		bool UseMetaFile() const
+		{
+			return m_useMetaFile;
+		}
+
+		bool SerializeToFile(GUID& guid, const std::filesystem::path& path)
+		{
+			return SerializeToFileInternal(guid, path);
+		}
+
 		bool SerializeToFile(const std::filesystem::path& path)
 		{
-			return SerializeToFileInternal(path);
+			GUID guid;
+			return SerializeToFile(guid, path);
 		}
 
 		bool SerializeFromGUID(const GUID& guid)
@@ -54,7 +86,7 @@ namespace Engine
 			{
 				return false;
 			}
-			return SerializeToFile(outputPath);
+			return SerializeToFileInternal(guid, outputPath);
 		}
 
 		bool DeserializeFromGUID(const GUID& guid)
@@ -94,6 +126,14 @@ namespace Engine
 		bool DeserializeFromFileInternal(const std::filesystem::path& filePath, Args&&...args)
 		{
 			PROFILE_SCOPE_FUNC(T, DeserializeFromFile, Serialization);
+
+			if (m_useMetaFile)
+			{
+				std::filesystem::path metaFilePath = filePath;
+				metaFilePath += L".meta";
+				AssetDeserializationMetaFileData metaDeserializerData = { metaFilePath };
+				T::DeserializeMetaFile(m_asset, metaDeserializerData);
+			}
 			AssetDeserializationFileData deserializerData = { filePath };
 			return T::DeserializeFromFile(m_asset, deserializerData, std::forward<Args>(args)...);
 		}
@@ -101,18 +141,40 @@ namespace Engine
 		bool DeserializeFromFileInternal(const std::filesystem::path& filePath)
 		{
 			PROFILE_SCOPE_FUNC(T, DeserializeFromFile, Serialization);
+			if (m_useMetaFile)
+			{
+				std::filesystem::path metaFilePath = filePath;
+				metaFilePath += L".meta";
+				AssetDeserializationMetaFileData deserializerData = { metaFilePath };
+				T::DeserializeMetaFile(m_asset, deserializerData);
+			}
 			AssetDeserializationFileData deserializerData = { filePath };
 			return T::DeserializeFromFile(m_asset, deserializerData);
 		}
 
-		bool SerializeToFileInternal(const std::filesystem::path& filePath)
+		bool SerializeToFileInternal(const GUID& guid, const std::filesystem::path& filePath)
 		{
 			PROFILE_SCOPE_FUNC(T, SerializeToFile, Serialization);
-			AssetSerializationMetaData serializerData = { filePath };
-			return T::SerializeToFile(m_asset, serializerData);
+			AssetSerializationFileData serializerData = { filePath };
+			bool serializeLiteral = T::SerializeToFile(m_asset, serializerData);
+			if (!m_useMetaFile)
+			{
+				AssetSerializerFuncs::SetAssetPath(guid, filePath);
+				return serializeLiteral;
+			}
+			if (serializeLiteral)
+			{
+				std::filesystem::path metaFilePath = filePath;
+				metaFilePath += L".meta";
+				AssetSerializationMetaFileData metaData = { metaFilePath, (uint32_t)guid };
+				T::SerializeToMetaFile(m_asset, metaData);
+				AssetSerializerFuncs::SetAssetPath(guid, filePath);
+			}
+			return serializeLiteral;
 		}
 
 	private:
 		T& m_asset;
+		bool m_useMetaFile;
 	};
 }

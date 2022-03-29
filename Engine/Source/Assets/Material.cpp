@@ -131,9 +131,26 @@ namespace Engine
 			m_materialConstants.GetBufferSize());
 	}
 
+	void Material::SetConstantsLayout(const MaterialConstantsLayout& layout, size_t layoutSize)
+	{
+		m_materialConstants = MaterialConstants(layout, layoutSize);
+		if (m_materialConstantBuffer != nullptr)
+		{
+			delete m_materialConstantBuffer;
+		}
+		m_materialConstantBuffer = ConstantBuffer::Create(
+			m_materialConstants.GetRawBuffer(),
+			m_materialConstants.GetBufferSize());
+	}
+
 	void Material::SetShader(const AssetRef<Shader>& shader)
 	{
 		m_shader = shader;
+	}
+
+	void Material::SetTextureData(uint32_t slot, const MaterialTextureData& materialTextureData)
+	{
+		SetTexture(slot, materialTextureData.texture);
 	}
 
 	void Material::SetTexture(uint32_t slot, const AssetRef<Texture>& texture)
@@ -163,7 +180,6 @@ namespace Engine
 			break;
 		}
 		}
-
 		MaterialTextureData& materialTextureData = m_textures[slot];
 		materialTextureData.texture = texture;
 	}
@@ -307,7 +323,6 @@ namespace Engine
 			break;
 		}
 		}
-
 		offset += attribute.layoutStride;
 		return attribute;
 	}
@@ -324,12 +339,12 @@ namespace Engine
 		char* materialConstantBuffer = nullptr;
 		rapidjson::Document& document = jsonFileParser.GetDocument();
 		
+		size_t layoutByteSize = 0;
 		// Deserializes the buffer layout with values.
 		if (document.HasMember("Layout"))
 		{
 			rapidjson::Value& layoutValue = document["Layout"].GetObject();
-			size_t layoutByteSize = 0;
-			if (!ReadSize(document, "Size", layoutByteSize)
+			if (!ReadSize(layoutValue, "Size", layoutByteSize)
 				|| layoutByteSize <= 0)
 			{
 				return false;
@@ -338,7 +353,7 @@ namespace Engine
 			size_t currentOffset = 0;
 			if (layoutValue.HasMember("Attributes"))
 			{
-				rapidjson::Value& attributes = document["Attributes"].GetArray();
+				rapidjson::Value& attributes = layoutValue["Attributes"].GetArray();
 				for (rapidjson::SizeType i = 0; i < attributes.Size(); i++)
 				{
 					rapidjson::Value& attributeValue = attributes[i].GetObject();
@@ -351,7 +366,7 @@ namespace Engine
 
 		// Applies the material constants.
 		{
-			material.SetConstantsLayout(layout);
+			material.SetConstantsLayout(layout, layoutByteSize);
 			MaterialConstants& constants = material.GetMaterialConstants();
 			constants.SetRawBuffer(materialConstantBuffer);
 			delete[] materialConstantBuffer;
@@ -369,15 +384,34 @@ namespace Engine
 			}
 		}
 
-		// TODO: Read and load the textures from their GUIDs.
+		// Reads and loads the textures from its GUIDs.
 		{
-
+			uint64_t currentTextureGUID;
+			if (document.HasMember("Textures"))
+			{
+				ReadUint32(document, "NumTextures", material.m_numTextures);
+				rapidjson::Value& texturesArray = document["Textures"].GetArray();
+				for (uint32_t i = 0; i < material.m_numTextures; i++)
+				{
+					rapidjson::Value& textureValue = texturesArray[i].GetObject();
+					ReadUint64(textureValue, "GUID", currentTextureGUID);
+					if (currentTextureGUID != 0)
+					{
+						GUID guid(currentTextureGUID);
+						AssetRef<Texture> texture;
+						AssetManager::GetTextures().Load(texture, 
+							AssetManager::GetAssetMapper().GetPath(guid));
+						material.SetTexture(i, texture);
+					}
+				}
+			}
 		}
 		return true;
 	}
 
-	bool Material::SerializeToFile(Material& material, AssetSerializationMetaData& metaData)
+	bool Material::SerializeToFile(Material& material, AssetSerializationFileData& metaData)
 	{
+		// Writes to a material file.
 		JsonFileWriter fileWriter(metaData.filePath);
 		
 		// Writes the constant buffer attribute layout.
@@ -476,11 +510,57 @@ namespace Engine
 			fileWriter.EndObject();
 		}
 
+		// Writes the shadedr to the json.
 		if (material.HasShader())
 		{
-			// TODO: Get the Shader GUID.
+			GUID shaderGUID;
+			material.m_shader.GetGUID(shaderGUID);
+			fileWriter.Write("Shader", (uint64_t)shaderGUID);
+		}
+		else
+		{
 			fileWriter.Write("Shader", 0);
 		}
+
+		// Writes the textures to a json.
+		{
+			fileWriter.Write("NumTextures", material.m_numTextures);
+			fileWriter.BeginArray("Textures");
+			GUID guid;
+
+			for (uint32_t i = 0; i < material.m_numTextures; i++)
+			{
+				MaterialTextureData materialTextureData = material.m_textures[i];
+				fileWriter.BeginObject();
+				if (materialTextureData.texture)
+				{
+					materialTextureData.texture.GetGUID(guid);
+					fileWriter.Write("GUID", (uint64_t)guid);
+				}
+				else
+				{
+					fileWriter.Write("GUID", 0);
+				}
+				fileWriter.EndObject();
+			}
+			fileWriter.EndArray();
+		}
+		fileWriter.Flush();
+		return true;
+	}
+
+	bool Material::SerializeToMetaFile(Material& material, AssetSerializationMetaFileData& metaData)
+	{
+		{
+			JsonFileWriter writer(metaData.metaFilePath);
+			writer.Write("GUID", (uint64_t)metaData.guid);
+			writer.Flush();
+		}
+		return true;
+	}
+
+	bool Material::DeserializeMetaFile(Material& material, AssetDeserializationMetaFileData& metaData)
+	{
 		return true;
 	}
 

@@ -166,7 +166,7 @@ namespace Engine
 			const auto& found = m_referenceCountedAssets.find(asset);
 			if (found != m_referenceCountedAssets.end())
 			{
-				guid = m_referenceCountedAssets->second.guid;
+				guid = found->second.guid;
 				return true;
 			}
 			return false;

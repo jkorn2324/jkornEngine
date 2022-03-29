@@ -191,7 +191,7 @@ namespace Engine
 		Write("x", value.x);
 		Write("y", value.y);
 		Write("z", value.z);
-		Write("2", value.w);
+		Write("w", value.w);
 		EndObject();
 	}
 
@@ -204,7 +204,7 @@ namespace Engine
 		Write("x", value.x);
 		Write("y", value.y);
 		Write("z", value.z);
-		Write("2", value.w);
+		Write("w", value.w);
 		EndObject();
 	}
 

@@ -18,6 +18,16 @@ namespace Engine
 		operator uint64_t() { return m_guid; }
 		operator const uint64_t() const { return m_guid; }
 		
+		friend bool operator==(const GUID& a, const GUID& b)
+		{
+			return (uint64_t)a == (uint64_t)b;
+		}
+
+		friend bool operator==(const GUID& a, const uint64_t& b)
+		{
+			return (uint64_t)a == b;
+		}
+
 		friend std::wstring ToWString(const GUID& guid);
 
 	private:

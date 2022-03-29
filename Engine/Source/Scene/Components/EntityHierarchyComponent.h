@@ -16,10 +16,13 @@ namespace Engine
 
 		void SetParent(const Entity& entity);
 		bool HasParent() const { return m_parentEntity.IsValid(); }
+		const Entity& GetParent() const { return m_parentEntity; }
 
 		bool HasChildren() const { return m_children.size() > 0; }
 		bool ContainsChild(const Entity& e);
+
 		const std::vector<Entity>& GetChildren() const { return m_children; }
+		const uint32_t GetNumChildren() const { return (uint32_t)m_children.size(); }
 
 		const Entity& GetOwner() const { return m_owner; }
 

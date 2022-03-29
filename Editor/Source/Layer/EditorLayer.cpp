@@ -8,6 +8,8 @@
 
 #include "EditorSelection.h"
 #include "EditorSceneManager.h"
+#include "EditorAssetManager.h"
+
 #include "EditorCamera.h"
 #include "ImGuizmo.h"
 
@@ -27,13 +29,6 @@ namespace Editor
 	static const float TOP_WINDOW_HEIGHT = 60.0f;
 	static const float WINDOW_HEIGHT_DIFFERENCE = 15.0f;
 
-	static void SaveScene(const std::wstring& filePath)
-	{
-		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
-		Engine::SceneSerializer sceneSerializer(&scene);
-		sceneSerializer.Serialize(filePath + L"/" +
-			scene.GetSceneName() + L".scene");
-	}
 
 	static void DrawDemo()
 	{
@@ -41,8 +36,6 @@ namespace Editor
 		ImGui::ShowDemoWindow();
 #endif
 	}
-
-	// TODO: Find a better way to get the main project menu path.
 
 	EditorLayer::EditorLayer()
 		: Layer("Editor"),
@@ -52,7 +45,6 @@ namespace Editor
 		m_sceneView(),
 		m_gameView()
 	{
-		// Ugly for now, but this will due for testing.
 	}
 
 	EditorLayer::~EditorLayer()
@@ -66,6 +58,8 @@ namespace Editor
 
 		Engine::GraphicsRenderer::GetRenderingAPI().SetClearColor(
 			MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+
+		// Tests the graphics
 		// Sets the ambient light for the scene.
 		Engine::GraphicsRenderer3D::SetAmbientLight(
 			MathLib::Vector3 { 0.25f, 0.25f, 0.25f });
@@ -129,7 +123,6 @@ namespace Editor
 					L"Shaders/LitShader.hlsl", shader, bufferLayout);
 				meshComponent.material->SetShader(shader);
 			}
-
 			Engine::AssetManager::GetMeshes().Get(L"DefaultCube",
 				meshComponent.mesh);
 		}
@@ -210,10 +203,9 @@ namespace Editor
 					{
 						currentPath = m_projectMenu.GetCurrentPath();
 					}
-					SaveScene(currentPath);
+					EditorSceneManager::SaveScene(currentPath);
+					// TODO: Asset Management
 				}
-				// TODO: Loading Scenes
-
 				ImGui::EndMenu();
 			}
 

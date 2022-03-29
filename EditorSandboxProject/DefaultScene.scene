@@ -1,7 +1,7 @@
 {
     "Entities": [
         {
-            "GUID": 4603208185583978316,
+            "GUID": 3512355581710871609,
             "NameComponent": "Test Cube",
             "Transform3DComponent": {
                 "Position": {
@@ -13,7 +13,7 @@
                     "x": 0.0,
                     "y": 0.0,
                     "z": 0.0,
-                    "2": 1.0
+                    "w": 1.0
                 },
                 "Scale": {
                     "x": 1.0,
@@ -22,11 +22,15 @@
                 }
             },
             "MeshComponent": {
+                "Material": 1373644641492372819,
                 "Enabled": true
+            },
+            "EntityHierarchyComponent": {
+                "Parent": 0
             }
         },
         {
-            "GUID": 7775343221955731002,
+            "GUID": 2297904935298284828,
             "NameComponent": "Directional Light",
             "Transform3DComponent": {
                 "Position": {
@@ -38,7 +42,7 @@
                     "x": 0.3826834559440613,
                     "y": 0.0,
                     "z": 0.0,
-                    "2": 0.9238795042037964
+                    "w": 0.9238795042037964
                 },
                 "Scale": {
                     "x": 1.0,
@@ -54,10 +58,13 @@
                 },
                 "LightIntensity": 1.0,
                 "Enabled": true
+            },
+            "EntityHierarchyComponent": {
+                "Parent": 0
             }
         },
         {
-            "GUID": 13246116019501337285,
+            "GUID": 15262177169368918429,
             "NameComponent": "Cube",
             "Transform3DComponent": {
                 "Position": {
@@ -69,7 +76,7 @@
                     "x": 0.0,
                     "y": 0.0,
                     "z": 0.0,
-                    "2": 1.0
+                    "w": 1.0
                 },
                 "Scale": {
                     "x": 1.0,
@@ -78,11 +85,15 @@
                 }
             },
             "MeshComponent": {
+                "Material": 0,
                 "Enabled": true
+            },
+            "EntityHierarchyComponent": {
+                "Parent": 0
             }
         },
         {
-            "GUID": 14199299619211899586,
+            "GUID": 10778335491538677341,
             "NameComponent": "Main Camera",
             "Transform3DComponent": {
                 "Position": {
@@ -94,7 +105,7 @@
                     "x": 0.0,
                     "y": 0.0,
                     "z": 0.0,
-                    "2": 1.0
+                    "w": 1.0
                 },
                 "Scale": {
                     "x": 1.0,
@@ -109,10 +120,13 @@
                 "NearPlane": 0.5,
                 "FarPlane": 10000.0,
                 "PerspFOV": 70.0,
-                "PerspAspectRatio": 1.1421911716461182,
-                "OrthoSize": 1.1421911716461182,
-                "OrthoWidth": 429.0,
-                "OrthoHeight": 490.0
+                "PerspAspectRatio": 0.44918695092201233,
+                "OrthoSize": 0.44918695092201233,
+                "OrthoWidth": 984.0000610351563,
+                "OrthoHeight": 442.0
+            },
+            "EntityHierarchyComponent": {
+                "Parent": 0
             }
         }
     ]

@@ -57,6 +57,7 @@ namespace Engine
 		Material& operator=(const Material& material);
 
 		void SetConstantsLayout(const MaterialConstantsLayout& layout);
+		void SetConstantsLayout(const MaterialConstantsLayout& layout, size_t layoutSize);
 
 		void SetShader(const AssetRef<Shader>& shader);
 		void SetTexture(uint32_t slot, const AssetRef<Texture>& texture);
@@ -81,6 +82,8 @@ namespace Engine
 		}
 
 	private:
+		void SetTextureData(uint32_t slot, const MaterialTextureData& materialTextureData);
+
 		AssetRef<Shader> m_shader;
 		ConstantBuffer* m_materialConstantBuffer;
 		MaterialTextureData* m_textures;

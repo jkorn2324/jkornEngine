@@ -75,14 +75,31 @@ namespace Engine
 			std::memcpy(this->name, name.c_str(), nameSize);
 			this->name[nameSize] = 0;
 		}
+
+		BufferLayoutParam(const BufferLayoutParam& param) 
+			: offset(param.offset), stride(param.stride), layoutType(param.layoutType)
+		{
+			uint32_t nameSize = sizeof(param.name) > 0 ? sizeof(param.name) : 1;
+			std::memcpy(name, param.name, nameSize);
+			name[nameSize - 1] = 0;
+		}
 	};
 
 	struct BufferLayout
 	{
 		std::vector<BufferLayoutParam> parameters;
 
+		BufferLayout() = default;
 		BufferLayout(const std::initializer_list<BufferLayoutParam>& initializerList)
 			: parameters(initializerList) { }
+		BufferLayout(const BufferLayout& layout)
+			: parameters(layout.parameters) { }
+
+		BufferLayout& operator=(const BufferLayout& layout)
+		{
+			parameters = layout.parameters;
+			return *this;
+		}
 
 		uint32_t GetNumElements() const { return (uint32_t)parameters.size(); }
 	};

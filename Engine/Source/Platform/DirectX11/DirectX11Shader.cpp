@@ -119,6 +119,7 @@ namespace Engine
 					DebugAssert(result == S_OK, "Failed to load input layout.");
 					if (result == S_OK)
 					{
+						m_bufferLayout = bufferLayout;
 						return true;
 					}
 				}
