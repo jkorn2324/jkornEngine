@@ -2,6 +2,7 @@
 #include "EntityInspector.h"
 
 #include "EditorSelection.h"
+#include "ImGuiUtils.h"
 
 #include <imgui.h>
 #include <functional>
@@ -203,6 +204,20 @@ namespace Editor
 			{
 				ImGui::Checkbox("Enabled", &component.enabled);
 				
+				ImGui::BeginGroup();
+				ImGui::Text("Material");
+				ImGui::SameLine();
+				float width = ImGui::GetContentRegionAvail().x;
+				ImVec2 size = { width, ImGui::GetTextLineHeightWithSpacing() };
+				ImGui::ColorButton("button-id", ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f }, ImGuiColorEditFlags_None, size);
+
+				if (ImGui::BeginDragDropTarget())
+				{
+					// TODO: Implementation
+					// const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(DRAG_DROP_PAYLOAD);
+					ImGui::EndDragDropTarget();
+				}
+				ImGui::EndGroup();
 				// TODO: Implementation
 			});
 

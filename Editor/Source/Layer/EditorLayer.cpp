@@ -32,9 +32,7 @@ namespace Editor
 
 	static void DrawDemo()
 	{
-#if 0
 		ImGui::ShowDemoWindow();
-#endif
 	}
 
 	EditorLayer::EditorLayer()

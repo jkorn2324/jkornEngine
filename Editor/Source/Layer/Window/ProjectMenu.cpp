@@ -364,6 +364,17 @@ namespace Editor
 						serializer.Serialize(path);
 					}
 				}
+				if (ImGui::MenuItem("Material"))
+				{
+					m_popupView = ProjectMenuPopupView::Popup_None;
+					{
+						// Creates and serializes a new material.
+						Engine::Material material;
+						Engine::AssetSerializer<Engine::Material> matSerializer(material);
+						auto path = m_currentPath / "New Material.mat";
+						matSerializer.SerializeToFile(path);
+					}
+				}
 				if (ImGui::MenuItem("Folder"))
 				{
 					m_popupView = ProjectMenuPopupView::Popup_None;
