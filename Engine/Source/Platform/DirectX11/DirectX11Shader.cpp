@@ -12,7 +12,7 @@
 
 namespace Engine
 {
-	static bool LoadShader(const WCHAR* fileName, const char* entryPoint, const char* model, ID3DBlob*& blob)
+	static bool CompileShader(const WCHAR* fileName, const char* entryPoint, const char* model, ID3DBlob*& blob)
 	{
 		DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 
@@ -95,10 +95,10 @@ namespace Engine
 	bool DirectX11Shader::Load(const wchar_t* fileName, const BufferLayout& bufferLayout)
 	{
 		ID3DBlob* vertexShader = nullptr;
-		if (LoadShader(fileName, "VS", "vs_4_0", vertexShader))
+		if (CompileShader(fileName, "VS", "vs_4_0", vertexShader))
 		{
 			ID3DBlob* pixelShader = nullptr;
-			if (LoadShader(fileName, "PS", "ps_4_0", pixelShader))
+			if (CompileShader(fileName, "PS", "ps_4_0", pixelShader))
 			{
 				DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
 					GraphicsRenderer::GetRenderingAPI();

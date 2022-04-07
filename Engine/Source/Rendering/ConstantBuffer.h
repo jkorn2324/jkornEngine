@@ -28,7 +28,7 @@ namespace Engine
 		
 	public:
 		static ConstantBuffer* Create(const void* buffer, size_t stride);
-
+		
 		friend class GraphicsRenderer;
 	};
 }
