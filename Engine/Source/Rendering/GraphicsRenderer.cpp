@@ -8,7 +8,7 @@
 #include "FrameBuffer.h"
 #include "Texture.h"
 #include "RenderingAPI.h"
-
+#include "Profiler.h"
 #include "Application.h"
 #include "Window.h"
 
@@ -24,6 +24,8 @@ namespace Engine
 	
 	bool GraphicsRenderer::Init()
 	{
+		PROFILE_SCOPE(Init, GraphicsRenderer);
+
 		DebugAssert(s_renderingAPI == nullptr, 
 			"Graphics Rendering API has already been initialized.");
 		s_renderingAPI = RenderingAPI::Create();

@@ -3,6 +3,7 @@
 
 #include "Worker.h"
 #include "Job.h"
+#include "Profiler.h"
 
 namespace Engine
 {
@@ -17,6 +18,8 @@ namespace Engine
 
 	void JobManager::Init()
 	{
+		PROFILE_SCOPE(Init, JobManager);
+
 		if (s_initialized)
 		{
 			return;

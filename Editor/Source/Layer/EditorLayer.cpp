@@ -132,6 +132,8 @@ namespace Editor
 
 	void EditorLayer::OnUpdate(const Engine::Timestep& timestep)
 	{
+		PROFILE_SCOPE(OnUpdate, EditorLayer);
+
 		// For testing purposes.
 		m_projectMenu.OnUpdate(timestep);
 		m_gameView.OnUpdate(timestep);
@@ -159,6 +161,8 @@ namespace Editor
 
 	void EditorLayer::OnImGuiRender()
 	{
+		PROFILE_SCOPE(OnImGuiRender, Editor);
+
 		DrawDemo();
 
 		DrawEditorTopWindow();

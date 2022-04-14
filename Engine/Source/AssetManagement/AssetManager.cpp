@@ -36,6 +36,8 @@ namespace Engine
 
 	void AssetManager::Init(const std::filesystem::path& guidsDatabasePath)
 	{
+		PROFILE_SCOPE(Init, AssetManager);
+
 		s_assetMapper = new AssetMapper(guidsDatabasePath);
 		s_assetMapper->BeginLoad();
 	}

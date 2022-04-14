@@ -1,6 +1,11 @@
 TODOS:
 -> Build Dependencies [x]
 
+Performance Issues:
+-> On Laptop
+	-> CreateDeviceAndSwapChain is really slow.
+	-> Takes up high CPU Usage.
+
 General Rendering:
 -> Per platform rendering
    -> Implementations move on from being relied on enum

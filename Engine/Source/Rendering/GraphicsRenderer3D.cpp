@@ -188,6 +188,8 @@ namespace Engine
 
 	void GraphicsRenderer3D::Init()
 	{
+		PROFILE_SCOPE(Init, GraphicsRenderer3D);
+
 		if (s_initialized)
 		{
 			return;

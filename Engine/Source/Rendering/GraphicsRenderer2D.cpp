@@ -91,6 +91,8 @@ namespace Engine
 
 	void GraphicsRenderer2D::Init()
 	{
+		PROFILE_SCOPE(Init, GraphicsRenderer2D);
+
 		if (s_spriteVertexBuffer == nullptr)
 		{
 			s_spriteVertexBuffer = VertexBuffer::Create(

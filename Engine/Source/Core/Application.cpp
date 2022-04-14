@@ -99,6 +99,8 @@ namespace Engine
 	{
 		while (m_running)
 		{
+			PROFILE_SCOPE(ApplicationUpdate, Application);
+
 			// Gets the time step.
 			time_point currentTime = std::chrono::high_resolution_clock::now();
 			std::chrono::nanoseconds diff =
@@ -109,24 +111,33 @@ namespace Engine
 
 			if (!m_window->IsMinimized())
 			{
-				// Update the window layer stack.
-				for (Layer* layer : m_windowLayerStack)
 				{
-					layer->OnUpdate(ts);
+					PROFILE_SCOPE(LayerUpdate, Layers);
+
+					// Update the window layer stack.
+					for (Layer* layer : m_windowLayerStack)
+					{
+						layer->OnUpdate(ts);
+					}
 				}
+
 
 				// Allows for the job manager to catch up.
 				JobManager::Wait();
 
-				// Update ImGui Layer.
-				m_imguiLayer->BeginRender();
 				{
-					for (Layer* layer : m_windowLayerStack)
+					PROFILE_SCOPE(ImGuiLayerUpdates, ImGui);
+
+					// Update ImGui Layer.
+					m_imguiLayer->BeginRender();
 					{
-						layer->OnImGuiRender();
+						for (Layer* layer : m_windowLayerStack)
+						{
+							layer->OnImGuiRender();
+						}
 					}
+					m_imguiLayer->EndRender();
 				}
-				m_imguiLayer->EndRender();
 			}
 			m_window->OnUpdate();
 		}

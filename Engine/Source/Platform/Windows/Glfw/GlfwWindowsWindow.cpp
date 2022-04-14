@@ -11,6 +11,7 @@
 #include "RenderingAPI.h"
 #include "Input.h"
 #include "PlatformInput.h"
+#include "Profiler.h"
 
 namespace Engine
 {
@@ -80,6 +81,8 @@ namespace Engine
 
 	void GlfwWindowsWindow::OnUpdate()
 	{
+		PROFILE_SCOPE(OnUpdate, Window);
+
 		glfwPollEvents();
 		GraphicsRenderer::SwapBuffers();
 	}
@@ -126,6 +129,8 @@ namespace Engine
 
 	void GlfwWindowsWindow::Initialize()
 	{
+		PROFILE_SCOPE(Initialize, GlfwWindowsWindow);
+
 		if (s_numWindows <= 0)
 		{
 			// Sets no api so that we can use directx 11.

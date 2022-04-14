@@ -7,6 +7,7 @@
 
 #include "SceneEvent.h"
 #include "EntityHierarchyComponent.h"
+#include "Profiler.h"
 
 namespace Engine
 {
@@ -15,6 +16,8 @@ namespace Engine
 
 	void SceneManager::Init()
 	{
+		PROFILE_SCOPE(Init, SceneManager);
+
 		Scene::CreateDefaultScene(s_activeScene);
 		s_activeScene->BindEventFunc(s_eventFunc);
 	}

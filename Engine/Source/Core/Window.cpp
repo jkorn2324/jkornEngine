@@ -3,6 +3,7 @@
 #include "ApplicationEvent.h"
 
 #include "GlfwWindowsWindow.h"
+#include "Profiler.h"
 
 namespace Engine
 {
@@ -10,6 +11,8 @@ namespace Engine
 
 	std::unique_ptr<Window> Window::GenerateWindow(const WindowProperties& properties)
 	{
+		PROFILE_SCOPE(GenerateWindow, Window);
+
 		switch (s_windowType)
 		{
 		case WindowType::GLFW_WINDOWS_WINDOW: return std::make_unique<GlfwWindowsWindow>(properties);

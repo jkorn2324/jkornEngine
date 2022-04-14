@@ -1,8 +1,9 @@
 #include "EnginePCH.h"
 #include "Profiler.h"
 
-#include <stdio.h>
+#include "Logger.h"
 
+#include <stdio.h>
 #include <unordered_map>
 
 #include <rapidjson\prettywriter.h>
@@ -154,7 +155,7 @@ namespace Engine
 	void Profiler::BeginProfile(const std::string& name,
 		const std::string& category)
 	{
-#ifdef _DEBUG
+#ifdef DEBUG
 		const auto& found = s_timers.find(name);
 		if (found != s_timers.end())
 		{
@@ -174,7 +175,7 @@ namespace Engine
 	void Profiler::EndProfile(const std::string& name,
 		const std::string& category)
 	{
-#ifdef _DEBUG
+#ifdef DEBUG
 		const auto& found = s_timers.find(name);
 		if (found != s_timers.end())
 		{

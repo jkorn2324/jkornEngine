@@ -5,6 +5,7 @@
 #include "JsonFileParser.h"
 #include "JsonUtils.h"
 #include "JsonFileWriter.h"
+#include "Profiler.h"
 
 namespace Engine
 {
@@ -62,6 +63,8 @@ namespace Engine
 
 	void AssetMapper::DoLoad()
 	{
+		PROFILE_SCOPE(DoLoad, AssetMapper);
+
 		LoadFromPath(m_rootPath);
 	}
 

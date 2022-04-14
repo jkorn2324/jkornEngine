@@ -5,6 +5,7 @@
 
 #include "PlatformDetector.h"
 #include "Window.h"
+#include "Profiler.h"
 
 #include "DirectX11VertexBuffer.h"
 #include "DirectX11IndexBuffer.h"
@@ -32,6 +33,10 @@ namespace Engine
 		const HWND& window, std::uint32_t width, std::uint32_t height,
 		ID3D11Device** device, ID3D11DeviceContext** context, IDXGISwapChain** swapChain)
 	{
+		// TODO: Make Function Faster
+
+		PROFILE_SCOPE(CreateDeviceAndSwapChain, GraphicsRenderer);
+
 		DXGI_SWAP_CHAIN_DESC swapChainDesc;
 		ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 		swapChainDesc.BufferCount = 2;
@@ -75,6 +80,8 @@ namespace Engine
 	static bool CreateBackBuffer(IDXGISwapChain* swapChain,
 		ID3D11Device* device, ID3D11RenderTargetView** renderTargetView)
 	{
+		PROFILE_SCOPE(CreateBackBuffer, GraphicsRenderer);
+
 		ID3D11Texture2D* backBuffer;
 		HRESULT result = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
 			(LPVOID*)&backBuffer);
@@ -90,6 +97,8 @@ namespace Engine
 		ID3D11DeviceContext* context, ID3D11SamplerState** samplerState,
 		UINT startSlot)
 	{
+		PROFILE_SCOPE(CreateSamplerState, GraphicsRenderer);
+
 		D3D11_SAMPLER_DESC samplerDesc;
 		ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
 		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -111,6 +120,8 @@ namespace Engine
 	static bool CreateRasterizerState(ID3D11Device* device,
 		ID3D11RasterizerState** rasterizerState, bool wireframe)
 	{
+		PROFILE_SCOPE(CreateRasterizerState, GraphicsRenderer);
+
 		D3D11_RASTERIZER_DESC desc;
 		ZeroMemory(&desc, sizeof(D3D11_RASTERIZER_DESC));
 		desc.CullMode = wireframe ? D3D11_CULL_NONE : D3D11_CULL_BACK;
@@ -247,6 +258,8 @@ namespace Engine
 
 	void DirectX11RenderingAPI::SetRenderTarget(ID3D11RenderTargetView* renderTargetView, ID3D11DepthStencilView* depthStencilView)
 	{
+		PROFILE_SCOPE(SetRenderTarget, GraphicsRenderer);
+
 		m_currentRenderTargetView = renderTargetView;
 		m_deviceContext->OMSetRenderTargets(1, &m_currentRenderTargetView, depthStencilView);
 	}
