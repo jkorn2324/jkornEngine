@@ -3,6 +3,7 @@
 
 #include "GraphicsRenderer.h"
 #include "DirectX11RenderingAPI.h"
+#include "DirectX11Utils.h"
 
 namespace Engine
 {
@@ -52,8 +53,6 @@ namespace Engine
 
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
 			GraphicsRenderer::GetRenderingAPI();
-
-		// Maps the subresource to the device context.
 		D3D11_MAPPED_SUBRESOURCE mapResource;
 		HRESULT result = renderingAPI.m_deviceContext->Map(
 			m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);

@@ -27,7 +27,8 @@ namespace Engine
 
 		AssetRef(TAsset* asset, const GUID& guid, const std::wstring& name, AssetReferenceManager<TAsset>* referenceManager)
 			: m_asset(asset),
-			m_referenceManager(referenceManager)
+			m_referenceManager(referenceManager),
+			m_guid(guid)
 		{
 			m_referenceManager->AddReference(asset, name, guid);
 		}
@@ -39,7 +40,8 @@ namespace Engine
 
 		AssetRef(const AssetRef& assetRef)
 			: m_asset(assetRef.m_asset),
-			m_referenceManager(assetRef.m_referenceManager)
+			m_referenceManager(assetRef.m_referenceManager),
+			m_guid(assetRef.m_guid)
 		{
 			m_referenceManager->AddReference(m_asset);
 		}
@@ -52,6 +54,7 @@ namespace Engine
 			}
 			m_referenceManager = assetRef.m_referenceManager;
 			m_asset = assetRef.m_asset;
+			m_guid = assetRef.m_guid;
 			if (m_referenceManager != nullptr)
 			{
 				m_referenceManager->AddReference(m_asset);
@@ -65,6 +68,7 @@ namespace Engine
 			{
 				return false;
 			}
+			guid = m_guid;
 			return m_referenceManager->GetGUID(m_asset, guid);
 		}
 
@@ -115,6 +119,7 @@ namespace Engine
 	private:
 		TAsset* m_asset;
 		AssetReferenceManager<TAsset>* m_referenceManager;
+		GUID m_guid;
 	};
 
 	// Reference counted structure.
@@ -206,5 +211,18 @@ namespace Engine
 	private:
 		std::unordered_map<TAsset*, RefCount> m_referenceCountedAssets;
 		std::function<void(const GUID&, const std::wstring&)> m_assetRemovedAllReferencesEvent = nullptr;
+	};
+}
+
+
+namespace std
+{
+	template<typename T>
+	struct hash<Engine::AssetRef<T>>
+	{
+		std::size_t operator()(const Engine::AssetRef<T>& asset)
+		{
+			return hash<uint64_t>()((uint64_t)asset.m_guid);
+		}
 	};
 }

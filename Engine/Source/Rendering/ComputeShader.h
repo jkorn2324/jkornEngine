@@ -5,6 +5,7 @@
 #include "Source\Matrix.h"
 
 #include <string>
+#include <memory>
 
 namespace Engine
 {
@@ -15,6 +16,8 @@ namespace Engine
 	class AssetSerializer;
 	template<typename T>
 	class AssetCache;
+	template<typename T>
+	class AssetRef;
 
 	// TODO: Compute Shader Buffer Layout, Works in Tandem with Serialization
 	// So that we can easily just put stuff inside of the Compute Shader directly
@@ -27,6 +30,69 @@ namespace Engine
 	// RWStructuredBuffers
 	// RWTexture2D - Must support asset cached textures & be able to be read from the GPU.
 
+	enum ComputeBufferType
+	{
+		Type_RWStructuredBuffer,
+		Type_StructuredBuffer,
+		Type_ConstantBuffer
+	};
+
+	// Compute Buffer abstraction class.
+	class ComputeBuffer
+	{
+	public:
+		ComputeBuffer(const ComputeBufferType& bufferType)
+			: m_computeBufferType(bufferType),
+			m_bufferStride(0),
+			m_bufferData(nullptr),
+			m_numElements(0)
+		{
+
+		}
+
+		~ComputeBuffer()
+		{
+			if (m_bufferData != nullptr)
+			{
+				delete[] m_bufferData;
+			}
+		}
+
+		const ComputeBufferType& GetBufferType() const { return m_computeBufferType; }
+
+		uint32_t GetNumElements() const { return m_numElements; }
+
+		size_t GetStride() const { return m_bufferStride; }
+
+		template<typename T>
+		void SetData(T* inData, uint32_t numElements)
+		{
+			size_t tStride = sizeof(T);
+			if (m_numElements != numElements
+				|| tStride != m_bufferStride)
+			{
+				if (m_bufferData != nullptr)
+				{
+					delete[] m_bufferData;
+				}
+				m_bufferData = new char[tStride * m_numElements];
+				m_bufferStride = tStride;
+			}
+			std::memcpy(m_bufferData, inData, tStride * m_numElements);
+		}
+
+		const void* GetData() const
+		{
+			return m_bufferData;
+		}
+
+	private:
+		void* m_bufferData;
+		size_t m_bufferStride;
+		uint32_t m_numElements;
+		ComputeBufferType m_computeBufferType;
+	};
+
 	class ComputeShader
 	{
 	public:
@@ -36,26 +102,11 @@ namespace Engine
 		virtual void Dispatch(uint32_t x, uint32_t y, uint32_t z) = 0;
 		virtual bool IsValid() const = 0;
 
-		// Sets a constant buffer.
-		template<typename T>
-		void SetConstants(T& bufferData)
-		{
-			InternalSetConstants(&bufferData, sizeof(T));
-		}
-
-		virtual void SetFloat(const std::string& name, float value) =0;
-		virtual void SetInt(const std::string& name, int value) =0;
-		// TODO: Vector of Integers
-		virtual void SetFloat2(const std::string& name, const MathLib::Vector2& vec2) =0;
-		virtual void SetFloat3(const std::string& name, const MathLib::Vector3& vec3) =0;
-		virtual void SetFloat4(const std::string& name, const MathLib::Vector4& vec4) =0;
-		virtual void SetMatrix3x3(const std::string& name, const MathLib::Matrix3x3& mat) =0;
-		virtual void SetMatrix4x4(const std::string& name, const MathLib::Matrix4x4& mat) =0;
-		virtual void SetTexture(const std::string& name, const Texture& texture)=0;
+		virtual void SetTexture(const AssetRef<Texture>& texture)=0;
+		virtual void SetBuffer(const std::shared_ptr<ComputeBuffer>& buffer)=0;
 
 	protected:
 		virtual bool Load(const wchar_t* fileName) = 0;
-		virtual void InternalSetConstants(void* bufferData, size_t stride)=0;
 		
 		SERIALIZABLE_ASSET(ComputeShader);
 	};

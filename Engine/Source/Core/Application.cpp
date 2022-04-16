@@ -52,9 +52,12 @@ namespace Engine
 
 		Logger::Init();
 		Profiler::Init();
-		JobManager::Init();
-		AssetManager::Init(m_rootPath);
 
+#if ENABLE_THREADING
+		// Job Manager is removed for now, should add it when lock-free queues are implemented.
+		JobManager::Init();
+#endif
+		AssetManager::Init(m_rootPath);
 		WindowProperties properties = 
 		{
 			name, WINDOW_WIDTH, WINDOW_HEIGHT, 
@@ -91,7 +94,9 @@ namespace Engine
 		GraphicsRenderer2D::Release();
 		GraphicsRenderer::Release();
 		Input::Release();
+#if ENABLE_THREADING
 		JobManager::Release();
+#endif
 		Profiler::Release();
 	}
 

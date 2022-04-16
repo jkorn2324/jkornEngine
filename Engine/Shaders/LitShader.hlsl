@@ -86,13 +86,20 @@ float4 PhongLightingCalculation(VertexShaderOut psIn)
     return float4(ambientCalculated + lightColor, 1.0);
 }
 
-float4 PS(VertexShaderOut psIn) : SV_TARGET
+struct PixelShaderOutput
 {
+    float4 color : COLOR;
+};
+
+PixelShaderOutput PS(VertexShaderOut psIn) : SV_TARGET
+{
+    PixelShaderOutput psOutput;
     psIn.normal = normalize(psIn.normal);
     float4 textureColor = float4(1.0, 1.0, 1.0, 1.0);
     if (HAS_MATERIAL_FLAG(MaterialFlag_DefaultTexture))
     {
         textureColor = DefaultTexture.Sample(DefaultSampler, psIn.uv);
     }
-    return textureColor * PhongLightingCalculation(psIn);
+    psOutput.color = textureColor * PhongLightingCalculation(psIn);
+    return psOutput;
 }

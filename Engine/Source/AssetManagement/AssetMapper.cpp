@@ -11,44 +11,35 @@ namespace Engine
 {
 	std::filesystem::path AssetMapper::GetPath(const GUID& guid)
 	{
-		m_mutex.lock();
 		const auto& outputPath = m_assetGUIDs.find(guid);
 		if(outputPath != m_assetGUIDs.end())
 		{
-			m_mutex.unlock();
 			return outputPath->second;
 		}
-		m_mutex.unlock();
 		return std::filesystem::path();
 	}
 
 	void AssetMapper::SetPath(const GUID& guid, const std::filesystem::path& path)
 	{
-		m_mutex.lock();
 		const auto& outputPath = m_assetGUIDs.find(guid);
 		if (outputPath != m_assetGUIDs.end())
 		{
 			m_assetGUIDs[guid] = path;
 			m_filePaths[path] = guid;
-			m_mutex.unlock();
 			return;
 		}
 		m_assetGUIDs.emplace(guid, path);
 		m_filePaths.emplace(path, guid);
-		m_mutex.unlock();
 	}
 
 	bool AssetMapper::GetGUID(const std::filesystem::path& path, GUID& guid)
 	{
-		m_mutex.lock();
 		const auto& outputPath = m_filePaths.find(path);
 		if (outputPath != m_filePaths.end())
 		{
-			m_mutex.unlock();
 			guid = outputPath->second;
 			return true;
 		}
-		m_mutex.unlock();
 		return false;
 	}
 
@@ -124,9 +115,7 @@ namespace Engine
 
 	void AssetMapper::UnLoad()
 	{
-		m_mutex.lock();
 		m_assetGUIDs.clear();
 		m_filePaths.clear();
-		m_mutex.unlock();
 	}
 }

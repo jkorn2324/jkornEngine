@@ -15,6 +15,12 @@ namespace Engine
 		GUID(uint64_t guid)
 			: m_guid(guid) { }
 
+		GUID& operator=(const GUID& guid)
+		{
+			m_guid = guid.m_guid;
+			return *this;
+		}
+
 		operator uint64_t() { return m_guid; }
 		operator const uint64_t() const { return m_guid; }
 		

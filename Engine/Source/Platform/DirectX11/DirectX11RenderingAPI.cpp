@@ -258,6 +258,11 @@ namespace Engine
 
 	void DirectX11RenderingAPI::SetRenderTarget(ID3D11RenderTargetView* renderTargetView, ID3D11DepthStencilView* depthStencilView)
 	{
+		SetRenderTarget(1, renderTargetView, depthStencilView);
+	}
+
+	void DirectX11RenderingAPI::SetRenderTarget(uint32_t numRenderTargets, ID3D11RenderTargetView* renderTargetView, ID3D11DepthStencilView* depthStencilView)
+	{
 		PROFILE_SCOPE(SetRenderTarget, GraphicsRenderer);
 
 		m_currentRenderTargetView = renderTargetView;

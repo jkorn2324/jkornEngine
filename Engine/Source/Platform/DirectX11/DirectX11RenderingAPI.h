@@ -26,6 +26,8 @@ namespace Engine
 
 		void SetRenderTarget(ID3D11RenderTargetView* renderTargetView,
 			ID3D11DepthStencilView* depthStencilView);
+		void SetRenderTarget(uint32_t id, ID3D11RenderTargetView* renderTargetView,
+			ID3D11DepthStencilView* depthStencilView);
 
 		void SetClearColor(const MathLib::Vector4& clearColor) override;
 		void Clear() override;
@@ -69,5 +71,7 @@ namespace Engine
 		friend class DirectX11Shader;
 		friend class DirectX11ImGuiLayer;
 		friend class DirectX11ComputeShader;
+		friend class DirectX11RenderTexture;
+		friend class DirectX11Utils;
 	};
 }

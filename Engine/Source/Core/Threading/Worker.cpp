@@ -28,22 +28,15 @@ namespace Engine
 		bool isLocked;
 		while (m_running)
 		{
-			isLocked = true;
-			JobManager::s_mutex.lock();
 			if (JobManager::s_numJobs > 0
 				&& !JobManager::s_jobs.empty())
 			{
 				Job* currentJob = JobManager::s_jobs.front();
 				JobManager::s_jobs.pop();
-				JobManager::s_mutex.unlock();
 				isLocked = false;
 				currentJob->OnRun();
 				JobManager::s_numJobs--;
 				delete currentJob;
-			}
-			if (isLocked)
-			{
-				JobManager::s_mutex.unlock();
 			}
 		}
 	}

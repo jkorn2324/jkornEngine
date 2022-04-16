@@ -18,7 +18,10 @@ namespace Engine
 
 		// Render Target View
 		TYPE_RGB,
-		RENDER_TARGET = TYPE_RGB
+		RENDER_TARGET = TYPE_RGB,
+
+		// Displays the texture belonging to the entity ids.
+		TYPE_ENTITYID
 	};
 
 	struct FrameBufferAttachment

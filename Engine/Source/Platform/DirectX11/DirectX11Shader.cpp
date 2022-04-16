@@ -4,49 +4,13 @@
 #include "GraphicsRenderer.h"
 #include "DirectX11RenderingAPI.h"
 #include "DirectX11BufferLayoutParser.h"
+#include "DirectX11Utils.h"
 
 #include <d3dcompiler.h>
 #include <fstream>
 
-#pragma comment(lib, "d3dcompiler.lib")
-
 namespace Engine
 {
-	static bool CompileShader(const WCHAR* fileName, const char* entryPoint, const char* model, ID3DBlob*& blob)
-	{
-		DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-
-#ifdef _DEBUG
-		dwShaderFlags |= D3DCOMPILE_DEBUG;
-		dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-
-		ID3DBlob* errorBlob = nullptr;
-		HRESULT result = D3DCompileFromFile(fileName, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-			entryPoint, model, dwShaderFlags, 0, &blob, &errorBlob);
-		if (result != S_OK)
-		{
-			if (errorBlob != nullptr)
-			{
-				static wchar_t buffer[4096];
-				_snwprintf_s(buffer, 4096, _TRUNCATE,
-					L"%hs", (char*)errorBlob->GetBufferPointer());
-				OutputDebugString(buffer);
-
-#ifdef PLATFORM_WINDOWS
-				MessageBox(nullptr, buffer, L"Error", MB_OK);
-#endif
-				errorBlob->Release();
-			}
-			return false;
-		}
-		// Releases the error blob.
-		if (errorBlob != nullptr)
-		{
-			errorBlob->Release();
-		}
-		return true;
-	}
 
 	DirectX11Shader::DirectX11Shader()
 		: Shader(),
@@ -95,10 +59,10 @@ namespace Engine
 	bool DirectX11Shader::Load(const wchar_t* fileName, const BufferLayout& bufferLayout)
 	{
 		ID3DBlob* vertexShader = nullptr;
-		if (CompileShader(fileName, "VS", "vs_4_0", vertexShader))
+		if (DirectX11Utils::CompileShader(fileName, "VS", "vs_4_0", vertexShader))
 		{
 			ID3DBlob* pixelShader = nullptr;
-			if (CompileShader(fileName, "PS", "ps_4_0", pixelShader))
+			if (DirectX11Utils::CompileShader(fileName, "PS", "ps_4_0", pixelShader))
 			{
 				DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
 					GraphicsRenderer::GetRenderingAPI();

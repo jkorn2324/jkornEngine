@@ -46,7 +46,7 @@ namespace Engine
 
 	private:
 		static std::atomic<uint32_t> s_numJobs;
-		static std::mutex s_mutex;
+		// TODO: Need to turn these into lock-free queue.
 		static std::queue<Job*> s_jobs;
 
 		friend class Application;

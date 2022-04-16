@@ -14,7 +14,6 @@ namespace Engine
 
 	std::atomic<uint32_t> JobManager::s_numJobs = 0;
 	std::queue<Job*> JobManager::s_jobs = std::queue<Job*>();
-	std::mutex JobManager::s_mutex;
 
 	void JobManager::Init()
 	{
@@ -35,6 +34,7 @@ namespace Engine
 
 	void JobManager::Release()
 	{
+		if (!s_initialized) return;
 		for (uint32_t i = 0; i < MAX_NUM_WORKERS; i++)
 		{
 			s_workers[i].End();
@@ -57,9 +57,7 @@ namespace Engine
 	{
 		if (!s_initialized) return;
 
-		s_mutex.lock();
 		s_numJobs++;
 		s_jobs.push(job);
-		s_mutex.unlock();
 	}
 }

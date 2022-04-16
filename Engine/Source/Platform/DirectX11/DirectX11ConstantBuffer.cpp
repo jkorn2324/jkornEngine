@@ -3,6 +3,7 @@
 
 #include "GraphicsRenderer.h"
 #include "DirectX11RenderingAPI.h"
+#include "DirectX11Utils.h"
 
 #include <d3d11.h>
 
@@ -11,26 +12,11 @@ namespace Engine
 	DirectX11ConstantBuffer::DirectX11ConstantBuffer(const void* buffer, std::size_t stride)
 		: ConstantBuffer(buffer, stride)
 	{
-		D3D11_BUFFER_DESC bufferDesc;
-		ZeroMemory(&bufferDesc, sizeof(bufferDesc));
-		bufferDesc.ByteWidth = (UINT)stride;
-		bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		bufferDesc.MiscFlags = 0;
-		bufferDesc.StructureByteStride = 0;
-
-		D3D11_SUBRESOURCE_DATA subresourceData;
-		subresourceData.pSysMem = buffer;
-		subresourceData.SysMemPitch = 0;
-		subresourceData.SysMemSlicePitch = 0;
 
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)(
 			GraphicsRenderer::GetRenderingAPI());
-		HRESULT result = renderingAPI.m_device->CreateBuffer(&bufferDesc,
-			&subresourceData, &m_constantBuffer);
-		DebugAssert(result == S_OK, "Failed to create constant buffer.");
-
+		m_constantBuffer = DirectX11Utils::CreateConstantBuffer(renderingAPI.m_device,
+			buffer, stride);
 		SetData((void*)buffer, stride);
 	}
 

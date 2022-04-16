@@ -4,42 +4,10 @@
 #include "GraphicsRenderer.h"
 #include "DirectX11RenderingAPI.h"
 #include "DirectX11Texture.h"
+#include "DirectX11Utils.h"
 
 namespace Engine
 {
-#pragma region d3d11_funcs
-
-	static ID3D11DepthStencilState* CreateDepthStencilState(D3D11_COMPARISON_FUNC func,
-		ID3D11Device* device)
-	{
-		D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-		ZeroMemory(&depthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-		depthStencilDesc.DepthEnable = true;
-		depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		depthStencilDesc.DepthFunc = func;
-
-		depthStencilDesc.StencilEnable = true;
-		depthStencilDesc.StencilReadMask = 0xff;
-		depthStencilDesc.StencilWriteMask = 0xff;
-
-		depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-		depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-		depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		ID3D11DepthStencilState* outDepthStencilState;
-		device->CreateDepthStencilState(&depthStencilDesc, &outDepthStencilState);
-		return outDepthStencilState;
-	}
-
-#pragma endregion
-
-
 	DirectX11FrameBuffer::DirectX11FrameBuffer(const FrameBufferSpecification& specification)
 		: FrameBuffer(specification),
 		m_depthTexture(),
@@ -66,7 +34,7 @@ namespace Engine
 		if (m_depthStencilSpecification.textureType != FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE)
 		{
 			{
-				m_depthStencilState = CreateDepthStencilState(
+				m_depthStencilState = DirectX11Utils::CreateDepthStencilState(
 					D3D11_COMPARISON_LESS, renderingAPI.m_device);
 				renderingAPI.m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 0);
 			}
@@ -132,6 +100,11 @@ namespace Engine
 				DebugAssert(result == S_OK, "Render target view was unsuccessfully created.");
 				outViewTexture->m_view = renderTargetView;
 				outViewTexture->texture = new DirectX11Texture(texture, shaderResource);
+				break;
+			}
+			case FrameBufferAttachmentType::TYPE_ENTITYID:
+			{
+				// TODO: Implementation
 				break;
 			}
 		}
@@ -238,7 +211,9 @@ namespace Engine
 				|| width > m_depthTexture.texture->GetHeight();
 		}
 		if (shouldRegenerate)
+		{
 			ReGenerateTextures();
+		}
 	}
 
 	void DirectX11FrameBuffer::ReGenerateTextures()

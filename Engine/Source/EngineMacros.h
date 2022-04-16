@@ -3,6 +3,8 @@
 namespace Engine
 {
 
+#define ENABLE_THREADING 0
+
 // Default Macros.
 #define NAMEOF(v) #v
 

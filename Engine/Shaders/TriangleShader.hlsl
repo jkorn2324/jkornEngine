@@ -18,7 +18,15 @@ VertexShaderOut VS(VertexShaderIn input)
 	return output;
 }
 
-float4 PS(VertexShaderOut input) : SV_TARGET
+
+struct PixelShaderOutput
 {
-	return input.color;
+    float4 color : SV_Target0;
+};
+
+PixelShaderOutput PS(VertexShaderOut input) : SV_TARGET
+{
+    PixelShaderOutput output;
+    output.color = input.color;
+	return output;
 }
