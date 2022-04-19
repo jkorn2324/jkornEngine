@@ -308,7 +308,7 @@ namespace Editor
 			m_windowBarSpacing = ImGui::GetTextLineHeightWithSpacing() * 2.0f;
 		}
 
-		Engine::Texture* frameTexture = m_frameBuffer->GetTexture(Engine::RENDER_TARGET);
+		Engine::Texture* frameTexture = m_frameBuffer->GetRenderTargetTexture(0);
 		if (frameTexture != nullptr)
 		{
 			ImGui::Image((void*)frameTexture->GetTextureID(),

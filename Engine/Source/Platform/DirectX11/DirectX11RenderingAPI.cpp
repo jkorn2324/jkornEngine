@@ -138,7 +138,7 @@ namespace Engine
 		m_deviceContext(nullptr),
 		m_device(nullptr),
 		m_backBufferRenderTargetView(nullptr),
-		m_currentRenderTargetView(nullptr),
+		m_currentRenderTargetViews(nullptr),
 		m_samplerState(nullptr),
 		m_width(0), m_height(0),
 		m_clearColor(0.0f, 0.0f, 1.0f, 1.0f),
@@ -158,7 +158,7 @@ namespace Engine
 			DebugAssert(result == S_OK, "Unable to create debug device.");
 		}
 #endif
-		m_currentRenderTargetView = nullptr;
+		m_currentRenderTargetViews = nullptr;
 
 		m_defaultRasterizerState->Release();
 		m_wireframeRasterizerState->Release();
@@ -258,15 +258,23 @@ namespace Engine
 
 	void DirectX11RenderingAPI::SetRenderTarget(ID3D11RenderTargetView* renderTargetView, ID3D11DepthStencilView* depthStencilView)
 	{
-		SetRenderTarget(1, renderTargetView, depthStencilView);
+		static ID3D11RenderTargetView* s_singleRenderTarget[1];
+		s_singleRenderTarget[0] = renderTargetView;
+
+		SetRenderTargets(1, s_singleRenderTarget, depthStencilView);
 	}
 
-	void DirectX11RenderingAPI::SetRenderTarget(uint32_t numRenderTargets, ID3D11RenderTargetView* renderTargetView, ID3D11DepthStencilView* depthStencilView)
+	void DirectX11RenderingAPI::SetRenderTargets(uint32_t numRenderTargets, ID3D11RenderTargetView** renderTargetViews, ID3D11DepthStencilView* depthStencilView)
 	{
-		PROFILE_SCOPE(SetRenderTarget, GraphicsRenderer);
+		PROFILE_SCOPE(SetRenderTargets, GraphicsRenderer);
 
-		m_currentRenderTargetView = renderTargetView;
-		m_deviceContext->OMSetRenderTargets(1, &m_currentRenderTargetView, depthStencilView);
+		for (uint16_t i = 0; i < m_numRenderTargetViews; i++)
+		{
+			m_currentRenderTargetViews[i] = nullptr;
+		}
+		m_numRenderTargetViews = numRenderTargets;
+		m_currentRenderTargetViews = renderTargetViews;
+		SetRenderTargets(m_numRenderTargetViews, m_currentRenderTargetViews, depthStencilView);
 	}
 
 	void DirectX11RenderingAPI::SetClearColor(const MathLib::Vector4& clearColor)
@@ -276,8 +284,15 @@ namespace Engine
 
 	void DirectX11RenderingAPI::Clear()
 	{
-		m_deviceContext->ClearRenderTargetView(m_currentRenderTargetView,
-			reinterpret_cast<const float*>(&m_clearColor));
+		for (uint32_t i = 0; i < m_numRenderTargetViews; i++)
+		{
+			ID3D11RenderTargetView* renderTargetView = m_currentRenderTargetViews[i];
+			if (renderTargetView != nullptr)
+			{
+				m_deviceContext->ClearRenderTargetView(renderTargetView,
+					reinterpret_cast<const float*>(&m_clearColor));
+			}
+		}
 	}
 
 	void DirectX11RenderingAPI::ClearTexture(uint32_t slot)

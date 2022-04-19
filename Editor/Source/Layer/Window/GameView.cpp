@@ -173,7 +173,7 @@ namespace Editor
 
 		DrawMenuBar();
 
-		Engine::Texture* texture = m_frameBuffer->GetTexture(Engine::RENDER_TARGET);
+		Engine::Texture* texture = m_frameBuffer->GetRenderTargetTexture(0);
 		if (texture != nullptr)
 		{
 			const void* textureID = texture->GetTextureID();

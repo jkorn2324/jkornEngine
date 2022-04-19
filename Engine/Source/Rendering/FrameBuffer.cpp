@@ -12,21 +12,22 @@ namespace Engine
 	FrameBuffer::FrameBuffer(const FrameBufferSpecification& specification)
 		: m_frameBufferSpecification(),
 		m_depthStencilSpecification(),
-		m_renderTargetSpecification()
+		m_renderTargetSpecifications(10)
 	{
 		m_frameBufferSpecification = specification;
 
+		bool setDepthStencilSpecification = false;
 		for (const auto& attachment : specification.attachments)
 		{
-			if (attachment.textureType == TYPE_DEPTH24_STENCIL8)
+			if (attachment.textureType == TYPE_DEPTH24_STENCIL8
+				&& !setDepthStencilSpecification)
 			{
 				m_depthStencilSpecification = attachment;
-				continue;
+				setDepthStencilSpecification = true;
 			}
 			else if (attachment.textureType == TYPE_RGB)
 			{
-				m_renderTargetSpecification = attachment;
-				continue;
+				m_renderTargetSpecifications.push_back(attachment);
 			}
 		}
 	}

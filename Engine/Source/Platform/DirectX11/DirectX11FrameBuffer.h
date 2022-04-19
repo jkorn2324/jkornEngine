@@ -39,7 +39,8 @@ namespace Engine
 		void Bind() const override;
 		void UnBind() const override;
 
-		class Texture* GetTexture(FrameBufferAttachmentType type) const override;
+		class Texture* GetDepthTexture() const override;
+		class Texture* GetRenderTargetTexture(uint32_t index) const override;
 
 		void ReGenerateTextures() override;
 		void Resize(uint32_t width, uint32_t height) override;
@@ -55,7 +56,9 @@ namespace Engine
 
 	private:
 		DirectX11ViewTexture m_depthTexture;
-		DirectX11ViewTexture m_renderTargetTexture;
+		
+		DirectX11ViewTexture* m_renderTargetTextures;
+		ID3D11RenderTargetView** m_renderTargets;
 
 		ID3D11DepthStencilState* m_depthStencilState;
 	};

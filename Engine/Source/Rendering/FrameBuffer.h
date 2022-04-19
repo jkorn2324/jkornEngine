@@ -18,10 +18,7 @@ namespace Engine
 
 		// Render Target View
 		TYPE_RGB,
-		RENDER_TARGET = TYPE_RGB,
-
-		// Displays the texture belonging to the entity ids.
-		TYPE_ENTITYID
+		RENDER_TARGET = TYPE_RGB
 	};
 
 	struct FrameBufferAttachment
@@ -81,12 +78,16 @@ namespace Engine
 
 		const FrameBufferSpecification& GetSpecification() const { return m_frameBufferSpecification; }
 
+		virtual class Texture* GetDepthTexture() const =0;
+		virtual class Texture* GetRenderTargetTexture(uint32_t index) const =0;
+
 		virtual class Texture* GetTexture(FrameBufferAttachmentType type) const=0;
+		size_t GetNumRenderTargets() const { return m_renderTargetSpecifications.size(); }
 
 	protected:
 		FrameBufferSpecification m_frameBufferSpecification;
+		std::vector<FrameBufferAttachment> m_renderTargetSpecifications;
 		FrameBufferAttachment m_depthStencilSpecification = FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE;
-		FrameBufferAttachment m_renderTargetSpecification = FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE;
 
 	public:
 		static FrameBuffer* Create(const FrameBufferSpecification& specification);

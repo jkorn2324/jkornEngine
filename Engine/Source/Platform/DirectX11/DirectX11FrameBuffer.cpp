@@ -11,7 +11,8 @@ namespace Engine
 	DirectX11FrameBuffer::DirectX11FrameBuffer(const FrameBufferSpecification& specification)
 		: FrameBuffer(specification),
 		m_depthTexture(),
-		m_renderTargetTexture(),
+		m_renderTargets(nullptr),
+		m_renderTargetTextures(nullptr),
 		m_depthStencilState(nullptr)
 	{
 		CreateBuffers();
@@ -19,6 +20,18 @@ namespace Engine
 
 	DirectX11FrameBuffer::~DirectX11FrameBuffer() 
 	{
+		m_depthTexture.Deallocate();
+
+		uint32_t numRenderTargets = (uint32_t)GetNumRenderTargets();
+		for (uint32_t i = 0; i < numRenderTargets; i++)
+		{
+			auto& viewTexture = m_renderTargetTextures[i];
+			viewTexture.Deallocate();
+			m_renderTargets[i] = nullptr;
+		}
+		delete[] m_renderTargets;
+		delete[] m_renderTargetTextures;
+
 		if (m_depthStencilState != nullptr)
 		{
 			m_depthStencilState->Release();
@@ -42,9 +55,18 @@ namespace Engine
 			CreateViewTexture(&m_depthTexture, &renderingAPI, m_depthStencilSpecification);
 		}
 
-		if (m_renderTargetSpecification.textureType != FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE)
+		uint32_t numRenderTargets = (uint32_t)GetNumRenderTargets();
+		if (numRenderTargets > 0)
 		{
-			CreateViewTexture(&m_renderTargetTexture, &renderingAPI, m_renderTargetSpecification);
+			m_renderTargets = new ID3D11RenderTargetView*[numRenderTargets];
+			m_renderTargetTextures = new DirectX11ViewTexture[numRenderTargets];
+
+			for (uint32_t i = 0; i < numRenderTargets; i++)
+			{
+				auto& renderTargetTexture = m_renderTargetTextures[i];
+				CreateViewTexture(&renderTargetTexture, &renderingAPI, m_renderTargetSpecifications[i]);
+				m_renderTargets[i] = reinterpret_cast<ID3D11RenderTargetView*>(renderTargetTexture.m_view);
+			}
 		}
 	}
 
@@ -102,11 +124,6 @@ namespace Engine
 				outViewTexture->texture = new DirectX11Texture(texture, shaderResource);
 				break;
 			}
-			case FrameBufferAttachmentType::TYPE_ENTITYID:
-			{
-				// TODO: Implementation
-				break;
-			}
 		}
 	}
 
@@ -159,15 +176,16 @@ namespace Engine
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
 			GraphicsRenderer::GetRenderingAPI();
 
-		// If there is a render target view than we should bind it to that otherwise bind it to the back buffer.
-		if (m_renderTargetTexture.m_view != nullptr)
+		uint32_t numRenderTextures = (uint32_t)GetNumRenderTargets();
+		// If there are more than one render target, bind them, otherwise bind it to the back buffer.
+		if (numRenderTextures > 0)
 		{
-			renderingAPI.SetRenderTarget((ID3D11RenderTargetView*)m_renderTargetTexture.m_view,
-				(ID3D11DepthStencilView*)m_depthTexture.m_view);
+			renderingAPI.SetRenderTargets(numRenderTextures,
+				m_renderTargets, (ID3D11DepthStencilView*)m_depthTexture.m_view);
 		}
 		else
 		{
-			renderingAPI.SetRenderTarget(renderingAPI.m_backBufferRenderTargetView, 
+			renderingAPI.SetRenderTarget(renderingAPI.m_backBufferRenderTargetView,
 				(ID3D11DepthStencilView*)m_depthTexture.m_view);
 		}
 		
@@ -200,11 +218,18 @@ namespace Engine
 		FrameBuffer::Resize(width, height);
 
 		bool shouldRegenerate = false;
-		if (m_renderTargetTexture.texture != nullptr)
+		auto numRenderTargets = GetNumRenderTargets();
+		if (numRenderTargets > 0)
 		{
-			shouldRegenerate |= height > m_renderTargetTexture.texture->GetHeight()
-				|| width > m_renderTargetTexture.texture->GetWidth();
+			for (auto i = 0; i < numRenderTargets; i++)
+			{
+				const auto& renderTargetTexture = m_renderTargetTextures[i];
+				shouldRegenerate |= height > renderTargetTexture.texture->GetHeight()
+					|| width > renderTargetTexture.texture->GetHeight();
+				if (shouldRegenerate) break;
+			}
 		}
+
 		if (m_depthTexture.texture != nullptr)
 		{
 			shouldRegenerate |= height > m_depthTexture.texture->GetHeight()
@@ -220,13 +245,29 @@ namespace Engine
 	{
 		// Regenerate Render Texture.
 		{
-			m_renderTargetTexture.Deallocate();
+			// Deallocates the render targets.
+			size_t numRenderTargets = GetNumRenderTargets();
+			if (numRenderTargets > 0)
+			{
+				for (auto i = 0; i < numRenderTargets; i++)
+				{
+					auto& renderTarget = m_renderTargetTextures[i];
+					m_renderTargets[i] = nullptr;
+					renderTarget.Deallocate();
+				}
+			}
 
 			DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
-			if (m_renderTargetSpecification.textureType
-				!= FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE)
+			for (uint16_t i = 0; i < m_renderTargetSpecifications.size(); i++)
 			{
-				CreateViewTexture(&m_renderTargetTexture, &renderingAPI, m_renderTargetSpecification);
+				const auto& renderTargetSpecification = m_renderTargetSpecifications[i];
+				if (renderTargetSpecification.textureType 
+					!= FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE)
+				{
+					DirectX11ViewTexture& viewTexture = m_renderTargetTextures[i];
+					CreateViewTexture(&viewTexture, &renderingAPI, renderTargetSpecification);
+					m_renderTargets[i] = reinterpret_cast<ID3D11RenderTargetView*>(viewTexture.m_view);
+				}
 			}
 		}
 
@@ -243,13 +284,15 @@ namespace Engine
 		}
 	}
 
-	Texture* DirectX11FrameBuffer::GetTexture(FrameBufferAttachmentType type) const
+	Texture* DirectX11FrameBuffer::GetDepthTexture() const
 	{
-		switch (type)
-		{
-			case FrameBufferAttachmentType::DEPTH_STENCIL:	return m_depthTexture.texture;
-			case FrameBufferAttachmentType::RENDER_TARGET:	return m_renderTargetTexture.texture;
-		}
-		return nullptr;
+		return m_depthTexture.texture;
+	}
+	
+	Texture* DirectX11FrameBuffer::GetRenderTargetTexture(uint32_t index) const
+	{
+		auto numRenderTargets = GetNumRenderTargets();
+		if (numRenderTargets >= (size_t)index) return nullptr;
+		return m_renderTargetTextures[index].texture;
 	}
 }

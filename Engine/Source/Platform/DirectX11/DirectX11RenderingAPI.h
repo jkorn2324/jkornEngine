@@ -26,7 +26,7 @@ namespace Engine
 
 		void SetRenderTarget(ID3D11RenderTargetView* renderTargetView,
 			ID3D11DepthStencilView* depthStencilView);
-		void SetRenderTarget(uint32_t id, ID3D11RenderTargetView* renderTargetView,
+		void SetRenderTargets(uint32_t numRenderTargets, ID3D11RenderTargetView** renderTargetViews,
 			ID3D11DepthStencilView* depthStencilView);
 
 		void SetClearColor(const MathLib::Vector4& clearColor) override;
@@ -49,8 +49,9 @@ namespace Engine
 		ID3D11DeviceContext* m_deviceContext;
 		ID3D11Device* m_device;
 
-		ID3D11RenderTargetView* m_currentRenderTargetView;
+		ID3D11RenderTargetView** m_currentRenderTargetViews;
 		ID3D11RenderTargetView* m_backBufferRenderTargetView;
+
 		ID3D11SamplerState* m_samplerState;
 
 		ID3D11RasterizerState* m_defaultRasterizerState;
@@ -58,8 +59,9 @@ namespace Engine
 
 		MathLib::Vector4 m_clearColor;
 
-		std::uint32_t m_width;
-		std::uint32_t m_height;
+		uint32_t m_width;
+		uint32_t m_height;
+		uint32_t m_numRenderTargetViews;
 
 		bool m_wireframeMode;
 
