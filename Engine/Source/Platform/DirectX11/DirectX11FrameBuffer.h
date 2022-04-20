@@ -58,10 +58,7 @@ namespace Engine
 
 	private:
 		DirectX11ViewTexture m_depthTexture;
-		
 		DirectX11ViewTexture* m_renderTargetTextures;
-		ID3D11RenderTargetView** m_renderTargets;
-
 		ID3D11DepthStencilState* m_depthStencilState;
 	};
 }

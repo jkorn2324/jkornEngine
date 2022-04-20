@@ -11,7 +11,6 @@ namespace Engine
 	DirectX11FrameBuffer::DirectX11FrameBuffer(const FrameBufferSpecification& specification)
 		: FrameBuffer(specification),
 		m_depthTexture(),
-		m_renderTargets(nullptr),
 		m_renderTargetTextures(nullptr),
 		m_depthStencilState(nullptr)
 	{
@@ -27,9 +26,7 @@ namespace Engine
 		{
 			auto& viewTexture = m_renderTargetTextures[i];
 			viewTexture.Deallocate();
-			m_renderTargets[i] = nullptr;
 		}
-		delete[] m_renderTargets;
 		delete[] m_renderTargetTextures;
 
 		if (m_depthStencilState != nullptr)
@@ -58,14 +55,12 @@ namespace Engine
 		uint32_t numRenderTargets = (uint32_t)GetNumRenderTargets();
 		if (numRenderTargets > 0)
 		{
-			m_renderTargets = new ID3D11RenderTargetView*[numRenderTargets];
 			m_renderTargetTextures = new DirectX11ViewTexture[numRenderTargets];
 
 			for (uint32_t i = 0; i < numRenderTargets; i++)
 			{
 				auto& renderTargetTexture = m_renderTargetTextures[i];
 				CreateViewTexture(&renderTargetTexture, &renderingAPI, m_renderTargetSpecifications[i]);
-				m_renderTargets[i] = reinterpret_cast<ID3D11RenderTargetView*>(renderTargetTexture.m_view);
 			}
 		}
 	}
@@ -188,6 +183,8 @@ namespace Engine
 
 	void DirectX11FrameBuffer::Bind() const
 	{
+		static ID3D11RenderTargetView* s_renderTargetViews[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
+
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
 			GraphicsRenderer::GetRenderingAPI();
 
@@ -195,8 +192,15 @@ namespace Engine
 		// If there are more than one render target, bind them, otherwise bind it to the back buffer.
 		if (numRenderTextures > 0)
 		{
+			// Updates the render targets.
+			for (uint32_t i = 0; i < numRenderTextures; i++)
+			{
+				DirectX11ViewTexture& texture = m_renderTargetTextures[i];
+				s_renderTargetViews[i] = reinterpret_cast<ID3D11RenderTargetView*>(texture.m_view);
+			}
+
 			renderingAPI.SetRenderTargets(numRenderTextures,
-				m_renderTargets, (ID3D11DepthStencilView*)m_depthTexture.m_view);
+				s_renderTargetViews, (ID3D11DepthStencilView*)m_depthTexture.m_view);
 		}
 		else
 		{
@@ -270,7 +274,6 @@ namespace Engine
 				for (auto i = 0; i < numRenderTargets; i++)
 				{
 					auto& renderTarget = m_renderTargetTextures[i];
-					m_renderTargets[i] = nullptr;
 					renderTarget.Deallocate();
 				}
 			}
@@ -284,7 +287,6 @@ namespace Engine
 				{
 					DirectX11ViewTexture& viewTexture = m_renderTargetTextures[i];
 					CreateViewTexture(&viewTexture, &renderingAPI, renderTargetSpecification);
-					m_renderTargets[i] = reinterpret_cast<ID3D11RenderTargetView*>(viewTexture.m_view);
 				}
 			}
 		}

@@ -277,7 +277,7 @@ namespace Engine
 		}
 		m_numRenderTargetViews = numRenderTargets;
 		m_currentRenderTargetViews = renderTargetViews;
-		m_deviceContext->OMSetRenderTargets(m_numRenderTargetViews, m_currentRenderTargetViews, depthStencilView);
+		m_deviceContext->OMSetRenderTargets(m_numRenderTargetViews, &m_currentRenderTargetViews[0], depthStencilView);
 	}
 
 	void DirectX11RenderingAPI::SetClearColor(const MathLib::Vector4& clearColor)
