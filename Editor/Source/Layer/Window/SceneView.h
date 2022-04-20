@@ -39,6 +39,7 @@ namespace Editor
 	private:
 		void HandleCameraInput(const Engine::Timestep& ts);
 		void UpdateTransformationWidget(const Engine::Timestep& ts);
+		void UpdateSelectedEntityID(const Engine::Timestep& ts);
 
 		bool GetCameraDirection(MathLib::Vector3& cameraDirection,
 			const EditorCamera& editorCamera, const Engine::PlatformInput& platformInput) const;

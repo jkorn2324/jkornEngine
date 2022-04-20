@@ -25,10 +25,10 @@ namespace Engine
 	struct GraphicsObjectConstants
 	{
 		MathLib::Matrix4x4 c_objectToWorld = MathLib::Matrix4x4::Identity;
-		MathLib::Vector3 c_objectPosition = MathLib::Vector3::Zero;
+		int32_t c_entityID = -1;
 
 	private:
-		float pad;
+		float pad1, pad2, pad3;
 	};
 
 #pragma region lighting_structs
@@ -248,23 +248,24 @@ namespace Engine
 		delete s_objectConstantBuffer;
 	}
 
-	void GraphicsRenderer3D::DrawMesh(const MathLib::Vector3& position, Mesh& mesh)
+	void GraphicsRenderer3D::DrawMesh(const MathLib::Vector3& position, Mesh& mesh, int32_t entityID)
 	{
-		DrawMesh(MathLib::Matrix4x4::CreateTranslation(position), mesh);
+		DrawMesh(MathLib::Matrix4x4::CreateTranslation(position), mesh, entityID);
 	}
 
-	void GraphicsRenderer3D::DrawMesh(const MathLib::Matrix4x4& transformMatrix, Mesh& mesh)
+	void GraphicsRenderer3D::DrawMesh(const MathLib::Matrix4x4& transformMatrix, Mesh& mesh, int32_t entityID)
 	{
-		DrawMesh(transformMatrix, mesh, *s_defaultMaterial);
+		DrawMesh(transformMatrix, mesh, *s_defaultMaterial, entityID);
 	}
 
-	void GraphicsRenderer3D::DrawMesh(const MathLib::Matrix4x4& transformMatrix, Mesh& mesh, const Material& material)
+	void GraphicsRenderer3D::DrawMesh(const MathLib::Matrix4x4& transformMatrix, Mesh& mesh, 
+		const Material& material, int32_t entityID)
 	{
 		// Bind the material.
 		material.Bind();
 
-		s_objectConstants.c_objectPosition = transformMatrix.GetTranslation();
 		s_objectConstants.c_objectToWorld = transformMatrix;
+		s_objectConstants.c_entityID = entityID;
 
 		// Bind Object Constants.
 		s_objectConstantBuffer->SetData(&s_objectConstants, sizeof(GraphicsObjectConstants));
@@ -276,14 +277,14 @@ namespace Engine
 			mesh.GetVertexBuffer(), mesh.GetIndexBuffer());
 	}
 
-	void GraphicsRenderer3D::DrawCube(const MathLib::Matrix4x4& transformMatrix)
+	void GraphicsRenderer3D::DrawCube(const MathLib::Matrix4x4& transformMatrix, int32_t entityID)
 	{
-		DrawCube(transformMatrix, *s_defaultMaterial);
+		DrawCube(transformMatrix, *s_defaultMaterial, entityID);
 	}
 	
-	void GraphicsRenderer3D::DrawCube(const MathLib::Matrix4x4& transformMatrix, const Material& material)
+	void GraphicsRenderer3D::DrawCube(const MathLib::Matrix4x4& transformMatrix, const Material& material, int32_t entityID)
 	{
-		DrawMesh(transformMatrix, *s_cubeMesh, material);
+		DrawMesh(transformMatrix, *s_cubeMesh, material, entityID);
 	}
 
 	void GraphicsRenderer3D::SetAmbientLight(const MathLib::Vector3& lightColor)

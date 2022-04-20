@@ -16,14 +16,14 @@ namespace Engine
 		static void Init();
 		static void Release();
 
-		static void DrawMesh(const MathLib::Vector3& position, class Mesh& mesh);
-		static void DrawMesh(const MathLib::Matrix4x4& transformMatrix, class Mesh& mesh);
+		static void DrawMesh(const MathLib::Vector3& position, class Mesh& mesh, int32_t entityID = -1);
+		static void DrawMesh(const MathLib::Matrix4x4& transformMatrix, class Mesh& mesh, int32_t entityID = -1);
 		static void DrawMesh(const MathLib::Matrix4x4& transformMatrix, class Mesh& mesh,
-			const class Material& material);
+			const class Material& material, int32_t entityID = -1);
 
 		static void DrawCube(const MathLib::Matrix4x4& transformMatrix,
-			const class Material& material);
-		static void DrawCube(const MathLib::Matrix4x4& transformMatrix);
+			const class Material& material, int32_t entityID = -1);
+		static void DrawCube(const MathLib::Matrix4x4& transformMatrix, int32_t entityID = -1);
 
 		static void SetAmbientLight(const MathLib::Vector3& color);
 		static bool AddPointLight(const MathLib::Vector3& position,

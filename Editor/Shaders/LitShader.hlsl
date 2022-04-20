@@ -11,6 +11,7 @@ struct VertexShaderOut
     float3 worldPos : POSITION0;
     float3 normal : NORMAL0;
     float2 uv : TEXCOORD0;
+    int entityID : ENTITYID;
 };
 
 // Material Constants
@@ -39,6 +40,7 @@ VertexShaderOut VS(VertexShaderIn vIn)
     float4 worldNormal = mul(float4(vIn.normal, 0.0), c_objectToWorld);
     output.normal = worldNormal.xyz;
     output.uv = vIn.uv;
+    output.entityID = c_entityID;
     return output;
 }
 
@@ -88,7 +90,8 @@ float4 PhongLightingCalculation(VertexShaderOut psIn)
 
 struct PixelShaderOutput
 {
-    float4 color : COLOR;
+    float4 color : SV_Target0;
+    int entityID : SV_Target1;
 };
 
 PixelShaderOutput PS(VertexShaderOut psIn) : SV_TARGET
@@ -101,5 +104,6 @@ PixelShaderOutput PS(VertexShaderOut psIn) : SV_TARGET
         textureColor = DefaultTexture.Sample(DefaultSampler, psIn.uv);
     }
     psOutput.color = textureColor * PhongLightingCalculation(psIn);
+    psOutput.entityID = psIn.entityID;
     return psOutput;
 }

@@ -109,13 +109,28 @@ namespace Engine
 				outViewTexture->texture = new DirectX11Texture(texture, shaderResourceView);
 				break;
 			}
-			case FrameBufferAttachmentType::RENDER_TARGET:
+			case FrameBufferAttachmentType::TYPE_RGBA_32:
 			{
 				ID3D11Texture2D* texture;
 				ID3D11ShaderResourceView* shaderResource;
 				CreateTextureWithShaderResource(api,
 					D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
 					DXGI_FORMAT_R32G32B32A32_FLOAT, 0, &texture, &shaderResource);
+				ID3D11RenderTargetView* renderTargetView;
+				HRESULT result = api->m_device->CreateRenderTargetView(texture,
+					nullptr, &renderTargetView);
+				DebugAssert(result == S_OK, "Render target view was unsuccessfully created.");
+				outViewTexture->m_view = renderTargetView;
+				outViewTexture->texture = new DirectX11Texture(texture, shaderResource);
+				break;
+			}
+			case FrameBufferAttachmentType::TYPE_INT:
+			{
+				ID3D11Texture2D* texture;
+				ID3D11ShaderResourceView* shaderResource;
+				CreateTextureWithShaderResource(api,
+					D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
+					DXGI_FORMAT_R32_SINT, 0, &texture, &shaderResource, DXGI_FORMAT_R32_SINT);
 				ID3D11RenderTargetView* renderTargetView;
 				HRESULT result = api->m_device->CreateRenderTargetView(texture,
 					nullptr, &renderTargetView);
@@ -224,13 +239,16 @@ namespace Engine
 			for (auto i = 0; i < numRenderTargets; i++)
 			{
 				const auto& renderTargetTexture = m_renderTargetTextures[i];
-				shouldRegenerate |= height > renderTargetTexture.texture->GetHeight()
-					|| width > renderTargetTexture.texture->GetHeight();
-				if (shouldRegenerate) break;
+				if (renderTargetTexture)
+				{
+					shouldRegenerate |= height > renderTargetTexture.texture->GetHeight()
+						|| width > renderTargetTexture.texture->GetHeight();
+					if (shouldRegenerate) break;
+				}
 			}
 		}
 
-		if (m_depthTexture.texture != nullptr)
+		if (m_depthTexture)
 		{
 			shouldRegenerate |= height > m_depthTexture.texture->GetHeight()
 				|| width > m_depthTexture.texture->GetHeight();
@@ -292,7 +310,7 @@ namespace Engine
 	Texture* DirectX11FrameBuffer::GetRenderTargetTexture(uint32_t index) const
 	{
 		auto numRenderTargets = GetNumRenderTargets();
-		if (numRenderTargets >= (size_t)index) return nullptr;
+		if (index >= (size_t)numRenderTargets) return nullptr;
 		return m_renderTargetTextures[index].texture;
 	}
 }

@@ -26,7 +26,10 @@ namespace Editor
 		Engine::FrameBufferSpecification editorSpecifications(
 			{
 				Engine::FrameBufferAttachmentType::DEPTH_STENCIL,
-				Engine::FrameBufferAttachmentType::RENDER_TARGET
+				// The Main Color Texture
+				Engine::FrameBufferAttachmentType::RENDER_TARGET,
+				// The Entity ID Texture
+				Engine::FrameBufferAttachmentType::ENTITY_VIEW_ID
 			});
 
 		Engine::Application& app = Engine::Application::Get();
@@ -56,6 +59,7 @@ namespace Editor
 		}
 
 		UpdateTransformationWidget(ts);
+		UpdateSelectedEntityID(ts);
 
 		if (!m_focused)
 		{
@@ -145,6 +149,15 @@ namespace Editor
 				(DEFAULT_SCROLL_DISTANCE * 0.25F));
 		}
 		m_prevMousePos = currentPos;
+	}
+
+	void SceneView::UpdateSelectedEntityID(const Engine::Timestep& ts)
+	{
+		Engine::Texture* entityIDsTexture = m_frameBuffer->GetRenderTargetTexture(1);
+		if (entityIDsTexture != nullptr)
+		{
+			// TODO: Read Pixel at a given mouse position & select an object
+		}
 	}
 
 	void SceneView::UpdateTransformationWidget(const Engine::Timestep& ts)

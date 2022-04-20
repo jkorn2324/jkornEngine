@@ -261,20 +261,23 @@ namespace Engine
 		static ID3D11RenderTargetView* s_singleRenderTarget[1];
 		s_singleRenderTarget[0] = renderTargetView;
 
-		SetRenderTargets(1, s_singleRenderTarget, depthStencilView);
+		SetRenderTargets(1, &s_singleRenderTarget[0], depthStencilView);
 	}
 
 	void DirectX11RenderingAPI::SetRenderTargets(uint32_t numRenderTargets, ID3D11RenderTargetView** renderTargetViews, ID3D11DepthStencilView* depthStencilView)
 	{
 		PROFILE_SCOPE(SetRenderTargets, GraphicsRenderer);
 
-		for (uint16_t i = 0; i < m_numRenderTargetViews; i++)
+		if (m_currentRenderTargetViews != nullptr)
 		{
-			m_currentRenderTargetViews[i] = nullptr;
+			for (uint16_t i = 0; i < m_numRenderTargetViews; i++)
+			{
+				m_currentRenderTargetViews[i] = nullptr;
+			}
 		}
 		m_numRenderTargetViews = numRenderTargets;
 		m_currentRenderTargetViews = renderTargetViews;
-		SetRenderTargets(m_numRenderTargetViews, m_currentRenderTargetViews, depthStencilView);
+		m_deviceContext->OMSetRenderTargets(m_numRenderTargetViews, m_currentRenderTargetViews, depthStencilView);
 	}
 
 	void DirectX11RenderingAPI::SetClearColor(const MathLib::Vector4& clearColor)

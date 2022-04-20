@@ -9,6 +9,7 @@ struct VertexShaderOut
     float4 position : SV_POSITION;
     float3 worldPosition : POSITION0;
     float2 uv : TEXCOORD0;
+    int entityID : ENTITYID;
 };
 
 #include "TextureConstants.hlsl"
@@ -29,16 +30,25 @@ VertexShaderOut VS(VertexShaderIn input)
     output.worldPosition = worldPos.xyz;
     output.position = mul(worldPos, c_viewProjection);
     output.uv = input.uv;
-    
+    output.entityID = c_entityID;
     return output;
 }
 
-float4 PS(VertexShaderOut input) : SV_TARGET
+struct PixelShaderOut
 {
+    float4 color : SV_Target0;
+    int entityID : SV_Target1;
+};
+
+PixelShaderOut PS(VertexShaderOut input) : SV_TARGET
+{
+    PixelShaderOut psOutput;
     float4 textureColor = float4(1.0, 1.0, 1.0, 1.0);
     if (HAS_MATERIAL_FLAG(MaterialFlag_DefaultTexture))
     {
         textureColor = DefaultTexture.Sample(DefaultSampler, input.uv);
     }
-    return textureColor * c_spriteColor;
+    psOutput.color = textureColor * c_spriteColor;
+    psOutput.entityID = input.entityID;
+    return psOutput;
 }

@@ -18,6 +18,8 @@ namespace Engine
 			Deallocate();
 		}
 
+		operator bool() const { return m_view != nullptr && texture != nullptr; }
+
 		void Deallocate()
 		{
 			if (m_view != nullptr)

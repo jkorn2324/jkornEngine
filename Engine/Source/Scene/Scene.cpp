@@ -332,12 +332,12 @@ namespace Engine
 						if (mesh.material)
 						{
 							GraphicsRenderer3D::DrawMesh(transform.GetTransformMatrix(),
-								*mesh.mesh, *mesh.material);
+								*mesh.mesh, *mesh.material, (int32_t)entity);
 							return;
 						}
 						// Draws the mesh without a material.
 						GraphicsRenderer3D::DrawMesh(transform.GetTransformMatrix(),
-							*mesh.mesh);
+							*mesh.mesh, (int32_t)entity);
 					}
 				});
 		}
@@ -356,14 +356,14 @@ namespace Engine
 					MathLib::Matrix4x4 transformMat = 
 						e.GetComponent<Transform2DComponent>().GetTransformMatrix();
 					GraphicsRenderer2D::DrawRect(
-						transformMat, sprite.color, sprite.texture);
+						transformMat, sprite.color, sprite.texture, (int32_t)entity);
 				}
 				if (e.HasComponent<Transform3DComponent>())
 				{
 					MathLib::Matrix4x4 transformMat
 						= e.GetComponent<Transform3DComponent>().GetTransformMatrix();
 					GraphicsRenderer2D::DrawRect(
-						transformMat, sprite.color, sprite.texture);
+						transformMat, sprite.color, sprite.texture, (int32_t)entity);
 				}
 			}
 		}

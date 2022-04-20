@@ -24,10 +24,10 @@ namespace Engine
 	struct GraphicsObjectConstants
 	{
 		MathLib::Matrix4x4 c_objectToWorld;
-		MathLib::Vector3 c_worldPosition;
+		int32_t c_entityID = -1;
 
 	private:
-		float pad;
+		float pad1, pad2, pad3;
 	};
 
 	struct GraphicsSpriteVertex
@@ -61,7 +61,8 @@ namespace Engine
 		2, 3, 0
 	};
 
-	static void DrawRectInternal(const MathLib::Matrix4x4& transform, const MathLib::Vector4& color, const AssetRef<Texture>& texture)
+	static void DrawRectInternal(const MathLib::Matrix4x4& transform, const MathLib::Vector4& color, 
+		const AssetRef<Texture>& texture, uint32_t entityID)
 	{
 		PROFILE_SCOPE(DrawRectInternal, Rendering);
 
@@ -75,7 +76,7 @@ namespace Engine
 		s_spriteMaterial->Bind();
 
 		s_spriteObjectConstants.c_objectToWorld = transform;
-		s_spriteObjectConstants.c_worldPosition = transform.GetTranslation();
+		s_spriteObjectConstants.c_entityID = entityID;
 
 		// Bind Per Object Constants.
 		s_spriteObjectConstantBuffer->SetData(&s_spriteObjectConstants, 
@@ -101,13 +102,14 @@ namespace Engine
 		if (s_spriteIndexBuffer == nullptr)
 		{
 			s_spriteIndexBuffer = IndexBuffer::Create(
-				&indices, sizeof(indices) / sizeof(indices[0]), sizeof(uint32_t));
+				&indices, sizeof(indices) / sizeof(indices[0]), sizeof(int32_t));
 		}
 
 		// Loads the Sprite Shader.
 		{
 			Engine::BufferLayout bufferLayout = 
-				{{ "POSITION", offsetof(GraphicsSpriteVertex, position),
+				{
+					{ "POSITION", offsetof(GraphicsSpriteVertex, position),
 						sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
 					{ "TEXCOORD", offsetof(GraphicsSpriteVertex, uv),
 						sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2 }
@@ -140,17 +142,18 @@ namespace Engine
 		delete s_spriteIndexBuffer;
 	}
 
-	void GraphicsRenderer2D::DrawRect(const MathLib::Vector2& pos, const MathLib::Vector2& scale, const AssetRef<Texture>& texture)
+	void GraphicsRenderer2D::DrawRect(const MathLib::Vector2& pos, const MathLib::Vector2& scale, 
+		const AssetRef<Texture>& texture, int32_t entityID)
 	{
 		Mat4x4 mat = Mat4x4::CreateScale(scale.x, scale.y, 1.0f)
 			* Mat4x4::CreateTranslation(pos.x, pos.y, 0.0f);
-		DrawRect(mat, Vec4::One, texture);
+		DrawRect(mat, Vec4::One, texture, entityID);
 	}
 	
-	void GraphicsRenderer2D::DrawRect(const MathLib::Matrix4x4& transformMat, const MathLib::Vector4& color, const AssetRef<Texture>& texture)
+	void GraphicsRenderer2D::DrawRect(const MathLib::Matrix4x4& transformMat, const MathLib::Vector4& color, 
+		const AssetRef<Texture>& texture, int32_t entityID)
 	{
 		// Used so that the vertex buffers are always set to a default rect.
-
 		if (!s_spriteVertexBufferDefault)
 		{
 			s_spriteVertexBuffer->SetData(&vertices,
@@ -163,17 +166,19 @@ namespace Engine
 		{
 			mat = Mat4x4::CreateScale((float)texture->GetWidth(), (float)texture->GetHeight(), 1.0f) * mat;
 		}
-		DrawRectInternal(mat, color, texture);
+		DrawRectInternal(mat, color, texture, entityID);
 	}
 
-	void GraphicsRenderer2D::DrawRect(const MathLib::Vector2& pos, const MathLib::Vector2 &scale, SubTexture* texture)
+	void GraphicsRenderer2D::DrawRect(const MathLib::Vector2& pos, const MathLib::Vector2 &scale, 
+		SubTexture* texture, int32_t entityID)
 	{
 		Mat4x4 mat = Mat4x4::CreateScale(scale.x, scale.y, 1.0f)
 			* Mat4x4::CreateTranslation(pos.x, pos.y, 0.0f);
-		DrawRect(mat, Vec4::One, texture);
+		DrawRect(mat, Vec4::One, texture, entityID);
 	}
 	
-	void GraphicsRenderer2D::DrawRect(const MathLib::Matrix4x4& transformMat, const MathLib::Vector4& color, SubTexture* texture)
+	void GraphicsRenderer2D::DrawRect(const MathLib::Matrix4x4& transformMat, const MathLib::Vector4& color, 
+		SubTexture* texture, int32_t entityID)
 	{
 		// Only changes UVs if it doesn't have defaults.
 		if (texture->HasDefaultUVS())
@@ -195,7 +200,7 @@ namespace Engine
 		
 		DrawRectInternal(Mat4x4::CreateScale(
 			texture->GetSize().x, texture->GetSize().y, 1.0f) * transformMat, 
-			color, texture->GetTexture());
+			color, texture->GetTexture(), entityID);
 	}
 
 }

@@ -12,7 +12,7 @@ namespace Engine
 	FrameBuffer::FrameBuffer(const FrameBufferSpecification& specification)
 		: m_frameBufferSpecification(),
 		m_depthStencilSpecification(),
-		m_renderTargetSpecifications(10)
+		m_renderTargetSpecifications()
 	{
 		m_frameBufferSpecification = specification;
 
@@ -25,11 +25,13 @@ namespace Engine
 				m_depthStencilSpecification = attachment;
 				setDepthStencilSpecification = true;
 			}
-			else if (attachment.textureType == TYPE_RGB)
+			else if (attachment.textureType == TYPE_RGBA_32
+				|| attachment.textureType == TYPE_INT)
 			{
 				m_renderTargetSpecifications.push_back(attachment);
 			}
 		}
+
 	}
 
 	void FrameBuffer::Resize(uint32_t width, uint32_t height)

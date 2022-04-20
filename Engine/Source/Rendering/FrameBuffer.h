@@ -17,8 +17,11 @@ namespace Engine
 		DEPTH_STENCIL = TYPE_DEPTH24_STENCIL8,
 
 		// Render Target View
-		TYPE_RGB,
-		RENDER_TARGET = TYPE_RGB
+		TYPE_RGBA_32,
+		RENDER_TARGET = TYPE_RGBA_32,
+		// Render Target View for Entity ID
+		TYPE_INT,
+		ENTITY_VIEW_ID = TYPE_INT
 	};
 
 	struct FrameBufferAttachment
@@ -28,7 +31,7 @@ namespace Engine
 
 		FrameBufferAttachment() = default;
 		FrameBufferAttachment(FrameBufferAttachmentType textureType)
-			: textureType(textureType), exportAsTexture(textureType == TYPE_RGB) { }
+			: textureType(textureType) { }
 	};
 
 	struct FrameBufferSpecificationAttachmentList
@@ -81,7 +84,6 @@ namespace Engine
 		virtual class Texture* GetDepthTexture() const =0;
 		virtual class Texture* GetRenderTargetTexture(uint32_t index) const =0;
 
-		virtual class Texture* GetTexture(FrameBufferAttachmentType type) const=0;
 		size_t GetNumRenderTargets() const { return m_renderTargetSpecifications.size(); }
 
 	protected:
