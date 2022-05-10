@@ -166,4 +166,81 @@ namespace Engine
 		DebugAssert(result == S_OK, "Failed to create unordered access view resource.");
 		return uav;
 	}
+	
+	ID3D11Texture2D* DirectX11Utils::CreateTexture2D(ID3D11Device* device, 
+		UINT width, UINT height, UINT bindFlags, int format, UINT quality, int textureRWFlags)
+	{
+		ID3D11Texture2D* texture2D = nullptr;
+		D3D11_TEXTURE2D_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
+		desc.Width = width;
+		desc.Height = height;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = (DXGI_FORMAT)format;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = quality;
+
+		if (textureRWFlags & CPU_Access_Read)
+		{
+			desc.Usage = D3D11_USAGE_STAGING;
+		}
+		else if(textureRWFlags & CPU_Access_Write)
+		{
+			desc.Usage = D3D11_USAGE_DYNAMIC;
+		}
+		else if (textureRWFlags & GPU_Access_Read)
+		{
+			if (textureRWFlags & GPU_Access_Write)
+			{
+				desc.Usage = D3D11_USAGE_DEFAULT;
+			}
+			else
+			{
+				desc.Usage = D3D11_USAGE_IMMUTABLE;
+			}
+		}
+		else
+		{
+			desc.Usage = D3D11_USAGE_DEFAULT;
+		}
+		desc.BindFlags = bindFlags;
+		
+		desc.CPUAccessFlags = 0;
+		if (textureRWFlags & CPU_Access_Read)
+		{
+			desc.CPUAccessFlags |= D3D11_CPU_ACCESS_READ;
+		}
+		if (textureRWFlags & CPU_Access_Write)
+		{
+			desc.CPUAccessFlags |= D3D11_CPU_ACCESS_WRITE;
+		}
+		desc.MiscFlags = 0;
+		HRESULT result = device->CreateTexture2D(&desc, nullptr, &texture2D);
+		DebugAssert(result == S_OK, "Failed to create texture2d.");
+		return texture2D;
+	}
+	
+	ID3D11ShaderResourceView* DirectX11Utils::CreateTextureShaderResourceView(ID3D11Device* device, ID3D11Texture2D* texture2D, int format)
+	{
+		ID3D11ShaderResourceView* shaderResource = nullptr;
+		HRESULT result;
+		if (format != DXGI_FORMAT_UNKNOWN)
+		{
+			D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc;
+			ZeroMemory(&viewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+			viewDesc.Texture2D.MipLevels = 1;
+			viewDesc.Format = (DXGI_FORMAT)format;
+			viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			result = device->CreateShaderResourceView(texture2D,
+				&viewDesc, &shaderResource);
+		}
+		else
+		{
+			result = device->CreateShaderResourceView(texture2D,
+				nullptr, &shaderResource);
+		}
+		DebugAssert(result == S_OK, "Shader Resource failed to be created when creating view target.");
+		return shaderResource;
+	}
 }

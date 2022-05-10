@@ -8,6 +8,7 @@ struct ID3D11DepthStencilState;
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct ID3D11Resource;
+struct ID3D11Texture2D;
 
 enum D3D11_COMPARISON_FUNC;
 
@@ -15,6 +16,14 @@ struct ID3D10Blob;
 
 namespace Engine
 {
+
+	enum DirectX11TextureRWFlags
+	{
+		CPU_Access_Read = 1 << 0,
+		CPU_Access_Write = 1 << 1,
+		GPU_Access_Read = 1 << 2,
+		GPU_Access_Write = 1 << 3
+	};
 
 	enum class DirectX11BufferType
 	{
@@ -24,6 +33,9 @@ namespace Engine
 
 	class DirectX11Utils
 	{
+	private:
+		static const int c_defaultFlags = GPU_Access_Write | GPU_Access_Read;
+
 	public:
 		static bool CompileShader(const wchar_t* fileName, const char* entryPoint, const char* model, ID3D10Blob*& blob);
 		static ID3D11DepthStencilState* CreateDepthStencilState(const D3D11_COMPARISON_FUNC& comparisonFunc, ID3D11Device* device);
@@ -34,5 +46,9 @@ namespace Engine
 
 		static ID3D11ShaderResourceView* CreateBufferShaderResourceView(ID3D11Device* device, ID3D11Buffer* buffer);
 		static ID3D11UnorderedAccessView* CreateBufferUnorderedAccessView(ID3D11Device* device, ID3D11Buffer* buffer);
+
+		static ID3D11Texture2D* CreateTexture2D(ID3D11Device* device, UINT width, UINT height, UINT bindFlags, int format, 
+			UINT quality, int textureRWFlags = c_defaultFlags);
+		static ID3D11ShaderResourceView* CreateTextureShaderResourceView(ID3D11Device* device, ID3D11Texture2D* texture2D, int format = 0);
 	};
 }

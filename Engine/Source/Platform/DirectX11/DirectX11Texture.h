@@ -10,6 +10,7 @@ namespace Engine
 	{
 	public:
 		explicit DirectX11Texture();
+		explicit DirectX11Texture(const TextureSpecifications& flags);
 		explicit DirectX11Texture(ID3D11Resource* resource,
 			ID3D11ShaderResourceView* shaderResourceView);
 		~DirectX11Texture();
@@ -22,6 +23,9 @@ namespace Engine
 	protected:
 		bool Load(const wchar_t* texturePath);
 		void Free();
+
+	private:
+		static class DirectX11RenderingAPI& GetRenderingAPI();
 
 	private:
 		ID3D11Resource* m_texture;

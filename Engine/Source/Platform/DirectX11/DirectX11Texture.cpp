@@ -3,16 +3,34 @@
 
 #include "GraphicsRenderer.h"
 #include "DirectX11RenderingAPI.h"
+#include "DirectX11Utils.h"
 
 #include <WICTextureLoader.h>
 #include <DDSTextureLoader.h>
 
 namespace Engine
 {
+
 	DirectX11Texture::DirectX11Texture() : Texture(),
 		m_shaderResourceView(nullptr),
 		m_texture(nullptr)
 	{
+	}
+
+	DirectX11Texture::DirectX11Texture(const TextureSpecifications& specifications) : Texture(specifications),
+		m_shaderResourceView(nullptr),
+		m_texture(nullptr)
+	{
+		// TODO: Must Provide more specifications so that user doesn't have to set it to
+		// just a render target view.
+
+		// Creates a texture by default as a render target view.
+		m_texture = DirectX11Utils::CreateTexture2D(
+			GetRenderingAPI().m_device, m_width, m_height,
+			D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
+			DXGI_FORMAT_R32G32B32A32_FLOAT, 0, specifications.readWriteFlags);
+		m_shaderResourceView = DirectX11Utils::CreateTextureShaderResourceView(
+			GetRenderingAPI().m_device, (ID3D11Texture2D*)m_texture);
 	}
 
 	DirectX11Texture::DirectX11Texture(ID3D11Resource* resource, ID3D11ShaderResourceView* shaderResourceView)
@@ -57,6 +75,11 @@ namespace Engine
 		m_height = 0;
 	}
 
+	DirectX11RenderingAPI& DirectX11Texture::GetRenderingAPI()
+	{
+		return (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
+	}
+
 	bool DirectX11Texture::IsValid() const
 	{
 		return m_shaderResourceView != nullptr
@@ -66,9 +89,6 @@ namespace Engine
 	bool DirectX11Texture::Load(const wchar_t* texturePath)
 	{
 		Free();
-
-		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
-			GraphicsRenderer::GetRenderingAPI();
 
 		HRESULT result;
 		std::wstring wstringPath(texturePath);
@@ -81,12 +101,12 @@ namespace Engine
 		if (extension == L".dds"
 			|| extension == L".DDS")
 		{
-			result = DirectX::CreateDDSTextureFromFile(renderingAPI.m_device,
+			result = DirectX::CreateDDSTextureFromFile(GetRenderingAPI().m_device,
 				texturePath, &m_texture, &m_shaderResourceView);
 		}
 		else
 		{
-			result = DirectX::CreateWICTextureFromFile(renderingAPI.m_device,
+			result = DirectX::CreateWICTextureFromFile(GetRenderingAPI().m_device,
 				texturePath, &m_texture, &m_shaderResourceView);
 		}
 
@@ -108,9 +128,7 @@ namespace Engine
 		{
 			return;
 		}
-		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
-			GraphicsRenderer::GetRenderingAPI();
-		renderingAPI.m_deviceContext->PSSetShaderResources(
+		GetRenderingAPI().m_deviceContext->PSSetShaderResources(
 			slot, 1, &m_shaderResourceView);
 	}
 }

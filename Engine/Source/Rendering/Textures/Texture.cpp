@@ -10,8 +10,15 @@
 namespace Engine
 {
 
+	static const int c_DefaultTextureRWFlags = Flag_GPU_ReadTexture | Flag_GPU_ReadTexture;
+
 	Texture::Texture()
-		: m_width(0), m_height(0) { }
+		: m_width(0), m_height(0), m_readWriteFlags((TextureReadWriteFlags)c_DefaultTextureRWFlags) { }
+
+	Texture::Texture(const TextureSpecifications& specifications)
+		: m_width(specifications.width), m_height(specifications.height), m_readWriteFlags(specifications.readWriteFlags)
+	{
+	}
 
 	std::uint32_t Texture::GetWidth() const
 	{
@@ -69,17 +76,23 @@ namespace Engine
 		return true;
 	}
 
+	Texture* Texture::Create(const TextureSpecifications& specifications)
+	{
+		switch (RenderingAPI::GetRenderingAPIType())
+		{
+		case RenderingAPIType::DIRECTX11: return new DirectX11Texture(specifications);
+		}
+		DebugAssert(false, "Unsupported Texture type.");
+		return nullptr;
+	}
+
 	Texture* Texture::Create()
 	{
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
 		case RenderingAPIType::DIRECTX11:	return new DirectX11Texture();
-		case RenderingAPIType::NONE:
-		{
-			DebugAssert(false, "Unsupported Texture type.");
-			return nullptr;
 		}
-		}
+		DebugAssert(false, "Unsupported Texture type.");
 		return nullptr;
 	}
 }

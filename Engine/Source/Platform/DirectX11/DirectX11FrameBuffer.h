@@ -54,7 +54,6 @@ namespace Engine
 			class DirectX11RenderingAPI* api, const FrameBufferAttachment& attachment);
 		void CreateTextureWithShaderResource(class DirectX11RenderingAPI* api, UINT bindFlags, DXGI_FORMAT format,
 			UINT quality, ID3D11Texture2D** texture2D, ID3D11ShaderResourceView** shaderResource, DXGI_FORMAT shaderResourceFormat = DXGI_FORMAT_UNKNOWN);
-		void CreateTexture(class DirectX11RenderingAPI* api, UINT bindFlags, DXGI_FORMAT format, UINT quality, ID3D11Texture2D** texture2D);
 
 	private:
 		DirectX11ViewTexture m_depthTexture;

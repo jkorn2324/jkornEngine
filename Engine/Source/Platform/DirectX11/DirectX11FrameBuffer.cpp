@@ -84,8 +84,9 @@ namespace Engine
 				}
 				else
 				{
-					CreateTexture(api,
-						D3D11_BIND_DEPTH_STENCIL, DXGI_FORMAT_D24_UNORM_S8_UINT, 0, &texture);
+					texture = DirectX11Utils::CreateTexture2D(api->m_device,
+						m_frameBufferSpecification.width, m_frameBufferSpecification.height, D3D11_BIND_DEPTH_STENCIL,
+						DXGI_FORMAT_D24_UNORM_S8_UINT, 0);
 					depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 				}
 
@@ -140,45 +141,10 @@ namespace Engine
 	void DirectX11FrameBuffer::CreateTextureWithShaderResource(DirectX11RenderingAPI* api, UINT bindFlags, 
 		DXGI_FORMAT textureFormat, UINT quality, ID3D11Texture2D** outTexture, ID3D11ShaderResourceView** outShaderResource, DXGI_FORMAT shaderResourceFormat)
 	{
-		CreateTexture(api, bindFlags, textureFormat, quality, outTexture);
-
-		HRESULT result;
-		if (shaderResourceFormat != DXGI_FORMAT_UNKNOWN)
-		{
-			D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc;
-			ZeroMemory(&viewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-			viewDesc.Texture2D.MipLevels = 1;
-			viewDesc.Format = shaderResourceFormat;
-			viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-			result = api->m_device->CreateShaderResourceView(*outTexture,
-				&viewDesc, outShaderResource);
-		}
-		else
-		{
-			result = api->m_device->CreateShaderResourceView(*outTexture,
-				nullptr, outShaderResource);
-		}
-		DebugAssert(result == S_OK, "Shader Resource failed to be created when creating view target.");
-	}
-
-	void DirectX11FrameBuffer::CreateTexture(DirectX11RenderingAPI* api, UINT bindFlags, DXGI_FORMAT format, UINT quality, ID3D11Texture2D** texture2D)
-	{
-		D3D11_TEXTURE2D_DESC desc;
-		ZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
-		desc.Width = (UINT)m_frameBufferSpecification.width;
-		desc.Height = (UINT)m_frameBufferSpecification.height;
-		desc.MipLevels = 1;
-		desc.ArraySize = 1;
-		desc.Format = format;
-		desc.SampleDesc.Count = 1;
-		desc.SampleDesc.Quality = quality;
-		desc.Usage = D3D11_USAGE_DEFAULT;
-		desc.BindFlags = bindFlags;
-		desc.CPUAccessFlags = 0;
-		desc.MiscFlags = 0;
-
-		HRESULT result = api->m_device->CreateTexture2D(&desc, nullptr, texture2D);
-		DebugAssert(result == S_OK, "View Texture2D failed to be created when creating view target.");
+		*outTexture = DirectX11Utils::CreateTexture2D(api->m_device, m_frameBufferSpecification.width, 
+			m_frameBufferSpecification.height, bindFlags, textureFormat, quality);
+		*outShaderResource = DirectX11Utils::CreateTextureShaderResourceView(
+			api->m_device, *outTexture, shaderResourceFormat);
 	}
 
 	void DirectX11FrameBuffer::Bind() const
@@ -240,7 +206,7 @@ namespace Engine
 		auto numRenderTargets = GetNumRenderTargets();
 		if (numRenderTargets > 0)
 		{
-			for (auto i = 0; i < numRenderTargets; i++)
+			for (size_t i = 0; i < numRenderTargets; i++)
 			{
 				const auto& renderTargetTexture = m_renderTargetTextures[i];
 				if (renderTargetTexture)
@@ -271,7 +237,7 @@ namespace Engine
 			size_t numRenderTargets = GetNumRenderTargets();
 			if (numRenderTargets > 0)
 			{
-				for (auto i = 0; i < numRenderTargets; i++)
+				for (size_t i = 0; i < numRenderTargets; i++)
 				{
 					auto& renderTarget = m_renderTargetTextures[i];
 					renderTarget.Deallocate();
