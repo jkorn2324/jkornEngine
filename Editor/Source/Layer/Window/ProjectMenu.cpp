@@ -5,6 +5,7 @@
 #include "imgui_internal.h"
 
 #include "EditorSceneManager.h"
+#include "EditorSelection.h"
 
 namespace Editor
 {
@@ -359,6 +360,7 @@ namespace Editor
 					// Creates a scene serializer.
 					{
 						// TODO: May need to async this.
+						EditorSelection::SetSelectedEntity(Engine::Entity::None);
 						Engine::SceneSerializer serializer = EditorSceneManager::GetDefaultSceneSerializer();
 						auto path = m_currentPath / "New Scene.scene";
 						serializer.Serialize(path);

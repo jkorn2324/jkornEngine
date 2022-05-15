@@ -9,8 +9,7 @@ namespace Engine
 {
 	bool AssetSerializerFuncs::GetAssetPathFromGUID(const GUID& guid, std::filesystem::path& path)
 	{
-		path = AssetManager::GetAssetMapper().GetPath(guid);
-		return !path.empty();
+		return AssetManager::GetAssetMapper().GetPath(guid, path);
 	}
 	
 	void AssetSerializerFuncs::SetAssetPath(const GUID& guid, const std::filesystem::path& path)

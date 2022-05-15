@@ -39,7 +39,6 @@ namespace Engine
 		PROFILE_SCOPE(Init, AssetManager);
 
 		s_assetMapper = new AssetMapper(guidsDatabasePath);
-		s_assetMapper->BeginLoad();
 	}
 
 	TypedAssetManager<Texture>& AssetManager::GetTextures()
@@ -68,7 +67,6 @@ namespace Engine
 
 		// Deletes the assets.
 		{
-			s_assetMapper->UnLoad();
 			delete s_assetMapper;
 			s_assetMapper = nullptr;
 		}

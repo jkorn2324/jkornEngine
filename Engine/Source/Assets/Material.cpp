@@ -377,8 +377,8 @@ namespace Engine
 			uint64_t shaderGUID;
 			ReadUint64(document, "Shader", shaderGUID);
 
-			std::filesystem::path assetPath = AssetManager::GetAssetMapper().GetPath(shaderGUID);
-			if (std::filesystem::exists(assetPath))
+			std::filesystem::path assetPath;
+			if (AssetManager::GetAssetMapper().GetPath(shaderGUID, assetPath))
 			{
 				AssetManager::GetShaders().Load(material.m_shader, assetPath);
 			}
@@ -395,12 +395,14 @@ namespace Engine
 				{
 					rapidjson::Value& textureValue = texturesArray[i].GetObject();
 					ReadUint64(textureValue, "GUID", currentTextureGUID);
-					if (currentTextureGUID != 0)
+
+					std::filesystem::path path;
+					if (currentTextureGUID != 0
+						&& AssetManager::GetAssetMapper().GetPath(currentTextureGUID, path))
 					{
 						GUID guid(currentTextureGUID);
 						AssetRef<Texture> texture;
-						AssetManager::GetTextures().Load(texture, 
-							AssetManager::GetAssetMapper().GetPath(guid));
+						AssetManager::GetTextures().Load(texture, path);
 						material.SetTexture(i, texture);
 					}
 				}

@@ -295,8 +295,11 @@ namespace Engine
 			ReadBool(value["MeshComponent"], "Enabled", meshComponent.enabled);
 			ReadUint64(value["MeshComponent"], "Material", materialGUID);
 
-			AssetManager::GetMaterials().Load(meshComponent.material,
-				AssetManager::GetAssetMapper().GetPath(GUID(materialGUID)));
+			std::filesystem::path path;
+			if (AssetManager::GetAssetMapper().GetPath(materialGUID, path))
+			{
+				AssetManager::GetMaterials().Load(meshComponent.material, path);
+			}
 		}
 
 		// Scene Camera Component.

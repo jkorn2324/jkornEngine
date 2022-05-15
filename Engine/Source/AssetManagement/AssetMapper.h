@@ -13,47 +13,33 @@ namespace Engine
 
 	class AssetMapper
 	{
+		typedef size_t PathIndex;
+		typedef size_t GUIDIndex;
+
 	public:
 		AssetMapper(const std::filesystem::path& path)
-			: m_assetGUIDs(1024), m_rootPath(path), m_filePaths(1024)
+			: m_pathToGUIDs(1024), m_rootPath(path), m_guidToPaths(1024)
 		{
 		}
 
-		std::filesystem::path GetPath(const GUID& guid);
+		bool GetPath(const GUID& guid, std::filesystem::path& path) const;
+		bool GetGUID(const std::filesystem::path& path, GUID& guid) const;
+
 		void SetPath(const GUID& guid, const std::filesystem::path& path);
-		bool GetGUID(const std::filesystem::path& path, GUID& guid);
 
 	private:
-		void BeginLoad();
-		void DoLoad();
-		void UnLoad();
+		// Used to remove the asset when it isn't being used anymore.
+		void RemovePath(const GUID& guid);
+		void RemovePath(const std::filesystem::path& path);
 
-		void LoadFromPath(const std::filesystem::path& path);
-		void LoadAssetGUID(const std::filesystem::path& path);
+		void Clear();
 
 	private:
-		std::unordered_map<GUID, std::filesystem::path> m_assetGUIDs;
-		std::unordered_map<std::wstring, GUID> m_filePaths;
+		std::unordered_map<PathIndex, GUID> m_pathToGUIDs;
+		std::unordered_map<GUIDIndex, std::filesystem::path> m_guidToPaths;
 		std::filesystem::path m_rootPath;
-		std::mutex m_mutex;
 
 		friend class AssetManager;
 		friend class LoadAssetMapperJob;
-	};
-
-
-	class LoadAssetMapperJob : public Job
-	{
-	public:
-		LoadAssetMapperJob(AssetMapper& mapper)
-			: m_assetMapper(std::ref<AssetMapper>(mapper)) { }
-
-		void OnRun() override
-		{
-			m_assetMapper.DoLoad();
-		}
-
-	private:
-		AssetMapper& m_assetMapper;
 	};
 }
