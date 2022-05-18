@@ -10,13 +10,11 @@
 namespace Engine
 {
 
-	static const int c_DefaultTextureRWFlags = Flag_GPU_ReadTexture | Flag_GPU_ReadTexture;
-
 	Texture::Texture()
-		: m_width(0), m_height(0), m_readWriteFlags((TextureReadWriteFlags)c_DefaultTextureRWFlags) { }
+		: m_width(0), m_height(0), m_serializedData() { }
 
 	Texture::Texture(const TextureSpecifications& specifications)
-		: m_width(specifications.width), m_height(specifications.height), m_readWriteFlags(specifications.readWriteFlags)
+		: m_width(specifications.width), m_height(specifications.height), m_serializedData(specifications.readWriteFlags, specifications.textureFormat)
 	{
 	}
 
@@ -50,6 +48,11 @@ namespace Engine
 		return nullptr;
 	}
 
+	bool Texture::Load(const wchar_t* texturePath)
+	{
+		return Load(texturePath, m_serializedData);
+	}
+
 	bool Texture::DeserializeFromFile(Texture& texture, AssetDeserializationFileData& value)
 	{
 		return texture.Load(value.filePath.c_str());
@@ -66,6 +69,16 @@ namespace Engine
 		{
 			JsonFileWriter fileWriter(metaData.metaFilePath);
 			fileWriter.Write<uint64_t>("GUID", (uint64_t)metaData.guid);
+			
+			fileWriter.BeginObject("ReadWriteFlags");
+			fileWriter.Write<bool>("Readable_CPU", texture.m_serializedData.readWriteFlags & Flag_CPU_ReadTexture);
+			fileWriter.Write<bool>("Writable_CPU", texture.m_serializedData.readWriteFlags & Flag_CPU_WriteTexture);
+			fileWriter.Write<bool>("Readable_GPU", texture.m_serializedData.readWriteFlags & Flag_GPU_ReadTexture);
+			fileWriter.Write<bool>("Writable_GPU", texture.m_serializedData.readWriteFlags & Flag_GPU_WriteTexture);
+			fileWriter.EndObject();
+
+			fileWriter.Write<uint32_t>("TextureFormat", texture.m_serializedData.textureFormat);
+			
 			fileWriter.Flush();
 		}
 		return true;
@@ -73,6 +86,44 @@ namespace Engine
 
 	bool Texture::DeserializeMetaFile(Texture& texture, AssetDeserializationMetaFileData& metaData)
 	{
+		JsonFileParser fileReader(metaData.metaFilePath);
+		if (!fileReader.IsValid()) return false;
+
+		const auto& document = fileReader.GetDocument();
+		if (document.HasMember("ReadWriteFlags"))
+		{
+			uint32_t deserializedRWFlags = 0;
+			const auto& readWriteFlags = document["ReadWriteFlags"].GetObject();
+			if (readWriteFlags.HasMember("Readable_CPU")
+				&& readWriteFlags["Readable_CPU"].GetBool())
+			{
+				deserializedRWFlags |= Flag_CPU_ReadTexture;
+			}
+			if (readWriteFlags.HasMember("Readable_GPU")
+				&& readWriteFlags["Readable_CPU"].GetBool())
+			{
+				deserializedRWFlags |= Flag_GPU_ReadTexture;
+			}
+			if (readWriteFlags.HasMember("Writable_CPU")
+				&& readWriteFlags["Writable_CPU"].GetBool())
+			{
+				deserializedRWFlags |= Flag_CPU_WriteTexture;
+			}
+			if (readWriteFlags.HasMember("Writable_GPU")
+				&& readWriteFlags["Writable_GPU"].GetBool())
+			{
+				deserializedRWFlags |= Flag_GPU_WriteTexture;
+			}
+			texture.m_serializedData.readWriteFlags 
+				= (TextureReadWriteFlags)deserializedRWFlags;
+		}
+
+		if (document.HasMember("TextureFormat")
+			&& document["TextureFormat"].IsUint())
+		{
+			texture.m_serializedData.textureFormat =
+				(TextureFormat)document["TextureFormat"].GetUint();
+		}
 		return true;
 	}
 
@@ -94,5 +145,15 @@ namespace Engine
 		}
 		DebugAssert(false, "Unsupported Texture type.");
 		return nullptr;
+	}
+	
+	bool Texture::CopyTexture(Texture& a, Texture& b)
+	{
+		return a.CopyTo(b);
+	}
+
+	bool CopyTexture(Texture& a, Texture& b)
+	{
+		return a.CopyTo(b);
 	}
 }

@@ -16,10 +16,13 @@ namespace Editor
 		m_open(true),
 		m_focused(false),
 		m_prevMousePos(),
+		m_currMousePos(),
 		m_mouseScroll(),
 		m_windowSize(),
+		m_windowPosition(),
 		m_windowBarSpacing(0.0f),
-		m_transformationWidget()
+		m_transformationWidget(),
+		m_sceneViewEntityIDs()
 	{
 		m_transformationWidget.SetEnabled(false);
 
@@ -59,7 +62,8 @@ namespace Editor
 		}
 
 		UpdateTransformationWidget(ts);
-		UpdateSelectedEntityID(ts);
+		UpdateEntityIDs(ts);
+		UpdateMousePosition(ts);
 
 		if (!m_focused)
 		{
@@ -68,12 +72,17 @@ namespace Editor
 		HandleCameraInput(ts);
 	}
 
+	void SceneView::UpdateMousePosition(const Engine::Timestep& ts)
+	{
+		MathLib::Vector2 currentPos = *reinterpret_cast<MathLib::Vector2*>(
+			&ImGui::GetMousePos());
+		m_prevMousePos = m_currMousePos;
+		m_currMousePos = currentPos;
+	}
+
 	void SceneView::HandleCameraInput(const Engine::Timestep& ts)
 	{
 		// Resets the camera.
-		MathLib::Vector2 currentPos = *reinterpret_cast<MathLib::Vector2*>(
-			&ImGui::GetMousePos());
-
 		ImGuiIO& io = ImGui::GetIO();
 
 		Engine::PlatformInput& platformInput = Engine::Input::GetPlatformInput();
@@ -83,11 +92,10 @@ namespace Editor
 			platformInput.FromKeyCode(Engine::InputKeyCode::KEY_CODE_F)))
 		{
 			editorCamera.FocusCamera();
-			m_prevMousePos = currentPos;
 			return;
 		}
 		
-		MathLib::Vector2 delta = currentPos - m_prevMousePos;
+		MathLib::Vector2 delta = m_currMousePos - m_prevMousePos;
 
 		// Moves the camera based on mouse dragging.
 		if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
@@ -148,15 +156,42 @@ namespace Editor
 			editorCamera.ZoomCamera(ts * m_mouseScroll.y * 
 				(DEFAULT_SCROLL_DISTANCE * 0.25F));
 		}
-		m_prevMousePos = currentPos;
 	}
 
-	void SceneView::UpdateSelectedEntityID(const Engine::Timestep& ts)
+	void SceneView::UpdateEntityIDs(const Engine::Timestep& ts)
 	{
+		if (m_windowSize.x <= 0
+			|| m_windowSize.y <= 0) return;
+
 		Engine::Texture* entityIDsTexture = m_frameBuffer->GetRenderTargetTexture(1);
-		if (entityIDsTexture != nullptr)
+		if (entityIDsTexture != nullptr 
+			&& m_focused
+			&& ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 		{
-			// TODO: Read Pixel at a given mouse position & select an object
+			MathLib::Vector2 localMousePos = m_currMousePos - m_windowPosition;
+			if (localMousePos.x < 0.0f
+				|| localMousePos.x > m_windowSize.x
+				|| localMousePos.y < 0.0f
+				|| localMousePos.y > m_windowSize.y)
+			{
+				return;
+			}
+			entityIDsTexture->CopyPixels(m_sceneViewEntityIDs);
+			MathLib::Vector2 localizedMousePos01 = localMousePos / m_windowSize;
+			uint32_t pixelX = (uint32_t)(localizedMousePos01.x 
+				* (float)entityIDsTexture->GetWidth());
+			uint32_t pixelY = (uint32_t)(localizedMousePos01.y 
+				* (float)entityIDsTexture->GetHeight());
+
+			uint32_t entityID;
+			uint32_t index = pixelX + pixelY * entityIDsTexture->GetWidth();
+			printf("Index: %i\n", index);
+
+			if (m_sceneViewEntityIDs.Get(pixelX + pixelY * entityIDsTexture->GetWidth(),
+				entityID))
+			{
+				printf("EntityID: %i\n", entityID);
+			}
 		}
 	}
 
@@ -328,6 +363,13 @@ namespace Editor
 				ImVec2((float)frameTexture->GetWidth(), (float)frameTexture->GetHeight()));
 		}
 
+		// Adjusts the window position so that the transformation widget fits in the middle
+		// of the corresponding transform.
+		{
+			m_windowPosition = *reinterpret_cast<MathLib::Vector2*>(&ImGui::GetWindowPos());
+			m_windowPosition.x += (m_windowSize.x - ImGui::GetContentRegionAvail().x) * 0.5f;
+			m_windowPosition.y += ImGui::GetTextLineHeight() * 2.0f;
+		}
 		DrawTransformationWidgetInput();
 
 		ImGui::End();
@@ -357,16 +399,9 @@ namespace Editor
 					= ImGuizmo::OPERATION::SCALE;
 			}
 		}
-		
-		// Adjusts the window position so that the transformation widget fits in the middle
-		// of the corresponding transform.
-		MathLib::Vector2 windowPosition = *(MathLib::Vector2*)&ImGui::GetWindowPos();
-		windowPosition.x += (m_windowSize.x - ImGui::GetContentRegionAvail().x) * 0.5f;
-		windowPosition.y += ImGui::GetTextLineHeight() * 2.0f;
-
 		m_entityWidgetChanged
 			= m_transformationWidget.OnImGuiRender(
-				windowPosition,
+				m_windowPosition,
 				GetResizedWindow());
 	}
 }

@@ -93,6 +93,7 @@ namespace Engine
 	public:
 		static void CreateDefaultScene(Scene*& scene);
 		static void CreateDefaultScene(std::shared_ptr<Scene>& sharedPointer);
+		static void CreateDefaultScene(std::unique_ptr<Scene>& uniquePointer);
 
 	private:
 		static void CreateDefaultScene(Scene& scene);

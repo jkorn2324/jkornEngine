@@ -1,36 +1,7 @@
 {
     "Entities": [
         {
-            "GUID": 3512355581710871609,
-            "NameComponent": "Test Cube",
-            "Transform3DComponent": {
-                "Position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "Rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "Scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            },
-            "MeshComponent": {
-                "Material": 1373644641492372819,
-                "Enabled": true
-            },
-            "EntityHierarchyComponent": {
-                "Parent": 0
-            }
-        },
-        {
-            "GUID": 2297904935298284828,
+            "GUID": 15368630057087486594,
             "NameComponent": "Directional Light",
             "Transform3DComponent": {
                 "Position": {
@@ -64,7 +35,7 @@
             }
         },
         {
-            "GUID": 15262177169368918429,
+            "GUID": 11032990132897543803,
             "NameComponent": "Cube",
             "Transform3DComponent": {
                 "Position": {
@@ -93,7 +64,7 @@
             }
         },
         {
-            "GUID": 10778335491538677341,
+            "GUID": 13863725176680018989,
             "NameComponent": "Main Camera",
             "Transform3DComponent": {
                 "Position": {
@@ -120,10 +91,10 @@
                 "NearPlane": 0.5,
                 "FarPlane": 10000.0,
                 "PerspFOV": 70.0,
-                "PerspAspectRatio": 0.44918695092201233,
-                "OrthoSize": 0.44918695092201233,
-                "OrthoWidth": 984.0000610351563,
-                "OrthoHeight": 442.0
+                "PerspAspectRatio": 0.75,
+                "OrthoSize": 0.75,
+                "OrthoWidth": 600.0,
+                "OrthoHeight": 800.0
             },
             "EntityHierarchyComponent": {
                 "Parent": 0

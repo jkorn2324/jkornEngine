@@ -84,6 +84,13 @@ namespace Engine
 		CreateDefaultScene(*scene.get());
 	}
 
+	void Scene::CreateDefaultScene(std::unique_ptr<Scene>& scene)
+	{
+		scene.reset();
+		scene = std::make_unique<Scene>();
+		CreateDefaultScene(*scene.get());
+	}
+
 	void Scene::CreateDefaultScene(Scene& scene)
 	{
 		// Creates the scene camera.

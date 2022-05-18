@@ -47,13 +47,10 @@ namespace Editor
 
 	EditorLayer::~EditorLayer()
 	{
-		EditorSceneManager::Release();
 	}
 
 	void EditorLayer::OnLayerAdded()
 	{
-		EditorSceneManager::Init();
-
 		Engine::GraphicsRenderer::GetRenderingAPI().SetClearColor(
 			MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 

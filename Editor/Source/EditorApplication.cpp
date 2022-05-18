@@ -2,6 +2,9 @@
 #include "EntryPoint.h"
 
 #include "Application.h"
+
+#include "EditorSceneManager.h"
+#include "ProjectManager.h"
 #include "Layer\EditorLayer.h"
 
 namespace Engine
@@ -13,7 +16,15 @@ namespace Engine
 		EditorApplication(const std::filesystem::path& rootPath)
 			: Application("Editor", rootPath)
 		{
+			Editor::EditorSceneManager::Init();
+			Editor::ProjectManager::Init();
+
 			AddOverlay(new Editor::EditorLayer());
+		}
+
+		~EditorApplication()
+		{
+			Editor::EditorSceneManager::Release();
 		}
 	};
 

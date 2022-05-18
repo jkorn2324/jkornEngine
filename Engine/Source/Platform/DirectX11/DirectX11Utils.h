@@ -47,6 +47,9 @@ namespace Engine
 		static ID3D11ShaderResourceView* CreateBufferShaderResourceView(ID3D11Device* device, ID3D11Buffer* buffer);
 		static ID3D11UnorderedAccessView* CreateBufferUnorderedAccessView(ID3D11Device* device, ID3D11Buffer* buffer);
 
+		static bool LoadTextureFromFile(ID3D11Device* device, const wchar_t* filePath, uint32_t rwFlags,
+			ID3D11Resource** resource, ID3D11ShaderResourceView** shaderResourceView, UINT bindFlags = 8);
+
 		static ID3D11Texture2D* CreateTexture2D(ID3D11Device* device, UINT width, UINT height, UINT bindFlags, int format, 
 			UINT quality, int textureRWFlags = c_defaultFlags);
 		static ID3D11ShaderResourceView* CreateTextureShaderResourceView(ID3D11Device* device, ID3D11Texture2D* texture2D, int format = 0);

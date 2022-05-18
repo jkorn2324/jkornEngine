@@ -2,6 +2,7 @@
 
 #include "EditorCamera.h"
 #include "EditorWidgets.h"
+#include "FixedStructures.h"
 
 namespace Engine
 {
@@ -39,7 +40,8 @@ namespace Editor
 	private:
 		void HandleCameraInput(const Engine::Timestep& ts);
 		void UpdateTransformationWidget(const Engine::Timestep& ts);
-		void UpdateSelectedEntityID(const Engine::Timestep& ts);
+		void UpdateEntityIDs(const Engine::Timestep& ts);
+		void UpdateMousePosition(const Engine::Timestep& ts);
 
 		bool GetCameraDirection(MathLib::Vector3& cameraDirection,
 			const EditorCamera& editorCamera, const Engine::PlatformInput& platformInput) const;
@@ -49,12 +51,16 @@ namespace Editor
 
 	private:
 		Engine::FrameBuffer* m_frameBuffer;
+		Engine::FixedArray m_sceneViewEntityIDs;
+
 		TransformationWidget m_transformationWidget;
 
+		MathLib::Vector2 m_windowPosition;
 		MathLib::Vector2 m_windowSize;
 		float m_windowBarSpacing;
 		
 		MathLib::Vector2 m_prevMousePos;
+		MathLib::Vector2 m_currMousePos;
 		MathLib::Vector2 m_mouseScroll;
 		
 		Engine::Entity m_prevSelectedEntity;

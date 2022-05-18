@@ -7,6 +7,8 @@
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include <DDSTextureLoader.h>
+#include <WICTextureLoader.h>
 
 #pragma comment(lib, "d3dcompiler.lib")
 
@@ -165,6 +167,80 @@ namespace Engine
 		HRESULT result = device->CreateUnorderedAccessView(buffer, &uavDesc, &uav);
 		DebugAssert(result == S_OK, "Failed to create unordered access view resource.");
 		return uav;
+	}
+
+	bool DirectX11Utils::LoadTextureFromFile(ID3D11Device* device, const wchar_t* filePath, uint32_t rwFlags, 
+		ID3D11Resource** resource, ID3D11ShaderResourceView** shaderResourceView, UINT bindFlags)
+	{
+		std::wstring wstringPath(filePath);
+		if (wstringPath.size() <= 0)
+		{
+			return false;
+		}
+
+		UINT textureUsage = D3D11_USAGE_DEFAULT;
+		UINT cpuAccessFlags = 0;
+
+		if (rwFlags & CPU_Access_Read)
+		{
+			if (rwFlags & CPU_Access_Write)
+			{
+				textureUsage = D3D11_USAGE_DYNAMIC;
+			}
+			else
+			{
+				textureUsage = D3D11_USAGE_STAGING;
+			}
+		}
+		else if (rwFlags & CPU_Access_Write)
+		{
+			textureUsage = D3D11_USAGE_DYNAMIC;
+		}
+		else if (rwFlags & GPU_Access_Read)
+		{
+			if (rwFlags & GPU_Access_Write)
+			{
+				textureUsage = D3D11_USAGE_DEFAULT;
+			}
+			else
+			{
+				textureUsage = D3D11_USAGE_IMMUTABLE;
+			}
+		}
+		else
+		{
+			textureUsage = D3D11_USAGE_DEFAULT;
+		}
+
+		if (rwFlags & CPU_Access_Read)
+		{
+			cpuAccessFlags |= D3D11_CPU_ACCESS_READ;
+		}
+		if (rwFlags & CPU_Access_Write)
+		{
+			cpuAccessFlags |= D3D11_CPU_ACCESS_WRITE;
+		}
+
+		HRESULT result;
+		std::wstring extension = wstringPath.substr(wstringPath.find_last_of('.'));
+		if (extension == L".dds"
+			|| extension == L".DDS")
+		{
+			result = DirectX::CreateDDSTextureFromFileEx(device,
+				filePath, 0,
+				(D3D11_USAGE)textureUsage, bindFlags, cpuAccessFlags, 0,
+				false,
+				resource, shaderResourceView, nullptr);
+		}
+		else
+		{
+			result = DirectX::CreateWICTextureFromFileEx(device,
+				filePath, 0,
+				(D3D11_USAGE)textureUsage, bindFlags, cpuAccessFlags, 0,
+				DirectX::WIC_LOADER_DEFAULT, resource, shaderResourceView);
+		}
+		DebugAssert(result == S_OK, "Failed to load texture2D from file.")
+		return result == S_OK;
 	}
 	
 	ID3D11Texture2D* DirectX11Utils::CreateTexture2D(ID3D11Device* device, 

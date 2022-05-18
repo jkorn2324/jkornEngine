@@ -264,8 +264,9 @@ namespace Editor
 			return;
 		}
 		ImGui::Begin("Entity Inspector", &m_open, ImGuiWindowFlags_MenuBar);
-
 		Engine::Entity entity = EditorSelection::GetSelectedEntity();
+		// TODO: Fix bug where selected entity points to a non-existing entity.
+
 		if (entity.IsValid())
 		{
 			// Component Options Menu

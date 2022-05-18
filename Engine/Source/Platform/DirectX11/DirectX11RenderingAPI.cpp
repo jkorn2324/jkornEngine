@@ -327,7 +327,7 @@ namespace Engine
 
 	void DirectX11RenderingAPI::SwapBuffers()
 	{
-		// For OpenGL, use this:
+		// For GLFW & OpenGL, use this:
 		// glfwSwapBuffers(m_window);
 
 		m_swapChain->Present(1, 0);
