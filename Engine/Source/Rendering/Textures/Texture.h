@@ -39,6 +39,21 @@ namespace Engine
 		TextureFormat_Int16,
 	};
 
+	static size_t SizeOfFormat(TextureFormat format)
+	{
+		switch (format)
+		{
+		case TextureFormat_ARGB32: return sizeof(float) * 4;
+		case TextureFormat_RGBA32: return sizeof(float) * 4;
+		case TextureFormat_Float32: return sizeof(float);
+		case TextureFormat_Int32: return sizeof(uint32_t);
+		case TextureFormat_Int16: return sizeof(uint16_t);
+		case TextureFormat_Int8: return sizeof(uint8_t);
+		case TextureFormat_RGBA8: return sizeof(float);
+		}
+		return 0;
+	}
+
 	static const int c_readWriteFlags = (int)(Flag_GPU_ReadTexture | Flag_GPU_WriteTexture);
 
 	struct TextureSpecifications

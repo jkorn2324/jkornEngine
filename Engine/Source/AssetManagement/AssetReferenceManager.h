@@ -43,7 +43,10 @@ namespace Engine
 			m_referenceManager(assetRef.m_referenceManager),
 			m_guid(assetRef.m_guid)
 		{
-			m_referenceManager->AddReference(m_asset);
+			if (m_referenceManager != nullptr)
+			{
+				m_referenceManager->AddReference(m_asset);
+			}
 		}
 
 		AssetRef& operator=(const AssetRef& assetRef)

@@ -67,21 +67,43 @@ namespace Engine
 		return DXGI_FORMAT_UNKNOWN;
 	}
 
-	static size_t SizeOfFormat(TextureFormat format)
+	static void DirectX11ConvertToPixelFormat(TextureFormat format, uint32_t pixelIndex,
+		const uint8_t* pixels, FixedArray& outputPixels)
 	{
+		size_t pixelIndexSize = (size_t)pixelIndex;
 		switch (format)
 		{
-		case TextureFormat_ARGB32: return sizeof(float) * 4;
-		case TextureFormat_RGBA32: return sizeof(float) * 4;
-		case TextureFormat_Float32: return sizeof(float);
-		case TextureFormat_Int32: return sizeof(uint32_t);
-		case TextureFormat_Int16: return sizeof(uint16_t);
-		case TextureFormat_Int8: return sizeof(uint8_t);
-		case TextureFormat_RGBA8: return sizeof(float);
+			case TextureFormat_Float32:
+			{
+				size_t sizeOffset = (size_t)sizeof(float);
+				const uint8_t* startPixel = pixels + (pixelIndexSize * sizeOffset);
+				float newPixel = 0.0f;
+				std::memcpy(&newPixel, startPixel, sizeOffset);
+				outputPixels.Set(pixelIndex, newPixel);
+				break;
+			}
+			case TextureFormat_Int32:
+			{
+				uint32_t sizeOffset = (uint32_t)sizeof(int32_t);
+				const uint8_t* startPixel = pixels + (pixelIndexSize * sizeOffset);
+				int32_t pixel = 0;
+				std::memcpy(&pixel, startPixel, sizeOffset);
+				outputPixels.Set(pixelIndex, pixel);
+				break;
+			}
+			default:
+			{
+				size_t formatSize = SizeOfFormat(format);
+				pixelIndexSize *= formatSize;
+				for (size_t offset = 0; offset < formatSize; offset++)
+				{
+					size_t byteOffset = pixelIndexSize + offset;
+					uint8_t resource = pixels[byteOffset];
+					outputPixels.Set((uint32_t)byteOffset, resource);
+				}
+			}
 		}
-		return 0;
 	}
-
 
 	DirectX11Texture::DirectX11Texture() : Texture(),
 		m_shaderResourceView(nullptr),
@@ -159,13 +181,20 @@ namespace Engine
 
 	void DirectX11Texture::Free()
 	{
+		if (m_pixels != nullptr)
+		{
+			delete[] m_pixels;
+			m_pixels = nullptr;
+		}
 		if (m_shaderResourceView != nullptr)
 		{
 			m_shaderResourceView->Release();
+			m_shaderResourceView = nullptr;
 		}
 		if (m_texture != nullptr)
 		{
 			m_texture->Release();
+			m_texture = nullptr;
 		}
 		m_width = 0;
 		m_height = 0;
@@ -264,7 +293,14 @@ namespace Engine
 			return;
 		}
 
-		size_t formatSize = SizeOfFormat(GetTextureFormat());
+		TextureFormat textureFormat = GetTextureFormat();
+		if (textureFormat == TextureFormat_Unknown)
+		{
+			texture->Release();
+			return;
+		}
+
+		size_t formatSize = SizeOfFormat(textureFormat);
 		pixelArray = FixedArray(m_width * m_height, formatSize);
 		if (resourceDesc.pData)
 		{
@@ -274,12 +310,9 @@ namespace Engine
 			{
 				for (uint32_t col = 0; col < m_width; col++)
 				{
-					indexOffset = (row * m_width + col) * formatSize;
-					for (uint32_t offset = 0; offset < formatSize; offset++)
-					{
-						uint8_t resource = resources[indexOffset + offset];
-						pixelArray.Set(indexOffset, resource);
-					}
+					indexOffset = row * m_width + col;
+					DirectX11ConvertToPixelFormat(textureFormat,
+						indexOffset, resources, pixelArray);
 				}
 			}
 		}
@@ -339,7 +372,8 @@ namespace Engine
 		((ID3D11Texture2D*)m_texture)->GetDesc(&textureDesc);
 		m_width = textureDesc.Width;
 		m_height = textureDesc.Height;
-		m_pixels = new uint32_t[m_width * m_height];
+		size_t wh = (size_t)m_width * (size_t)m_height;
+		m_pixels = new uint32_t[wh];
 		UpdatePixels();
 		return true;
 	}

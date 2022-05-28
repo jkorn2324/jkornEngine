@@ -36,7 +36,7 @@ VertexShaderOut VS(VertexShaderIn vIn)
 	float4 worldNormal = mul(float4(vIn.normal, 0.0), c_objectToWorld);
 	output.normal = mul(worldNormal, c_viewProjection);
 	output.uv = vIn.uv;
-    output.entityID = c_entityID;
+    output.entityID = GetEntityID();
 	return output;
 }
 

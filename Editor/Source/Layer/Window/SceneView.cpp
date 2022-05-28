@@ -62,6 +62,7 @@ namespace Editor
 		}
 
 		UpdateTransformationWidget(ts);
+		// Update the entity widget if entity IDs change.
 		UpdateEntityIDs(ts);
 		UpdateMousePosition(ts);
 
@@ -96,7 +97,6 @@ namespace Editor
 		}
 		
 		MathLib::Vector2 delta = m_currMousePos - m_prevMousePos;
-
 		// Moves the camera based on mouse dragging.
 		if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
 		{
@@ -160,9 +160,16 @@ namespace Editor
 
 	void SceneView::UpdateEntityIDs(const Engine::Timestep& ts)
 	{
-		if (m_windowSize.x <= 0
-			|| m_windowSize.y <= 0) return;
+		if (m_entityWidgetChanged || m_transformationWidget.IsMouseOver()) return;
 
+		// If an alt key is pressed, don't do anything.
+		const auto& platformInput = Engine::Input::GetPlatformInput();
+		int32_t lAltKey = platformInput.FromKeyCode(Engine::KEY_CODE_LEFT_ALT);
+		int32_t rAltKey = platformInput.FromKeyCode(Engine::KEY_CODE_RIGHT_ALT);
+		if (ImGui::IsKeyDown(lAltKey) || ImGui::IsKeyDown(rAltKey)) return;
+
+		MathLib::Vector2 windowSize = GetResizedWindow();
+		if (windowSize.x <= 0 || windowSize.y <= 0) return;
 		Engine::Texture* entityIDsTexture = m_frameBuffer->GetRenderTargetTexture(1);
 		if (entityIDsTexture != nullptr 
 			&& m_focused
@@ -170,27 +177,35 @@ namespace Editor
 		{
 			MathLib::Vector2 localMousePos = m_currMousePos - m_windowPosition;
 			if (localMousePos.x < 0.0f
-				|| localMousePos.x > m_windowSize.x
+				|| localMousePos.x > windowSize.x
 				|| localMousePos.y < 0.0f
-				|| localMousePos.y > m_windowSize.y)
+				|| localMousePos.y > windowSize.y)
 			{
 				return;
 			}
 			entityIDsTexture->CopyPixels(m_sceneViewEntityIDs);
-			MathLib::Vector2 localizedMousePos01 = localMousePos / m_windowSize;
-			uint32_t pixelX = (uint32_t)(localizedMousePos01.x 
-				* (float)entityIDsTexture->GetWidth());
-			uint32_t pixelY = (uint32_t)(localizedMousePos01.y 
-				* (float)entityIDsTexture->GetHeight());
 
-			uint32_t entityID;
+			uint32_t pixelX = (uint32_t)localMousePos.x;
+			uint32_t pixelY = (uint32_t)localMousePos.y;
+			int32_t entityID;
 			uint32_t index = pixelX + pixelY * entityIDsTexture->GetWidth();
-			printf("Index: %i\n", index);
-
-			if (m_sceneViewEntityIDs.Get(pixelX + pixelY * entityIDsTexture->GetWidth(),
-				entityID))
+			if (m_sceneViewEntityIDs.Get(index, entityID))
 			{
-				printf("EntityID: %i\n", entityID);
+				int32_t currentEntityID = entityID - 1;
+				if (currentEntityID < 0)
+				{
+					EditorSelection::SetSelectedEntity(Engine::Entity::None);
+					return;
+				}
+				Engine::Scene* scenePtr = &Engine::SceneManager::GetActiveScene();
+				Engine::Entity selectedEntity(currentEntityID, scenePtr);
+				// Sets the selected entity to the one picked by the scene.
+				if (selectedEntity.IsValid())
+				{
+					EditorSelection::SetSelectedEntity(selectedEntity);
+					return;
+				}
+				EditorSelection::SetSelectedEntity(Engine::Entity::None);
 			}
 		}
 	}
@@ -198,7 +213,7 @@ namespace Editor
 	void SceneView::UpdateTransformationWidget(const Engine::Timestep& ts)
 	{
 		m_transformationWidget.SetEnabled(EditorSelection::HasSelectedEntity());
-		if (EditorSelection::HasSelectedEntity())
+		if (m_transformationWidget.IsEnabled())
 		{
 			Engine::Entity entity = EditorSelection::GetSelectedEntity();
 			if (entity.HasComponent<Engine::Transform3DComponent>())
@@ -318,7 +333,6 @@ namespace Editor
 			EditorCameraProperties& properties = editorCamera.GetCameraProperties();
 			properties.width = windowSize.x;
 			properties.height = windowSize.y;
-			
 			m_frameBuffer->Resize((uint32_t)properties.width, (uint32_t)properties.height);
 		}
 

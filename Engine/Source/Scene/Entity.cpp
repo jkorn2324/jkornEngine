@@ -16,6 +16,8 @@ namespace Engine
     template<typename T>
     static void CopyComponent(const Entity& from, Entity& to, const std::function<void(T&, T&)>& func, bool addIfNotExist = true)
     {
+        if (!from.IsValid() || !to.IsValid()) return;
+
         if (from.HasComponent<T>())
         {
             T& fromComponent = from.GetComponent<T>();
@@ -35,6 +37,12 @@ namespace Engine
     const Entity Entity::None = Entity();
 
     EventFunc Entity::s_componentEventFunc = nullptr;
+
+    Entity::Entity(uint32_t id, Scene* scene)
+        : m_scene(scene),
+        m_entity((entt::entity)id)
+    {
+    }
 
     Entity::Entity(const entt::entity& entity, Scene* scene)
         : m_scene(scene),

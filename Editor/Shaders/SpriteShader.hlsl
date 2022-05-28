@@ -30,7 +30,7 @@ VertexShaderOut VS(VertexShaderIn input)
     output.worldPosition = worldPos.xyz;
     output.position = mul(worldPos, c_viewProjection);
     output.uv = input.uv;
-    output.entityID = c_entityID;
+    output.entityID = GetEntityID();
     return output;
 }
 

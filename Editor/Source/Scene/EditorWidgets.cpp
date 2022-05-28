@@ -21,8 +21,9 @@ namespace Editor
     bool TransformationWidget::OnImGuiRender(const MathLib::Vector2& displayPos,
         const MathLib::Vector2& displayBounds)
     {
-        if (!m_enabled)
+        if (!IsEnabled())
         {
+            SetMouseUsing(false);
             return false;
         }
         Editor::EditorCamera& camera
@@ -35,13 +36,19 @@ namespace Editor
 
         MathLib::Matrix4x4 transformMatrix
             = m_transform.GetTransformMatrix();
-
+        
         bool manipulated = ImGuizmo::Manipulate(
             reinterpret_cast<const float*>(&camera.GetViewMatrix()),
                 reinterpret_cast<const float*>(&camera.GetProjectionMatrix()),
                     m_widgetOperation, m_widgetMode, (float*)transformMatrix.matrix, nullptr, nullptr);
-        
-        if (!m_movable) return false;
+
+        SetMouseOver(ImGuizmo::IsOver());
+        if (!IsMovable()) 
+        {
+            SetMouseUsing(false);
+            return false;
+        }
+        SetMouseUsing(ImGuizmo::IsUsing());
 
         if (manipulated)
         {
@@ -63,7 +70,6 @@ namespace Editor
             m_transform.SetLocalScale(scale);
             m_transform.SetLocalEulerAngles(
                 m_transform.GetLocalEulerAngles(true) + deltaRotation, true);
-            // m_transform.SetForwardDirection(transformMatrix.GetZAxis());
         }
         return manipulated;
     }

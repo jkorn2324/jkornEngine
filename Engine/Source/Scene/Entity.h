@@ -17,6 +17,7 @@ namespace Engine
 	{
 	public:
 		explicit Entity() = default;
+		explicit Entity(uint32_t id, class Scene* scene);
 		explicit Entity(const entt::entity& entity, class Scene* scene);
 
 		template<typename T>
