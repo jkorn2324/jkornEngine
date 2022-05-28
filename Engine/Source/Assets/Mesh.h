@@ -32,10 +32,10 @@ namespace Engine
 
 		template<typename T>
 		T* GetVertices() const { return reinterpret_cast<T*>(m_vertices); }
-		std::uint32_t GetNumVertices() const;
+		uint32_t GetNumVertices() const;
 
-		std::uint32_t* GetIndices() const;
-		std::uint32_t GetNumIndices() const;
+		uint32_t* GetIndices() const;
+		uint32_t GetNumIndices() const;
 
 		VertexBuffer* GetVertexBuffer() const { return m_vertexBuffer; }
 		IndexBuffer* GetIndexBuffer() const { return m_indexBuffer; }
@@ -45,13 +45,13 @@ namespace Engine
 
 	private:	
 		char* m_vertices;
-		std::uint32_t* m_indices;
-
+		uint32_t* m_indices;
+		
 		VertexBuffer* m_vertexBuffer;
 		IndexBuffer* m_indexBuffer;
 
-		std::uint32_t m_vertexCount;
-		std::uint32_t m_indexCount;
+		uint32_t m_vertexCount;
+		uint32_t m_indexCount;
 
 		bool m_skinned;
 
