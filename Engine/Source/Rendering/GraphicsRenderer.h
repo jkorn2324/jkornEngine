@@ -27,6 +27,8 @@ namespace Engine
 		static void EndScene() { }
 
 		static void SwapBuffers();
+
+		static void Draw(class VertexArray* vertexArray);
 		static void Draw(class VertexBuffer* vertexBuffer,
 			class IndexBuffer* indexBuffer);
 

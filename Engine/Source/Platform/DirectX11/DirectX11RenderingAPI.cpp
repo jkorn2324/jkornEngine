@@ -9,6 +9,7 @@
 
 #include "DirectX11VertexBuffer.h"
 #include "DirectX11IndexBuffer.h"
+#include "DirectX11VertexArray.h"
 
 #include "GlfwWindowsWindow.h"
 
@@ -323,6 +324,16 @@ namespace Engine
 			m_deviceContext->Draw(
 				vBuffer->GetNumVerts(), 0);
 		}
+	}
+
+	void DirectX11RenderingAPI::Draw(VertexArray* vertexArray)
+	{
+		if (!vertexArray->IsValid()) return;
+
+		// Draws a vertex array.
+		vertexArray->Bind();
+		m_deviceContext->DrawIndexed(
+			vertexArray->GetIndexBuffer()->GetNumIndices(), 0, 0);
 	}
 
 	void DirectX11RenderingAPI::SwapBuffers()

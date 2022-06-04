@@ -108,61 +108,104 @@ namespace Engine
 	static LightingData s_lightingData;
 	static ConstantBuffer* s_lightingConstantBuffer = nullptr;
 
-	static GraphicsCubeMeshVertex cubeMeshVertices[] =
+
+	static MathLib::Vector3 s_cubeMeshNormals[] =
 	{
-		{ MathLib::Vector3(-0.5F, 0.5f, -0.5f),
-			MathLib::Vector3(0.0f, 0.0f, -1.0f), MathLib::Vector2(0.0f, 0.0f) },
-		{ MathLib::Vector3(0.5f, 0.5f, -0.5f),
-			MathLib::Vector3(0.0f, 0.0f, -1.0f), MathLib::Vector2(1.0f, 0.0f) },
-		{ MathLib::Vector3(0.5f, -0.5f, -0.5f),
-			MathLib::Vector3(0.0f, 0.0f, -1.0f), MathLib::Vector2(1.0f, 1.0f) },
-		{ MathLib::Vector3(-0.5f, -0.5f, -0.5f),
-			MathLib::Vector3(0.0f, 0.0f, -1.0f), MathLib::Vector2(0.0f, 1.0f) },
+		MathLib::Vector3(0.0f, 0.0f, -1.0f),
+		MathLib::Vector3(0.0f, 0.0f, -1.0f),
+		MathLib::Vector3(0.0f, 0.0f, -1.0f),
+		MathLib::Vector3(0.0f, 0.0f, -1.0f), 
 
-		{ MathLib::Vector3(-0.5F, -0.5f, 0.5f),
-			MathLib::Vector3(0.0f, 0.0f, 1.0f), MathLib::Vector2(0.0f, 0.0f) },
-		{ MathLib::Vector3(0.5f, -0.5f, 0.5f),
-			MathLib::Vector3(0.0f, 0.0f, 1.0f), MathLib::Vector2(1.0f, 0.0f) },
-		{ MathLib::Vector3(0.5f, 0.5f, 0.5f),
-			MathLib::Vector3(0.0f, 0.0f, 1.0f), MathLib::Vector2(1.0f, 1.0f) },
-		{ MathLib::Vector3(-0.5f, 0.5f, 0.5f),
-			MathLib::Vector3(0.0f, 0.0f, 1.0f), MathLib::Vector2(0.0f, 1.0f) },
+		MathLib::Vector3(0.0f, 0.0f, 1.0f), 
+		MathLib::Vector3(0.0f, 0.0f, 1.0f),
+		MathLib::Vector3(0.0f, 0.0f, 1.0f),
+		MathLib::Vector3(0.0f, 0.0f, 1.0f),
 
-		{ MathLib::Vector3(-0.5F, 0.5f, 0.5f),
-			MathLib::Vector3(0.0f, 1.0f, 0.0f), MathLib::Vector2(0.0f, 0.0f) },
-		{ MathLib::Vector3(0.5f, 0.5f, 0.5f),
-			MathLib::Vector3(0.0f, 1.0f, 0.0f), MathLib::Vector2(1.0f, 0.0f) },
-		{ MathLib::Vector3(0.5f, 0.5f, -0.5f),
-			MathLib::Vector3(0.0f, 1.0f, 0.0f), MathLib::Vector2(1.0f, 1.0f) },
-		{ MathLib::Vector3(-0.5f, 0.5f, -0.5f),
-			MathLib::Vector3(0.0f, 1.0f, 0.0f), MathLib::Vector2(0.0f, 1.0f) },
+		MathLib::Vector3(0.0f, 1.0f, 0.0f),
+		MathLib::Vector3(0.0f, 1.0f, 0.0f),
+		MathLib::Vector3(0.0f, 1.0f, 0.0f),
+		MathLib::Vector3(0.0f, 1.0f, 0.0f),
 
-		{ MathLib::Vector3(-0.5f, -0.5f, -0.5f),
-			MathLib::Vector3(0.0f, -1.0f, 0.0f), MathLib::Vector2(0.0f, 0.0f) },
-		{ MathLib::Vector3(0.5f, -0.5f, -0.5f),
-			MathLib::Vector3(0.0f, -1.0f, 0.0f), MathLib::Vector2(1.0f, 0.0f) },
-		{ MathLib::Vector3(0.5f, -0.5f, 0.5f),
-			MathLib::Vector3(0.0f, -1.0f, 0.0f), MathLib::Vector2(1.0f, 1.0f) },
-		{ MathLib::Vector3(-0.5f, -0.5f, 0.5f),
-			MathLib::Vector3(0.0f, -1.0f, 0.0f), MathLib::Vector2(0.0f, 1.0f) },
+		MathLib::Vector3(0.0f, -1.0f, 0.0f),
+		MathLib::Vector3(0.0f, -1.0f, 0.0f),
+		MathLib::Vector3(0.0f, -1.0f, 0.0f),
+		MathLib::Vector3(0.0f, -1.0f, 0.0f), 
 
-		{ MathLib::Vector3(-0.5f, -0.5f, 0.5f),
-			MathLib::Vector3(-1.0f, 0.0f, 0.0f), MathLib::Vector2(0.0f, 0.0f) },
-		{ MathLib::Vector3(-0.5f, 0.5f, 0.5f),
-			MathLib::Vector3(-1.0f, 0.0f, 0.0f), MathLib::Vector2(1.0f, 0.0f) },
-		{ MathLib::Vector3(-0.5f, 0.5f, -0.5f),
-			MathLib::Vector3(-1.0f, 0.0f, 0.0f), MathLib::Vector2(1.0f, 1.0f) },
-		{ MathLib::Vector3(-0.5f, -0.5f, -0.5f),
-			MathLib::Vector3(-1.0f, 0.0f, 0.0f), MathLib::Vector2(0.0f, 1.0f) },
+		MathLib::Vector3(-1.0f, 0.0f, 0.0f), 
+		MathLib::Vector3(-1.0f, 0.0f, 0.0f),
+		MathLib::Vector3(-1.0f, 0.0f, 0.0f), 
+		MathLib::Vector3(-1.0f, 0.0f, 0.0f),
 
-		{ MathLib::Vector3(0.5f, -0.5f, -0.5f),
-			MathLib::Vector3(1.0f, 0.0f, 0.0f), MathLib::Vector2(0.0f, 0.0f) },
-		{ MathLib::Vector3(0.5f, 0.5f, -0.5f),
-			MathLib::Vector3(1.0f, 0.0f, 0.0f), MathLib::Vector2(1.0f, 0.0f) },
-		{ MathLib::Vector3(0.5f, 0.5f, 0.5f),
-			MathLib::Vector3(1.0f, 0.0f, 0.0f), MathLib::Vector2(1.0f, 1.0f) },
-		{ MathLib::Vector3(0.5f, -0.5f, 0.5f),
-			MathLib::Vector3(1.0f, 0.0f, 0.0f), MathLib::Vector2(0.0f, 1.0f) }
+		MathLib::Vector3(1.0f, 0.0f, 0.0f),
+		MathLib::Vector3(1.0f, 0.0f, 0.0f),
+		MathLib::Vector3(1.0f, 0.0f, 0.0f),
+		MathLib::Vector3(1.0f, 0.0f, 0.0f)
+	};
+
+	static MathLib::Vector2 s_vertexUVs[] =
+	{
+		MathLib::Vector2(0.0f, 0.0f),
+		MathLib::Vector2(1.0f, 0.0f),
+		MathLib::Vector2(1.0f, 1.0f),
+		MathLib::Vector2(0.0f, 1.0f),
+
+		MathLib::Vector2(0.0f, 0.0f),
+		MathLib::Vector2(1.0f, 0.0f),
+		MathLib::Vector2(1.0f, 1.0f),
+		MathLib::Vector2(0.0f, 1.0f),
+
+		MathLib::Vector2(0.0f, 0.0f),
+		MathLib::Vector2(1.0f, 0.0f),
+		MathLib::Vector2(1.0f, 1.0f),
+		MathLib::Vector2(0.0f, 1.0f),
+
+		MathLib::Vector2(0.0f, 0.0f),
+		MathLib::Vector2(1.0f, 0.0f),
+		MathLib::Vector2(1.0f, 1.0f),
+		MathLib::Vector2(0.0f, 1.0f),
+
+		MathLib::Vector2(0.0f, 0.0f),
+		MathLib::Vector2(1.0f, 0.0f),
+		MathLib::Vector2(1.0f, 1.0f),
+		MathLib::Vector2(0.0f, 1.0f),
+
+		MathLib::Vector2(0.0f, 0.0f),
+		MathLib::Vector2(1.0f, 0.0f),
+		MathLib::Vector2(1.0f, 1.0f),
+		MathLib::Vector2(0.0f, 1.0f)
+	};
+
+	static MathLib::Vector3 s_cubeMeshVertexPositions[] =
+	{
+		MathLib::Vector3(-0.5F, 0.5f, -0.5f),
+		MathLib::Vector3(0.5f, 0.5f, -0.5f),
+		MathLib::Vector3(0.5f, -0.5f, -0.5f),
+		MathLib::Vector3(-0.5f, -0.5f, -0.5f),
+
+		MathLib::Vector3(-0.5F, -0.5f, 0.5f),
+		MathLib::Vector3(0.5f, -0.5f, 0.5f),
+		MathLib::Vector3(0.5f, 0.5f, 0.5f),
+		MathLib::Vector3(-0.5f, 0.5f, 0.5f),
+
+		MathLib::Vector3(-0.5F, 0.5f, 0.5f),
+		MathLib::Vector3(0.5f, 0.5f, 0.5f),
+		MathLib::Vector3(0.5f, 0.5f, -0.5f),
+		MathLib::Vector3(-0.5f, 0.5f, -0.5f),
+
+		MathLib::Vector3(-0.5f, -0.5f, -0.5f),
+		MathLib::Vector3(0.5f, -0.5f, -0.5f),
+		MathLib::Vector3(0.5f, -0.5f, 0.5f),
+		MathLib::Vector3(-0.5f, -0.5f, 0.5f),
+
+		MathLib::Vector3(-0.5f, -0.5f, 0.5f),
+		MathLib::Vector3(-0.5f, 0.5f, 0.5f),
+		MathLib::Vector3(-0.5f, 0.5f, -0.5f),
+		MathLib::Vector3(-0.5f, -0.5f, -0.5f),
+
+		MathLib::Vector3(0.5f, -0.5f, -0.5f),
+		MathLib::Vector3(0.5f, 0.5f, -0.5f),
+		MathLib::Vector3(0.5f, 0.5f, 0.5f),
+		MathLib::Vector3(0.5f, -0.5f, 0.5f)
 	};
 
 	static uint32_t cubeMeshIndices[] =
@@ -211,12 +254,12 @@ namespace Engine
 				});
 
 			Engine::BufferLayout bufferLayout = {{
-				{ "POSITION", offsetof(GraphicsCubeMeshVertex, pos),
-					sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
-				{ "NORMAL", offsetof(GraphicsCubeMeshVertex, normal),
-					sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
-				{ "TEXCOORD", offsetof(GraphicsCubeMeshVertex, uv),
-					sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2 }
+				{ "POSITION", 0,
+					sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3, 0 },
+				{ "NORMAL", 0,
+					sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3, 1 },
+				{ "TEXCOORD", 0,
+					sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2, 2 }
 			}};
 
 			AssetRef<Shader> defaultShader;
@@ -234,9 +277,15 @@ namespace Engine
 		// Generates the cube mesh, but should be stored in asset manager.
 		{
 			AssetManager::GetMeshes().Cache(s_cubeMesh, L"DefaultCube");
-			s_cubeMesh->SetVertices(cubeMeshVertices,
-				sizeof(GraphicsCubeMeshVertex), 
-				sizeof(cubeMeshVertices) / sizeof(cubeMeshVertices[0]));
+
+			// TODO: Implementation
+			s_cubeMesh->SetVertexCount(sizeof(s_cubeMeshVertexPositions) / sizeof(MathLib::Vector3));
+			s_cubeMesh->SetVertices(s_cubeMeshVertexPositions,
+				sizeof(s_cubeMeshVertexPositions) / sizeof(MathLib::Vector3));
+			s_cubeMesh->SetNormals(s_cubeMeshNormals,
+				sizeof(s_cubeMeshNormals) / sizeof(MathLib::Vector3));
+			s_cubeMesh->SetUV0(s_vertexUVs,
+				sizeof(s_vertexUVs) / sizeof(MathLib::Vector2));
 			s_cubeMesh->SetIndices(cubeMeshIndices,
 				sizeof(cubeMeshIndices) / sizeof(cubeMeshIndices[0]));
 		}
@@ -274,7 +323,7 @@ namespace Engine
 
 		// Draws the mesh.
 		GraphicsRenderer::GetRenderingAPI().Draw(
-			mesh.GetVertexBuffer(), mesh.GetIndexBuffer());
+			mesh.GetVertexArray().get());
 	}
 
 	void GraphicsRenderer3D::DrawCube(const MathLib::Matrix4x4& transformMatrix, int32_t entityID)

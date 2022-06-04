@@ -59,6 +59,10 @@ namespace Engine
 		GraphicsRenderer3D::BindLights();
 	}
 
+	void GraphicsRenderer::Draw(VertexArray* vertexArray)
+	{
+	}
+
 	void GraphicsRenderer::Draw(VertexBuffer* vBuffer,
 		IndexBuffer* iBuffer)
 	{

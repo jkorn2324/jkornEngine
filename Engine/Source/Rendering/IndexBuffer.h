@@ -26,7 +26,11 @@ namespace Engine
 		uint32_t m_indexStride;
 
 	public:
-		static IndexBuffer* Create(const void* buffer,
-			std::uint32_t numIndices, std::uint32_t stride);
+		static bool Create(std::shared_ptr<IndexBuffer>& buf,
+			const void* buffer, uint32_t indices, uint32_t stride);
+		static bool Create(std::unique_ptr<IndexBuffer>& buf,
+			const void* buffer, uint32_t indices, uint32_t stride);
+		static bool Create(IndexBuffer** buf,
+			const void* buffer, uint32_t indices, uint32_t stride);
 	};
 }

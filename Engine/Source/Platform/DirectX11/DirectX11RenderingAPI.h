@@ -34,6 +34,7 @@ namespace Engine
 
 		void ClearTexture(uint32_t slot) override;
 
+		void Draw(class VertexArray* vertexArray) override;
 		void Draw(class VertexBuffer* buffer, 
 			class IndexBuffer* indexBuffer = nullptr) override;
 		void SwapBuffers() override;
@@ -68,6 +69,7 @@ namespace Engine
 		friend class DirectX11VertexBuffer;
 		friend class DirectX11IndexBuffer;
 		friend class DirectX11FrameBuffer;
+		friend class DirectX11VertexArray;
 		friend class DirectX11Texture;
 		friend class DirectX11Texture2D;
 		friend class DirectX11ConstantBuffer;

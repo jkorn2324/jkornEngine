@@ -20,17 +20,14 @@ namespace Engine
 
         if (from.HasComponent<T>())
         {
-            T& fromComponent = from.GetComponent<T>();
-            if (to.HasComponent<T>())
+            if (!to.HasComponent<T>())
             {
-                T& toComp = to.GetComponent<T>();
-                func(fromComponent, toComp);
+                func(from.GetComponent<T>(), 
+                    to.AddComponent<T>());
+                return;
             }
-            else
-            {
-                T& toComp = to.AddComponent<T>();
-                func(fromComponent, toComp);
-            }
+            func(from.GetComponent<T>(), 
+                to.GetComponent<T>());
         }
     }
 

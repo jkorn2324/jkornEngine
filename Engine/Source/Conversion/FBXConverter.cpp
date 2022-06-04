@@ -12,12 +12,6 @@ namespace Engine
 	// Format for Mesh is Just
 	// Position, UV, Normal
 
-	struct MeshVertex
-	{
-		MathLib::Vector3 pos;
-		MathLib::Vector2 uv;
-		MathLib::Vector3 normal;
-	};
 
 	static bool ConvertToMesh(FbxMesh* mesh, Mesh& outMesh)
 	{
@@ -29,8 +23,10 @@ namespace Engine
 			converter.Triangulate(mesh, true);
 		}
 
+		// TODO: Implementation
+#if 0
 		// Stores the results per each vertex.
-		std::vector<MeshVertex> outVertices(mesh->GetControlPointsCount());
+		std::vector<Mathlib::Vector3> outVertices(mesh->GetControlPointsCount());
 		std::vector<uint32_t> outIndices;
 
 		// Reads from the Fbx Mesh.
@@ -65,10 +61,12 @@ namespace Engine
 			}
 		}
 
+		// TODO: Implementation
 		outMesh.SetVertices(reinterpret_cast<MeshVertex*>(&outVertices), 
 			sizeof(MeshVertex), (uint32_t)outVertices.size());
 		outMesh.SetIndices(reinterpret_cast<uint32_t*>(&outIndices), 
 			(uint32_t)outIndices.size());
+#endif
 	}
 
 	FBXConverter::FBXConverter(const char* fileName)

@@ -23,7 +23,9 @@ namespace Engine
 		uint32_t m_numVerts;
 
 	public:
-		static VertexBuffer* Create(const void* bufferData,
-			uint32_t numVertices, uint32_t stride);
+		static bool Create(std::shared_ptr<VertexBuffer>& ptr,
+			const void* bufferData, uint32_t numVertices, uint32_t stride);
+		static bool Create(VertexBuffer** buf,
+			const void* bufferData, uint32_t numVertices, uint32_t stride);
 	};
 }

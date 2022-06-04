@@ -108,9 +108,9 @@ namespace Editor
 				};
 
 				Engine::BufferLayout bufferLayout = { {
-					{ "POSITION", offsetof(CubeMeshVert, pos), Engine::BufferLayoutType::FLOAT3 },
-					{ "NORMAL", offsetof(CubeMeshVert, normal), Engine::BufferLayoutType::FLOAT3 },
-					{ "TEXCOORD", offsetof(CubeMeshVert, uv), Engine::BufferLayoutType::FLOAT2 }
+					{ "POSITION", 0, Engine::BufferLayoutType::FLOAT3, 0 },
+					{ "NORMAL", 0, Engine::BufferLayoutType::FLOAT3, 1 },
+					{ "TEXCOORD", 0, Engine::BufferLayoutType::FLOAT2, 2 }
 				} };
 
 				Engine::AssetRef<Engine::Shader> shader;

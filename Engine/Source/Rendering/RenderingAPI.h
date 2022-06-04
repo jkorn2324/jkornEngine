@@ -25,8 +25,11 @@ namespace Engine
 		virtual void SetClearColor(const MathLib::Vector4& vector4)=0;
 		virtual void SwapBuffers()=0;
 		virtual void Clear()=0;
+		
+		virtual void Draw(class VertexArray* vertexArray) =0;
 		virtual void Draw(class VertexBuffer* vertexBuffer,
 			class IndexBuffer* indexBuffer = nullptr)=0;
+
 		virtual void SetWireframe(bool wireframeMode)=0;
 		virtual bool IsWireframe() const=0;
 

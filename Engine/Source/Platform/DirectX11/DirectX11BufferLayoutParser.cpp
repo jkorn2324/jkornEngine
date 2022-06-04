@@ -168,7 +168,7 @@ namespace Engine
 
 			// TODO: Make it so that semantic indices can change.
 			description.SemanticIndex = 0;
-			description.InputSlot = 0;
+			description.InputSlot = param.inputSlot;
 			description.InstanceDataStepRate = 0;
 
 			description.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;

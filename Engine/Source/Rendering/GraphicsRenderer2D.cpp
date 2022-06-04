@@ -96,12 +96,12 @@ namespace Engine
 
 		if (s_spriteVertexBuffer == nullptr)
 		{
-			s_spriteVertexBuffer = VertexBuffer::Create(
+			VertexBuffer::Create(&s_spriteVertexBuffer,
 				&vertices, sizeof(vertices) / sizeof(vertices[0]), sizeof(GraphicsSpriteVertex));
 		}
 		if (s_spriteIndexBuffer == nullptr)
 		{
-			s_spriteIndexBuffer = IndexBuffer::Create(
+			IndexBuffer::Create(&s_spriteIndexBuffer,
 				&indices, sizeof(indices) / sizeof(indices[0]), sizeof(int32_t));
 		}
 

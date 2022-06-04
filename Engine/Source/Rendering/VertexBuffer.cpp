@@ -7,18 +7,34 @@
 namespace Engine
 {
 
-	VertexBuffer* VertexBuffer::Create(const void* bufferData, uint32_t numVertices, uint32_t stride)
+	bool VertexBuffer::Create(VertexBuffer** ptr,
+		const void* bufferData, uint32_t numVertices, uint32_t stride)
 	{
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
-		case RenderingAPIType::DIRECTX11:	return new DirectX11VertexBuffer(bufferData, numVertices, stride);
-		case RenderingAPIType::NONE:
+			case RenderingAPIType::DIRECTX11:
+			{
+				*ptr = new DirectX11VertexBuffer(bufferData, numVertices, stride);
+				return true;
+			}
+		}
+		DebugAssert(false, "Unsupported Vertex Buffer type.");
+		return false;
+	}
+
+	bool VertexBuffer::Create(std::shared_ptr<VertexBuffer>& ptr,
+		const void* bufferData, uint32_t numVertices, uint32_t stride)
+	{
+		switch (RenderingAPI::GetRenderingAPIType())
 		{
-			DebugAssert(false, "Unsupported Vertex Buffer type.");
-			return nullptr;
+			case RenderingAPIType::DIRECTX11:
+			{
+				ptr = std::make_shared<DirectX11VertexBuffer>(bufferData, numVertices, stride);
+				return true;
+			}
 		}
-		}
-		return nullptr;
+		DebugAssert(false, "Unsupported Vertex Buffer type.");
+		return false;
 	}
 
 	VertexBuffer::VertexBuffer(const void* buffer, uint32_t numVerts, uint32_t stride)

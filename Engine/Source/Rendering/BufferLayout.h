@@ -56,9 +56,10 @@ namespace Engine
 		uint32_t offset;
 		size_t stride;
 		BufferLayoutType layoutType;
+		uint32_t inputSlot;
 
-		BufferLayoutParam(const std::string& name, uint32_t offset, BufferLayoutType layoutType)
-			: offset(offset), layoutType(layoutType)
+		BufferLayoutParam(const std::string& name, uint32_t offset, BufferLayoutType layoutType, uint32_t inputSlot = 0)
+			: offset(offset), layoutType(layoutType), inputSlot(inputSlot)
 		{
 			stride = GetStrideFromBufferLayoutType(layoutType);
 			uint32_t nameSize = name.size() > MAX_SIZE_OF_NAME ?
@@ -67,8 +68,8 @@ namespace Engine
 			this->name[nameSize] = 0;
 		}
 
-		BufferLayoutParam(const std::string& name, uint32_t offset, size_t stride, BufferLayoutType layoutType)
-			: offset(offset), stride(stride), layoutType(layoutType)
+		BufferLayoutParam(const std::string& name, uint32_t offset, size_t stride, BufferLayoutType layoutType, uint32_t inputSlot = 0)
+			: offset(offset), stride(stride), layoutType(layoutType), inputSlot(inputSlot)
 		{
 			uint32_t nameSize = name.size() > MAX_SIZE_OF_NAME ? 
 				MAX_SIZE_OF_NAME : (uint32_t)name.size();
@@ -77,7 +78,7 @@ namespace Engine
 		}
 
 		BufferLayoutParam(const BufferLayoutParam& param) 
-			: offset(param.offset), stride(param.stride), layoutType(param.layoutType)
+			: offset(param.offset), stride(param.stride), layoutType(param.layoutType), inputSlot(param.inputSlot)
 		{
 			uint32_t nameSize = sizeof(param.name) > 0 ? sizeof(param.name) : 1;
 			std::memcpy(name, param.name, nameSize);
@@ -85,6 +86,7 @@ namespace Engine
 		}
 	};
 
+	// TODO: Refactor the buffer layout.
 	struct BufferLayout
 	{
 		std::vector<BufferLayoutParam> parameters;

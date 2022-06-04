@@ -16,6 +16,8 @@ namespace Engine
 
 		bool IsValid() const override;
 
+		ID3D11Buffer* GetID3D11Buffer() const { return m_vertexBuffer; }
+
 		void SetData(const void* buffer,
 			std::uint32_t numVertices, std::uint32_t stride) override;
 		void Bind() const override;
