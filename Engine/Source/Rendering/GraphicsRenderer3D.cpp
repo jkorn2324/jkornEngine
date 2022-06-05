@@ -253,15 +253,18 @@ namespace Engine
 					{"c_materialColor", LayoutType_Vector4 }
 				});
 
-			Engine::BufferLayout bufferLayout = {{
-				{ "POSITION", 0,
-					sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3, 0 },
-				{ "NORMAL", 0,
-					sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3, 1 },
-				{ "TEXCOORD", 0,
-					sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2, 2 }
-			}};
-
+			Engine::BufferLayout bufferLayout =
+			{
+				{
+					{ "Position", BufferLayoutSemanticType::Type_Position, BufferLayoutType::Float32, 3 }
+				},
+				{
+					{ "Normal", BufferLayoutSemanticType::Type_Normal, BufferLayoutType::Float32, 3 }
+				},
+				{
+					{ "UV", BufferLayoutSemanticType::Type_TexCoord, BufferLayoutType::Float32, 2 }
+				}
+			};
 			AssetRef<Shader> defaultShader;
 			AssetManager::GetShaders().Load(defaultShader,
 					L"Shaders/Unlit-VertUvPosShader.hlsl", bufferLayout);
@@ -284,7 +287,7 @@ namespace Engine
 				sizeof(s_cubeMeshVertexPositions) / sizeof(MathLib::Vector3));
 			s_cubeMesh->SetNormals(s_cubeMeshNormals,
 				sizeof(s_cubeMeshNormals) / sizeof(MathLib::Vector3));
-			s_cubeMesh->SetUV0(s_vertexUVs,
+			s_cubeMesh->SetUVs(0, s_vertexUVs,
 				sizeof(s_vertexUVs) / sizeof(MathLib::Vector2));
 			s_cubeMesh->SetIndices(cubeMeshIndices,
 				sizeof(cubeMeshIndices) / sizeof(cubeMeshIndices[0]));

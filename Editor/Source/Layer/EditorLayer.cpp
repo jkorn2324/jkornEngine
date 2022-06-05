@@ -107,11 +107,18 @@ namespace Editor
 					MathLib::Vector2 uv;
 				};
 
-				Engine::BufferLayout bufferLayout = { {
-					{ "POSITION", 0, Engine::BufferLayoutType::FLOAT3, 0 },
-					{ "NORMAL", 0, Engine::BufferLayoutType::FLOAT3, 1 },
-					{ "TEXCOORD", 0, Engine::BufferLayoutType::FLOAT2, 2 }
-				} };
+				Engine::BufferLayout bufferLayout = 
+				{ 
+					{
+						{ "Position", Engine::BufferLayoutSemanticType::Type_Position, Engine::BufferLayoutType::Float32, 3 }
+					},
+					{
+						{ "Normal", Engine::BufferLayoutSemanticType::Type_Normal, Engine::BufferLayoutType::Float32, 3 }
+					},
+					{
+						{ "UV", Engine::BufferLayoutSemanticType::Type_TexCoord, Engine::BufferLayoutType::Float32, 2 }
+					}
+				};
 
 				Engine::AssetRef<Engine::Shader> shader;
 				Engine::AssetManager::GetShaders().Load(

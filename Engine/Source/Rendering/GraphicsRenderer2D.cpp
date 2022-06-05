@@ -107,14 +107,13 @@ namespace Engine
 
 		// Loads the Sprite Shader.
 		{
-			Engine::BufferLayout bufferLayout = 
+			Engine::BufferLayout bufferLayout =
+			{
 				{
-					{ "POSITION", offsetof(GraphicsSpriteVertex, position),
-						sizeof(MathLib::Vector3), Engine::BufferLayoutType::FLOAT3 },
-					{ "TEXCOORD", offsetof(GraphicsSpriteVertex, uv),
-						sizeof(MathLib::Vector2), Engine::BufferLayoutType::FLOAT2 }
-				};
-
+					{ "Position", BufferLayoutSemanticType::Type_Position, BufferLayoutType::Float32, 3 },
+					{ "UV", BufferLayoutSemanticType::Type_TexCoord, BufferLayoutType::Float32, 2 }
+				}
+			};
 			Engine::TypedAssetManager<Engine::Shader>& shaderAssetCache =
 				Engine::AssetManager::GetShaders();
 			shaderAssetCache.Load<const Engine::BufferLayout&>(s_spriteShader,

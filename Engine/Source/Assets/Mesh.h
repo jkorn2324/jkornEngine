@@ -33,7 +33,8 @@ namespace Engine
 			: m_vertexBuffer(nullptr), m_vertices(nullptr)
 		{
 			m_vertices = new char[numVertices * sizeof(T)];
-			VertexBuffer::Create(m_vertexBuffer, nullptr, numVertices,
+			memset(m_vertices, 0, sizeof(T) * numVertices);
+			VertexBuffer::Create(m_vertexBuffer, m_vertices, numVertices,
 				sizeof(T));
 		}
 
@@ -52,8 +53,19 @@ namespace Engine
 		{
 		}
 
-		void SetVertices(const T* data, uint32_t numVertices)
+		void SetVertices(const T* data, uint32_t numVertices, bool resetVertexCount = true)
 		{
+			if (resetVertexCount)
+			{
+				if (m_vertexBuffer != nullptr
+					&& m_vertexBuffer->GetNumVerts() != numVertices
+					&& m_vertices != nullptr)
+				{
+					delete[] m_vertices;
+					m_vertices = new char[sizeof(T) * numVertices];
+				}
+			}
+
 			if (m_vertexBuffer != nullptr)
 			{
 				m_vertexBuffer->SetData(data, numVertices, sizeof(T));
@@ -182,11 +194,12 @@ namespace Engine
 		void SetColors(const MathLib::Vector4* vertexColors, size_t size);
 		const MathLib::Vector4* GetVertexColors() const { return m_vertexColors.GetRawBuffer(); }
 
-		void SetUV0(const std::initializer_list<MathLib::Vector2>& uvs);
-		void SetUV0(const MathLib::Vector2* uvs, size_t size);
-		const MathLib::Vector2* GetUV0() const { return m_uv0.GetRawBuffer(); }
+		void SetUVs(uint32_t index, const std::initializer_list<MathLib::Vector2>& uvs);
+		void SetUVs(uint32_t index, const MathLib::Vector2* uvs, size_t size);
+		const MathLib::Vector2* GetUVs(uint32_t index) const { return m_uvs[index].GetRawBuffer(); }
 
-		// TODO: Get & Set UVs (0-8)
+	private:
+		void RefreshVertexArray();
 
 	private:	
 		// Graphics Arrays
@@ -201,10 +214,8 @@ namespace Engine
 		MeshBuffer<MathLib::Vector3> m_bitangents;
 		MeshBuffer<MathLib::Vector4> m_vertexColors;
 
-		// TODO: Add more uv layers.
-		MeshBuffer<MathLib::Vector2> m_uv0;
-
-		// TODO: Add Mesh Layout & Link it to Shader
+		MeshBuffer<MathLib::Vector2>* m_uvs;
+		// TODO: Link Buffer Layout to Shader
 
 		uint32_t m_vertexCount;
 		uint32_t m_indexCount;

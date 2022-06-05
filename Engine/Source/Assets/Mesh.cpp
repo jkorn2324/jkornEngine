@@ -15,6 +15,9 @@
 
 namespace Engine
 {
+
+	static const uint32_t c_maxUVsCount = 8;
+
 	Mesh::Mesh()
 		: m_vertices(),
 		m_normals(),
@@ -24,8 +27,10 @@ namespace Engine
 		m_vertexCount(0),
 		m_indexCount(0),
 		m_skinned(false),
-		m_vertexArray(nullptr)
+		m_vertexArray(nullptr),
+		m_uvs(nullptr)
 	{
+		m_uvs = new MeshBuffer<MathLib::Vector2>[c_maxUVsCount];
 		VertexArray::Create(m_vertexArray);
 	}
 
@@ -37,7 +42,18 @@ namespace Engine
 		m_vertexColors.Release();
 		m_vertexArray->ClearVertexBuffers();
 
+		// Releases the UVs.
+		for (uint32_t i = 0; i < c_maxUVsCount; ++i)
+		{
+			MeshBuffer<MathLib::Vector2>& uvsCount = m_uvs[i];
+			uvsCount.Release();
+		}
+
+		delete[] m_uvs;
 		delete[] m_indices;
+
+		m_uvs = nullptr;
+		m_indices = nullptr;
 	}
 
 	void Mesh::SetIndices(const uint32_t* indices, uint32_t indexCount)
@@ -60,8 +76,15 @@ namespace Engine
 	{
 		if (m_vertexCount != vertexCount)
 		{
-			m_vertexArray->ClearVertexBuffers();
-			m_uv0.SetVertexCount(vertexCount);
+			if (m_vertexArray->GetNumVertexBuffers() > 0)
+			{
+				m_vertexArray->ClearVertexBuffers();
+			}
+			// Sets the vertex count.
+			for (uint32_t i = 0; i < c_maxUVsCount; ++i)
+			{
+				m_uvs[i].SetVertexCount(vertexCount);
+			}
 			m_vertices.SetVertexCount(vertexCount);
 			m_normals.SetVertexCount(vertexCount);
 			m_bitangents.SetVertexCount(vertexCount);
@@ -107,16 +130,18 @@ namespace Engine
 		m_vertexArray->AddVertexBuffer(m_vertexColors.GetVertexBuffer());
 	}
 
-	void Mesh::SetUV0(const std::initializer_list<MathLib::Vector2>& uvs)
+	void Mesh::SetUVs(uint32_t index, const std::initializer_list<MathLib::Vector2>& uvs)
 	{
-		SetUV0(reinterpret_cast<const MathLib::Vector2*>(&uvs), uvs.size());
+		SetUVs(index, reinterpret_cast<const MathLib::Vector2*>(&uvs), uvs.size());
 	}
 	
-	void Mesh::SetUV0(const MathLib::Vector2* uvs, size_t size)
+	void Mesh::SetUVs(uint32_t index, const MathLib::Vector2* uvs, size_t size)
 	{
-		m_uv0.SetVertices(uvs, (uint32_t)size);
+		if (index >= c_maxUVsCount) return;
+		MeshBuffer<MathLib::Vector2>& uvIn = m_uvs[index];
+		uvIn.SetVertices(uvs, (uint32_t)size);
 		// TODO: Better way of adding buffers.
-		m_vertexArray->AddVertexBuffer(m_uv0.GetVertexBuffer());
+		m_vertexArray->AddVertexBuffer(uvIn.GetVertexBuffer());
 	}
 
 	void Mesh::SetNormals(const std::initializer_list<MathLib::Vector3>& normals)
@@ -139,6 +164,11 @@ namespace Engine
 	void Mesh::RecalculateNormals()
 	{
 		// TODO: Recalculate the normals.
+	}
+
+	void Mesh::RefreshVertexArray()
+	{
+
 	}
 
 	uint32_t* Mesh::GetIndices() const

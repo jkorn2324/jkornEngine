@@ -7,43 +7,56 @@
 namespace Engine
 {
 
+	enum class BufferLayoutSemanticType
+	{
+		Type_Position,
+		Type_Normal,
+		Type_Tangent,
+		Type_Binormal,
+		Type_TexCoord,
+		Type_UV = Type_TexCoord,
+		Type_Color,
+		Type_Custom
+	};
+
 	enum class BufferLayoutType
 	{
-		BOOL,
+		Int8,
+		Bool = Int8,
 
-		INT,
-		INT2,
-		INT3,
-		INT4,
+		Int16,
+		Int32,
 
-		UINT,
-		UINT2,
-		UINT3,
-		UINT4,
-		
-		FLOAT,
-		FLOAT2,
-		FLOAT3,
-		FLOAT4
+		Uint8,
+		Uint16,
+		Uint32,
+
+		Float16,
+		Float32,
+
+		SNorm8,
+		SNorm16,
+
+		UNorm8,
+		UNorm16
 	};
 
 	static size_t GetStrideFromBufferLayoutType(const BufferLayoutType& layoutType)
 	{
 		switch (layoutType)
 		{
-			case BufferLayoutType::BOOL: return sizeof(bool);
-			case BufferLayoutType::INT: return sizeof(int32_t);
-			case BufferLayoutType::INT2: return sizeof(int32_t) * 2;
-			case BufferLayoutType::INT3: return sizeof(int32_t) * 3;
-			case BufferLayoutType::INT4: return sizeof(int32_t) * 4;
-			case BufferLayoutType::UINT: return sizeof(uint32_t);
-			case BufferLayoutType::UINT2: return sizeof(uint32_t) * 2;
-			case BufferLayoutType::UINT3: return sizeof(uint32_t) * 3;
-			case BufferLayoutType::UINT4: return sizeof(uint32_t) * 4;
-			case BufferLayoutType::FLOAT: return sizeof(float);
-			case BufferLayoutType::FLOAT2: return sizeof(float) * 2;
-			case BufferLayoutType::FLOAT3: return sizeof(float) * 3;
-			case BufferLayoutType::FLOAT4: return sizeof(float) * 4;
+		case BufferLayoutType::Int8: return sizeof(int8_t);
+		case BufferLayoutType::Int16: return sizeof(int16_t);
+		case BufferLayoutType::Int32: return sizeof(int32_t);
+		case BufferLayoutType::Uint8: return sizeof(uint8_t);
+		case BufferLayoutType::Uint16: return sizeof(uint16_t);
+		case BufferLayoutType::Uint32: return sizeof(uint32_t);
+		case BufferLayoutType::Float16: return sizeof(uint16_t);
+		case BufferLayoutType::Float32: return sizeof(float_t);
+		case BufferLayoutType::SNorm8: return sizeof(int8_t);
+		case BufferLayoutType::SNorm16: return sizeof(int16_t);
+		case BufferLayoutType::UNorm8: return sizeof(uint8_t);
+		case BufferLayoutType::UNorm16: return sizeof(uint16_t);
 		}
 		return 0;
 	}
@@ -52,47 +65,40 @@ namespace Engine
 
 	struct BufferLayoutParam
 	{
-		char name[MAX_SIZE_OF_NAME + 1];
-		uint32_t offset;
-		size_t stride;
+		std::string name;
+		BufferLayoutSemanticType semanticType;
 		BufferLayoutType layoutType;
-		uint32_t inputSlot;
+		uint32_t numValues = 1;
+		uint32_t semanticIndex = 0;
 
-		BufferLayoutParam(const std::string& name, uint32_t offset, BufferLayoutType layoutType, uint32_t inputSlot = 0)
-			: offset(offset), layoutType(layoutType), inputSlot(inputSlot)
+		size_t GetStride() const { return GetStrideFromBufferLayoutType(layoutType) * (size_t)numValues; }
+	};
+
+	struct BufferLayoutParameterSet
+	{
+		std::vector<BufferLayoutParam> parameters;
+
+		BufferLayoutParameterSet() : parameters() { }
+
+		BufferLayoutParameterSet(const BufferLayoutParam& param)
+			: parameters({ param })
 		{
-			stride = GetStrideFromBufferLayoutType(layoutType);
-			uint32_t nameSize = name.size() > MAX_SIZE_OF_NAME ?
-				MAX_SIZE_OF_NAME : (uint32_t)name.size();
-			std::memcpy(this->name, name.c_str(), nameSize);
-			this->name[nameSize] = 0;
 		}
 
-		BufferLayoutParam(const std::string& name, uint32_t offset, size_t stride, BufferLayoutType layoutType, uint32_t inputSlot = 0)
-			: offset(offset), stride(stride), layoutType(layoutType), inputSlot(inputSlot)
+		BufferLayoutParameterSet(const std::initializer_list<BufferLayoutParam>& params)
+			: parameters(params)
 		{
-			uint32_t nameSize = name.size() > MAX_SIZE_OF_NAME ? 
-				MAX_SIZE_OF_NAME : (uint32_t)name.size();
-			std::memcpy(this->name, name.c_str(), nameSize);
-			this->name[nameSize] = 0;
-		}
 
-		BufferLayoutParam(const BufferLayoutParam& param) 
-			: offset(param.offset), stride(param.stride), layoutType(param.layoutType), inputSlot(param.inputSlot)
-		{
-			uint32_t nameSize = sizeof(param.name) > 0 ? sizeof(param.name) : 1;
-			std::memcpy(name, param.name, nameSize);
-			name[nameSize - 1] = 0;
 		}
 	};
 
 	// TODO: Refactor the buffer layout.
 	struct BufferLayout
 	{
-		std::vector<BufferLayoutParam> parameters;
+		std::vector<BufferLayoutParameterSet> parameters;
 
 		BufferLayout() = default;
-		BufferLayout(const std::initializer_list<BufferLayoutParam>& initializerList)
+		BufferLayout(const std::initializer_list<BufferLayoutParameterSet>& initializerList)
 			: parameters(initializerList) { }
 		BufferLayout(const BufferLayout& layout)
 			: parameters(layout.parameters) { }
@@ -101,6 +107,16 @@ namespace Engine
 		{
 			parameters = layout.parameters;
 			return *this;
+		}
+
+		uint32_t GetTotalParamSize() const
+		{
+			uint32_t i = 0;
+			for (const BufferLayoutParameterSet& set : parameters)
+			{
+				i += (uint32_t)set.parameters.size();
+			}
+			return i;
 		}
 
 		uint32_t GetNumElements() const { return (uint32_t)parameters.size(); }

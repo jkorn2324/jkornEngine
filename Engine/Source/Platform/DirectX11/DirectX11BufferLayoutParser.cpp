@@ -6,179 +6,223 @@
 namespace Engine
 {
 
-	static DXGI_FORMAT GetFormatFromEnum(std::size_t stride, const BufferLayoutType& layoutType)
+	static bool GetSemanticNameFromType(std::string& out, BufferLayoutSemanticType semanticType)
 	{
-		switch (layoutType)
+		switch (semanticType)
 		{
-		case BufferLayoutType::FLOAT:	return DXGI_FORMAT_R32_FLOAT;
-		case BufferLayoutType::FLOAT2:	return DXGI_FORMAT_R32G32_FLOAT;
-		case BufferLayoutType::FLOAT3:	return DXGI_FORMAT_R32G32B32_FLOAT;
-		case BufferLayoutType::FLOAT4:	return DXGI_FORMAT_R32G32B32A32_FLOAT;
-		case BufferLayoutType::INT:
+		case BufferLayoutSemanticType::Type_Binormal:
 		{
-			std::size_t sizeOfStride = sizeof(stride);
-			if (sizeOfStride == sizeof(std::int16_t))
-			{
-				return DXGI_FORMAT_R16_SINT;
-			}
-			else if (sizeOfStride == sizeof(std::int8_t))
-			{
-				return DXGI_FORMAT_R8_SINT;
-			}
-			else if (sizeOfStride == sizeof(std::int32_t))
-			{
-				return DXGI_FORMAT_R32_SINT;
-			}
-			DebugAssert(false,
-				"Buffer stride components should be either 8, 16, or 32 Bytes");
-			break;
+			out = "BINORMAL";
+			return true;
 		}
-		case BufferLayoutType::INT2:
+		case BufferLayoutSemanticType::Type_Color:
 		{
-			std::size_t sizeOfStride = sizeof(stride) / 2;
-			if (sizeOfStride == sizeof(std::int16_t))
-			{
-				return DXGI_FORMAT_R16G16_SINT;
-			}
-			else if (sizeOfStride == sizeof(std::int8_t))
-			{
-				return DXGI_FORMAT_R8G8_SINT;
-			}
-			else if (sizeOfStride == sizeof(std::int32_t))
-			{
-				return DXGI_FORMAT_R32G32_SINT;
-			}
-			DebugAssert(false,
-				"Buffer stride components should be either 8, 16, or 32 Bytes");
-			break;
+			out = "COLOR";
+			return true;
 		}
-		case BufferLayoutType::INT3:
+		case BufferLayoutSemanticType::Type_Normal:
 		{
-			if (sizeof(stride) / 3 == sizeof(std::int32_t))
-			{
-				return DXGI_FORMAT_R32G32B32_SINT;
-			}
-			DebugAssert(false,
-				"Buffer Stride components should be 32 Bytes");
-			break;
+			out = "NORMAL";
+			return true;
 		}
-		case BufferLayoutType::INT4:
+		case BufferLayoutSemanticType::Type_Position:
 		{
-			std::size_t sizeOfStride = sizeof(stride) / 4;
-			if (sizeOfStride == sizeof(std::int16_t))
-			{
-				return DXGI_FORMAT_R16G16B16A16_SINT;
-			}
-			else if (sizeOfStride == sizeof(std::int8_t))
-			{
-				return DXGI_FORMAT_R8G8B8A8_SINT;
-			}
-			else if (sizeOfStride == sizeof(std::int32_t))
-			{
-				return DXGI_FORMAT_R32G32B32A32_SINT;
-			}
-			DebugAssert(false,
-				"Buffer stride components should be either 8, 16, or 32 Bytes");
-			break;
+			out = "POSITION";
+			return true;
 		}
-		case BufferLayoutType::UINT:
+		case BufferLayoutSemanticType::Type_Tangent:
 		{
-			std::size_t sizeOfStride = sizeof(stride);
-			if (sizeOfStride == sizeof(std::uint16_t))
-			{
-				return DXGI_FORMAT_R16_UINT;
-			}
-			else if (sizeOfStride == sizeof(std::uint8_t))
-			{
-				return DXGI_FORMAT_R8_UINT;
-			}
-			else if (sizeOfStride == sizeof(std::uint32_t))
-			{
-				return DXGI_FORMAT_R32_UINT;
-			}
-			DebugAssert(false,
-				"Buffer stride components should be either 8, 16, or 32 Bytes");
-			break;
+			out = "TANGENT";
+			return true;
 		}
-		case BufferLayoutType::UINT2:
+		case BufferLayoutSemanticType::Type_TexCoord:
 		{
-			std::size_t sizeOfStride = sizeof(stride) / 2;
-			if (sizeOfStride == sizeof(std::uint16_t))
-			{
-				return DXGI_FORMAT_R16G16_SINT;
-			}
-			else if (sizeOfStride == sizeof(std::uint8_t))
-			{
-				return DXGI_FORMAT_R8G8_SINT;
-			}
-			else if (sizeOfStride == sizeof(std::uint32_t))
-			{
-				return DXGI_FORMAT_R32G32_UINT;
-			}
-			DebugAssert(false,
-				"Buffer stride components should be either 8, 16, or 32 Bytes");
-			break;
+			out = "TEXCOORD";
+			return true;
 		}
-		case BufferLayoutType::UINT3:
+		}
+		return false;
+	}
+
+	static DXGI_FORMAT GetFormatFromParam(const BufferLayoutParam& param)
+	{
+		switch (param.layoutType)
 		{
-			if (sizeof(stride) / 3 == sizeof(std::uint32_t))
-			{
-				return DXGI_FORMAT_R32G32B32_UINT;
-			}
-			DebugAssert(false,
-				"Buffer Stride components should be 32 Bytes");
-			break;
-		}
-		case BufferLayoutType::UINT4:
+		case BufferLayoutType::Float16:
 		{
-			std::size_t sizeOfStride = sizeof(stride) / 4;
-			if (sizeOfStride == sizeof(std::uint16_t))
+			switch (param.numValues)
 			{
-				return DXGI_FORMAT_R16G16B16A16_UINT;
+			case 1: return DXGI_FORMAT_R16_FLOAT;
+			case 2: return DXGI_FORMAT_R16G16_FLOAT;
+			default: return DXGI_FORMAT_R16G16B16A16_FLOAT;
 			}
-			else if (sizeOfStride == sizeof(std::uint8_t))
-			{
-				return DXGI_FORMAT_R8G8B8A8_UINT;
-			}
-			else if (sizeOfStride == sizeof(std::uint32_t))
-			{
-				return DXGI_FORMAT_R32G32B32A32_UINT;
-			}
-			DebugAssert(false,
-				"Buffer stride components should be either 8, 16, or 32 Bytes");
-			break;
+			return DXGI_FORMAT_R16G16B16A16_FLOAT;
 		}
-		default:
-			DebugAssert(false, "Format from buffer layout type doesn't exist.");
+		case BufferLayoutType::Float32:
+		{
+			switch (param.numValues)
+			{
+			case 1: return DXGI_FORMAT_R32_FLOAT;
+			case 2: return DXGI_FORMAT_R32G32_FLOAT;
+			case 3: return DXGI_FORMAT_R32G32B32_FLOAT;
+			default: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+			}
+			return DXGI_FORMAT_R32G32B32A32_FLOAT;
+		}
+		case BufferLayoutType::Int8:
+		{
+			switch (param.numValues)
+			{
+			case 1: return DXGI_FORMAT_R8_SINT;
+			case 2: return DXGI_FORMAT_R8G8_SINT;
+			default: return DXGI_FORMAT_R8G8B8A8_SINT;
+			}
+			return DXGI_FORMAT_R8G8B8A8_SINT;
+		}
+		case BufferLayoutType::Int16:
+		{
+			switch (param.numValues)
+			{
+			case 1: return DXGI_FORMAT_R16_SINT;
+			case 2: return DXGI_FORMAT_R16G16_SINT;
+			default: return DXGI_FORMAT_R16G16B16A16_SINT;
+			}
+			return DXGI_FORMAT_R16G16B16A16_SINT;
+		}
+		case BufferLayoutType::Int32:
+		{
+			switch (param.numValues)
+			{
+			case 1: return DXGI_FORMAT_R32_SINT;
+			case 2: return DXGI_FORMAT_R32G32_SINT;
+			case 3: return DXGI_FORMAT_R32G32B32_SINT;
+			default: return DXGI_FORMAT_R32G32B32A32_SINT;
+			}
+			return DXGI_FORMAT_R32G32B32A32_SINT;
+		}
+		case BufferLayoutType::Uint8:
+		{
+			switch (param.numValues)
+			{
+			case 1: return DXGI_FORMAT_R8_UINT;
+			case 2: return DXGI_FORMAT_R8G8_UINT;
+			default: return DXGI_FORMAT_R8G8B8A8_UINT;
+			}
+			return DXGI_FORMAT_R8G8B8A8_UINT;
+		}
+		case BufferLayoutType::Uint16:
+		{
+			switch (param.numValues)
+			{
+			case 1: return DXGI_FORMAT_R16_UINT;
+			case 2: return DXGI_FORMAT_R16G16_UINT;
+			default: return DXGI_FORMAT_R16G16B16A16_UINT;
+			}
+			return DXGI_FORMAT_R16G16B16A16_UINT;
+		}
+		case BufferLayoutType::Uint32:
+		{
+			switch (param.numValues)
+			{
+			case 1: return DXGI_FORMAT_R32_UINT;
+			case 2: return DXGI_FORMAT_R32G32_UINT;
+			case 3: return DXGI_FORMAT_R32G32B32_UINT;
+			default: return DXGI_FORMAT_R32G32B32A32_UINT;
+			}
+			return DXGI_FORMAT_R32G32B32A32_UINT;
+		}
+		case BufferLayoutType::SNorm8:
+		{
+			switch (param.numValues)
+			{
+			case 1: return DXGI_FORMAT_R8_SNORM;
+			case 2: return DXGI_FORMAT_R8G8_SNORM;
+			default: return DXGI_FORMAT_R8G8B8A8_SNORM;
+			}
+			return DXGI_FORMAT_R8G8B8A8_SNORM;
+		}
+		case BufferLayoutType::SNorm16:
+		{
+			switch (param.numValues)
+			{
+			case 1: return DXGI_FORMAT_R16_SNORM;
+			case 2: return DXGI_FORMAT_R16G16_SNORM;
+			default: return DXGI_FORMAT_R16G16B16A16_SNORM;
+			}
+			return DXGI_FORMAT_R16G16B16A16_SNORM;
+		}
+		case BufferLayoutType::UNorm8:
+		{
+			switch (param.numValues)
+			{
+			case 1: return DXGI_FORMAT_R8_UNORM;
+			case 2: return DXGI_FORMAT_R8G8_UNORM;
+			default: return DXGI_FORMAT_R8G8B8A8_UNORM;
+			}
+			return DXGI_FORMAT_R8G8B8A8_UNORM;
+		}
+		case BufferLayoutType::UNorm16:
+		{
+			switch (param.numValues)
+			{
+			case 1: return DXGI_FORMAT_R16_UNORM;
+			case 2: return DXGI_FORMAT_R16G16_UNORM;
+			default: return DXGI_FORMAT_R16G16B16A16_UNORM;
+			}
+			return DXGI_FORMAT_R16G16B16A16_UNORM;
+		}
 		}
 		return DXGI_FORMAT_UNKNOWN;
 	}
 
 	DirectX11BufferLayoutParser::DirectX11BufferLayoutParser(const BufferLayout& bufferLayout)
-		: m_numElements((uint32_t)bufferLayout.parameters.size()),
+		: m_numElements(bufferLayout.GetTotalParamSize()),
 		m_inputElementDesc(nullptr)
 	{
 		m_inputElementDesc = new D3D11_INPUT_ELEMENT_DESC[m_numElements];
-		// Creates the input element description.
-		for (std::uint32_t i = 0; i < m_numElements; i++)
+		uint32_t numInputSlots = bufferLayout.GetNumElements();
+
+		uint32_t descSlot = 0;
+		for (uint32_t inputSlot = 0; inputSlot < numInputSlots; ++inputSlot)
 		{
-			const BufferLayoutParam& param = *(bufferLayout.parameters.begin() + i);
-			D3D11_INPUT_ELEMENT_DESC description;
-			ZeroMemory(&description, sizeof(description));
+			const BufferLayoutParameterSet& params = *(bufferLayout.parameters.begin() + inputSlot);
+			uint32_t currentOffset = 0;
+			for (size_t paramIndex = 0; paramIndex < params.parameters.size(); ++paramIndex)
+			{
+				if (descSlot >= m_numElements) return;
+				const BufferLayoutParam& param = params.parameters[paramIndex];
+				D3D11_INPUT_ELEMENT_DESC description;
+				ZeroMemory(&description, sizeof(description));
 
-			// TODO: Make it so that semantic indices can change.
-			description.SemanticIndex = 0;
-			description.InputSlot = param.inputSlot;
-			description.InstanceDataStepRate = 0;
+				std::string outSemanticName;
+				if (GetSemanticNameFromType(outSemanticName, param.semanticType))
+				{
+					char* semanticName = new char[outSemanticName.size() + 1];
+					semanticName[outSemanticName.size()] = 0;
+					std::memcpy(semanticName,
+						outSemanticName.c_str(), outSemanticName.size());
+					description.SemanticName = semanticName;
+				}
+				else
+				{
+					char* semanticName = new char[param.name.size() + 1];
+					semanticName[param.name.size()] = 0;
+					std::memcpy(semanticName,
+						param.name.c_str(), param.name.size());
+					description.SemanticName = semanticName;
+				}
 
-			description.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
-			description.SemanticName = new char[MAX_SIZE_OF_NAME + 1];
-			std::memcpy(const_cast<char*>(description.SemanticName),
-				param.name, MAX_SIZE_OF_NAME);
-			description.Format = GetFormatFromEnum(
-				param.stride, param.layoutType);
-			description.AlignedByteOffset = param.offset;
-			m_inputElementDesc[i] = description;
+				description.SemanticIndex = param.semanticIndex;
+				description.InputSlot = inputSlot;
+				description.InstanceDataStepRate = 0;
+
+				description.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
+				description.Format = GetFormatFromParam(param);
+				description.AlignedByteOffset = currentOffset;
+				m_inputElementDesc[descSlot] = description;
+				currentOffset += param.GetStride();
+				descSlot++;
+			}
 		}
 	}
 	

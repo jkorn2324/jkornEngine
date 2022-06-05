@@ -29,11 +29,23 @@ namespace Engine
 			fileWriter.BeginArray("Elements");
 			for (uint32_t i = 0; i < shader.m_bufferLayout.GetNumElements(); i++)
 			{
+				BufferLayoutParameterSet& params = shader.m_bufferLayout.parameters[i];
+
 				fileWriter.BeginObject();
-				BufferLayoutParam& param = shader.m_bufferLayout.parameters[i];
-				fileWriter.Write("Name", (std::string)param.name);
-				fileWriter.Write("LayoutType", (uint32_t)param.layoutType);
-				fileWriter.Write("Offset", param.offset);
+				fileWriter.Write("NumParams", params.parameters.size());
+				fileWriter.BeginArray("ParamsGroup");
+				
+				for (const BufferLayoutParam& param : params.parameters)
+				{
+					fileWriter.BeginObject();
+					fileWriter.Write("Name", param.name);
+					fileWriter.Write("LayoutType", (uint32_t)param.layoutType);
+					fileWriter.Write("NumValues", (uint32_t)param.numValues);
+					fileWriter.Write("SemanticIndex", (uint32_t)param.semanticIndex);
+					fileWriter.Write("SemanticType", (uint32_t)param.semanticType);
+					fileWriter.EndObject();
+				}
+				fileWriter.EndArray();
 				fileWriter.EndObject();
 			}
 			fileWriter.EndArray();
@@ -52,23 +64,46 @@ namespace Engine
 		rapidjson::Document& document = fileParser.GetDocument();
 		if (document.HasMember("BufferLayout"))
 		{
-			rapidjson::Value& bufferLayout = document["BufferLayout"].GetObject();
+			rapidjson::Value& bufferLayout = document["BufferLayout"].GetArray();
 			uint32_t numElements;
 			ReadUint32(bufferLayout, "NumElements", numElements);
-
-			std::string elementName;
-			BufferLayoutType bufferLayoutType;
-			uint32_t offset;
 
 			rapidjson::Value& elements = document["Elements"].GetArray();
 			for (uint32_t i = 0; i < numElements; ++i)
 			{
 				rapidjson::Value& elementObject = elements[i].GetObject();
-				ReadString(elementObject, "Name", elementName);
-				ReadEnum<BufferLayoutType>(elementObject, "LayoutType", bufferLayoutType);
-				ReadUint32(elementObject, "Offset", offset);
-				shader.m_bufferLayout.parameters.push_back(
-					BufferLayoutParam(elementName, offset, bufferLayoutType));
+				if (elementObject.HasMember("NumParams"))
+				{
+					uint32_t numParams;
+					ReadUint32(elementObject, "NumParams", numParams);
+					
+					BufferLayoutParameterSet parameters;
+					rapidjson::Value& paramsGroup = elementObject["ParamsGroup"].GetArray();
+					for (uint32_t i = 0; i < numParams; ++i)
+					{
+						rapidjson::Value& paramObject = paramsGroup[i].GetObject();
+						std::string elementName;
+						BufferLayoutType bufferLayoutType;
+						BufferLayoutSemanticType semanticType;
+						uint32_t semanticIndex;
+						uint32_t numValues;
+
+						ReadString(paramObject, "Name", elementName);
+						ReadEnum(paramObject, "LayoutType", bufferLayoutType);
+						ReadEnum(paramObject, "SemanticType", semanticType);
+						ReadUint32(paramObject, "SemanticIndex", semanticIndex);
+						ReadUint32(paramObject, "NumValues", numValues);
+
+						parameters.parameters.push_back(
+							{ elementName, semanticType, bufferLayoutType, numValues, semanticIndex });
+					}
+
+					// Pushes back the parameters to the buffer layout.
+					if (parameters.parameters.size() > 0)
+					{
+						shader.m_bufferLayout.parameters.push_back(parameters);
+					}
+				}
 			}
 		}
 		return true;

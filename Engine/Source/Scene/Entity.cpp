@@ -53,7 +53,8 @@ namespace Engine
         {
             return false;
         }
-        return m_scene->m_entityRegistry.valid(m_entity);
+        return *this != Entity::None
+            && m_scene->m_entityRegistry.valid(m_entity);
     }
     
     void Entity::BindEventFunc(const EventFunc& func)
