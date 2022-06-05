@@ -110,8 +110,8 @@ namespace Engine
 			Engine::BufferLayout bufferLayout =
 			{
 				{
-					{ "Position", BufferLayoutSemanticType::Type_Position, BufferLayoutType::Float32, 3 },
-					{ "UV", BufferLayoutSemanticType::Type_TexCoord, BufferLayoutType::Float32, 2 }
+					Engine::BufferLayoutParam::Position0,
+					Engine::BufferLayoutParam::Uv0
 				}
 			};
 			Engine::TypedAssetManager<Engine::Shader>& shaderAssetCache =

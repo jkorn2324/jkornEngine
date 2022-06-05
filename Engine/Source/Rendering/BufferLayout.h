@@ -72,6 +72,13 @@ namespace Engine
 		uint32_t semanticIndex = 0;
 
 		size_t GetStride() const { return GetStrideFromBufferLayoutType(layoutType) * (size_t)numValues; }
+
+		static const BufferLayoutParam Position0;
+		static const BufferLayoutParam Normal0;
+		static const BufferLayoutParam Binormal0;
+		static const BufferLayoutParam Tangent0;
+		static const BufferLayoutParam Color4_0;
+		static const BufferLayoutParam Uv0;
 	};
 
 	struct BufferLayoutParameterSet

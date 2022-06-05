@@ -110,13 +110,13 @@ namespace Editor
 				Engine::BufferLayout bufferLayout = 
 				{ 
 					{
-						{ "Position", Engine::BufferLayoutSemanticType::Type_Position, Engine::BufferLayoutType::Float32, 3 }
+						Engine::BufferLayoutParam::Position0
 					},
 					{
-						{ "Normal", Engine::BufferLayoutSemanticType::Type_Normal, Engine::BufferLayoutType::Float32, 3 }
+						Engine::BufferLayoutParam::Normal0
 					},
 					{
-						{ "UV", Engine::BufferLayoutSemanticType::Type_TexCoord, Engine::BufferLayoutType::Float32, 2 }
+						Engine::BufferLayoutParam::Uv0
 					}
 				};
 

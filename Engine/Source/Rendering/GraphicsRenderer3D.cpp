@@ -256,13 +256,13 @@ namespace Engine
 			Engine::BufferLayout bufferLayout =
 			{
 				{
-					{ "Position", BufferLayoutSemanticType::Type_Position, BufferLayoutType::Float32, 3 }
+					Engine::BufferLayoutParam::Position0
 				},
 				{
-					{ "Normal", BufferLayoutSemanticType::Type_Normal, BufferLayoutType::Float32, 3 }
+					Engine::BufferLayoutParam::Normal0
 				},
 				{
-					{ "UV", BufferLayoutSemanticType::Type_TexCoord, BufferLayoutType::Float32, 2 }
+					Engine::BufferLayoutParam::Uv0
 				}
 			};
 			AssetRef<Shader> defaultShader;
