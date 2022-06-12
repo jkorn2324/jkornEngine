@@ -165,7 +165,8 @@ namespace Engine
 		uint32_t GetNumVertices() const;
 
 		void RecalculateNormals();
-		
+	
+		void SetIndices(const std::vector<uint32_t>& indices);
 		void SetIndices(const uint32_t* indices, uint32_t indexCount);
 		uint32_t* GetIndices() const;
 		uint32_t GetIndexCount() const;
@@ -179,22 +180,26 @@ namespace Engine
 		uint32_t GetVertexCount() const { return m_vertexCount; }
 		
 		void SetVertices(const MathLib::Vector3* vertices, size_t verticesSize);
-		void SetVertices(const std::initializer_list<MathLib::Vector3>& vertices);
+		void SetVertices(const std::vector<MathLib::Vector3>& vertices);
 		const MathLib::Vector3* GetVertices() const { return m_vertices.GetRawBuffer(); }
 		
 		void SetNormals(const MathLib::Vector3* normals, size_t normalsSize);
-		void SetNormals(const std::initializer_list<MathLib::Vector3>& vertices);
+		void SetNormals(const std::vector<MathLib::Vector3>& normals);
 		const MathLib::Vector3* GetNormals() const { return m_normals.GetRawBuffer(); }
 
-		void SetBitangents(const MathLib::Vector3* bitangents, size_t tangentsSize);
-		void SetBitangents(const std::initializer_list<MathLib::Vector3>& bitangents);
-		const MathLib::Vector3* GetBitangents() const { return m_bitangents.GetRawBuffer(); }
+		void SetBinormals(const MathLib::Vector3* binormals, size_t normalsSize);
+		void SetBinormals(const std::vector<MathLib::Vector3>& binormals);
+		const MathLib::Vector3* GetBinormals() const { return m_binormals.GetRawBuffer(); }
 
-		void SetColors(const std::initializer_list<MathLib::Vector4>& colors);
+		void SetTangents(const MathLib::Vector3* tangents, size_t tangentsSize);
+		void SetTangents(const std::vector<MathLib::Vector3>& tangents);
+		const MathLib::Vector3* GetTangents() const { return m_tangents.GetRawBuffer(); }
+
+		void SetColors(const std::vector<MathLib::Vector4>& colors);
 		void SetColors(const MathLib::Vector4* vertexColors, size_t size);
 		const MathLib::Vector4* GetVertexColors() const { return m_vertexColors.GetRawBuffer(); }
 
-		void SetUVs(uint32_t index, const std::initializer_list<MathLib::Vector2>& uvs);
+		void SetUVs(uint32_t index, const std::vector<MathLib::Vector2>& uvs);
 		void SetUVs(uint32_t index, const MathLib::Vector2* uvs, size_t size);
 		const MathLib::Vector2* GetUVs(uint32_t index) const { return m_uvs[index].GetRawBuffer(); }
 
@@ -211,7 +216,8 @@ namespace Engine
 		// Vertices Data
 		MeshBuffer<MathLib::Vector3> m_vertices;
 		MeshBuffer<MathLib::Vector3> m_normals;
-		MeshBuffer<MathLib::Vector3> m_bitangents;
+		MeshBuffer<MathLib::Vector3> m_binormals;
+		MeshBuffer<MathLib::Vector3> m_tangents;
 		MeshBuffer<MathLib::Vector4> m_vertexColors;
 
 		MeshBuffer<MathLib::Vector2>* m_uvs;

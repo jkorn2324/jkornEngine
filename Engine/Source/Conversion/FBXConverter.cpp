@@ -13,7 +13,7 @@ namespace Engine
 	// Position, UV, Normal
 
 
-	static bool ConvertToMesh(FbxMesh* mesh, Mesh& outMesh)
+	static bool ConvertToMesh(fbxsdk::FbxMesh* mesh, Mesh& outMesh)
 	{
 		if (!mesh) return false;
 
@@ -23,50 +23,65 @@ namespace Engine
 			converter.Triangulate(mesh, true);
 		}
 
-		// TODO: Implementation
-#if 0
 		// Stores the results per each vertex.
-		std::vector<Mathlib::Vector3> outVertices(mesh->GetControlPointsCount());
-		std::vector<uint32_t> outIndices;
+		std::vector<MathLib::Vector3> outVertices(mesh->GetControlPointsCount());
+		std::vector<MathLib::Vector3> outNormals(mesh->GetControlPointsCount());
+		std::vector<MathLib::Vector3> outBinormals(mesh->GetControlPointsCount());
+		std::vector<MathLib::Vector3> outTangents(mesh->GetControlPointsCount());
 
+
+		uint32_t polygonCount = mesh->GetPolygonCount();
+
+		std::vector<uint32_t> outIndices;
 		// Reads from the Fbx Mesh.
 		{
-			fbxsdk::FbxStringList uvSetList;
-			mesh->GetUVSetNames(uvSetList);
-			// TODO: Get More than one element uv set list.
-			const FbxGeometryElementUV* uv = mesh->GetElementUV(uvSetList.GetStringAt(0));
+			{
+				std::vector<MathLib::Vector2> uvsTempArr;
+				fbxsdk::FbxStringList uvSetList;
+				mesh->GetUVSetNames(uvSetList);
+				for (uint32_t uv = 0; uv < uvSetList.GetCount(); ++uv)
+				{
+					uvsTempArr.clear();
+					FbxGeometryElementUV* uvElement = mesh->GetElementUV(uvSetList.GetStringAt(uv));
+					if (!uvElement) break;
 
-			uint32_t polygonCount = mesh->GetPolygonCount();
+					for (uint32_t i = 0; i < polygonCount; ++i)
+					{
+						uint32_t vertexIndices = mesh->GetPolygonSize(i);
+						for (uint32_t vertexIndex = 0; vertexIndex < vertexIndices; ++vertexIndex)
+						{
+							uvsTempArr.push_back(*reinterpret_cast<MathLib::Vector2*>(
+								&uvElement->GetDirectArray().GetAt(vertexIndex)));
+						}
+					}
+					outMesh.SetUVs(uv, uvsTempArr);
+				}
+			}
+			
 			for (uint32_t i = 0; i < polygonCount; ++i)
 			{
 				uint32_t vertexIndices = mesh->GetPolygonSize(i);
 				for (uint32_t vertexIndex = 0; vertexIndex < vertexIndices; ++vertexIndex)
 				{
 					uint32_t index = mesh->GetPolygonVertex(i, vertexIndex);
-					size_t currentIndex = outVertices.size();
 
-					fbxsdk::FbxVector4 normal;
-					mesh->GetPolygonVertexNormal(i, vertexIndex, normal);
-
-					MeshVertex vertex;
-					if (uv)
-					{
-						uint32_t uvIndex = uv->GetIndexArray().GetAt(index);
-						std::memcpy(&vertex.uv, &uv->GetDirectArray().GetAt(uvIndex), sizeof(MathLib::Vector2));
-					}
-					std::memcpy(&vertex.pos,
-						&mesh->GetControlPointAt(index), sizeof(MathLib::Vector3));
-					std::memcpy(&vertex.normal, &normal, sizeof(MathLib::Vector3));
+					outVertices.push_back(*reinterpret_cast<MathLib::Vector3*>(
+						&mesh->GetControlPointAt(index)));
+					outNormals.push_back(*reinterpret_cast<MathLib::Vector3*>(
+						mesh->GetElementNormal(index)));
+					outBinormals.push_back(*reinterpret_cast<MathLib::Vector3*>(
+						mesh->GetElementBinormal(index)));
+					outTangents.push_back(*reinterpret_cast<MathLib::Vector3*>(
+						mesh->GetElementTangent(index)));
+					outIndices.push_back(index);
 				}
 			}
 		}
-
-		// TODO: Implementation
-		outMesh.SetVertices(reinterpret_cast<MeshVertex*>(&outVertices), 
-			sizeof(MeshVertex), (uint32_t)outVertices.size());
-		outMesh.SetIndices(reinterpret_cast<uint32_t*>(&outIndices), 
-			(uint32_t)outIndices.size());
-#endif
+		outMesh.SetVertices(outVertices);
+		outMesh.SetIndices(outIndices);
+		outMesh.SetNormals(outNormals);
+		outMesh.SetBinormals(outBinormals);
+		outMesh.SetTangents(outTangents);
 	}
 
 	FBXConverter::FBXConverter(const char* fileName)

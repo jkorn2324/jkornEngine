@@ -21,7 +21,8 @@ namespace Engine
 	Mesh::Mesh()
 		: m_vertices(),
 		m_normals(),
-		m_bitangents(),
+		m_binormals(),
+		m_tangents(),
 		m_vertexColors(),
 		m_indices(nullptr),
 		m_vertexCount(0),
@@ -38,7 +39,8 @@ namespace Engine
 	{
 		m_vertices.Release();
 		m_normals.Release();
-		m_bitangents.Release();
+		m_binormals.Release();
+		m_tangents.Release();
 		m_vertexColors.Release();
 		m_vertexArray->ClearVertexBuffers();
 
@@ -54,6 +56,11 @@ namespace Engine
 
 		m_uvs = nullptr;
 		m_indices = nullptr;
+	}
+
+	void Mesh::SetIndices(const std::vector<uint32_t>& indices)
+	{
+		SetIndices(&indices[0], indices.size());
 	}
 
 	void Mesh::SetIndices(const uint32_t* indices, uint32_t indexCount)
@@ -87,16 +94,16 @@ namespace Engine
 			}
 			m_vertices.SetVertexCount(vertexCount);
 			m_normals.SetVertexCount(vertexCount);
-			m_bitangents.SetVertexCount(vertexCount);
+			m_binormals.SetVertexCount(vertexCount);
 			m_vertexColors.SetVertexCount(vertexCount);
 		}
 		m_vertexCount = vertexCount;
 
 	}
 
-	void Mesh::SetVertices(const std::initializer_list<MathLib::Vector3>& vertices)
+	void Mesh::SetVertices(const std::vector<MathLib::Vector3>& vertices)
 	{
-		SetVertices(reinterpret_cast<const MathLib::Vector3*>(&vertices), vertices.size());
+		SetVertices(&vertices[0], vertices.size());
 	}
 
 	void Mesh::SetVertices(const MathLib::Vector3* vertices, size_t verticesCount)
@@ -106,21 +113,33 @@ namespace Engine
 		m_vertexArray->AddVertexBuffer(m_vertices.GetVertexBuffer());
 	}
 
-	void Mesh::SetBitangents(const std::initializer_list<MathLib::Vector3>& bitangents)
+	void Mesh::SetBinormals(const std::vector<MathLib::Vector3>& bitangents)
 	{
-		SetBitangents(reinterpret_cast<const MathLib::Vector3*>(&bitangents), bitangents.size());
+		SetBinormals(&bitangents[0], bitangents.size());
 	}
 
-	void Mesh::SetBitangents(const MathLib::Vector3* bitangents, size_t tangentsSize)
+	void Mesh::SetBinormals(const MathLib::Vector3* bitangents, size_t tangentsSize)
 	{
-		m_bitangents.SetVertices(bitangents, (uint32_t)tangentsSize);
+		m_binormals.SetVertices(bitangents, (uint32_t)tangentsSize);
 		// TODO: Better way of adding buffers.
-		m_vertexArray->AddVertexBuffer(m_bitangents.GetVertexBuffer());
+		m_vertexArray->AddVertexBuffer(m_binormals.GetVertexBuffer());
 	}
 
-	void Mesh::SetColors(const std::initializer_list<MathLib::Vector4>& colors)
+	void Mesh::SetTangents(const MathLib::Vector3* tangents, size_t tangentsSize)
 	{
-		SetColors(reinterpret_cast<const MathLib::Vector4*>(&colors), colors.size());
+		m_tangents.SetVertices(tangents, (uint32_t)tangentsSize);
+		// TODO: Better way of adding buffers.
+		m_vertexArray->AddVertexBuffer(m_tangents.GetVertexBuffer());
+	}
+
+	void Mesh::SetTangents(const std::vector<MathLib::Vector3>& tangents)
+	{
+		SetTangents(&tangents[0], tangents.size());
+	}
+
+	void Mesh::SetColors(const std::vector<MathLib::Vector4>& colors)
+	{
+		SetColors(&colors[0], colors.size());
 	}
 
 	void Mesh::SetColors(const MathLib::Vector4* vertexColors, size_t size)
@@ -130,11 +149,12 @@ namespace Engine
 		m_vertexArray->AddVertexBuffer(m_vertexColors.GetVertexBuffer());
 	}
 
-	void Mesh::SetUVs(uint32_t index, const std::initializer_list<MathLib::Vector2>& uvs)
-	{
-		SetUVs(index, reinterpret_cast<const MathLib::Vector2*>(&uvs), uvs.size());
-	}
 	
+	void Mesh::SetUVs(uint32_t index, const std::vector<MathLib::Vector2>& uvs)
+	{
+		SetUVs(index, &uvs[0], uvs.size());
+	}
+
 	void Mesh::SetUVs(uint32_t index, const MathLib::Vector2* uvs, size_t size)
 	{
 		if (index >= c_maxUVsCount) return;
@@ -144,9 +164,9 @@ namespace Engine
 		m_vertexArray->AddVertexBuffer(uvIn.GetVertexBuffer());
 	}
 
-	void Mesh::SetNormals(const std::initializer_list<MathLib::Vector3>& normals)
+	void Mesh::SetNormals(const std::vector<MathLib::Vector3>& normals)
 	{
-		SetNormals(reinterpret_cast<const MathLib::Vector3*>(&normals), normals.size());
+		SetNormals(&normals[0], normals.size());
 	}
 
 	void Mesh::SetNormals(const MathLib::Vector3* normals, size_t normalsSize)
