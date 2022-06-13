@@ -253,21 +253,9 @@ namespace Engine
 					{"c_materialColor", LayoutType_Vector4 }
 				});
 
-			Engine::BufferLayout bufferLayout =
-			{
-				{
-					Engine::BufferLayoutParam::Position0
-				},
-				{
-					Engine::BufferLayoutParam::Normal0
-				},
-				{
-					Engine::BufferLayoutParam::Uv0
-				}
-			};
 			AssetRef<Shader> defaultShader;
 			AssetManager::GetShaders().Load(defaultShader,
-					L"Shaders/Unlit-VertUvPosShader.hlsl", bufferLayout);
+					L"Shaders/Unlit-VertUvPosShader.hlsl", Mesh::c_defaultLayout);
 			s_defaultMaterial->SetShader(defaultShader);
 		}
 
@@ -281,9 +269,8 @@ namespace Engine
 		{
 			AssetManager::GetMeshes().Cache(s_cubeMesh, L"DefaultCube");
 
-			// TODO: Implementation
 			s_cubeMesh->SetVertexCount(sizeof(s_cubeMeshVertexPositions) / sizeof(MathLib::Vector3));
-			s_cubeMesh->SetVertices(s_cubeMeshVertexPositions,
+			s_cubeMesh->SetPositions(s_cubeMeshVertexPositions,
 				sizeof(s_cubeMeshVertexPositions) / sizeof(MathLib::Vector3));
 			s_cubeMesh->SetNormals(s_cubeMeshNormals,
 				sizeof(s_cubeMeshNormals) / sizeof(MathLib::Vector3));

@@ -8,7 +8,6 @@
 
 namespace Engine
 {
-
 	bool VertexArray::Create(VertexArray** outVertexArray)
 	{
 		switch (RenderingAPI::GetRenderingAPIType())

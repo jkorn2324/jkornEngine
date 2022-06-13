@@ -17,6 +17,7 @@ namespace Engine
 		explicit DirectX11VertexArray();
 		~DirectX11VertexArray();
 
+		void SetVertexBuffers(const std::vector<std::shared_ptr<VertexBuffer>>& buffers) override;
 		void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer) override;
 		bool GetVertexBuffer(std::shared_ptr<VertexBuffer>& buf, uint32_t index) const override;
 

@@ -96,6 +96,14 @@ namespace Engine
 				m_vertices, vertexCount, sizeof(T));
 		}
 
+		void SetBufferLayout(const BufferLayoutParameterSet& set)
+		{
+			if (m_vertexBuffer)
+			{
+				m_vertexBuffer->SetBufferLayoutParameters(set);
+			}
+		}
+
 		const std::shared_ptr<VertexBuffer>& GetVertexBuffer() const { return m_vertexBuffer; }
 
 		const T* GetRawBuffer() const { return reinterpret_cast<T*>(m_vertices); }
@@ -162,8 +170,6 @@ namespace Engine
 		explicit Mesh();
 		~Mesh();
 
-		uint32_t GetNumVertices() const;
-
 		void RecalculateNormals();
 	
 		void SetIndices(const std::vector<uint32_t>& indices);
@@ -176,12 +182,14 @@ namespace Engine
 		void SetSkinned(bool skinned) { m_skinned = skinned; }
 		bool IsSkinned() const { return m_skinned; }
 
+		void SetMeshLayout(const BufferLayout& bufferLayout);
+
 		void SetVertexCount(uint32_t vertexCount);
 		uint32_t GetVertexCount() const { return m_vertexCount; }
 		
-		void SetVertices(const MathLib::Vector3* vertices, size_t verticesSize);
-		void SetVertices(const std::vector<MathLib::Vector3>& vertices);
-		const MathLib::Vector3* GetVertices() const { return m_vertices.GetRawBuffer(); }
+		void SetPositions(const MathLib::Vector3* vertices, size_t verticesSize);
+		void SetPositions(const std::vector<MathLib::Vector3>& vertices);
+		const MathLib::Vector3* GetPositions() const { return m_positions.GetRawBuffer(); }
 		
 		void SetNormals(const MathLib::Vector3* normals, size_t normalsSize);
 		void SetNormals(const std::vector<MathLib::Vector3>& normals);
@@ -214,20 +222,22 @@ namespace Engine
 		uint32_t* m_indices;
 		
 		// Vertices Data
-		MeshBuffer<MathLib::Vector3> m_vertices;
+		MeshBuffer<MathLib::Vector3> m_positions;
 		MeshBuffer<MathLib::Vector3> m_normals;
 		MeshBuffer<MathLib::Vector3> m_binormals;
 		MeshBuffer<MathLib::Vector3> m_tangents;
 		MeshBuffer<MathLib::Vector4> m_vertexColors;
-
 		MeshBuffer<MathLib::Vector2>* m_uvs;
-		// TODO: Link Buffer Layout to Shader
 
+		BufferLayout m_bufferLayout;
 		uint32_t m_vertexCount;
 		uint32_t m_indexCount;
 
 		bool m_skinned;
 
 		SERIALIZABLE_ASSET(Mesh);
+
+	public:
+		static const BufferLayout c_defaultLayout;
 	};
 }

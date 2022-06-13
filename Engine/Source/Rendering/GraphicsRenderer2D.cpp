@@ -98,6 +98,10 @@ namespace Engine
 		{
 			VertexBuffer::Create(&s_spriteVertexBuffer,
 				&vertices, sizeof(vertices) / sizeof(vertices[0]), sizeof(GraphicsSpriteVertex));
+			s_spriteVertexBuffer->SetBufferLayoutParameters({
+				BufferLayoutParam::Position0,
+				BufferLayoutParam::Uv0
+			});
 		}
 		if (s_spriteIndexBuffer == nullptr)
 		{
@@ -107,17 +111,11 @@ namespace Engine
 
 		// Loads the Sprite Shader.
 		{
-			Engine::BufferLayout bufferLayout =
-			{
-				{
-					Engine::BufferLayoutParam::Position0,
-					Engine::BufferLayoutParam::Uv0
-				}
-			};
 			Engine::TypedAssetManager<Engine::Shader>& shaderAssetCache =
 				Engine::AssetManager::GetShaders();
-			shaderAssetCache.Load<const Engine::BufferLayout&>(s_spriteShader,
-				L"Shaders/SpriteShader.hlsl", bufferLayout);
+			shaderAssetCache.Load(s_spriteShader,
+				L"Shaders/SpriteShader.hlsl", 
+				BufferLayout{ s_spriteVertexBuffer->GetBufferLayoutParameters() });
 
 			Engine::TypedAssetManager<Engine::Material>& materialCache =
 				Engine::AssetManager::GetMaterials();

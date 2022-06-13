@@ -20,6 +20,17 @@ namespace Engine
 	{
 	}
 
+	void DirectX11VertexArray::SetVertexBuffers(const std::vector<std::shared_ptr<VertexBuffer>>& buffers)
+	{
+		m_vertexBuffers = buffers;
+		m_bufferLayout.parameters.clear();
+
+		for (const auto& buffer : buffers)
+		{
+			m_bufferLayout.parameters.push_back(buffer->GetBufferLayoutParameters());
+		}
+	}
+
 	void DirectX11VertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& inVertexBuffer)
 	{
 		if (inVertexBuffer == nullptr) return;
@@ -27,6 +38,7 @@ namespace Engine
 		const auto& found = std::find(m_vertexBuffers.begin(), m_vertexBuffers.end(), inVertexBuffer);
 		if (found == m_vertexBuffers.end())
 		{
+			m_bufferLayout.parameters.push_back(inVertexBuffer->GetBufferLayoutParameters());
 			m_vertexBuffers.push_back(inVertexBuffer);
 		}
 	}
@@ -34,6 +46,7 @@ namespace Engine
 	void DirectX11VertexArray::ClearVertexBuffers()
 	{
 		m_vertexBuffers.clear();
+		m_bufferLayout.parameters.clear();
 	}
 
 	bool DirectX11VertexArray::GetVertexBuffer(std::shared_ptr<VertexBuffer>& buf, uint32_t index) const

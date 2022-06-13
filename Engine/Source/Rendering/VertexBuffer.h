@@ -1,5 +1,7 @@
 #pragma once
 
+#include "BufferLayout.h"
+
 namespace Engine
 {
 
@@ -18,9 +20,14 @@ namespace Engine
 			uint32_t stride) =0;
 		virtual void Bind() const =0;
 
+		void SetBufferLayoutParameters(const BufferLayoutParameterSet& parameters);
+		const BufferLayoutParameterSet& GetBufferLayoutParameters() const { return m_bufferLayoutParameters; }
+
 	protected:
+		BufferLayoutParameterSet m_bufferLayoutParameters;
 		uint32_t m_stride;
 		uint32_t m_numVerts;
+
 
 	public:
 		static bool Create(std::shared_ptr<VertexBuffer>& ptr,

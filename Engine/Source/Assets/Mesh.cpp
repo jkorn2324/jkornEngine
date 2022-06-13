@@ -18,12 +18,20 @@ namespace Engine
 
 	static const uint32_t c_maxUVsCount = 8;
 
+	const BufferLayout Mesh::c_defaultLayout = 
+	{
+		BufferLayoutParameterSet::Position,
+		BufferLayoutParameterSet::Normal,
+		BufferLayoutParameterSet::Uv0
+	};
+
 	Mesh::Mesh()
-		: m_vertices(),
+		: m_positions(),
 		m_normals(),
 		m_binormals(),
 		m_tangents(),
 		m_vertexColors(),
+		m_bufferLayout(c_defaultLayout),
 		m_indices(nullptr),
 		m_vertexCount(0),
 		m_indexCount(0),
@@ -37,7 +45,7 @@ namespace Engine
 
 	Mesh::~Mesh()
 	{
-		m_vertices.Release();
+		m_positions.Release();
 		m_normals.Release();
 		m_binormals.Release();
 		m_tangents.Release();
@@ -79,38 +87,104 @@ namespace Engine
 		}
 	}
 
+	void Mesh::SetMeshLayout(const BufferLayout& bufferLayout)
+	{
+		m_bufferLayout = bufferLayout;
+		RefreshVertexArray();
+	}
+
 	void Mesh::SetVertexCount(uint32_t vertexCount)
 	{
 		if (m_vertexCount != vertexCount)
 		{
-			if (m_vertexArray->GetNumVertexBuffers() > 0)
-			{
-				m_vertexArray->ClearVertexBuffers();
-			}
 			// Sets the vertex count.
 			for (uint32_t i = 0; i < c_maxUVsCount; ++i)
 			{
 				m_uvs[i].SetVertexCount(vertexCount);
+				m_uvs[i].SetBufferLayout({
+					{ "UV", BufferLayoutSemanticType::Type_TexCoord, BufferLayoutType::Float32, 2, i }
+				});
 			}
-			m_vertices.SetVertexCount(vertexCount);
+			m_positions.SetVertexCount(vertexCount);
+			m_positions.SetBufferLayout(BufferLayoutParameterSet::Position);
+
 			m_normals.SetVertexCount(vertexCount);
+			m_normals.SetBufferLayout(BufferLayoutParameterSet::Normal);
+
 			m_binormals.SetVertexCount(vertexCount);
+			m_binormals.SetBufferLayout(BufferLayoutParameterSet::Binormal);
+
+			m_tangents.SetVertexCount(vertexCount);
+			m_tangents.SetBufferLayout(BufferLayoutParameterSet::Tangent);
+
 			m_vertexColors.SetVertexCount(vertexCount);
+			m_vertexColors.SetBufferLayout(BufferLayoutParameterSet::Color);
 		}
 		m_vertexCount = vertexCount;
-
+		RefreshVertexArray();
 	}
 
-	void Mesh::SetVertices(const std::vector<MathLib::Vector3>& vertices)
+	void Mesh::RefreshVertexArray()
 	{
-		SetVertices(&vertices[0], vertices.size());
+		m_vertexArray->ClearVertexBuffers();
+	
+		if (m_vertexCount > 0)
+		{
+			for (const auto& parameters : m_bufferLayout.parameters)
+			{
+				if (parameters == BufferLayoutParameterSet::Position)
+				{
+					m_vertexArray->AddVertexBuffer(m_positions.GetVertexBuffer());
+				}
+				else if (parameters == BufferLayoutParameterSet::Tangent)
+				{
+					m_vertexArray->AddVertexBuffer(m_tangents.GetVertexBuffer());
+				}
+				else if (parameters == BufferLayoutParameterSet::Normal)
+				{
+					m_vertexArray->AddVertexBuffer(m_normals.GetVertexBuffer());
+				}
+				else if (parameters == BufferLayoutParameterSet::Binormal)
+				{
+					m_vertexArray->AddVertexBuffer(m_binormals.GetVertexBuffer());
+				}
+				else if (parameters == BufferLayoutParameterSet::Color)
+				{
+					m_vertexArray->AddVertexBuffer(m_vertexColors.GetVertexBuffer());
+				}
+				else if (parameters == BufferLayoutParameterSet::Uv0)
+				{
+					m_vertexArray->AddVertexBuffer(m_uvs[0].GetVertexBuffer());
+				}
+				else if (parameters == BufferLayoutParameterSet::Uv1)
+				{
+					m_vertexArray->AddVertexBuffer(m_uvs[1].GetVertexBuffer());
+				}
+				else if (parameters == BufferLayoutParameterSet::Uv2)
+				{
+					m_vertexArray->AddVertexBuffer(m_uvs[2].GetVertexBuffer());
+				}
+				else if (parameters == BufferLayoutParameterSet::Uv3)
+				{
+					m_vertexArray->AddVertexBuffer(m_uvs[3].GetVertexBuffer());
+				}
+			}
+		}
 	}
 
-	void Mesh::SetVertices(const MathLib::Vector3* vertices, size_t verticesCount)
+	void Mesh::SetPositions(const std::vector<MathLib::Vector3>& vertices)
 	{
-		m_vertices.SetVertices(vertices, verticesCount);
-		// TODO: Better way of adding buffers
-		m_vertexArray->AddVertexBuffer(m_vertices.GetVertexBuffer());
+		SetPositions(&vertices[0], vertices.size());
+	}
+
+	void Mesh::SetPositions(const MathLib::Vector3* vertices, size_t verticesCount)
+	{
+		m_positions.SetVertices(vertices, verticesCount);
+
+		// Sets the buffer layout parameters.
+		const auto& buffer = m_vertexColors.GetVertexBuffer();
+		buffer->SetBufferLayoutParameters(BufferLayoutParameterSet::Position);
+		RefreshVertexArray();
 	}
 
 	void Mesh::SetBinormals(const std::vector<MathLib::Vector3>& bitangents)
@@ -121,15 +195,21 @@ namespace Engine
 	void Mesh::SetBinormals(const MathLib::Vector3* bitangents, size_t tangentsSize)
 	{
 		m_binormals.SetVertices(bitangents, (uint32_t)tangentsSize);
-		// TODO: Better way of adding buffers.
-		m_vertexArray->AddVertexBuffer(m_binormals.GetVertexBuffer());
+
+		// Sets the buffer layout parameters.
+		const auto& buffer = m_vertexColors.GetVertexBuffer();
+		buffer->SetBufferLayoutParameters(BufferLayoutParameterSet::Binormal);
+		RefreshVertexArray();
 	}
 
 	void Mesh::SetTangents(const MathLib::Vector3* tangents, size_t tangentsSize)
 	{
 		m_tangents.SetVertices(tangents, (uint32_t)tangentsSize);
-		// TODO: Better way of adding buffers.
-		m_vertexArray->AddVertexBuffer(m_tangents.GetVertexBuffer());
+
+		// Sets the buffer layout parameters.
+		const auto& buffer = m_vertexColors.GetVertexBuffer();
+		buffer->SetBufferLayoutParameters(BufferLayoutParameterSet::Tangent);
+		RefreshVertexArray();
 	}
 
 	void Mesh::SetTangents(const std::vector<MathLib::Vector3>& tangents)
@@ -145,8 +225,11 @@ namespace Engine
 	void Mesh::SetColors(const MathLib::Vector4* vertexColors, size_t size)
 	{
 		m_vertexColors.SetVertices(vertexColors, (uint32_t)size);
-		// TODO: Better way of adding buffers.
-		m_vertexArray->AddVertexBuffer(m_vertexColors.GetVertexBuffer());
+
+		// Sets the buffer layout parameters.
+		const auto& buffer = m_vertexColors.GetVertexBuffer();
+		buffer->SetBufferLayoutParameters(BufferLayoutParameterSet::Color);
+		RefreshVertexArray();
 	}
 
 	
@@ -160,8 +243,13 @@ namespace Engine
 		if (index >= c_maxUVsCount) return;
 		MeshBuffer<MathLib::Vector2>& uvIn = m_uvs[index];
 		uvIn.SetVertices(uvs, (uint32_t)size);
-		// TODO: Better way of adding buffers.
-		m_vertexArray->AddVertexBuffer(uvIn.GetVertexBuffer());
+
+		// Sets the buffer layout parameters.
+		const auto& buffer = uvIn.GetVertexBuffer();
+		buffer->SetBufferLayoutParameters({
+			 { "UV", BufferLayoutSemanticType::Type_TexCoord, BufferLayoutType::Float32, 2, index }
+		});
+		RefreshVertexArray();
 	}
 
 	void Mesh::SetNormals(const std::vector<MathLib::Vector3>& normals)
@@ -172,23 +260,17 @@ namespace Engine
 	void Mesh::SetNormals(const MathLib::Vector3* normals, size_t normalsSize)
 	{
 		m_normals.SetVertices(normals, normalsSize);
-		// TODO: Better way of adding buffers.
-		m_vertexArray->AddVertexBuffer(m_normals.GetVertexBuffer());
-	}
 
-	uint32_t Mesh::GetNumVertices() const
-	{
-		return m_vertexCount;
+		// Sets the buffer layout parameters.
+		const auto& buffer = m_normals.GetVertexBuffer();
+		buffer->SetBufferLayoutParameters({
+			BufferLayoutParam::Normal0
+		});
 	}
 
 	void Mesh::RecalculateNormals()
 	{
 		// TODO: Recalculate the normals.
-	}
-
-	void Mesh::RefreshVertexArray()
-	{
-
 	}
 
 	uint32_t* Mesh::GetIndices() const

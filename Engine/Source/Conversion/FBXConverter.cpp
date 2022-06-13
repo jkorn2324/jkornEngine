@@ -77,7 +77,7 @@ namespace Engine
 				}
 			}
 		}
-		outMesh.SetVertices(outVertices);
+		outMesh.SetPositions(outVertices);
 		outMesh.SetIndices(outIndices);
 		outMesh.SetNormals(outNormals);
 		outMesh.SetBinormals(outBinormals);

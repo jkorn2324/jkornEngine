@@ -38,13 +38,18 @@ namespace Engine
 	}
 
 	VertexBuffer::VertexBuffer(const void* buffer, uint32_t numVerts, uint32_t stride)
-		: m_stride(stride), m_numVerts(numVerts)
+		: m_stride(stride), m_numVerts(numVerts), m_bufferLayoutParameters()
 	{
 	}
 
 	uint32_t VertexBuffer::GetStride() const
 	{
 		return m_stride;
+	}
+
+	void VertexBuffer::SetBufferLayoutParameters(const BufferLayoutParameterSet& parameters)
+	{
+		m_bufferLayoutParameters = parameters;
 	}
 
 	uint32_t VertexBuffer::GetNumVerts() const

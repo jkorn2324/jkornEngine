@@ -73,12 +73,34 @@ namespace Engine
 
 		size_t GetStride() const { return GetStrideFromBufferLayoutType(layoutType) * (size_t)numValues; }
 
+
+		friend bool operator==(const BufferLayoutParam& a, const BufferLayoutParam& b)
+		{
+			return a.name == b.name
+				&& a.semanticType == b.semanticType
+				&& a.layoutType == b.layoutType
+				&& a.numValues == b.numValues
+				&& a.semanticIndex == b.semanticIndex;
+		}
+		
+		friend bool operator!=(const BufferLayoutParam& a, const BufferLayoutParam& b)
+		{
+			return a.name != b.name
+				|| a.semanticType != b.semanticType
+				|| a.layoutType != b.layoutType
+				|| a.numValues != b.numValues
+				|| a.semanticIndex != b.semanticIndex;
+		}
+
 		static const BufferLayoutParam Position0;
 		static const BufferLayoutParam Normal0;
 		static const BufferLayoutParam Binormal0;
 		static const BufferLayoutParam Tangent0;
 		static const BufferLayoutParam Color4_0;
 		static const BufferLayoutParam Uv0;
+		static const BufferLayoutParam Uv1;
+		static const BufferLayoutParam Uv2;
+		static const BufferLayoutParam Uv3;
 	};
 
 	struct BufferLayoutParameterSet
@@ -97,9 +119,41 @@ namespace Engine
 		{
 
 		}
+
+		friend bool operator==(const BufferLayoutParameterSet& a, const BufferLayoutParameterSet& b)
+		{
+			if (a.parameters.size() != b.parameters.size()) return false;
+
+			for (size_t i = 0; i < a.parameters.size(); ++i)
+			{
+				if (a.parameters[i] != b.parameters[i]) return false;
+			}
+			return true;
+		}
+
+		friend bool operator!=(const BufferLayoutParameterSet& a, const BufferLayoutParameterSet& b)
+		{
+			if (a.parameters.size() != b.parameters.size()) return true;
+
+			for (size_t i = 0; i < a.parameters.size(); ++i)
+			{
+				if (a.parameters[i] != b.parameters[i]) return true;
+			}
+			return false;
+		}
+
+		static const BufferLayoutParameterSet Position;
+		static const BufferLayoutParameterSet Normal;
+		static const BufferLayoutParameterSet Binormal;
+		static const BufferLayoutParameterSet Tangent;
+		static const BufferLayoutParameterSet Uv0;
+		static const BufferLayoutParameterSet Uv1;
+		static const BufferLayoutParameterSet Uv2;
+		static const BufferLayoutParameterSet Uv3;
+		static const BufferLayoutParameterSet Color;
 	};
 
-	// TODO: Refactor the buffer layout.
+
 	struct BufferLayout
 	{
 		std::vector<BufferLayoutParameterSet> parameters;
@@ -127,5 +181,27 @@ namespace Engine
 		}
 
 		uint32_t GetNumElements() const { return (uint32_t)parameters.size(); }
+
+		friend bool operator==(const BufferLayout& a, const BufferLayout& b)
+		{
+			if (a.parameters.size() != b.parameters.size()) return false;
+
+			for (size_t i = 0; i < a.parameters.size(); ++i)
+			{
+				if (a.parameters[i] != b.parameters[i]) return false;
+			}
+			return true;
+		}
+
+		friend bool operator!=(const BufferLayout& a, const BufferLayout& b)
+		{
+			if (a.parameters.size() != b.parameters.size()) return true;
+
+			for (size_t i = 0; i < a.parameters.size(); ++i)
+			{
+				if (a.parameters[i] != b.parameters[i]) return true;
+			}
+			return false;
+		}
 	};
 }
