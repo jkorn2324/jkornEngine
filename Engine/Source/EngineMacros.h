@@ -16,7 +16,8 @@ namespace Engine
 	static bool SerializeToFile(##name& asset, struct AssetSerializationFileData& serializeData); \
 	static bool DeserializeMetaFile(##name& asset, struct AssetDeserializationMetaFileData& metaFileData); \
 	static bool SerializeToMetaFile(##name& asset, struct AssetSerializationMetaFileData& metaFileData); \
-	static name* Create(); \
+	static bool Create(std::shared_ptr<##name>& outputAsset); \
+	static bool Create(##name** outputAsset); \
 	friend class Engine::AssetSerializer<name>; \
 	friend class Engine::AssetCache<name>
 

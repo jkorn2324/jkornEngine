@@ -23,6 +23,8 @@ namespace Engine
 			converter.Triangulate(mesh, true);
 		}
 
+		outMesh.SetVertexCount(mesh->GetControlPointsCount());
+
 		// Stores the results per each vertex.
 		std::vector<MathLib::Vector3> outVertices(mesh->GetControlPointsCount());
 		std::vector<MathLib::Vector3> outNormals(mesh->GetControlPointsCount());
@@ -31,7 +33,6 @@ namespace Engine
 
 
 		uint32_t polygonCount = mesh->GetPolygonCount();
-
 		std::vector<uint32_t> outIndices;
 		// Reads from the Fbx Mesh.
 		{

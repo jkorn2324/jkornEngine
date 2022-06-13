@@ -30,12 +30,14 @@ namespace Engine
 
 	Texture* Texture::CreateTexture()
 	{
-		return Create();
+		// TODO: Implementation
+		return nullptr;
 	}
 
 	Texture* Texture::CreateTexture(const std::wstring& filePath)
 	{
-		Texture* texture = Create();
+		// TODO: Implementation
+		Texture* texture = nullptr;
 		if(texture != nullptr)
 		{
 			Engine::AssetSerializer<Texture> serializer(*texture);
@@ -127,26 +129,63 @@ namespace Engine
 		return true;
 	}
 
-	Texture* Texture::Create(const TextureSpecifications& specifications)
+
+	bool Texture::Create(Texture** texture)
 	{
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
-		case RenderingAPIType::DIRECTX11: return new DirectX11Texture(specifications);
+			case RenderingAPIType::DIRECTX11:
+			{
+				*texture = new DirectX11Texture();
+				return true;
+			}
 		}
-		DebugAssert(false, "Unsupported Texture type.");
-		return nullptr;
+		DebugAssert(false, "Unsupported rendering API type.");
+		return false;
 	}
 
-	Texture* Texture::Create()
+	bool Texture::Create(Texture** texture, const TextureSpecifications& specifications)
 	{
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
-		case RenderingAPIType::DIRECTX11:	return new DirectX11Texture();
+			case RenderingAPIType::DIRECTX11:
+			{
+				*texture = new DirectX11Texture(specifications);
+				return true;
+			}
 		}
-		DebugAssert(false, "Unsupported Texture type.");
-		return nullptr;
+		DebugAssert(false, "Unsupported rendering API type.");
+		return false;
 	}
-	
+
+	bool Texture::Create(std::shared_ptr<Texture>& texture)
+	{
+		switch (RenderingAPI::GetRenderingAPIType())
+		{
+			case RenderingAPIType::DIRECTX11:
+			{
+				texture = std::make_shared<DirectX11Texture>();
+				return true;
+			}
+		}
+		DebugAssert(false, "Unsupported rendering API type.");
+		return false;
+	}
+
+	bool Texture::Create(std::shared_ptr<Texture>& texture, const TextureSpecifications& specifications)
+	{
+		switch (RenderingAPI::GetRenderingAPIType())
+		{
+			case RenderingAPIType::DIRECTX11:
+			{
+				texture = std::make_shared<DirectX11Texture>(specifications);
+				return true;
+			}
+		}
+		DebugAssert(false, "Unsupported rendering API type.");
+		return false;
+	}
+
 	bool Texture::CopyTexture(Texture& a, Texture& b)
 	{
 		return a.CopyTo(b);

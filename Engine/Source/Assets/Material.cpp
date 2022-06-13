@@ -568,13 +568,27 @@ namespace Engine
 
 #pragma endregion
 
-	Material* Material::Create(const MaterialConstantsLayout& constants)
+	bool Material::Create(Material** material)
 	{
-		return new Material(constants);
+		*material = new Material();
+		return true;
 	}
 
-	Material* Material::Create()
+	bool Material::Create(Material** material, const MaterialConstantsLayout& constants)
 	{
-		return new Material;
+		*material = new Material(constants);
+		return true;
+	}
+
+	bool Material::Create(std::shared_ptr<Material>& material)
+	{
+		material = std::make_shared<Material>();
+		return true;
+	}
+
+	bool Material::Create(std::shared_ptr<Material>& material, const MaterialConstantsLayout& constants)
+	{
+		material = std::make_shared<Material>(constants);
+		return true;
 	}
 }

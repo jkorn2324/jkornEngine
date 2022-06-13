@@ -129,17 +129,31 @@ namespace Engine
 		return true;
 	}
 
-	Shader* Shader::Create()
+	bool Shader::Create(Shader** asset)
 	{
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
-		case RenderingAPIType::DIRECTX11:	return new DirectX11Shader();
-		case RenderingAPIType::NONE:
+		case RenderingAPIType::DIRECTX11:
 		{
-			DebugAssert(false, "Unsupported shader type.");
-			return nullptr;
+			*asset = new DirectX11Shader();
+			return true;
 		}
 		}
-		return nullptr;
+		DebugAssert(false, "Unsupported shader type.");
+		return false;
+	}
+
+	bool Shader::Create(std::shared_ptr<Shader>& asset)
+	{
+		switch (RenderingAPI::GetRenderingAPIType())
+		{
+		case RenderingAPIType::DIRECTX11:
+		{
+			asset = std::make_shared<DirectX11Shader>();
+			return true;
+		}
+		}
+		DebugAssert(false, "Unsupported shader type.");
+		return false;
 	}
 }

@@ -69,11 +69,9 @@ namespace Engine
 		{
 			return found;
 		}
-		TAsset* asset = TAsset::Create();
-		if (asset == nullptr)
-		{
-			return nullptr;
-		}
+
+		TAsset* asset;
+		if (!TAsset::Create(&asset)) return nullptr;
 		m_cachedAssets.emplace(guid, asset);
 		return asset;
 	}
@@ -87,8 +85,8 @@ namespace Engine
 		{
 			return found;
 		}
-		TAsset* created = TAsset::Create(std::forward<Args>(args)...);
-		if (created == nullptr)
+		TAsset* created;
+		if(!TAsset::Create(&created, std::forward<Args>(args)...))
 		{
 			return nullptr;
 		}
@@ -115,12 +113,11 @@ namespace Engine
 			return found->second;
 		}
 
-		TAsset* outputAsset = TAsset::Create();
-		if (outputAsset == nullptr)
+		TAsset* outputAsset;
+		if (!TAsset::Create(&outputAsset))
 		{
 			return nullptr;
 		}
-
 		AssetSerializer<TAsset> assetSerializer(*outputAsset);
 		if (!assetSerializer.DeserializeFromGUID(guid))
 		{
@@ -140,8 +137,8 @@ namespace Engine
 			return found->second;
 		}
 
-		TAsset* outputAsset = TAsset::Create();
-		if (outputAsset == nullptr)
+		TAsset* outputAsset;
+		if (!TAsset::Create(&outputAsset))
 		{
 			return nullptr;
 		}
@@ -166,8 +163,8 @@ namespace Engine
 			return found->second;
 		}
 		
-		TAsset* outputAsset = TAsset::Create();
-		if (outputAsset == nullptr)
+		TAsset* outputAsset;
+		if (!TAsset::Create(&outputAsset))
 		{
 			return nullptr;
 		}
@@ -192,8 +189,8 @@ namespace Engine
 			return found->second;
 		}
 
-		TAsset* outputAsset = TAsset::Create();
-		if (outputAsset == nullptr)
+		TAsset* outputAsset;
+		if (!TAsset::Create(&outputAsset))
 		{
 			return nullptr;
 		}

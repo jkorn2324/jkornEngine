@@ -310,8 +310,15 @@ namespace Engine
 		return true;
 	}
 
-	Mesh* Mesh::Create()
+	bool Mesh::Create(Mesh** mesh)
 	{
-		return new Mesh();
+		*mesh = new Mesh();
+		return true;
+	}
+
+	bool Mesh::Create(std::shared_ptr<Mesh>& mesh)
+	{
+		mesh = std::make_shared<Mesh>();
+		return true;
 	}
 }

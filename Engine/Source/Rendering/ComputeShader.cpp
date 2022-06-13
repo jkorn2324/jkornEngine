@@ -32,12 +32,31 @@ namespace Engine
 		return true;
 	}
 
-	ComputeShader* ComputeShader::Create()
+	bool ComputeShader::Create(ComputeShader** shader)
 	{
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
-			case RenderingAPIType::DIRECTX11: return new DirectX11ComputeShader();
+			case RenderingAPIType::DIRECTX11:
+			{
+				*shader = new DirectX11ComputeShader();
+				return true;
+			}
 		}
-		return nullptr;
+		DebugAssert(false, "Invalid Rendering API type.");
+		return false;
+	}
+
+	bool ComputeShader::Create(std::shared_ptr<ComputeShader>& shader)
+	{
+		switch (RenderingAPI::GetRenderingAPIType())
+		{
+			case RenderingAPIType::DIRECTX11:
+			{
+				shader = std::make_shared<DirectX11ComputeShader>();
+				return true;
+			}
+		}
+		DebugAssert(false, "Invalid Rendering API type.");
+		return false;
 	}
 }

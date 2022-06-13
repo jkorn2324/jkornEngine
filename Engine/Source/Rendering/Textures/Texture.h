@@ -125,7 +125,8 @@ namespace Engine
 		uint32_t m_width, m_height;
 
 	private:
-		static Texture* Create(const TextureSpecifications& specifications);
+		static bool Create(Texture** texture, const TextureSpecifications& specifications);
+		static bool Create(std::shared_ptr<Texture>& texture, const TextureSpecifications& specifications);
 
 		SERIALIZABLE_ASSET(Texture);
 		

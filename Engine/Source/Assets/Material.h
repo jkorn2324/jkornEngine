@@ -91,7 +91,9 @@ namespace Engine
 		InternalMaterialConstants m_internalMaterialConstants;
 		uint32_t m_numTextures;
 
-		static Material* Create(const MaterialConstantsLayout& constants);
+		static bool Create(Material** material, const MaterialConstantsLayout& constants);
+		static bool Create(std::shared_ptr<Material>& material, const MaterialConstantsLayout& constants);
+
 		SERIALIZABLE_ASSET(Material);
 	};
 }
