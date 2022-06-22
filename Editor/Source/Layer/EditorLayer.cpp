@@ -100,13 +100,6 @@ namespace Editor
 			meshComponent.material->SetTexture(0, texture);
 
 			{
-				struct CubeMeshVert
-				{
-					MathLib::Vector3 pos;
-					MathLib::Vector3 normal;
-					MathLib::Vector2 uv;
-				};
-
 				Engine::BufferLayout bufferLayout = 
 				{ 
 					{

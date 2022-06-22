@@ -45,13 +45,19 @@ namespace Engine
 			return *this;
 		}
 
+		void CopyBuffer(const void* buffer)
+		{
+			if (m_buffer == nullptr) return;
+			std::memcpy(m_buffer, buffer, m_length);
+		}
+
 		template<typename T>
 		bool Get(uint32_t index, T& out) const
 		{
-			uint32_t convertedIndex = index * (uint32_t)sizeof(T);
-			if (convertedIndex >= GetLength()) return false;
-			T* ptrPosition = reinterpret_cast<T*>(m_buffer + convertedIndex);
-			std::memcpy(&out, ptrPosition, sizeof(T));
+			uint32_t convertedLength = GetLength() / (uint32_t)sizeof(T);
+			if (index >= convertedLength) return false;
+			T* casted = reinterpret_cast<T*>(m_buffer) + index;
+			out = casted[0];
 			return true;
 		}
 
@@ -65,6 +71,8 @@ namespace Engine
 		}
 
 		uint32_t GetLength() const { return m_length; }
+
+		uint8_t* GetRawBuffer() const { return reinterpret_cast<uint8_t*>(m_buffer); }
 
 	private:
 		void Free()

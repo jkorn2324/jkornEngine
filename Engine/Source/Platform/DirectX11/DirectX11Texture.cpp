@@ -283,7 +283,6 @@ namespace Engine
 		if (texture == nullptr) return;
 		GetRenderingAPI().m_deviceContext->CopyResource(texture, m_texture);
 
-
 		D3D11_MAPPED_SUBRESOURCE resourceDesc;
 		HRESULT result = GetRenderingAPI().m_deviceContext->Map(
 			texture, 0, D3D11_MAP_READ, 0, &resourceDesc);
@@ -296,6 +295,8 @@ namespace Engine
 		TextureFormat textureFormat = GetTextureFormat();
 		if (textureFormat == TextureFormat_Unknown)
 		{
+			GetRenderingAPI().m_deviceContext->Unmap(
+				texture, 0);
 			texture->Release();
 			return;
 		}
@@ -304,18 +305,17 @@ namespace Engine
 		pixelArray = FixedArray(m_width * m_height, formatSize);
 		if (resourceDesc.pData)
 		{
-			const uint8_t* resources = reinterpret_cast<uint8_t*>(resourceDesc.pData);
-			uint32_t indexOffset;
-			for (uint32_t row = 0; row < m_height; row++)
+			uint8_t* buffer = pixelArray.GetRawBuffer();
+			for (uint32_t i = 0; i < m_height; i++)
 			{
-				for (uint32_t col = 0; col < m_width; col++)
-				{
-					indexOffset = row * m_width + col;
-					DirectX11ConvertToPixelFormat(textureFormat,
-						indexOffset, resources, pixelArray);
-				}
+				std::memcpy(
+					buffer + m_width * formatSize * i,
+					(uint8_t*)resourceDesc.pData + resourceDesc.RowPitch * i,
+					m_width * formatSize);
 			}
 		}
+		GetRenderingAPI().m_deviceContext->Unmap(
+			texture, 0);
 		texture->Release();
 	}
 
