@@ -3,9 +3,6 @@
 #include "Entity.h"
 #include "SceneManager.h"
 
-#include "AssetManager.h"
-#include "AssetCache.h"
-
 #include "SceneEvent.h"
 #include "Event.h"
 
@@ -109,8 +106,7 @@ namespace Engine
 			entity.AddComponent<Transform3DComponent>();
 			MeshComponent& component =
 				entity.AddComponent<MeshComponent>();
-			AssetManager::GetMeshes().Get(L"DefaultCube", component.mesh);
-			AssetManager::GetMaterials().Get(L"Unlit - ColorUV", component.material);
+			component.mesh = &GraphicsRenderer3D::GetCubeMesh();
 			component.enabled = true;
 		}
 

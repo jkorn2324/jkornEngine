@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 struct ID3D11Buffer;
 
 namespace Engine
@@ -27,7 +29,10 @@ namespace Engine
 		virtual void Bind(const uint32_t& slot, int flags) const=0;
 		
 	public:
-		static ConstantBuffer* Create(const void* buffer, size_t stride);
+		static bool Create(ConstantBuffer** outConstantBuffer,
+			const void* buffer, size_t stride);
+		static bool Create(std::shared_ptr<ConstantBuffer>& constantBuffer,
+			const void* buffer, size_t stride);
 		
 		friend class GraphicsRenderer;
 	};

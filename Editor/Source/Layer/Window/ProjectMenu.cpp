@@ -43,8 +43,8 @@ namespace Editor
 
 		if (s_numProjectMenus <= 0)
 		{
-			s_fileIconTexture = Engine::Texture::CreateTexture(g_fileIconPath);
-			s_folderIconTexture = Engine::Texture::CreateTexture(g_folderIconPath);
+			Engine::Texture::LoadFromFile(&s_fileIconTexture, g_fileIconPath);
+			Engine::Texture::LoadFromFile(&s_folderIconTexture, g_folderIconPath);
 		}
 		s_numProjectMenus++;
 	}
@@ -370,11 +370,7 @@ namespace Editor
 				{
 					m_popupView = ProjectMenuPopupView::Popup_None;
 					{
-						// Creates and serializes a new material.
-						Engine::Material material;
-						Engine::AssetSerializer<Engine::Material> matSerializer(material);
-						auto path = m_currentPath / "New Material.mat";
-						matSerializer.SerializeToFile(path);
+						// TODO: Should Create a New Material
 					}
 				}
 				if (ImGui::MenuItem("Folder"))

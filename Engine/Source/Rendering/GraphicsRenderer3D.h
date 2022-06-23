@@ -31,6 +31,8 @@ namespace Engine
 		static void SetDirectionalLight(const MathLib::Vector3& direction,
 			const DirectionalLightComponent& directionalLight);
 
+		static Mesh& GetCubeMesh();
+
 	private:
 		static void BindLights();
 

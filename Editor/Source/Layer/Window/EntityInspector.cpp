@@ -289,8 +289,8 @@ namespace Editor
 						DrawComponentInMenu<Engine::MeshComponent>("Mesh", entity,
 							[=](Engine::MeshComponent& meshComponent) -> void
 							{
-								// TODO: Remove this, as this is temporary.
-								Engine::TypedAssetManager<Engine::Mesh>& meshes
+#if 0
+								TypedAssetManager<Engine::Mesh>& meshes
 									= Engine::AssetManager::GetMeshes();
 								meshes.Get(L"DefaultCube", meshComponent.mesh);
 
@@ -301,6 +301,7 @@ namespace Editor
 									= meshComponent.material->GetMaterialConstants();
 								constants.SetMaterialConstant(
 									"c_materialColor", MathLib::Vector4::One);
+#endif
 							});
 
 						DrawComponentInMenu<Engine::SceneCameraComponent>("Camera", entity);

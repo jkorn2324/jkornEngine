@@ -6,8 +6,6 @@
 #include "VertexArray.h"
 
 #include "JsonFileWriter.h"
-#include "AssetSerializer.h"
-
 
 #include <memory>
 #include <locale>
@@ -283,32 +281,6 @@ namespace Engine
 		return m_indexCount;
 	}
 
-	bool Mesh::DeserializeFromFile(Mesh& mesh, AssetDeserializationFileData& value)
-	{
-		// TODO: Read from a normal file.
-		return true;
-	}
-
-	bool Mesh::SerializeToFile(Mesh& mesh, AssetSerializationFileData& metaData)
-	{
-		// TODO: Write to a file.
-		return true;
-	}
-
-	bool Mesh::SerializeToMetaFile(Mesh& mesh, AssetSerializationMetaFileData& metaData)
-	{
-		// Writes to the meta file.
-		JsonFileWriter metaFileWriter(metaData.metaFilePath);
-		metaFileWriter.Write("GUID", metaData.guid);
-		metaFileWriter.Flush();
-		return true;
-	}
-
-	bool Mesh::DeserializeMetaFile(Mesh& mesh, AssetDeserializationMetaFileData& metaData)
-	{
-		// TODO: Implementation
-		return true;
-	}
 
 	bool Mesh::Create(Mesh** mesh)
 	{

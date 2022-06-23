@@ -1,8 +1,5 @@
 #pragma once
 
-#include "AssetSerializer.h"
-#include "AssetReferenceManager.h"
-
 namespace Editor
 {
 
@@ -18,14 +15,11 @@ namespace Editor
 		static void SaveAssets();
 
 		template<typename T>
-		static void SaveAsset(const std::filesystem::path& path, Engine::AssetRef<T>& asset)
+		static void SaveAsset(const std::filesystem::path& path, T* asset)
 		{
 			if (asset)
 			{
-				Engine::AssetSerializer serializer(*asset.Get(), true);
-				Engine::GUID guid;
-				asset.GetGUID(guid);
-				serializer.SerializeToFile(guid, path);
+				// TODO: Implementation
 			}
 		}
 	};

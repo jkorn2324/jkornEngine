@@ -5,8 +5,6 @@
 #include "Scene.h"
 #include "Components.h"
 
-#include "AssetManager.h"
-#include "AssetCache.h"
 #include "Texture.h"
 #include "Mesh.h"
 

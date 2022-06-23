@@ -14,19 +14,35 @@ namespace Engine
 		SetData((void*)bufferData, stride);
 	}
 
-	ConstantBuffer* ConstantBuffer::Create(const void* buffer, std::size_t stride)
+	bool ConstantBuffer::Create(ConstantBuffer** outConstantBuffer, const void* buffer, std::size_t stride)
 	{
 		PROFILE_SCOPE(CreateConstantBuffer, Rendering);
 
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
-		case RenderingAPIType::DIRECTX11:	return new DirectX11ConstantBuffer(buffer, stride);
-		case RenderingAPIType::NONE:
+		case RenderingAPIType::DIRECTX11: 
 		{
-			DebugAssert(false, "Invalid constant buffer type.");
-			return nullptr;
+			*outConstantBuffer = new DirectX11ConstantBuffer(buffer, stride);
+			return true;
 		}
 		}
-		return nullptr;
+		DebugAssert(false, "Invalid Rendering API for Constant buffer.");
+		return false;
+	}
+
+	bool ConstantBuffer::Create(std::shared_ptr<ConstantBuffer>& outConstantBuffer, const void* buffer, std::size_t stride)
+	{
+		PROFILE_SCOPE(CreateConstantBuffer, Rendering);
+
+		switch (RenderingAPI::GetRenderingAPIType())
+		{
+		case RenderingAPIType::DIRECTX11:
+		{
+			outConstantBuffer = std::make_shared<DirectX11ConstantBuffer>(buffer, stride);
+			return true;
+		}
+		}
+		DebugAssert(false, "Invalid Rendering API for Constant buffer.");
+		return false;
 	}
 }

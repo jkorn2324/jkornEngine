@@ -35,7 +35,7 @@ namespace Engine
 		}
 
 		CameraConstants placeholder;
-		s_cameraConstantBuffer = ConstantBuffer::Create(&placeholder,
+		ConstantBuffer::Create(&s_cameraConstantBuffer, &placeholder,
 			sizeof(CameraConstants));
 		return true;
 	}
@@ -61,6 +61,8 @@ namespace Engine
 
 	void GraphicsRenderer::Draw(VertexArray* vertexArray)
 	{
+		DebugAssert(s_renderingAPI != nullptr, "Rendering API isn't initialized.");
+		s_renderingAPI->Draw(vertexArray);
 	}
 
 	void GraphicsRenderer::Draw(VertexBuffer* vBuffer,

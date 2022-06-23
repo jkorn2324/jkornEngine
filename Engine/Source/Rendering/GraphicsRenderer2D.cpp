@@ -7,8 +7,6 @@
 #include "Material.h"
 #include "BufferLayout.h"
 
-#include "AssetManager.h"
-#include "AssetCache.h"
 #include "Profiler.h"
 
 #include "Texture.h"
@@ -44,8 +42,8 @@ namespace Engine
 	static ConstantBuffer* s_spriteObjectConstantBuffer = nullptr;
 	static GraphicsObjectConstants s_spriteObjectConstants;
 
-	static AssetRef<Material> s_spriteMaterial;
-	static AssetRef<Shader> s_spriteShader;
+	static Material* s_spriteMaterial;
+	static Shader* s_spriteShader;
 
 	static GraphicsSpriteVertex vertices[4] =
 	{
@@ -62,7 +60,7 @@ namespace Engine
 	};
 
 	static void DrawRectInternal(const MathLib::Matrix4x4& transform, const MathLib::Vector4& color, 
-		const AssetRef<Texture>& texture, uint32_t entityID)
+		Texture* texture, uint32_t entityID)
 	{
 		PROFILE_SCOPE(DrawRectInternal, Rendering);
 
@@ -111,36 +109,28 @@ namespace Engine
 
 		// Loads the Sprite Shader.
 		{
-			Engine::TypedAssetManager<Engine::Shader>& shaderAssetCache =
-				Engine::AssetManager::GetShaders();
-			shaderAssetCache.Load(s_spriteShader,
-				L"Shaders/SpriteShader.hlsl", 
-				BufferLayout{ s_spriteVertexBuffer->GetBufferLayoutParameters() });
-
-			Engine::TypedAssetManager<Engine::Material>& materialCache =
-				Engine::AssetManager::GetMaterials();
-			// Defines the sprite material.
-			materialCache.Cache(s_spriteMaterial, 
-				L"SpriteMaterial", 
-				MaterialConstantsLayout {
-					{ "c_spriteColor", LayoutType_Vector4 }
-				});
+			// TODO: Replace with Asset Caching, but for now this will due.
+			Engine::Shader::LoadFromFile(&s_spriteShader,
+				L"Shaders/SpriteShader.hlsl",
+				{ s_spriteVertexBuffer->GetBufferLayoutParameters() });
+			Engine::Material::Create(&s_spriteMaterial, { {"c_spriteColor", LayoutType_Vector4 }});
 			s_spriteMaterial->SetShader(s_spriteShader);
 		}
-
-		s_spriteObjectConstantBuffer = ConstantBuffer::Create(
+		ConstantBuffer::Create(&s_spriteObjectConstantBuffer,
 			&s_spriteObjectConstants, sizeof(GraphicsObjectConstants));
 	}
 
 	void GraphicsRenderer2D::Release()
 	{
+		delete s_spriteShader;
+		delete s_spriteMaterial;
 		delete s_spriteObjectConstantBuffer;
 		delete s_spriteVertexBuffer;
 		delete s_spriteIndexBuffer;
 	}
 
 	void GraphicsRenderer2D::DrawRect(const MathLib::Vector2& pos, const MathLib::Vector2& scale, 
-		const AssetRef<Texture>& texture, int32_t entityID)
+		Texture* texture, int32_t entityID)
 	{
 		Mat4x4 mat = Mat4x4::CreateScale(scale.x, scale.y, 1.0f)
 			* Mat4x4::CreateTranslation(pos.x, pos.y, 0.0f);
@@ -148,7 +138,7 @@ namespace Engine
 	}
 	
 	void GraphicsRenderer2D::DrawRect(const MathLib::Matrix4x4& transformMat, const MathLib::Vector4& color, 
-		const AssetRef<Texture>& texture, int32_t entityID)
+		Texture* texture, int32_t entityID)
 	{
 		// Used so that the vertex buffers are always set to a default rect.
 		if (!s_spriteVertexBufferDefault)
@@ -180,7 +170,7 @@ namespace Engine
 		// Only changes UVs if it doesn't have defaults.
 		if (texture->HasDefaultUVS())
 		{
-			DrawRect(transformMat, color, texture->GetTexture());
+			DrawRect(transformMat, color, (Texture*)texture->GetTexture());
 			return;
 		}
 
@@ -197,7 +187,7 @@ namespace Engine
 		
 		DrawRectInternal(Mat4x4::CreateScale(
 			texture->GetSize().x, texture->GetSize().y, 1.0f) * transformMat, 
-			color, texture->GetTexture(), entityID);
+			color, (Texture*)texture->GetTexture(), entityID);
 	}
 
 }

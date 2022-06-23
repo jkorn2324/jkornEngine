@@ -113,7 +113,9 @@ namespace Engine
 
 	}
 
-	DirectX11Texture::DirectX11Texture(const TextureSpecifications& specifications) : Texture(specifications),
+	DirectX11Texture::DirectX11Texture(uint32_t width, uint32_t height,
+		const TextureSpecifications& specifications)
+		: Texture(width, height, specifications),
 		m_shaderResourceView(nullptr),
 		m_texture(nullptr),
 		m_pixels(nullptr)
@@ -158,8 +160,8 @@ namespace Engine
 			{
 				readWriteFlags |= Flag_GPU_ReadTexture | Flag_GPU_WriteTexture;
 			}
-			m_serializedData.readWriteFlags = (TextureReadWriteFlags)readWriteFlags;
-			m_serializedData.textureFormat = FromD3D11Format(textureDesc.Format);
+			m_specifications.readWriteFlags = (TextureReadWriteFlags)readWriteFlags;
+			m_specifications.textureFormat = FromD3D11Format(textureDesc.Format);
 
 			m_pixels = new uint32_t[m_width * m_height];
 		}
@@ -359,12 +361,12 @@ namespace Engine
 		return true;
 	}
 
-	bool DirectX11Texture::Load(const wchar_t* texturePath, const TextureSerializedData& serializedData)
+	bool DirectX11Texture::LoadFromFile_Internal(const wchar_t* texturePath)
 	{
 		Free();
 
 		if (!DirectX11Utils::LoadTextureFromFile(GetRenderingAPI().m_device,
-			texturePath, serializedData.readWriteFlags, &m_texture, &m_shaderResourceView, D3D10_BIND_SHADER_RESOURCE))
+			texturePath, m_specifications.readWriteFlags, &m_texture, &m_shaderResourceView, D3D10_BIND_SHADER_RESOURCE))
 		{
 			return false;
 		}

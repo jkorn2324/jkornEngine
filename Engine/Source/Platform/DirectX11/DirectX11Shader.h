@@ -10,13 +10,14 @@ namespace Engine
 	{
 	public:
 		explicit DirectX11Shader();
+		explicit DirectX11Shader(const BufferLayout& bufferLayout);
 		~DirectX11Shader();
 
 		bool IsValid() const override;
 		void Bind() const;
 
 	protected:
-		bool Load(const wchar_t* shaderPath, const struct BufferLayout& bufferLayout) override;
+		bool LoadFromFile_Internal(const wchar_t* shaderPath) override;
 
 	private:
 		ID3D11VertexShader* m_vertexShader;

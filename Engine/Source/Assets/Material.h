@@ -3,7 +3,6 @@
 #include "ConstantBuffer.h"
 #include "GraphicsRenderer.h"
 
-#include "AssetReferenceManager.h"
 #include "ConstantBuffer.h"
 #include "Texture.h"
 #include "Shader.h"
@@ -25,11 +24,11 @@ namespace Engine
 
 	struct MaterialTextureData
 	{
-		AssetRef<Texture> texture;
+		Texture* texture;
 
 		MaterialTextureData()
 			: texture() { }
-		MaterialTextureData(const AssetRef<Texture>& texture)
+		MaterialTextureData(Texture* texture)
 			: texture(texture) { }
 	};
 
@@ -59,8 +58,8 @@ namespace Engine
 		void SetConstantsLayout(const MaterialConstantsLayout& layout);
 		void SetConstantsLayout(const MaterialConstantsLayout& layout, size_t layoutSize);
 
-		void SetShader(const AssetRef<Shader>& shader);
-		void SetTexture(uint32_t slot, const AssetRef<Texture>& texture);
+		void SetShader(Shader* shader);
+		void SetTexture(uint32_t slot, Texture* texture);
 
 		bool HasShader() const { return m_shader; }
 
@@ -84,16 +83,17 @@ namespace Engine
 	private:
 		void SetTextureData(uint32_t slot, const MaterialTextureData& materialTextureData);
 
-		AssetRef<Shader> m_shader;
+		Shader* m_shader;
 		ConstantBuffer* m_materialConstantBuffer;
 		MaterialTextureData* m_textures;
 		MaterialConstants m_materialConstants;
 		InternalMaterialConstants m_internalMaterialConstants;
 		uint32_t m_numTextures;
 
-		static bool Create(Material** material, const MaterialConstantsLayout& constants);
-		static bool Create(std::shared_ptr<Material>& material, const MaterialConstantsLayout& constants);
-
-		SERIALIZABLE_ASSET(Material);
+	public:
+		static bool Create(Material** material);
+		static bool Create(Material** material, const MaterialConstantsLayout& constantsLayout);
+		static bool Create(std::shared_ptr<Material>& material);
+		static bool Create(std::shared_ptr<Material>& material, const MaterialConstantsLayout& constantsLayout);
 	};
 }

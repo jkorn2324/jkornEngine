@@ -16,11 +16,6 @@ namespace Engine
 	class VertexArray;
 
 	template<typename T>
-	class AssetSerializer;
-	template<typename T>
-	class AssetCache;
-
-	template<typename T>
 	class MeshBuffer
 	{
 	public:
@@ -235,9 +230,10 @@ namespace Engine
 
 		bool m_skinned;
 
-		SERIALIZABLE_ASSET(Mesh);
-
 	public:
+		static bool Create(Mesh** mesh);
+		static bool Create(std::shared_ptr<Mesh>& mesh);
+
 		static const BufferLayout c_defaultLayout;
 	};
 }

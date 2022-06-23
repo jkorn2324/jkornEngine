@@ -24,14 +24,21 @@ namespace Engine
 		const BufferLayout& GetBufferLayout() const { return m_bufferLayout; }
 
 	protected:
-		virtual bool Load(const wchar_t* fileName, const BufferLayout& bufferLayout) = 0;
+		virtual bool LoadFromFile_Internal(const wchar_t* fileName) =0;
+		bool LoadFromFile_Internal(const wchar_t* fileName, const BufferLayout& bufferLayout);
 
 	protected:
 		BufferLayout m_bufferLayout;
 
-	private:
-		static bool DeserializeFromFile(Shader& shader, struct AssetDeserializationFileData& deserializeData, const BufferLayout& bufferLayout);
+	public:
+		static bool Create(Shader** shader);
+		static bool Create(std::shared_ptr<Shader>& shader);
+		static bool Create(Shader** shader, const BufferLayout& bufferLayout);
+		static bool Create(std::shared_ptr<Shader>& shader, const BufferLayout& bufferLayout);
 
-		SERIALIZABLE_ASSET(Shader);
+		static bool LoadFromFile(Shader** shader, 
+			const wchar_t* fileName, const BufferLayout& bufferLayout);
+		static bool LoadFromFile(std::shared_ptr<Shader>& shader,
+			const wchar_t* fileName, const BufferLayout& bufferLayout);
 	};
 }

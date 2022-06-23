@@ -12,13 +12,6 @@ namespace Engine
 	class ConstantBuffer;
 	class Texture;
 
-	template<typename T>
-	class AssetSerializer;
-	template<typename T>
-	class AssetCache;
-	template<typename T>
-	class AssetRef;
-
 	// TODO: Compute Shader Buffer Layout, Works in Tandem with Serialization
 	// So that we can easily just put stuff inside of the Compute Shader directly
 	// 
@@ -102,12 +95,14 @@ namespace Engine
 		virtual void Dispatch(uint32_t x, uint32_t y, uint32_t z) = 0;
 		virtual bool IsValid() const = 0;
 
-		virtual void SetTexture(const AssetRef<Texture>& texture)=0;
+		virtual void SetTexture(Texture* texture)=0;
 		virtual void SetBuffer(const std::shared_ptr<ComputeBuffer>& buffer)=0;
 
 	protected:
 		virtual bool Load(const wchar_t* fileName) = 0;
-		
-		SERIALIZABLE_ASSET(ComputeShader);
+
+	public:
+		static bool Create(ComputeShader** shader);
+		static bool Create(std::shared_ptr<ComputeShader>& shader);
 	};
 }

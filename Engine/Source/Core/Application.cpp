@@ -15,7 +15,6 @@
 #include "ImGuiLayer.h"
 #include "Input.h"
 #include "Profiler.h"
-#include "AssetManager.h"
 #include "SceneManager.h"
 #include "Entity.h"
 #include "EntityHierarchyComponent.h"
@@ -57,7 +56,6 @@ namespace Engine
 		// Job Manager is removed for now, should add it when lock-free queues are implemented.
 		JobManager::Init();
 #endif
-		AssetManager::Init(m_rootPath);
 		WindowProperties properties = 
 		{
 			name, WINDOW_WIDTH, WINDOW_HEIGHT, 
@@ -89,7 +87,6 @@ namespace Engine
 		m_windowLayerStack.Clear();
 
 		SceneManager::Release();
-		AssetManager::Release();
 		GraphicsRenderer3D::Release();
 		GraphicsRenderer2D::Release();
 		GraphicsRenderer::Release();
