@@ -30,6 +30,12 @@ namespace Engine
 			: texture() { }
 		MaterialTextureData(Texture* texture)
 			: texture(texture) { }
+
+		MaterialTextureData& operator=(const MaterialTextureData& textureData)
+		{
+			texture = textureData.texture;
+			return *this;
+		}
 	};
 
 	enum MaterialFlags
@@ -59,9 +65,10 @@ namespace Engine
 		void SetConstantsLayout(const MaterialConstantsLayout& layout, size_t layoutSize);
 
 		void SetShader(Shader* shader);
-		void SetTexture(uint32_t slot, Texture* texture);
+		const Shader* GetShader() const { return m_shader; }
+		bool HasShader() const { return m_shader != nullptr; }
 
-		bool HasShader() const { return m_shader; }
+		void SetTexture(uint32_t slot, Texture* texture);
 
 		const MaterialTextureData& GetTextureData(uint32_t slot) const { return m_textures[slot]; }
 		const MaterialConstants& GetMaterialConstants() const { return m_materialConstants; }
@@ -81,8 +88,10 @@ namespace Engine
 		}
 
 	private:
+		void RefreshBuffer();
 		void SetTextureData(uint32_t slot, const MaterialTextureData& materialTextureData);
 
+	private:
 		Shader* m_shader;
 		ConstantBuffer* m_materialConstantBuffer;
 		MaterialTextureData* m_textures;

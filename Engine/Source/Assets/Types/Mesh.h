@@ -46,6 +46,7 @@ namespace Engine
 
 		~MeshBuffer()
 		{
+			m_vertexBuffer.reset();
 		}
 
 		void SetVertices(const T* data, uint32_t numVertices, bool resetVertexCount = true)

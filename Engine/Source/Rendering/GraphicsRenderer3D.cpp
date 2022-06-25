@@ -249,10 +249,11 @@ namespace Engine
 		{
 			Material::Create(&s_defaultMaterial, { { "c_materialColor", LayoutType_Vector4 } });
 
-			Shader* shader;
-			Shader::LoadFromFile(&shader,
+			// TODO: Temporary, should be loaded from an asset.
+			static std::shared_ptr<Shader> shader;
+			Shader::LoadFromFile(shader,
 				L"Shaders/Unlit-VertUvPosShader.hlsl", Mesh::c_defaultLayout);
-			s_defaultMaterial->SetShader(shader);
+			s_defaultMaterial->SetShader(shader.get());
 		}
 
 		// Initialize the constant buffer and buffer layout.

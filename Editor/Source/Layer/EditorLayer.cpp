@@ -80,7 +80,9 @@ namespace Editor
 			Engine::MeshComponent& meshComponent
 				= e.AddComponent<Engine::MeshComponent>();
 
-			Engine::Material::Create(&meshComponent.material, 
+			// TODO: Temporary (Remove Soon), makes sure that the material is getting deleted.
+			static std::shared_ptr<Engine::Material> material;
+			Engine::Material::Create(material, 
 			{
 				{ "c_diffuseColor", Engine::LayoutType_Vector4 },
 				{ "c_specularColor", Engine::LayoutType_Vector4 },
@@ -88,14 +90,16 @@ namespace Editor
 				{ Engine::LayoutType_Vector3 }
 			});
 
+			meshComponent.material = material.get();
 			Engine::MaterialConstants& constants = meshComponent.material->GetMaterialConstants();
 			constants.SetMaterialConstant("c_diffuseColor", MathLib::Vector4::One);
 			constants.SetMaterialConstant("c_specularPower", 10.0f);
 			constants.SetMaterialConstant("c_specularColor", MathLib::Vector4::One);
 			
-			Engine::Texture* texture;
-			Engine::Texture::LoadFromFile(&texture, L"Assets/brick-texture.png");
-			meshComponent.material->SetTexture(0, texture);
+			// TODO: Temporary, makes sure that it gets deleted when program ends.
+			static std::shared_ptr<Engine::Texture> texture;
+			Engine::Texture::LoadFromFile(texture, L"Assets/brick-texture.png");
+			meshComponent.material->SetTexture(0, texture.get());
 
 			{
 				Engine::BufferLayout bufferLayout = 
@@ -110,10 +114,12 @@ namespace Editor
 						Engine::BufferLayoutParam::Uv0
 					}
 				};
-				Engine::Shader* shader;
-				Engine::Shader::LoadFromFile(&shader,
+
+				// TODO: Temporary, makes sure that it gets deleted when program ends.
+				static std::shared_ptr<Engine::Shader> shader;
+				Engine::Shader::LoadFromFile(shader,
 					L"Shaders/LitShader.hlsl", bufferLayout);
-				meshComponent.material->SetShader(shader);
+				meshComponent.material->SetShader(shader.get());
 			}
 			meshComponent.mesh = &Engine::GraphicsRenderer3D::GetCubeMesh();
 		}

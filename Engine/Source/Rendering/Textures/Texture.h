@@ -120,14 +120,12 @@ namespace Engine
 
 		static bool LoadFromFile(Texture** texture,
 			const wchar_t* texturePath);
-		
 		static bool LoadFromFile(Texture** texture,
 			const wchar_t* texturePath,
 			const TextureSpecifications& specifications);
 		
 		static bool LoadFromFile(std::shared_ptr<Texture>& texture,
 			const wchar_t* texturePath);
-
 		static bool LoadFromFile(std::shared_ptr<Texture>& texture,
 			const wchar_t* texturePath,
 			const TextureSpecifications& specifications);
