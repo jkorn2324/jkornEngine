@@ -1,9 +1,12 @@
 #include "EnginePCH.h"
-#include "JsonFileParser.h"
+#include "JsonFileReader.h"
 
 namespace Engine
 {
-	JsonFileParser::JsonFileParser(const char* fileName)
+
+	
+
+	JsonFileReader::JsonFileReader(const char* fileName)
 		: m_buffer(nullptr), m_document(), m_bufferSize(0)
 	{
 		FILE* filePath;
@@ -11,7 +14,7 @@ namespace Engine
 		Parse(filePath);
 	}
 
-	JsonFileParser::JsonFileParser(const wchar_t* fileName)
+	JsonFileReader::JsonFileReader(const wchar_t* fileName)
 		: m_buffer(nullptr), m_document(), m_bufferSize(0)
 	{
 		FILE* filePath;
@@ -19,7 +22,7 @@ namespace Engine
 		Parse(filePath);
 	}
 
-	JsonFileParser::JsonFileParser(const std::wstring& fileName)
+	JsonFileReader::JsonFileReader(const std::wstring& fileName)
 		: m_buffer(nullptr), m_document(), m_bufferSize(0)
 	{
 		FILE* filePath;
@@ -27,7 +30,7 @@ namespace Engine
 		Parse(filePath);
 	}
 
-	JsonFileParser::JsonFileParser(const std::string& fileName)
+	JsonFileReader::JsonFileReader(const std::string& fileName)
 		: m_buffer(nullptr), m_document(), m_bufferSize(0)
 	{
 		FILE* filePath;
@@ -35,12 +38,17 @@ namespace Engine
 		Parse(filePath);
 	}
 
-	JsonFileParser::~JsonFileParser()
+	JsonFileReader::~JsonFileReader()
 	{
 		delete m_buffer;
 	}
 
-	void JsonFileParser::Parse(FILE* file)
+	ReadJsonObject JsonFileReader::GetJsonObject() const
+	{
+		return ReadJsonObject(m_document);
+	}
+
+	void JsonFileReader::Parse(FILE* file)
 	{
 		if (file == nullptr)
 		{
@@ -56,4 +64,5 @@ namespace Engine
 		m_document.Parse(m_buffer);
 		DebugAssert(!m_document.HasParseError(), "Document has trouble parsing the file.");
 	}
+
 }

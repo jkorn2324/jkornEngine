@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "DirectX11IndexBuffer.h"
 
+#include "Memory.h"
 #include "GraphicsRenderer.h"
 #include "DirectX11RenderingAPI.h"
 
@@ -59,7 +60,7 @@ namespace Engine
 		HRESULT result = renderingAPI.m_deviceContext->Map(
 			m_indexBuffer, 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		DebugAssert(result == S_OK, "Failed to map the index buffer");
-		std::memcpy(mappedResource.pData, buffer, numIndices * stride);
+		Memory::Memcpy(mappedResource.pData, buffer, numIndices * stride);
 		renderingAPI.m_deviceContext->Unmap(m_indexBuffer, 0);
 
 		m_format = stride == sizeof(uint16_t) ?

@@ -2,6 +2,7 @@
 
 #include "Source\Vector.h"
 #include "Source\Matrix.h"
+#include "Memory.h"
 
 namespace Engine
 {

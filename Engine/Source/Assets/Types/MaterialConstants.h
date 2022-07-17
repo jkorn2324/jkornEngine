@@ -5,6 +5,8 @@
 #include <initializer_list>
 #include <unordered_map>
 
+#include "Memory.h"
+
 namespace Engine
 {
 
@@ -110,7 +112,7 @@ namespace Engine
 				{
 					return;
 				}
-				std::memcpy(bufferPosition, &value, sizeof(value));
+				Memory::Memcpy(bufferPosition, &value, sizeof(value));
 			}
 		}
 
@@ -136,16 +138,7 @@ namespace Engine
 
 	private:
 		void ReleaseBuffer();
-
-		void SetRawBuffer(char* materialBuffer)
-		{
-			if (m_materialBuffer == nullptr)
-			{
-				m_materialBuffer = new char[m_totalBufferSize];
-			}
-			std::memcpy(m_materialBuffer, materialBuffer, m_totalBufferSize);
-		}
-
+		void SetRawBuffer(char* materialBuffer);
 
 	private:
 		char* m_materialBuffer;

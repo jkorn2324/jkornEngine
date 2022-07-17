@@ -4,8 +4,9 @@
 #include "StringUtils.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
-
 #include "JsonFileWriter.h"
+
+#include "Memory.h"
 
 #include <memory>
 #include <locale>
@@ -72,7 +73,7 @@ namespace Engine
 	void Mesh::SetIndices(const uint32_t* indices, uint32_t indexCount)
 	{
 		m_indices = new std::uint32_t[indexCount];
-		std::memcpy(m_indices, indices, 
+		Memory::Memcpy(m_indices, indices, 
 			sizeof(std::uint32_t) * indexCount);
 		
 		// Creates the index buffer.

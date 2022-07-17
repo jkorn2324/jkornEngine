@@ -4,6 +4,7 @@
 #include "Source\Vector.h"
 #include "Source\Matrix.h"
 
+#include "Memory.h"
 #include <string>
 #include <memory>
 
@@ -71,7 +72,7 @@ namespace Engine
 				m_bufferData = new char[tStride * m_numElements];
 				m_bufferStride = tStride;
 			}
-			std::memcpy(m_bufferData, inData, tStride * m_numElements);
+			Memory::Memcpy(m_bufferData, inData, tStride * m_numElements);
 		}
 
 		const void* GetData() const

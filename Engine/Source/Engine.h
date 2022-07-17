@@ -17,6 +17,13 @@
 #include "EngineTime.h"
 #include "Window.h"
 
+#include "IStream.h"
+#include "BinaryStream.h"
+#include "Memory.h"
+#include "JsonFileReader.h"
+#include "JsonFileWriter.h"
+#include "JsonObjects.h"
+
 #include "ApplicationEvent.h"
 #include "Event.h"
 #include "SceneEvent.h"

@@ -228,7 +228,7 @@ namespace Editor
 			if (ehc.HasChildren())
 			{
 				auto children = ehc.GetChildren();
-				for (int i = 0; i < children.size(); i++)
+				for (size_t i = 0; i < children.size(); i++)
 				{
 					DrawEntity(children[i], duplicatedEntity);
 				}

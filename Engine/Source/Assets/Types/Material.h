@@ -2,8 +2,8 @@
 
 #include "ConstantBuffer.h"
 #include "GraphicsRenderer.h"
+#include "Memory.h"
 
-#include "ConstantBuffer.h"
 #include "Texture.h"
 #include "Shader.h"
 #include "MaterialConstants.h"

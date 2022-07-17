@@ -140,6 +140,7 @@ namespace Engine
 		m_device(nullptr),
 		m_backBufferRenderTargetView(nullptr),
 		m_currentRenderTargetViews(nullptr),
+		m_numRenderTargetViews(0),
 		m_samplerState(nullptr),
 		m_width(0), m_height(0),
 		m_clearColor(0.0f, 0.0f, 1.0f, 1.0f),

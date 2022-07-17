@@ -176,7 +176,7 @@ namespace Engine
 
 		// Changes the UVs so that is based on the sub texture.
 		GraphicsSpriteVertex verts[4];
-		std::memcpy(&verts[0], &vertices[0], sizeof(vertices));
+		Memory::Memcpy(&verts[0], &vertices[0], sizeof(vertices));
 		verts[0].uv = texture->GetUVS()[0];
 		verts[1].uv = texture->GetUVS()[1];
 		verts[2].uv = texture->GetUVS()[2];

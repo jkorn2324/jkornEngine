@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "DirectX11BufferLayoutParser.h"
+#include "Memory.h"
 
 #include <d3d11.h>
 
@@ -199,7 +200,7 @@ namespace Engine
 				{
 					char* semanticName = new char[outSemanticName.size() + 1];
 					semanticName[outSemanticName.size()] = 0;
-					std::memcpy(semanticName,
+					Memory::Memcpy(semanticName,
 						outSemanticName.c_str(), outSemanticName.size());
 					description.SemanticName = semanticName;
 				}
@@ -207,7 +208,7 @@ namespace Engine
 				{
 					char* semanticName = new char[param.name.size() + 1];
 					semanticName[param.name.size()] = 0;
-					std::memcpy(semanticName,
+					Memory::Memcpy(semanticName,
 						param.name.c_str(), param.name.size());
 					description.SemanticName = semanticName;
 				}

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "RefCounters.h"
+
 #include "Source\Vector.h"
 #include "Source\Math.h"
 

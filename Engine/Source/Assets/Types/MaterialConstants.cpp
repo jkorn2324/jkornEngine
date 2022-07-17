@@ -1,6 +1,8 @@
 #include "EnginePCH.h"
 #include "MaterialConstants.h"
 
+#include "Memory.h"
+
 namespace Engine
 {
 	MaterialConstants::MaterialConstants(const MaterialConstantsLayout& materialConstantsLayout)
@@ -27,7 +29,7 @@ namespace Engine
 		m_materialBuffer = new char[m_totalBufferSize];
 		if (constants.m_materialBuffer != nullptr)
 		{
-			std::memcpy(m_materialBuffer, constants.GetRawBuffer(), m_totalBufferSize);
+			Memory::Memcpy(m_materialBuffer, constants.GetRawBuffer(), m_totalBufferSize);
 		}
 	}
 
@@ -42,7 +44,7 @@ namespace Engine
 		m_materialBuffer = new char[m_totalBufferSize];
 		if (constants.m_materialBuffer != nullptr)
 		{
-			std::memcpy(m_materialBuffer, constants.GetRawBuffer(), m_totalBufferSize);
+			Memory::Memcpy(m_materialBuffer, constants.GetRawBuffer(), m_totalBufferSize);
 		}
 		return *this;
 	}
@@ -101,5 +103,14 @@ namespace Engine
 			delete[] m_materialBuffer;
 			m_materialBuffer = nullptr;
 		}
+	}
+
+	void MaterialConstants::SetRawBuffer(char* materialBuffer)
+	{
+		if (m_materialBuffer == nullptr)
+		{
+			m_materialBuffer = new char[m_totalBufferSize];
+		}
+		Memory::Memcpy(m_materialBuffer, materialBuffer, m_totalBufferSize);
 	}
 }

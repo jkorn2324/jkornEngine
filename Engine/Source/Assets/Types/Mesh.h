@@ -1,11 +1,9 @@
 #pragma once
 
-#include <string>
+#include "EngineMacros.h"
 
 #include "Source\Vector.h"
 #include "GUID.h"
-#include "EngineMacros.h"
-
 #include "VertexBuffer.h"
 
 #include <string>
@@ -74,7 +72,7 @@ namespace Engine
 
 			if (m_vertices != nullptr)
 			{
-				std::memcpy(m_vertices, data, sizeof(T) * (size_t)numVertices);
+				Memory::Memcpy(m_vertices, data, sizeof(T) * (size_t)numVertices);
 			}
 		}
 
@@ -151,7 +149,7 @@ namespace Engine
 			{
 				size_t size = m_vertexBuffer->GetNumVerts() * m_vertexBuffer->GetStride();
 				m_vertices = new char[size];
-				std::memcpy(m_vertices, buffer.m_vertices, size);
+				Memory::Memcpy(m_vertices, buffer.m_vertices, size);
 			}
 		}
 	

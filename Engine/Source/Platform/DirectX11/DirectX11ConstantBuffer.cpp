@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "DirectX11ConstantBuffer.h"
 
+#include "Memory.h"
 #include "GraphicsRenderer.h"
 #include "DirectX11RenderingAPI.h"
 #include "DirectX11Utils.h"
@@ -41,7 +42,7 @@ namespace Engine
 			HRESULT result = renderingAPI.m_deviceContext->Map(
 				m_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
 			DebugAssert(result == S_OK, "Failed to map the vertex buffer resource.");
-			std::memcpy(mapResource.pData, buffer, stride);
+			Memory::Memcpy(mapResource.pData, buffer, stride);
 			renderingAPI.m_deviceContext->Unmap(m_constantBuffer, 0);
 		}
 	}

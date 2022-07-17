@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <memory>
+#include "Memory.h"
 
 namespace Engine
 {
@@ -26,7 +26,7 @@ namespace Engine
 			if (m_length > 0)
 			{
 				m_buffer = new char[m_length];
-				std::memcpy(m_buffer, arr.m_buffer, m_length);
+				Memory::Memcpy(m_buffer, arr.m_buffer, m_length);
 			}
 		}
 
@@ -41,14 +41,14 @@ namespace Engine
 				m_buffer = new char[fixedArray.m_length];
 				m_length = fixedArray.m_length;
 			}
-			std::memcpy(m_buffer, fixedArray.m_buffer, fixedArray.m_length);
+			Memory::Memcpy(m_buffer, fixedArray.m_buffer, fixedArray.m_length);
 			return *this;
 		}
 
 		void CopyBuffer(const void* buffer)
 		{
 			if (m_buffer == nullptr) return;
-			std::memcpy(m_buffer, buffer, m_length);
+			Memory::Memcpy(m_buffer, buffer, m_length);
 		}
 
 		template<typename T>
@@ -67,7 +67,7 @@ namespace Engine
 			uint32_t convertedIndex = index * (uint32_t)sizeof(T);
 			if (convertedIndex >= GetLength()) return;
 			T* ptrPosition = reinterpret_cast<T*>(m_buffer + convertedIndex);
-			std::memcpy(ptrPosition, &in, sizeof(T));
+			Memory::Memcpy(ptrPosition, &in, sizeof(T));
 		}
 
 		uint32_t GetLength() const { return m_length; }

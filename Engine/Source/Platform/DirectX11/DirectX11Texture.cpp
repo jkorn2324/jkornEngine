@@ -5,6 +5,7 @@
 #include "DirectX11RenderingAPI.h"
 #include "DirectX11Utils.h"
 #include "FixedStructures.h"
+#include "Memory.h"
 
 namespace Engine
 {
@@ -78,7 +79,7 @@ namespace Engine
 				size_t sizeOffset = (size_t)sizeof(float);
 				const uint8_t* startPixel = pixels + (pixelIndexSize * sizeOffset);
 				float newPixel = 0.0f;
-				std::memcpy(&newPixel, startPixel, sizeOffset);
+				Memory::Memcpy(&newPixel, startPixel, sizeOffset);
 				outputPixels.Set(pixelIndex, newPixel);
 				break;
 			}
@@ -87,7 +88,7 @@ namespace Engine
 				uint32_t sizeOffset = (uint32_t)sizeof(int32_t);
 				const uint8_t* startPixel = pixels + (pixelIndexSize * sizeOffset);
 				int32_t pixel = 0;
-				std::memcpy(&pixel, startPixel, sizeOffset);
+				Memory::Memcpy(&pixel, startPixel, sizeOffset);
 				outputPixels.Set(pixelIndex, pixel);
 				break;
 			}
@@ -310,7 +311,7 @@ namespace Engine
 			uint8_t* buffer = pixelArray.GetRawBuffer();
 			for (uint32_t i = 0; i < m_height; i++)
 			{
-				std::memcpy(
+				Memory::Memcpy(
 					buffer + m_width * formatSize * i,
 					(uint8_t*)resourceDesc.pData + resourceDesc.RowPitch * i,
 					m_width * formatSize);

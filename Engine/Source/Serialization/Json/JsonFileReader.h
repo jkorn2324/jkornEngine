@@ -3,16 +3,21 @@
 #include <string>
 #include <rapidjson\document.h>
 
+#include "JsonObjects.h"
+
 namespace Engine
 {
-	class JsonFileParser
+
+	class JsonFileReader
 	{
 	public:
-		JsonFileParser(const char* fileName);
-		JsonFileParser(const wchar_t* fileName);
-		JsonFileParser(const std::wstring& fileName);
-		JsonFileParser(const std::string& fileName);
-		~JsonFileParser();
+		JsonFileReader(const char* fileName);
+		JsonFileReader(const wchar_t* fileName);
+		JsonFileReader(const std::wstring& fileName);
+		JsonFileReader(const std::string& fileName);
+		~JsonFileReader();
+
+		ReadJsonObject GetJsonObject() const;
 
 		rapidjson::Document& GetDocument() { return m_document; }
 		const rapidjson::Document& GetDocument() const { return m_document; }
@@ -27,4 +32,5 @@ namespace Engine
 		rapidjson::Document m_document;
 		size_t m_bufferSize;
 	};
+
 }

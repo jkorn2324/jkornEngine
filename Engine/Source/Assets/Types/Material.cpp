@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "Material.h"
 
-#include "JsonFileParser.h"
+#include "JsonFileReader.h"
 #include "JsonUtils.h"
 
 #include <rapidjson\stringbuffer.h>

@@ -6,11 +6,6 @@
 
 namespace Engine
 {
-	template<typename T>
-	class AssetSerializer;
-	template<typename T>
-	class AssetCache;
-
 	class Shader
 	{
 	public:

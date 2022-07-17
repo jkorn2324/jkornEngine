@@ -6,7 +6,7 @@
 #include "Scene.h"
 
 #include "JsonUtils.h"
-#include "JsonFileParser.h"
+#include "JsonFileReader.h"
 #include "JsonFileWriter.h"
 
 #include "Profiler.h"
@@ -410,11 +410,11 @@ namespace Engine
 	{
 		PROFILE_SCOPE(DeserializeScene, Serialization);
 
-		JsonFileParser parser = { filePath };
+		JsonFileReader parser = { filePath };
 		Deserialize(parser);
 	}
 
-	void SceneSerializer::Deserialize(const JsonFileParser& jsonParser)
+	void SceneSerializer::Deserialize(const JsonFileReader& jsonParser)
 	{
 		if (jsonParser.IsValid())
 		{
