@@ -18,12 +18,15 @@ namespace Engine
 
 	static const uint32_t c_maxUVsCount = 8;
 
-	const BufferLayout Mesh::c_defaultLayout = 
+	namespace
 	{
-		BufferLayoutParameterSet::Position,
-		BufferLayoutParameterSet::Normal,
-		BufferLayoutParameterSet::Uv0
-	};
+		const BufferLayout c_defaultMeshLayoutInternal = 
+		{
+			BufferLayoutParameterSet::Position,
+			BufferLayoutParameterSet::Normal,
+			BufferLayoutParameterSet::Uv0
+		};
+	}
 
 	Mesh::Mesh()
 		: m_positions(),
@@ -31,7 +34,7 @@ namespace Engine
 		m_binormals(),
 		m_tangents(),
 		m_vertexColors(),
-		m_bufferLayout(c_defaultLayout),
+		m_bufferLayout(c_defaultMeshLayoutInternal),
 		m_indices(nullptr),
 		m_vertexCount(0),
 		m_indexCount(0),

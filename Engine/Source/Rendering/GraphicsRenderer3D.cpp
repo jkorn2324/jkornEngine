@@ -255,7 +255,12 @@ namespace Engine
 
 			AssetRef<Shader> defaultShader;
 			AssetManager::GetShaders().Load(defaultShader,
-					L"Shaders/Unlit-VertUvPosShader.hlsl", Mesh::c_defaultLayout);
+					L"Shaders/Unlit-VertUvPosShader.hlsl",
+				Engine::BufferLayout {
+					Engine::BufferLayoutParameterSet::Position,
+					Engine::BufferLayoutParameterSet::Normal,
+					Engine::BufferLayoutParameterSet::Uv0
+				});
 			s_defaultMaterial->SetShader(defaultShader);
 		}
 

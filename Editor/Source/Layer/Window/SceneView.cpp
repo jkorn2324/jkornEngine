@@ -90,7 +90,7 @@ namespace Editor
 		EditorCamera& editorCamera = EditorSceneManager::GetEditorCamera();
 		// Focuses the camera.
 		if (ImGui::IsKeyPressed(
-			platformInput.FromKeyCode(Engine::InputKeyCode::KEY_CODE_F)))
+			platformInput.FromKeyCode<ImGuiKey>(Engine::InputKeyCode::KEY_CODE_F)))
 		{
 			editorCamera.FocusCamera();
 			return;
@@ -106,14 +106,14 @@ namespace Editor
 		}
 
 		bool isLeftAltPressed = ImGui::IsKeyDown(
-			platformInput.FromKeyCode(Engine::KEY_CODE_LEFT_ALT));
+			platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_LEFT_ALT));
 		m_transformationWidget.SetMovable(!isLeftAltPressed);
 
 		bool handledZoom = false;
 		if (isLeftAltPressed)
 		{
-			float altKeyHeld = io.KeysDownDuration[
-				platformInput.FromKeyCode(Engine::KEY_CODE_LEFT_ALT)];
+			float altKeyHeld = io.KeysData[
+				platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_LEFT_ALT)].DownDuration;
 			// Only updates the rotation if the left mouse button is held.
 			if (ImGui::IsMouseDown(
 				platformInput.FromMouseButton(Engine::InputMouseButton::MOUSE_BUTTON_LEFT)))
@@ -164,8 +164,8 @@ namespace Editor
 
 		// If an alt key is pressed, don't do anything.
 		const auto& platformInput = Engine::Input::GetPlatformInput();
-		int32_t lAltKey = platformInput.FromKeyCode(Engine::KEY_CODE_LEFT_ALT);
-		int32_t rAltKey = platformInput.FromKeyCode(Engine::KEY_CODE_RIGHT_ALT);
+		ImGuiKey lAltKey = platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_LEFT_ALT);
+		ImGuiKey rAltKey = platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_RIGHT_ALT);
 		if (ImGui::IsKeyDown(lAltKey) || ImGui::IsKeyDown(rAltKey)) return;
 
 		MathLib::Vector2 windowSize = GetResizedWindow();
@@ -274,38 +274,38 @@ namespace Editor
 		const EditorCamera& editorCamera, const Engine::PlatformInput& platformInput) const
 	{
 		bool hasInput = false;
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_W))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_S)))
+		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_W))
+			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_S)))
 		{
 			hasInput = true;
 			outputDirection += editorCamera.GetForward();
 		}
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_S))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_W)))
+		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_S))
+			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_W)))
 		{
 			hasInput = true;
 			outputDirection += -editorCamera.GetForward();
 		}
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_A))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_D)))
+		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_A))
+			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_D)))
 		{
 			hasInput = true;
 			outputDirection += -editorCamera.GetRight();
 		}
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_D))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_A)))
+		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_D))
+			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_A)))
 		{
 			hasInput = true;
 			outputDirection += editorCamera.GetRight();
 		}
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_Q))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_E)))
+		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_Q))
+			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_E)))
 		{
 			hasInput = true;
 			outputDirection += -MathLib::Vector3::UnitY;
 		}
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_E))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode(Engine::KEY_CODE_Q)))
+		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_E))
+			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_Q)))
 		{
 			hasInput = true;
 			outputDirection += MathLib::Vector3::UnitY;
@@ -395,19 +395,19 @@ namespace Editor
 		{
 			Engine::PlatformInput& platformInput = Engine::Input::GetPlatformInput();
 			if (ImGui::IsKeyDown(
-				platformInput.FromKeyCode(Engine::InputKeyCode::KEY_CODE_W)))
+				platformInput.FromKeyCode<ImGuiKey>(Engine::InputKeyCode::KEY_CODE_W)))
 			{
 				m_transformationWidget.m_widgetOperation
 					= ImGuizmo::OPERATION::TRANSLATE;
 			}
 			else if (ImGui::IsKeyDown(
-				platformInput.FromKeyCode(Engine::InputKeyCode::KEY_CODE_E)))
+				platformInput.FromKeyCode<ImGuiKey>(Engine::InputKeyCode::KEY_CODE_E)))
 			{
 				m_transformationWidget.m_widgetOperation
 					= ImGuizmo::OPERATION::ROTATE;
 			}
 			else if (ImGui::IsKeyDown(
-				platformInput.FromKeyCode(Engine::InputKeyCode::KEY_CODE_R)))
+				platformInput.FromKeyCode<ImGuiKey>(Engine::InputKeyCode::KEY_CODE_R)))
 			{
 				m_transformationWidget.m_widgetOperation
 					= ImGuizmo::OPERATION::SCALE;

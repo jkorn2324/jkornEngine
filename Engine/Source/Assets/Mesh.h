@@ -236,8 +236,5 @@ namespace Engine
 		bool m_skinned;
 
 		SERIALIZABLE_ASSET(Mesh);
-
-	public:
-		static const BufferLayout c_defaultLayout;
 	};
 }
