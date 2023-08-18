@@ -16,6 +16,11 @@
 namespace Engine
 {
 
+	namespace
+	{
+		ID3D11RenderTargetView* n_SingleRenderTargetView[1];
+	}
+
 	static bool GetHWND(Window* window, HWND& hwnd)
 	{
 		switch (Window::GetWindowType())
@@ -260,25 +265,28 @@ namespace Engine
 
 	void DirectX11RenderingAPI::SetRenderTarget(ID3D11RenderTargetView* renderTargetView, ID3D11DepthStencilView* depthStencilView)
 	{
-		static ID3D11RenderTargetView* s_singleRenderTarget[1];
-		s_singleRenderTarget[0] = renderTargetView;
-
-		SetRenderTargets(1, &s_singleRenderTarget[0], depthStencilView);
+		n_SingleRenderTargetView[0] = renderTargetView;
+		SetRenderTargets(1, &n_SingleRenderTargetView[0], depthStencilView);
 	}
 
 	void DirectX11RenderingAPI::SetRenderTargets(uint32_t numRenderTargets, ID3D11RenderTargetView** renderTargetViews, ID3D11DepthStencilView* depthStencilView)
 	{
 		PROFILE_SCOPE(SetRenderTargets, GraphicsRenderer);
-
-		if (m_currentRenderTargetViews != nullptr)
+		
+		// Ensures that we are only changing the render target views if
+		// they are indeed pointing to different arrays.
+		if (m_currentRenderTargetViews != renderTargetViews)
 		{
-			for (uint16_t i = 0; i < m_numRenderTargetViews; i++)
+			if (m_currentRenderTargetViews != nullptr)
 			{
-				m_currentRenderTargetViews[i] = nullptr;
+				for (uint16_t i = 0; i < m_numRenderTargetViews; i++)
+				{
+					m_currentRenderTargetViews[i] = nullptr;
+				}
 			}
+			m_numRenderTargetViews = numRenderTargets;
+			m_currentRenderTargetViews = renderTargetViews;
 		}
-		m_numRenderTargetViews = numRenderTargets;
-		m_currentRenderTargetViews = renderTargetViews;
 		m_deviceContext->OMSetRenderTargets(m_numRenderTargetViews, &m_currentRenderTargetViews[0], depthStencilView);
 	}
 

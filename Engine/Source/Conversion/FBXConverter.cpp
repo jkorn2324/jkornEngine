@@ -148,7 +148,7 @@ namespace Engine
 			FbxNode* childNode = rootNode->GetChild(i);
 			if (!childNode) continue;
 
-			FbxMesh* mesh = childNode->GetMesh();
+			fbxsdk::FbxMesh* mesh = childNode->GetMesh();
 			if (mesh)
 			{
 				// TODO: Import mesh to scene.

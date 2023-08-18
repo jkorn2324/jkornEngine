@@ -226,10 +226,11 @@ namespace Engine
 		if (extension == L".dds"
 			|| extension == L".DDS")
 		{
+			// Creates the DDS Texture From the File
 			result = DirectX::CreateDDSTextureFromFileEx(device,
 				filePath, 0,
 				(D3D11_USAGE)textureUsage, bindFlags, cpuAccessFlags, 0,
-				false,
+				(DirectX::DX11::DDS_LOADER_FLAGS)0,
 				resource, shaderResourceView, nullptr);
 		}
 		else

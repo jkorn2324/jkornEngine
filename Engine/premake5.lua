@@ -99,13 +99,13 @@ project "Engine"
 		includedirs
 		{
 			"%{IncludeDirectories.DirectXTK}",
-			"C:/Program Files/Autodesk/FBX/FBX SDK/2020.2/include/"
+			"%{IncludeDirectories.fbxsdk}"
 		}
 
 		links
 		{
 			"%{LibraryNames.DirectXTK}",
-			"libfbxsdk.lib"
+			os.findlib("%{LibraryNames.fbxsdk}")
 		}
 
 		defines
@@ -125,7 +125,7 @@ project "Engine"
 		libdirs
 		{
 			"%{LibraryDirectories.DirectXTK}Bin/Desktop_2019/Win32/%{cfg.buildcfg}/",
-			"C:/Program Files/Autodesk/FBX/FBX SDK/2020.2/lib/vs2019/x86/%{cfg.buildcfg}/"
+			"%{LibraryDirectories.fbxsdk}vs2019/x86/%{cfg.buildcfg}/"
 		}
 		-- Pre Build Commands so that glfw, imgui & DirectXTK gets built before the Engine lib.
 		prebuildcommands
@@ -138,18 +138,18 @@ project "Engine"
 		postbuildcommands
 		{
 			"mkdir \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\"",
-			"copy /Y \"C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2020.2\\lib\\vs2019\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\\libfbxsdk.dll\""
 		}
 
 		defines
 		{
 			"PLATFORM_WINDOWS_X86"
 		}
+
 	filter { "architecture:x86_64", "system:Windows"}
 		libdirs
 		{
 			"%{LibraryDirectories.DirectXTK}Bin/Desktop_2019/x64/%{cfg.buildcfg}/",
-			"C:/Program Files/Autodesk/FBX/FBX SDK/2020.2/lib/vs2019/x64/%{cfg.buildcfg}/"
+			"%{LibraryDirectories.fbxsdk}vs2019/x64/%{cfg.buildcfg}/"
 		}
 		-- Pre Build Commands so that glfw, imgui & DirectXTK gets built before the Engine lib.
 		prebuildcommands
@@ -161,10 +161,35 @@ project "Engine"
 		postbuildcommands
 		{
 			"mkdir \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\"",
-			"copy /Y \"C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2020.2\\lib\\vs2019\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
 		}
 
 		defines
 		{
 			"PLATFORM_WINDOWS_X64"
+		}
+
+	-- If the action/compiler is vs2022
+	filter { "architecture:x86", "system:Windows", "action:vs2022" }
+		postbuildcommands
+		{
+			"copy /Y \"%{FBXLibSDKLibPath}\\vs2022\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\\libfbxsdk.dll\""
+		}
+	
+	-- If the action/compiler is vs2019
+	filter { "architecture:x86", "system:Windows", "action:vs2019" }
+		postbuildcommands
+		{
+			"copy /Y \"%{FBXLibSDKLibPath}\\vs2019\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\\libfbxsdk.dll\""
+		}
+
+	filter { "architecture:x86_64", "system:Windows", "action:vs2022" }
+		postbuildcommands
+		{
+			"copy /Y \"%{FBXLibSDKLibPath}\\vs2022\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
+		}
+		
+	filter { "architecture:x86_64", "system:Windows", "action:vs2019" }
+		postbuildcommands
+		{
+			"copy /Y \"%{FBXLibSDKLibPath}\\vs2019\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
 		}
