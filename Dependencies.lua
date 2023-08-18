@@ -1,6 +1,6 @@
 FBXLibSDKPath = "C:/Program Files/Autodesk/FBX/FBX SDK"
 FBXLibSDKVersion = "2020.3.4"
-FBXLibSDKPathDllLib = "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\%{FBXLibSDKVersion}\\lib"
+FBXLibSDKLibPath = "%{FBXLibSDKPath}/%{FBXLibSDKVersion}/lib"
 
 IncludeDirectories = {}
 

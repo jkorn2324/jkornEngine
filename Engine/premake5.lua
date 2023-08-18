@@ -172,24 +172,24 @@ project "Engine"
 	filter { "architecture:x86", "system:Windows", "action:vs2022" }
 		postbuildcommands
 		{
-			"copy /Y \"%{FBXLibSDKPathDllLib}\\vs2022\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\\libfbxsdk.dll\""
+			"copy /Y \"%{FBXLibSDKLibPath}\\vs2022\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\\libfbxsdk.dll\""
 		}
 	
 	-- If the action/compiler is vs2019
 	filter { "architecture:x86", "system:Windows", "action:vs2019" }
 		postbuildcommands
 		{
-			"copy /Y \"%{FBXLibSDKPathDllLib}\\vs2019\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\\libfbxsdk.dll\""
+			"copy /Y \"%{FBXLibSDKLibPath}\\vs2019\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\\libfbxsdk.dll\""
 		}
 
 	filter { "architecture:x86_64", "system:Windows", "action:vs2022" }
 		postbuildcommands
 		{
-			"copy /Y \"%{FBXLibSDKPathDllLib}\\vs2022\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
+			"copy /Y \"%{FBXLibSDKLibPath}\\vs2022\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
 		}
 		
 	filter { "architecture:x86_64", "system:Windows", "action:vs2019" }
 		postbuildcommands
 		{
-			"copy /Y \"%{FBXLibSDKPathDllLib}\\vs2019\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
+			"copy /Y \"%{FBXLibSDKLibPath}\\vs2019\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
 		}
