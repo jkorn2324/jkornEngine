@@ -18,7 +18,7 @@ namespace Engine
 	public:
 		virtual ~IStreamWriter() { }
 
-		virtual void Write(void* bytes, uint32_t size)=0;
+		virtual void Write(void* bytes, size_t size) = 0;
 	};
 
 	/// <summary>
@@ -27,7 +27,7 @@ namespace Engine
 	class IStreamReader
 	{
 	public:
-		virtual bool Read(void** bytes, uint32_t size) =0;
-		virtual bool IsEndOfStream() const =0;
+		virtual bool Read(void** bytes, size_t size) = 0;
+		virtual bool IsEndOfStream() const = 0;
 	};
 }

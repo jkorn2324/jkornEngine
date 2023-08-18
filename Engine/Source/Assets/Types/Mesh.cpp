@@ -19,13 +19,15 @@ namespace Engine
 
 	namespace
 	{
-		const BufferLayout c_defaultMeshLayoutInternal = 
+		const BufferLayout c_defaultMeshLayoutInternal =
 		{
 			BufferLayoutParameterSet::Position,
 			BufferLayoutParameterSet::Normal,
 			BufferLayoutParameterSet::Uv0
 		};
 	}
+
+	const BufferLayout Mesh::c_defaultLayout = c_defaultMeshLayoutInternal;
 
 	Mesh::Mesh()
 		: m_positions(),
@@ -76,13 +78,13 @@ namespace Engine
 	void Mesh::SetIndices(const uint32_t* indices, uint32_t indexCount)
 	{
 		m_indices = new std::uint32_t[indexCount];
-		Memory::Memcpy(m_indices, indices, 
+		Memory::Memcpy(m_indices, indices,
 			sizeof(std::uint32_t) * indexCount);
-		
+
 		// Creates the index buffer.
 		std::shared_ptr<IndexBuffer> indexBuffer;
 		IndexBuffer::Create(indexBuffer, indices, indexCount, sizeof(uint32_t));
-		
+
 		if (m_vertexArray != nullptr)
 		{
 			m_vertexArray->SetIndexBuffer(indexBuffer);
@@ -105,7 +107,7 @@ namespace Engine
 				m_uvs[i].SetVertexCount(vertexCount);
 				m_uvs[i].SetBufferLayout({
 					{ "UV", BufferLayoutSemanticType::Type_TexCoord, BufferLayoutType::Float32, 2, i }
-				});
+					});
 			}
 			m_positions.SetVertexCount(vertexCount);
 			m_positions.SetBufferLayout(BufferLayoutParameterSet::Position);
@@ -129,7 +131,7 @@ namespace Engine
 	void Mesh::RefreshVertexArray()
 	{
 		m_vertexArray->ClearVertexBuffers();
-	
+
 		if (m_vertexCount > 0)
 		{
 			for (const auto& parameters : m_bufferLayout.parameters)
@@ -234,7 +236,7 @@ namespace Engine
 		RefreshVertexArray();
 	}
 
-	
+
 	void Mesh::SetUVs(uint32_t index, const std::vector<MathLib::Vector2>& uvs)
 	{
 		SetUVs(index, &uvs[0], uvs.size());
@@ -250,7 +252,7 @@ namespace Engine
 		const auto& buffer = uvIn.GetVertexBuffer();
 		buffer->SetBufferLayoutParameters({
 			 { "UV", BufferLayoutSemanticType::Type_TexCoord, BufferLayoutType::Float32, 2, index }
-		});
+			});
 		RefreshVertexArray();
 	}
 
@@ -267,7 +269,7 @@ namespace Engine
 		const auto& buffer = m_normals.GetVertexBuffer();
 		buffer->SetBufferLayoutParameters({
 			BufferLayoutParam::Normal0
-		});
+			});
 	}
 
 	void Mesh::RecalculateNormals()

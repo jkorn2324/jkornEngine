@@ -60,6 +60,19 @@ namespace Engine
 			return false;
 		}
 
+		/// <summary>
+		/// Force uncaches the asset from the asset cache.
+		/// </summary>
+		/// <param name="assetID">Asset ID</param>
+		void ForceUncache(const TAssetID& assetID)
+		{
+			const auto& searchedAsset = m_assetCache.find(assetID);
+			if (searchedAsset != m_assetCache.end())
+			{
+				m_assetCache.erase(searchedAsset);
+			}
+		}
+
 		// Gets the Asset from the shared asset ptr;
 		bool GetAsset(const TAssetID& assetID, TAssetSharedPtr& outPtr) const
 		{
@@ -95,7 +108,7 @@ namespace Engine
 			{
 				int32_t lastAssetIndex = (int32_t)m_unreferencedAssets.size() - 1;
 				const TAssetID& id = m_unreferencedAssets[lastAssetIndex];
-				TAssetSharedPtr ptr = m_assetCache[id];
+				TAssetSharedPtr& ptr = m_assetCache[id];
 				m_assetCache.erase(id);
 				m_unreferencedAssets.pop_back();
 				ptr.reset();
