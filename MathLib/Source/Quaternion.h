@@ -44,6 +44,11 @@ namespace MathLib
 		static Quaternion FromEuler(float yaw, float pitch, float roll);
 		static Quaternion FromEuler(float yaw, float pitch, float roll, bool inDegrees);
 
+		/**
+		 * The quaternion rotation from a direction.
+		 */
+		static Quaternion FromDirection(const Vector3& desiredDirection);
+		static Quaternion FromDirection(const Vector3& desiredDirection, const Vector3& upDirection, const Vector3& rightDirection);
 
 		static const Quaternion Identity;
 	};

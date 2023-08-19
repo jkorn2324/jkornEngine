@@ -37,6 +37,14 @@ namespace Engine
 
 		const class Scene& GetScene() const { return *m_scene; }
 
+		/**
+		 * Casted to a bool so that we can check for if its valid.
+		 */
+		explicit operator bool() const
+		{
+			return IsValid();
+		}
+
 		friend bool operator==(const Entity& a, const Entity& b)
 		{
 			return a.m_entity == b.m_entity;

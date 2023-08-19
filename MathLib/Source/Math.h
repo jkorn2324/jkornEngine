@@ -1,5 +1,8 @@
 #pragma once
 
+#include "MathPCH.h"
+#include "Defines.h"
+
 #include <cmath>
 
 namespace MathLib
@@ -16,14 +19,61 @@ namespace MathLib
 		return std::sqrtf(input);
 	}
 
+	static double Sqrt(double input)
+	{
+		return std::sqrt(input);
+	}
+
+	template<typename T>
+	static T Sqrt(T input)
+	{
+		ASSERT_IS_ARITHMETIC(T);
+		double casted = static_cast<double>(input);
+		return static_cast<T>(Sqrt(casted));
+	}
+
+	template<>
+	static float Sqrt(float input)
+	{
+		return std::sqrtf(input);
+	}
+
+	template<typename T>
+	static T Abs(T input)
+	{
+		ASSERT_IS_ARITHMETIC(T);
+
+		const T negativeOne = static_cast<T>(-1);
+		return input < 0 ? input * negativeOne : input;
+	}
+
+	template<>
 	static float Abs(float input)
 	{
-		return static_cast<float>(std::abs(input));
+		return std::abs(input);
+	}
+
+	template<>
+	static double Abs(double input)
+	{
+		return std::abs(input);
+	}
+
+	template<typename T>
+	static bool IsCloseEnough(T a, T b, T epsilon)
+	{
+		return a == b;
+	}
+
+	template<>
+	static bool IsCloseEnough(float a, float b, float epsilon)
+	{
+		return MathLib::Abs(a - b) <= epsilon;
 	}
 
 	static bool IsCloseEnough(float a, float b)
 	{
-		return Abs((a - b)) < EPSILON;
+		return IsCloseEnough(a, b, EPSILON);
 	}
 
 	static float Sin(float input, bool inDegrees = true)
@@ -64,18 +114,21 @@ namespace MathLib
 	template<typename T>
 	static T Max(const T& a, const T& b)
 	{
+		ASSERT_IS_ARITHMETIC(T);
 		return a > b ? a : b;
 	}
 
 	template<typename T>
 	static T Min(const T& a, const T& b)
 	{
+		ASSERT_IS_ARITHMETIC(T);
 		return a < b ? a : b;
 	}
 
 	template<typename T>
 	static T Clamp(const T& min, const T& max, const T& val)
 	{
+		ASSERT_IS_ARITHMETIC(T);
 		return Min(max, Max(min, val));
 	}
 

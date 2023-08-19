@@ -196,6 +196,29 @@ namespace MathLib
 			+ Sin(pitch * 0.5f, inDegrees) * Sin(yaw * 0.5f, inDegrees) * Sin(roll * 0.5f, inDegrees));
 	}
 
+	Quaternion Quaternion::FromDirection(const Vector3& desiredDirection)
+	{
+		return FromDirection(desiredDirection, Vector3::UnitY, Vector3::UnitX);
+	}
+
+	Quaternion Quaternion::FromDirection(const Vector3& desiredDirection, const Vector3& upDirection, const Vector3& rightDirection)
+	{
+		Vector3 rotationAxis;
+		float dotProduct = Dot(upDirection, desiredDirection);
+		if (MathLib::IsCloseEnough(dotProduct, 1.0f))
+		{
+			rotationAxis = rightDirection;
+		}
+		else
+		{
+			rotationAxis = Cross(desiredDirection, upDirection);
+		}
+		// rotation axis for a quaternion.
+		rotationAxis.Normalize();
+		float rotationAngle = ACos(dotProduct, false);
+		return Quaternion(rotationAxis, rotationAngle, false);
+	}
+
 	Quaternion Normalize(const Quaternion& quat)
 	{
 		float length = quat.Length();

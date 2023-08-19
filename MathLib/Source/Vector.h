@@ -8,8 +8,6 @@ namespace MathLib
 	// TODO: Add SIMD/intrinsic support (Reason why we don't use SIMD as its different based on platform
 	// ARM, x64, etc...)
 
-#pragma region vector2
-
 	class Vector2
 	{
 	public:
@@ -80,10 +78,6 @@ namespace MathLib
 		Vector2Int(int32_t x, int32_t y);
 		Vector2Int(const Vector2& vec);
 	};
-
-#pragma endregion
-
-#pragma region vector3
 
 	class Vector3
 	{
@@ -177,7 +171,6 @@ namespace MathLib
 		Vector3Int(const Vector3& vec);
 	};
 
-#pragma endregion
 
 	class Vector4
 	{
