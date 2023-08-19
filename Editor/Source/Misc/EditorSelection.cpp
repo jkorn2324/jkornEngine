@@ -34,12 +34,12 @@ namespace Editor
 
 	bool EditorSelection::HasSelectedEntity() { return s_selectedEntity.IsValid(); }
 
-	void EditorSelection::OnEvent(Engine::Event& event)
+	void EditorSelection::OnEvent(Engine::IEvent& event)
 	{
 		Engine::EventDispatcher dispatcher(event);
-		dispatcher.Invoke<Engine::EntityCreatedEvent>(
+		dispatcher.Invoke<Engine::EntityEventType, Engine::EntityCreatedEvent>(
 			BIND_STATIC_EVENT_FUNCTION(OnEntityCreated_EditorSelection));
-		dispatcher.Invoke<Engine::EntityDestroyedEvent>(
+		dispatcher.Invoke<Engine::EntityEventType, Engine::EntityDestroyedEvent>(
 			BIND_STATIC_EVENT_FUNCTION(OnEntityDestroyed_EditorSelection));
 	}
 }

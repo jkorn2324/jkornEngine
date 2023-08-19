@@ -17,7 +17,7 @@ namespace Engine
 		char** args;
 	};
 	
-	class Event;
+	class IEvent;
 
 	class Application
 	{
@@ -36,7 +36,7 @@ namespace Engine
 		class Window& GetWindow() const;
 
 	private:
-		void OnEvent(Event& event);
+		void OnEvent(IEvent& event);
 
 		bool OnWindowClosed(class WindowClosedEvent& event);
 		bool OnWindowResized(class WindowResizedEvent& event);

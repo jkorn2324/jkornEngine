@@ -41,10 +41,10 @@ namespace Editor
 	{
 	}
 	
-	void SceneHierarchy::OnEvent(Engine::Event& event)
+	void SceneHierarchy::OnEvent(Engine::IEvent& event)
 	{
 		Engine::EventDispatcher eventDispatcher(event);
-		eventDispatcher.Invoke<Engine::EntityDestroyedEvent>(
+		eventDispatcher.Invoke<Engine::EntityEventType, Engine::EntityDestroyedEvent>(
 			BIND_EVENT_FUNCTION(SceneHierarchy::OnEntityDestroyed));
 	}
 

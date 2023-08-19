@@ -157,14 +157,14 @@ namespace Engine
 		}
 	}
 
-	void Scene::OnEvent(Event& event)
+	void Scene::OnEvent(IEvent& event)
 	{
 		EventDispatcher dispatcher(event);
-		dispatcher.Invoke<EntityComponentAddedEvent<Transform3DComponent>>(
+		dispatcher.Invoke<EntityEventType, EntityComponentAddedEvent<Transform3DComponent>>(
 			BIND_EVENT_FUNCTION(OnComponentAdded));
-		dispatcher.Invoke<EntityComponentRemovedEvent<Transform3DComponent>>(
+		dispatcher.Invoke<EntityEventType, EntityComponentRemovedEvent<Transform3DComponent>>(
 			BIND_EVENT_FUNCTION(OnComponentRemoved));
-		dispatcher.Invoke<EntityHierarchyChangedEvent>(
+		dispatcher.Invoke<EntityEventType, EntityHierarchyChangedEvent>(
 			BIND_EVENT_FUNCTION(OnEntityHierarchyChanged));
 	}
 
@@ -643,8 +643,9 @@ namespace Engine
 	template<>
 	bool Scene::OnComponentRemoved(EntityComponentRemovedEvent<BehaviorComponent>& event)
 	{
-		event.component.Get().OnDestroy();
-		event.component.Destroy();
+		BehaviorComponent& component = event.GetComponent();
+		component.Get().OnDestroy();
+		component.Destroy();
 		return true;
 	}
 

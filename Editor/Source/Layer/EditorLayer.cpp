@@ -323,7 +323,7 @@ namespace Editor
 		}
 	}
 	
-	void EditorLayer::OnEvent(Engine::Event& event)
+	void EditorLayer::OnEvent(Engine::IEvent& event)
 	{
 		EditorSceneManager::OnEvent(event);
 		EditorSelection::OnEvent(event);

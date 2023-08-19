@@ -6,7 +6,7 @@
 
 namespace Engine
 {
-
+	class IEvent;
 
 	class Layer
 	{
@@ -20,7 +20,7 @@ namespace Engine
 		virtual void OnUpdate(const Timestep& ts) { }
 		virtual void OnImGuiRender() { }
 
-		virtual void OnEvent(class Event& event) { }
+		virtual void OnEvent(IEvent& event) { }
 		const std::string& GetName() const { return m_name; }
 
 	protected:

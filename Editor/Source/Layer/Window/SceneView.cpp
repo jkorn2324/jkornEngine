@@ -49,7 +49,7 @@ namespace Editor
 		delete m_frameBuffer;
 	}
 
-	void SceneView::OnEvent(Engine::Event& event)
+	void SceneView::OnEvent(Engine::IEvent& event)
 	{
 		// TODO: Implementation
 	}

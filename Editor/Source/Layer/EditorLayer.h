@@ -12,7 +12,7 @@
 namespace Engine
 {
 	class FrameBuffer;
-	class Event;
+	class IEvent;
 }
 
 namespace Editor
@@ -30,7 +30,7 @@ namespace Editor
 		void OnUpdate(const Engine::Timestep& timestep);
 		void OnImGuiRender() override;
 
-		void OnEvent(Engine::Event& event) override;
+		void OnEvent(Engine::IEvent& event) override;
 
 	private:
 		void DrawEditorTopWindow();

@@ -173,14 +173,14 @@ namespace Engine
 		return *m_window.get();
 	}
 
-	void Application::OnEvent(Event& event)
+	void Application::OnEvent(IEvent& event)
 	{
 		Input::OnEvent(event);
 		SceneManager::OnEvent(event);
 
 		EventDispatcher dispatcher(event);
-		dispatcher.Invoke<WindowClosedEvent>(BIND_EVENT_FUNCTION(Application::OnWindowClosed));
-		dispatcher.Invoke<WindowResizedEvent>(BIND_EVENT_FUNCTION(Application::OnWindowResized));
+		dispatcher.Invoke<WindowEventType, WindowClosedEvent>(BIND_EVENT_FUNCTION(Application::OnWindowClosed));
+		dispatcher.Invoke<WindowEventType, WindowResizedEvent>(BIND_EVENT_FUNCTION(Application::OnWindowResized));
 
 		for(auto iterator = m_windowLayerStack.rbegin(); iterator != m_windowLayerStack.rend(); iterator++)
 		{

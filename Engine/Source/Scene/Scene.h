@@ -14,7 +14,7 @@
 namespace Engine
 {
 	class Entity;
-	class Event;
+	class IEvent;
 	class GUID;
 
 	template<typename T>
@@ -26,7 +26,7 @@ namespace Engine
 	using Transform3DComponent = MathLib::Transform3D;
 	using Transform2DComponent = MathLib::Transform2D;
 
-	using EventFunc = std::function<void(Event&)>;
+	using EventFunc = std::function<void(IEvent&)>;
 
 	class Scene
 	{
@@ -35,7 +35,7 @@ namespace Engine
 		explicit Scene(const std::wstring& name);
 		~Scene();
 
-		void OnEvent(Event& event);
+		void OnEvent(IEvent& event);
 
 		Entity CreateEntity(const GUID& guid, const std::string& entityName, const Engine::Entity& parent);
 		Entity CreateEntity(const std::string& entityName, const Engine::Entity& parent);

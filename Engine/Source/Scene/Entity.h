@@ -11,7 +11,7 @@
 
 namespace Engine
 {
-	using EventFunc = std::function<void(Event&)>;
+	using EventFunc = std::function<void(IEvent&)>;
 
 	class Entity
 	{

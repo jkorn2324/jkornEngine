@@ -8,8 +8,9 @@ namespace Engine
 	class Scene;
 	class Timestep;
 	class Entity;
+	class IEvent;
 
-	using EventFunc = std::function<void(class Event&)>;
+	using EventFunc = std::function<void(IEvent&)>;
 
 	class SceneManager
 	{
@@ -17,7 +18,7 @@ namespace Engine
 		static void Init();
 		static void Release();
 
-		static void OnEvent(Event& event);
+		static void OnEvent(IEvent& event);
 		static void LoadScene(const std::filesystem::path& path);
 		static void LoadScene(const wchar_t* filePath);
 

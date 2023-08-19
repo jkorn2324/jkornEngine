@@ -252,7 +252,7 @@ namespace Editor
 		// TODO: Implementation
 	}
 	
-	void EntityInspector::OnEvent(Engine::Event& event)
+	void EntityInspector::OnEvent(Engine::IEvent& event)
 	{
 		// TODO: Implementation
 	}

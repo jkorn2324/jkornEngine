@@ -82,7 +82,7 @@ namespace Editor
 		}
 	}
 
-	void ProjectMenu::OnEvent(Engine::Event& event)
+	void ProjectMenu::OnEvent(Engine::IEvent& event)
 	{
 	}
 

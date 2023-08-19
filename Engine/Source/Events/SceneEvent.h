@@ -10,64 +10,94 @@ namespace Engine
 	class EntityHierarchyComponent;
 	class Scene;
 
-#define EVENT_TYPE_COMPONENT_CLASS(type, category) template<typename Component>\
-	class type : public Event { \
-	public: \
-		explicit type(const Entity& entity, Component& c) \
-			: entity((Entity&)entity), component(c), typeInfo(typeid(Component)) { } \
-		const std::type_info& GetComponentType() const { return typeInfo; } \
-		static EventType GetStaticEventType() { return EventType::type; }\
-		virtual EventType GetEventType() const override { return GetStaticEventType(); }\
-		virtual const char* GetName() const override { return #type; }\
-		virtual int GetEventCategoryFlags() const override { return (int)EventCategory::category; } \
-		static bool StaticIsValid(class Event& event) \
-		{ \
-			type<Component>& t = (type&)event; \
-			return t.typeInfo == typeid(Component); \
-		} \
-	private: \
-		const std::type_info& typeInfo; \
-	public: \
-		Entity& entity; \
-		Component& component; }
+	enum class EntityEventType
+	{
+		EntityCreatedEventType, EntityDestroyedEventType,
 
+		EntityComponentAddedEventType, EntityComponentRemovedEventType, 
 
-	class EntityCreatedEvent : public Event
+		EntityHierarchyChangedEventType
+	};
+
+	class EntityCreatedEvent : public Event<EntityEventType>
 	{
 	public:
 		explicit EntityCreatedEvent(const Entity& entity)
 			: entity((Entity&)entity) { }
 
-		EVENT_CATEGORY_CLASS(Scene)
-		EVENT_TYPE_CLASS(EntityCreatedEvent)
+		EVENT_TYPE_CLASS(EntityEventType, EntityCreatedEventType)
 
 		Entity& entity;
 	};
 
-	class EntityDestroyedEvent : public Event
+	class EntityDestroyedEvent : public Event<EntityEventType>
 	{
 	public:
 		explicit EntityDestroyedEvent(const Entity& entity)
-			: entity((Entity&)entity) { }
+			: entity(entity) { }
 
-		EVENT_CATEGORY_CLASS(Scene)
-		EVENT_TYPE_CLASS(EntityDestroyedEvent)
+		EVENT_TYPE_CLASS(EntityEventType, EntityDestroyedEventType)
 
-		Entity& entity;
+		const Entity& entity;
 	};
 
-	class EntityHierarchyChangedEvent : public Event
+	class EntityHierarchyChangedEvent : public Event<EntityEventType>
 	{
 	public:
-		explicit EntityHierarchyChangedEvent(const EntityHierarchyComponent& component)
+		explicit EntityHierarchyChangedEvent(EntityHierarchyComponent& component)
 			: entityHierarchy((EntityHierarchyComponent&)component) { }
 
-		EVENT_TYPE_CLASS(EntityHierarchyChangedEvent)
-		EVENT_CATEGORY_CLASS(Scene)
+		EVENT_TYPE_CLASS(EntityEventType, EntityHierarchyChangedEventType)
 
 		EntityHierarchyComponent& entityHierarchy;
 	};
 
-	EVENT_TYPE_COMPONENT_CLASS(EntityComponentAddedEvent, Scene);
-	EVENT_TYPE_COMPONENT_CLASS(EntityComponentRemovedEvent, Scene);
+	template<typename TComponent>
+	class EntityComponentAddedEvent : public Event<EntityEventType>
+	{
+	public:
+		explicit EntityComponentAddedEvent(Entity& entity, TComponent& component)
+			: entity(entity), component(component), componentType(typeid(TComponent)) { }
+
+		/**
+		 * Gets the entity. 
+		 */
+		Entity& GetEntity() { return entity; }
+		/**
+		 * Get the component. 
+		 */
+		TComponent& GetComponent() { return component; }
+
+		EVENT_TYPE_CLASS(EntityEventType, EntityComponentAddedEventType);
+
+	private:
+		const std::type_info& componentType;
+		Entity& entity;
+		TComponent& component;
+	};
+
+	template<typename TComponent>
+	class EntityComponentRemovedEvent : public Event<EntityEventType>
+	{
+	public:
+		explicit EntityComponentRemovedEvent(Entity& entity, TComponent& component)
+			: entity(entity), component(component), componentType(typeid(TComponent)) { }
+
+		/**
+		 * Gets the entity.
+		 */
+		Entity& GetEntity() { return entity; }
+		/**
+		 * Get the component.
+		 */
+		TComponent& GetComponent() { return component; }
+
+		EVENT_TYPE_CLASS(EntityEventType, EntityComponentRemovedEventType);
+
+	private:
+		const std::type_info& componentType;
+		Entity& entity;
+		TComponent& component;
+	};
+
 }

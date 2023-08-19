@@ -9,7 +9,7 @@ namespace Engine
 {
 
 	class PlatformImGuiLayer;
-	class Event;
+	class IEvent;
 
 	class ImGuiLayer : public Layer
 	{
@@ -18,7 +18,7 @@ namespace Engine
 		explicit ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnEvent(Event& event) override;
+		void OnEvent(IEvent& event) override;
 
 		void OnLayerAdded() override;
 		void OnLayerRemoved() override;

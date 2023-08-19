@@ -30,10 +30,12 @@ namespace Engine
 		bool resizable = false;
 	};
 
+	class IEvent;
+
 	class Window
 	{
 	public:
-		using WindowEventCallback = std::function<void(class Event&)>;
+		using WindowEventCallback = std::function<void(IEvent&)>;
 
 	public:
 		Window(const WindowProperties& params);

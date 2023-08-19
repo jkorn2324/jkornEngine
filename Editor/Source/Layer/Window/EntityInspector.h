@@ -3,7 +3,7 @@
 
 namespace Engine
 {
-	class Event;
+	class IEvent;
 }
 
 namespace Editor
@@ -23,7 +23,7 @@ namespace Editor
 		void SetOpen(bool open) { m_open = open; }
 		bool IsOpen() const { return m_open; }
 
-		void OnEvent(Engine::Event& event);
+		void OnEvent(Engine::IEvent& event);
 
 		void Draw();
 

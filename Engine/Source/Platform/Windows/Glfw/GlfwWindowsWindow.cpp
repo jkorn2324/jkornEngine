@@ -10,6 +10,7 @@
 #include "GraphicsRenderer.h"
 #include "RenderingAPI.h"
 #include "Input.h"
+#include "InputEvent.h"
 #include "PlatformInput.h"
 #include "Profiler.h"
 

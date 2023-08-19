@@ -8,7 +8,7 @@
 namespace Engine
 {
 	class Timestep;
-	class Event;
+	class IEvent;
 }
 
 namespace Editor

@@ -7,14 +7,14 @@
 
 namespace Engine
 {
-	class Event;
+	class IEvent;
 }
 
 namespace Editor
 {
 	class EditorCamera;
 
-	using EventFunc = std::function<void(Engine::Event&)>;
+	using EventFunc = std::function<void(Engine::IEvent&)>;
 
 	class EditorSceneManager
 	{
@@ -22,7 +22,7 @@ namespace Editor
 		static void Init();
 		static void Release();
 
-		static void OnEvent(Engine::Event& event);
+		static void OnEvent(Engine::IEvent& event);
 
 		static void OpenScene(const std::filesystem::path& path);
 		static void SaveScene(const std::filesystem::path& path);

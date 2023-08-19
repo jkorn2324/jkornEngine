@@ -27,7 +27,7 @@ namespace Engine
 		delete s_activeScene;
 	}
 	
-	void SceneManager::OnEvent(Event& event)
+	void SceneManager::OnEvent(IEvent& event)
 	{
 		if (s_activeScene != nullptr)
 		{
