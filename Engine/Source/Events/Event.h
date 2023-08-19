@@ -5,17 +5,7 @@
 namespace Engine
 {
 
-	enum class EventType
-	{
-
-		InputKeyEvent, InputKeyPressedEvent, InputKeyReleasedEvent,
-		InputMouseButtonEvent, InputMouseButtonPressedEvent, InputMouseButtonReleasedEvent,
-		InputMouseMoveEvent, InputMouseScrollEvent,
-
-		EntityCreatedEvent, EntityDestroyedEvent, EntityHierarchyChangedEvent,
-		EntityComponentAddedEvent, EntityComponentRemovedEvent
-	};
-
+	// The macros for defining an event type.
 #define EVENT_TYPE_CLASS(TEnumType, EnumValue) public:\
 	static TEnumType GetStaticEventType() { return TEnumType::EnumValue; }\
 	virtual TEnumType GetEventType() const override { return GetStaticEventType(); }\
@@ -70,6 +60,8 @@ namespace Engine
 		template<typename TEventTypeParam, typename TEventType, typename Func>
 		bool Invoke(const Func& callback)
 		{
+			// Asserts the the event type param is an enum & that the
+			// event that is searched is a base of an Event<TEventTypeParam>
 			static_assert(std::is_enum<TEventTypeParam>::value, 
 				"TEventType must be constrained to an enum or enum class.");
 			static_assert(std::is_base_of<Event<TEventTypeParam>, TEventType>::value, 
