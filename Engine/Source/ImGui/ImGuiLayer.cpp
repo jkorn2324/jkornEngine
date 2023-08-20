@@ -32,10 +32,10 @@ namespace Engine
 		OnLayerRemoved();
 	}
 
-	void ImGuiLayer::OnEvent(Event& event)
+	void ImGuiLayer::OnEvent(IEvent& event)
 	{
 		EventDispatcher dispatcher(event);
-		dispatcher.Invoke<WindowResizedEvent>(
+		dispatcher.Invoke<WindowEventType, WindowResizedEvent>(
 			BIND_EVENT_FUNCTION(OnWindowResized));
 	}
 
@@ -55,9 +55,9 @@ namespace Engine
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-		
+
 		io.ConfigWindowsMoveFromTitleBarOnly = true;
-		
+
 		ImGui::StyleColorsDark();
 
 		m_windowImGuiLayer->OnLayerAdded();
