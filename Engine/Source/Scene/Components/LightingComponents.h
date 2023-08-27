@@ -4,6 +4,9 @@
 
 namespace Engine
 {
+	/**
+	 * Directional Light Component.
+	 */
 	struct DirectionalLightComponent
 	{
 		MathLib::Vector3 lightColor = MathLib::Vector3::One;
@@ -15,6 +18,9 @@ namespace Engine
 			: lightColor(lightColor) { }
 	};
 
+	/**
+	 * The Point light Component.
+	 */
 	struct PointLightComponent
 	{
 		MathLib::Vector3 lightColor = MathLib::Vector3::One;

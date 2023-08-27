@@ -58,7 +58,7 @@ namespace Editor
 		// Sets the ambient light for the scene.
 		Engine::GraphicsRenderer3D::SetAmbientLight(
 			MathLib::Vector3 { 0.25f, 0.25f, 0.25f });
-		
+
 		// Creates a cube to test phong lighting calculations.
 		{
 			Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
@@ -75,7 +75,7 @@ namespace Editor
 			}
 
 			Engine::Entity e = scene.CreateEntity("Test Cube");
-			Engine::Transform3DComponent& component 
+			Engine::Transform3DComponent& component
 				= e.AddComponent<Engine::Transform3DComponent>();
 			Engine::MeshComponent& meshComponent
 				= e.AddComponent<Engine::MeshComponent>();
@@ -83,25 +83,25 @@ namespace Editor
 			Engine::AssetManager::GetMaterials().Cache(
 				L"LitShader", meshComponent.material);
 			meshComponent.material->SetConstantsLayout(
-			{
-				{ "c_diffuseColor", Engine::LayoutType_Vector4 },
-				{ "c_specularColor", Engine::LayoutType_Vector4 },
-				{ "c_specularPower", Engine::LayoutType_Float },
-				{ Engine::LayoutType_Vector3 }
-			});
+				{
+					{ "c_diffuseColor", Engine::LayoutType_Vector4 },
+					{ "c_specularColor", Engine::LayoutType_Vector4 },
+					{ "c_specularPower", Engine::LayoutType_Float },
+					{ Engine::LayoutType_Vector3 }
+				});
 
 			Engine::MaterialConstants& constants = meshComponent.material->GetMaterialConstants();
 			constants.SetMaterialConstant("c_diffuseColor", MathLib::Vector4::One);
 			constants.SetMaterialConstant("c_specularPower", 10.0f);
 			constants.SetMaterialConstant("c_specularColor", MathLib::Vector4::One);
-			
+
 			Engine::AssetRef<Engine::Texture> texture;
 			Engine::AssetManager::GetTextures().Load(L"Assets/brick-texture.png", texture);
 			meshComponent.material->SetTexture(0, texture);
 
 			{
-				Engine::BufferLayout bufferLayout = 
-				{ 
+				Engine::BufferLayout bufferLayout =
+				{
 					{
 						Engine::BufferLayoutParam::Position0
 					},
@@ -134,13 +134,13 @@ namespace Editor
 		// For testing purposes.
 		m_projectMenu.OnUpdate(timestep);
 		m_gameView.OnUpdate(timestep);
-		
+
 		// Updates the scene view.
 		{
 			m_sceneView.OnUpdate(timestep);
 			EditorSceneManager::GetEditorCamera().OnEditorUpdate(timestep);
 		}
-		
+
 		Engine::SceneManager::OnUpdate(timestep);
 
 		if (EditorSceneManager::IsPlaying())
@@ -322,7 +322,7 @@ namespace Editor
 			ImGui::End();
 		}
 	}
-	
+
 	void EditorLayer::OnEvent(Engine::IEvent& event)
 	{
 		EditorSceneManager::OnEvent(event);

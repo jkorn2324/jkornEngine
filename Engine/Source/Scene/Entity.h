@@ -13,6 +13,9 @@ namespace Engine
 {
 	using EventFunc = std::function<void(IEvent&)>;
 
+	/**
+	 * The Entity class. (Defines what consists of an entity in the game)
+	 */
 	class Entity
 	{
 	public:
@@ -26,7 +29,7 @@ namespace Engine
 		T& GetComponent();
 		template<typename T>
 		bool HasComponent() const;
-		template<typename T, typename... Args> 
+		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args);
 		template<typename T>
 		void RemoveComponent();
@@ -90,7 +93,7 @@ namespace Engine
 	{
 		return m_scene->m_entityRegistry.has<T>(m_entity);
 	}
-	
+
 	template<typename T, typename ...Args>
 	T& Entity::AddComponent(Args && ...args)
 	{

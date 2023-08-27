@@ -6,7 +6,7 @@
 namespace GlfwSandbox
 {
 	static const wchar_t* CARDS_LARGE_TILEMAP = L"Assets/Textures/PlayingCards/Tilesheet/cardsLarge_tilemap.png";
-	
+
 	static float s_rotation = 0.0f;
 
 	GlfwGame::GlfwGame()
@@ -20,7 +20,7 @@ namespace GlfwSandbox
 		InitializeRenderBuffers();
 		InitializeSceneComponents();
 	}
-	
+
 	GlfwGame::~GlfwGame()
 	{
 		Engine::SceneSerializer serializer(&Engine::SceneManager::GetActiveScene());
@@ -48,7 +48,7 @@ namespace GlfwSandbox
 
 		Engine::FrameBufferSpecification frameBufferSpecification({
 			{ Engine::FrameBufferAttachmentType::DEPTH_STENCIL }
-		});
+			});
 		frameBufferSpecification.width = Engine::GraphicsRenderer::GetRenderingAPI().GetWidth();
 		frameBufferSpecification.height = Engine::GraphicsRenderer::GetRenderingAPI().GetHeight();
 		m_frameBuffer = Engine::FrameBuffer::Create(frameBufferSpecification);
@@ -62,7 +62,7 @@ namespace GlfwSandbox
 		Engine::Entity cameraEntity = scene.Find("CameraEntity");
 		if (cameraEntity.IsValid())
 		{
-			Engine::BehaviorComponent& component 
+			Engine::BehaviorComponent& component
 				= cameraEntity.GetComponent<Engine::BehaviorComponent>();
 			component.Get().AddBehavior<CameraController>();
 			return;
@@ -73,7 +73,7 @@ namespace GlfwSandbox
 				= cameraEntity.AddComponent<Engine::Transform3DComponent>();
 			camComponentTransform.SetLocalPosition(MathLib::Vector3(-1.0f, 0.0f, 0.0f));
 			camComponentTransform.LookAt(MathLib::Vector3(0.0f, 0.0f, 0.0f));
-			
+
 			Engine::SceneCameraComponent& camComponent
 				= cameraEntity.AddComponent<Engine::SceneCameraComponent>();
 			Engine::CameraProperties& properties
@@ -164,7 +164,7 @@ namespace GlfwSandbox
 		Engine::Entity spriteEntity = scene.Find("HappyFace");
 		if (spriteEntity.IsValid())
 		{
-			Engine::SpriteComponent& component = 
+			Engine::SpriteComponent& component =
 				spriteEntity.GetComponent<Engine::SpriteComponent>();
 
 			ImGui::Begin("Variables Editor");
@@ -173,7 +173,7 @@ namespace GlfwSandbox
 		}
 	}
 
-	void GlfwGame::OnEvent(Engine::Event& event)
+	void GlfwGame::OnEvent(Engine::IEvent& event)
 	{
 		Engine::EventDispatcher dispatcher(event);
 		dispatcher.Invoke<Engine::WindowResizedEvent>(BIND_EVENT_FUNCTION(GlfwGame::OnWindowResize));

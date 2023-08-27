@@ -104,14 +104,14 @@ namespace Engine
 		BehaviorComponent()
 			: m_behaviorScriptContainer() { }
 		BehaviorComponent(const BehaviorComponent& component)
-			: m_behaviorScriptContainer() 
+			: m_behaviorScriptContainer()
 		{
 			if (component.IsValid())
 			{
 				m_behaviorScriptContainer = component.m_behaviorScriptContainer;
 			}
 		}
-		
+
 		BehaviorComponent& operator=(const BehaviorComponent& component)
 		{
 			if (component.IsValid())

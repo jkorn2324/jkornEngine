@@ -26,7 +26,7 @@ namespace GlfwSandbox
 		~GlfwGame();
 
 		void OnUpdate(const Engine::Timestep& ts) override;
-		void OnEvent(Engine::Event& event) override;
+		void OnEvent(Engine::IEvent& event) override;
 
 		void OnImGuiRender() override;
 
@@ -40,7 +40,7 @@ namespace GlfwSandbox
 	private:
 		Engine::VertexBuffer* m_vertexBuffer;
 		Engine::IndexBuffer* m_indexBuffer;
-		
+
 		Engine::SubTexture* m_subTexture;
 
 		Engine::ConstantBuffer* m_entityConstantBuffer;
