@@ -13,143 +13,137 @@
 namespace Engine
 {
 
-    template<typename T>
-    static void CopyComponent(const Entity& from, Entity& to, const std::function<void(T&, T&)>& func, bool addIfNotExist = true)
-    {
-        if (!from.IsValid() || !to.IsValid()) return;
+	template<typename T>
+	static void CopyComponent(const Entity& from, Entity& to, const std::function<void(T&, T&)>& func, bool addIfNotExist = true)
+	{
+		if (!from.IsValid() || !to.IsValid()) return;
 
-        if (from.HasComponent<T>())
-        {
-            if (!to.HasComponent<T>())
-            {
-                func(from.GetComponent<T>(), 
-                    to.AddComponent<T>());
-                return;
-            }
-            func(from.GetComponent<T>(), 
-                to.GetComponent<T>());
-        }
-    }
+		if (from.HasComponent<T>())
+		{
+			if (!to.HasComponent<T>())
+			{
+				func(from.GetComponent<T>(),
+					to.AddComponent<T>());
+				return;
+			}
+			func(from.GetComponent<T>(),
+				to.GetComponent<T>());
+		}
+	}
 
-    const Entity Entity::None = Entity();
+	const Entity Entity::None = Entity();
 
-    EventFunc Entity::s_componentEventFunc = nullptr;
+	EventFunc Entity::s_componentEventFunc = nullptr;
 
-    Entity::Entity(uint32_t id, Scene* scene)
-        : m_scene(scene),
-        m_entity((entt::entity)id)
-    {
-    }
+	Entity::Entity(uint32_t id, Scene* scene)
+		: m_scene(scene),
+		m_entity((entt::entity)id)
+	{
+	}
 
-    Entity::Entity(const entt::entity& entity, Scene* scene)
-        : m_scene(scene),
-        m_entity(entity)
-    {
-    }
+	Entity::Entity(const entt::entity& entity, Scene* scene)
+		: m_scene(scene),
+		m_entity(entity)
+	{
+	}
 
-    bool Entity::IsValid() const
-    {
-        if (m_scene == nullptr)
-        {
-            return false;
-        }
-        return *this != Entity::None
-            && m_scene->m_entityRegistry.valid(m_entity);
-    }
-    
-    void Entity::BindEventFunc(const EventFunc& func)
-    {
-        s_componentEventFunc = func;
-    }
+	bool Entity::IsValid() const
+	{
+		if (m_scene == nullptr)
+		{
+			return false;
+		}
+		return *this != Entity::None
+			&& m_scene->m_entityRegistry.valid(m_entity);
+	}
 
-    void CopyEntity(const Entity& fromEntity, Entity& toEntity, bool copyName)
-    {
-        if (copyName)
-        {
-            CopyComponent<NameComponent>(fromEntity, toEntity,
-                [=](NameComponent& from, NameComponent& to) -> void
-                {
-                    to.name = from.name;
-                });
-        }
+	void Entity::BindEventFunc(const EventFunc& func)
+	{
+		s_componentEventFunc = func;
+	}
 
-        CopyComponent<Transform3DComponent>(fromEntity, toEntity,
-            [=](Transform3DComponent& from, Transform3DComponent& to) -> void
-            {
-                to.SetLocalPosition(from.GetLocalPosition());
-                to.SetLocalRotation(from.GetLocalRotation());
-                to.SetLocalScale(from.GetLocalScale());
-                to.SetParentTransformMatrix(from.GetParentTransformMatrix());
-            });
+	void CopyEntity(const Entity& fromEntity, Entity& toEntity, bool copyName)
+	{
+		if (copyName)
+		{
+			CopyComponent<NameComponent>(fromEntity, toEntity,
+				[=](NameComponent& from, NameComponent& to) -> void
+				{
+					to.name = from.name;
+				});
+		}
 
-        CopyComponent<Transform2DComponent>(fromEntity, toEntity,
-            [=](Transform2DComponent& from, Transform2DComponent& to) -> void
-            {
-                to.SetLocalPosition(from.GetLocalPosition());
-                to.SetLocalRotation(from.GetLocalRotation());
-                to.SetLocalScale(from.GetLocalScale());
-                to.SetParentTransformMatrix(from.GetParentTransformMatrix());
-            });
+		CopyComponent<Transform3DComponent>(fromEntity, toEntity,
+			[=](Transform3DComponent& from, Transform3DComponent& to) -> void
+			{
+				to.SetLocalPosition(from.GetLocalPosition());
+				to.SetLocalRotation(from.GetLocalRotation());
+				to.SetLocalScale(from.GetLocalScale());
+				to.SetParentTransformMatrix(from.GetParentTransformMatrix());
+			});
 
-        CopyComponent<SpriteComponent>(fromEntity, toEntity,
-            [=](SpriteComponent& from, SpriteComponent& to) -> void
-            {
-                to.color = from.color;
-                to.enabled = from.enabled;
-                to.texture = from.texture;
-            });
+		CopyComponent<Transform2DComponent>(fromEntity, toEntity,
+			[=](Transform2DComponent& from, Transform2DComponent& to) -> void
+			{
+				to.SetLocalPosition(from.GetLocalPosition());
+				to.SetLocalRotation(from.GetLocalRotation());
+				to.SetLocalScale(from.GetLocalScale());
+				to.SetParentTransformMatrix(from.GetParentTransformMatrix());
+			});
 
-        CopyComponent<MeshComponent>(fromEntity, toEntity,
-            [=](MeshComponent& from, MeshComponent& to) -> void
-            {
-                to.material = from.material;
-                to.enabled = from.enabled;
-                to.mesh = from.mesh;
-            });
+		CopyComponent<SpriteComponent>(fromEntity, toEntity,
+			[=](SpriteComponent& from, SpriteComponent& to) -> void
+			{
+				to.color = from.color;
+				to.enabled = from.enabled;
+				to.texture = from.texture;
+			});
 
-        CopyComponent<DirectionalLightComponent>(fromEntity, toEntity,
-            [=](DirectionalLightComponent& from, DirectionalLightComponent& to) -> void
-            {
-                to.enabled = from.enabled;
-                to.lightColor = from.lightColor;
-                to.lightIntensity = from.lightIntensity;
-            });
+		CopyComponent<MeshComponent>(fromEntity, toEntity,
+			[=](MeshComponent& from, MeshComponent& to) -> void
+			{
+				to.material = from.material;
+				to.enabled = from.enabled;
+				to.mesh = from.mesh;
+			});
 
-        CopyComponent<PointLightComponent>(fromEntity, toEntity,
-            [=](PointLightComponent& from, PointLightComponent& to) -> void
-            {
-                to.enabled = from.enabled;
-                to.innerRadius = from.innerRadius;
-                to.outerRadius = from.outerRadius;
-                to.lightColor = from.lightColor;
-                to.lightIntensity = from.lightIntensity;
-            });
+		CopyComponent<DirectionalLightComponent>(fromEntity, toEntity,
+			[=](DirectionalLightComponent& from, DirectionalLightComponent& to) -> void
+			{
+				to.enabled = from.enabled;
+				to.lightColor = from.lightColor;
+				to.lightIntensity = from.lightIntensity;
+			});
 
-        CopyComponent<SceneCameraComponent>(fromEntity, toEntity,
-            [=](SceneCameraComponent& from, SceneCameraComponent& to) -> void
-            {
-                to.enabled = from.enabled;
-                to.camera = from.camera;
-                to.mainCamera = from.mainCamera;
-            });
+		CopyComponent<PointLightComponent>(fromEntity, toEntity,
+			[=](PointLightComponent& from, PointLightComponent& to) -> void
+			{
+				to.enabled = from.enabled;
+				to.innerRadius = from.innerRadius;
+				to.outerRadius = from.outerRadius;
+				to.lightColor = from.lightColor;
+				to.lightIntensity = from.lightIntensity;
+			});
 
-        CopyComponent<BehaviorComponent>(fromEntity, toEntity,
-            [=](const BehaviorComponent& from, BehaviorComponent& to) -> void
-            {
-                Copy(from, to);
-            });
+		CopyComponent<SceneCameraComponent>(fromEntity, toEntity,
+			[=](SceneCameraComponent& from, SceneCameraComponent& to) -> void
+			{
+				to.enabled = from.enabled;
+				to.camera = from.camera;
+				to.mainCamera = from.mainCamera;
+			});
 
-        CopyComponent<EntityHierarchyComponent>(fromEntity, toEntity,
-            [=](const EntityHierarchyComponent& from, EntityHierarchyComponent& to) -> void
-            {
-                Engine::Scene& active = (Engine::Scene&)toEntity.GetScene();
-                for (const auto& e : from.GetChildren())
-                {
-                    // Creates the entity.
-                    Engine::Entity created = active.CreateEntity(
-                        e.GetComponent<NameComponent>().name, toEntity);
-                    CopyEntity(e, created);
-                }
-            });
-    }
+		CopyComponent<EntityHierarchyComponent>(fromEntity, toEntity,
+			[=](const EntityHierarchyComponent& from, EntityHierarchyComponent& to) -> void
+			{
+				Engine::Scene& active = (Engine::Scene&)toEntity.GetScene();
+				for (const auto& e : from.GetChildren())
+				{
+					// Creates the entity.
+					Engine::Entity created = active.CreateEntity(
+						e.GetComponent<NameComponent>().name, toEntity);
+					CopyEntity(e, created);
+				}
+			});
+	}
 }

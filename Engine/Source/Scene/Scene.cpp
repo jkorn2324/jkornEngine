@@ -149,12 +149,6 @@ namespace Engine
 
 	Scene::~Scene()
 	{
-		auto entityView = m_entityRegistry.view<BehaviorComponent>();
-		for (auto e : entityView)
-		{
-			auto behaviorComponent = entityView.get<Engine::BehaviorComponent>(e);
-			behaviorComponent.Destroy();
-		}
 	}
 
 	void Scene::OnEvent(IEvent& event)
@@ -199,23 +193,9 @@ namespace Engine
 			int32_t sizeOfVec = (int32_t)m_markedForDestroyEntities.size() - 1;
 			while (sizeOfVec >= 0)
 			{
-				{
-					Entity e = Entity{ m_markedForDestroyEntities[sizeOfVec], this };
-					e.GetComponent<BehaviorComponent>().Destroy();
-				}
 				m_entityRegistry.destroy(m_markedForDestroyEntities[sizeOfVec]);
 				m_markedForDestroyEntities.pop_back();
 				sizeOfVec--;
-			}
-		}
-
-		// Updates each behavior component generally.
-		{
-			auto entityView = m_entityRegistry.view<BehaviorComponent>();
-			for (auto entity : entityView)
-			{
-				auto behaviorComponent = entityView.get<BehaviorComponent>(entity);
-				behaviorComponent.Get().OnUpdate(ts);
 			}
 		}
 
@@ -268,7 +248,7 @@ namespace Engine
 					if (e.HasComponent<Engine::Transform3DComponent>())
 					{
 						GraphicsRenderer3D::SetDirectionalLight(
-							e.GetComponent<Engine::Transform3DComponent>().GetWorldForward(), 
+							e.GetComponent<Engine::Transform3DComponent>().GetWorldForward(),
 							entityView.raw()[back]);
 						break;
 					}
@@ -293,31 +273,11 @@ namespace Engine
 	void Scene::OnRuntimeUpdate(const Timestep& ts)
 	{
 		PROFILE_SCOPE(RuntimeUpdate, Scene);
-
-		// Updates each behavior component at runtime.
-		{
-			auto entityView = m_entityRegistry.view<BehaviorComponent>();
-			for (auto entity : entityView)
-			{
-				auto behaviorComponent = entityView.get<BehaviorComponent>(entity);
-				behaviorComponent.Get().OnRuntimeUpdate(ts);
-			}
-		}
 	}
 
 	void Scene::OnEditorUpdate(const Timestep& ts)
 	{
 		PROFILE_SCOPE(EditorUpdate, Scene);
-
-		// Updates each behavior component.
-		{
-			auto entityView = m_entityRegistry.view<BehaviorComponent>();
-			for (auto entity : entityView)
-			{
-				auto behaviorComponent = entityView.get<BehaviorComponent>(entity);
-				behaviorComponent.Get().OnEditorUpdate(ts);
-			}
-		}
 	}
 
 	void Scene::Render(const CameraConstants& cameraConstants)
@@ -360,7 +320,7 @@ namespace Engine
 				Entity e = Entity{ entity, this };
 				if (e.HasComponent<Transform2DComponent>())
 				{
-					MathLib::Matrix4x4 transformMat = 
+					MathLib::Matrix4x4 transformMat =
 						e.GetComponent<Transform2DComponent>().GetTransformMatrix();
 					GraphicsRenderer2D::DrawRect(
 						transformMat, sprite.color, sprite.texture, (int32_t)entity);
@@ -455,12 +415,6 @@ namespace Engine
 		createdEntity.AddComponent<NameComponent>(entityName);
 		createdEntity.AddComponent<IDComponent>(guid);
 
-		{
-			BehaviorComponent& entity
-				= createdEntity.AddComponent<BehaviorComponent>();
-			entity.Create(createdEntity);
-		}
-
 		EntityHierarchyComponent& ehc
 			= createdEntity.AddComponent<EntityHierarchyComponent>(createdEntity);
 		if (parent.IsValid())
@@ -489,12 +443,6 @@ namespace Engine
 		Entity createdEntity = Entity(m_entityRegistry.create(), this);
 		createdEntity.AddComponent<NameComponent>(entityName);
 		createdEntity.AddComponent<IDComponent>();
-
-		{
-			BehaviorComponent& entity
-				= createdEntity.AddComponent<BehaviorComponent>();
-			entity.Create(createdEntity);
-		}
 
 		EntityHierarchyComponent& ehc
 			= createdEntity.AddComponent<EntityHierarchyComponent>(createdEntity);
@@ -555,7 +503,7 @@ namespace Engine
 		{
 			return;
 		}
-		
+
 		// Destroys the entity's children.
 		{
 			EntityHierarchyComponent& ehc =
@@ -569,14 +517,7 @@ namespace Engine
 			}
 		}
 
-		// Triggers on destroy for the children.
-		{
-			BehaviorComponent& bc =
-				entity.GetComponent<BehaviorComponent>();
-			bc.Get().OnDestroy();
-		}
-
-		const auto& find = std::find(m_markedForDestroyEntities.begin(), 
+		const auto& find = std::find(m_markedForDestroyEntities.begin(),
 			m_markedForDestroyEntities.end(), entity.m_entity);
 		if (find == m_markedForDestroyEntities.end())
 		{
@@ -637,15 +578,6 @@ namespace Engine
 	bool Scene::OnComponentRemoved(EntityComponentRemovedEvent<T>& event)
 	{
 		static_assert(false);
-		return true;
-	}
-	
-	template<>
-	bool Scene::OnComponentRemoved(EntityComponentRemovedEvent<BehaviorComponent>& event)
-	{
-		BehaviorComponent& component = event.GetComponent();
-		component.Get().OnDestroy();
-		component.Destroy();
 		return true;
 	}
 

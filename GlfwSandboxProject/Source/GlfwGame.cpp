@@ -62,9 +62,8 @@ namespace GlfwSandbox
 		Engine::Entity cameraEntity = scene.Find("CameraEntity");
 		if (cameraEntity.IsValid())
 		{
-			Engine::BehaviorComponent& component
-				= cameraEntity.GetComponent<Engine::BehaviorComponent>();
-			component.Get().AddBehavior<CameraController>();
+			// Adds the Camera Controller.
+			cameraEntity.AddComponent<CameraController>();
 			return;
 		}
 		cameraEntity = scene.CreateEntity("CameraEntity");
@@ -83,9 +82,7 @@ namespace GlfwSandbox
 			properties.orthoWidth = (float)app.GetWindow().GetWidth();
 			properties.orthoHeight = (float)app.GetWindow().GetHeight();
 
-			Engine::BehaviorComponent& component
-				= cameraEntity.GetComponent<Engine::BehaviorComponent>();
-			component.Get().AddBehavior<CameraController>();
+			cameraEntity.AddComponent<CameraController>();
 		}
 
 		Engine::Entity entity = scene.CreateEntity("HappyFace");
@@ -107,8 +104,15 @@ namespace GlfwSandbox
 		Engine::SceneManager::OnRuntimeUpdate(ts);
 
 		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
-		Engine::Entity entity = scene.Find("HappyFace");
 
+		Engine::Entity cameraEntity = scene.Find("CameraEntity");
+		if (cameraEntity)
+		{
+			// Executes an update for the camera.
+			Camera::ExecuteUpdate(ts, cameraEntity);
+		}
+
+		Engine::Entity entity = scene.Find("HappyFace");
 		if (entity.IsValid())
 		{
 			Engine::Transform3DComponent& transformComponent
@@ -176,7 +180,7 @@ namespace GlfwSandbox
 	void GlfwGame::OnEvent(Engine::IEvent& event)
 	{
 		Engine::EventDispatcher dispatcher(event);
-		dispatcher.Invoke<Engine::WindowResizedEvent>(BIND_EVENT_FUNCTION(GlfwGame::OnWindowResize));
+		dispatcher.Invoke<Engine::WindowEventType, Engine::WindowResizedEvent>(BIND_EVENT_FUNCTION(GlfwGame::OnWindowResize));
 	}
 
 	bool GlfwGame::OnWindowResize(Engine::WindowResizedEvent& event)

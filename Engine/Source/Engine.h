@@ -41,8 +41,8 @@
 #include "Shader.h"
 #include "VertexBuffer.h"
 
-#include "BehaviorScript.h"
-#include "BehaviorScriptContainer.h"
+#include "SystemManager.h"
+#include "ISystemBase.h"
 
 #include "Components.h"
 #include "Entity.h"

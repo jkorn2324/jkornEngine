@@ -4,11 +4,9 @@
 
 #include "Entity.h"
 #include "GUID.h"
-#include "BehaviorScriptContainer.h"
 #include "SceneCamera.h"
 #include "EntityHierarchyComponent.h"
 #include "LightingComponents.h"
-#include "BehaviorScript.h"
 #include "AssetReferenceManager.h"
 
 namespace Engine
@@ -96,65 +94,5 @@ namespace Engine
 			: mesh(), material() { }
 		explicit MeshComponent(const AssetRef<Mesh>& mesh, const AssetRef<Material>& material)
 			: mesh(mesh), material(material) { }
-	};
-
-	class BehaviorComponent
-	{
-	public:
-		BehaviorComponent()
-			: m_behaviorScriptContainer() { }
-		BehaviorComponent(const BehaviorComponent& component)
-			: m_behaviorScriptContainer()
-		{
-			if (component.IsValid())
-			{
-				m_behaviorScriptContainer = component.m_behaviorScriptContainer;
-			}
-		}
-
-		BehaviorComponent& operator=(const BehaviorComponent& component)
-		{
-			if (component.IsValid())
-			{
-				m_behaviorScriptContainer = component.m_behaviorScriptContainer;
-			}
-			return *this;
-		}
-
-		bool IsValid() const { return m_behaviorScriptContainer.get() != nullptr; }
-		BehaviorScriptContainer& Get() { return *m_behaviorScriptContainer.get(); }
-		const BehaviorScriptContainer& Get() const { return *m_behaviorScriptContainer.get(); }
-
-		friend void Copy(const BehaviorComponent& from, BehaviorComponent& to)
-		{
-			to.Copy(from);
-		}
-
-	private:
-		void Copy(const BehaviorComponent& from)
-		{
-			if (from.IsValid())
-			{
-				for (const auto& behavior : from.m_behaviorScriptContainer->GetBehaviors())
-				{
-					m_behaviorScriptContainer->CopyBehavior(behavior);
-				}
-			}
-		}
-
-		void Create(Entity& entity)
-		{
-			m_behaviorScriptContainer = std::make_shared<BehaviorScriptContainer>(entity);
-		}
-
-		void Destroy()
-		{
-			m_behaviorScriptContainer->Deallocate();
-		}
-
-	private:
-		std::shared_ptr<BehaviorScriptContainer> m_behaviorScriptContainer;
-
-		friend class Scene;
 	};
 }

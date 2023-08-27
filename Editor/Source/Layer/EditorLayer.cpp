@@ -20,12 +20,6 @@
 namespace Editor
 {
 
-	class TestBehavior : public Engine::BehaviorScript
-	{
-		MathLib::Vector2 m_direction;
-		MathLib::Vector3 m_position;
-	};
-
 	static const float TOP_WINDOW_HEIGHT = 60.0f;
 	static const float WINDOW_HEIGHT_DIFFERENCE = 15.0f;
 
@@ -66,11 +60,9 @@ namespace Editor
 			// Add Behavior script to camera.
 			{
 				Engine::Entity entity = scene.Find("Main Camera");
-				if (entity.IsValid())
+				if (entity)
 				{
-					Engine::BehaviorComponent& component
-						= entity.GetComponent<Engine::BehaviorComponent>();
-					component.Get().AddBehavior<CameraController>();
+					entity.AddComponent<CameraController>();
 				}
 			}
 
@@ -139,6 +131,16 @@ namespace Editor
 		{
 			m_sceneView.OnUpdate(timestep);
 			EditorSceneManager::GetEditorCamera().OnEditorUpdate(timestep);
+		}
+
+		// Updates the camera view.
+		{
+			Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
+			Engine::Entity entity = scene.Find("Main Camera");
+			if (entity)
+			{
+				Camera::ExecuteUpdate(timestep, entity);
+			}
 		}
 
 		Engine::SceneManager::OnUpdate(timestep);
