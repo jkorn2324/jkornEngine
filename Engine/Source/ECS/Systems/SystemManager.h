@@ -29,17 +29,17 @@ namespace Engine
 		}
 
 		template<typename TSystem>
-		static void SetSystem()
+		static void AddSystem()
 		{
 			SystemHandlerBase& system = Get();
-			system.SetSystem<TSystem>();
+			system.AddSystem<TSystem>();
 		}
 
 		template<typename TSystem, typename...TArgs>
-		static void SetSystem(TArgs&&... args)
+		static void AddSystem(TArgs&&... args)
 		{
 			SystemHandlerBase& system = Get();
-			system.SetSystem<TSystem, TArgs...>(std::forward<TArgs>(args)...);
+			system.AddSystem<TSystem, TArgs...>(std::forward<TArgs>(args)...);
 		}
 	};
 }

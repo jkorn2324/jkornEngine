@@ -52,7 +52,7 @@ namespace Editor
 		// TODO: Initialize Systems
 
 		// Sets the camera system.
-		Engine::SystemManager::SetSystem<Editor::CameraControllerSystem>();
+		Engine::SystemManager::AddSystem<Editor::CameraControllerSystem>();
 
 		Engine::GraphicsRenderer::GetRenderingAPI().SetClearColor(
 			MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f));

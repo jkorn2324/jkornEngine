@@ -30,7 +30,7 @@ namespace Engine
 		/**
 		 * Sets the system internally.
 		 */
-		void SetSystemInternal(ISystemBase* system)
+		void AddSystemInternal(ISystemBase* system)
 		{
 			// Pushes the systems back.
 			m_systems.push_back(system);
@@ -41,7 +41,7 @@ namespace Engine
 		 * Sets the system.
 		 */
 		template<typename TInheritedSystem, typename... TArgs>
-		void SetSystem(TArgs&&... args)
+		void AddSystem(TArgs&&... args)
 		{
 			static_assert(std::is_base_of<ISystemBase, TInheritedSystem>::value, "TInheritedSystem must inherit from TSystem, which inherits from ISystemBase");
 			static_assert(std::is_constructible<TInheritedSystem, TArgs...>::value, "TInheritedSystem must be constructed based on the arguments inputted.");
@@ -51,7 +51,7 @@ namespace Engine
 		}
 
 		template<typename TInheritedSystem>
-		void SetSystem()
+		void AddSystem()
 		{
 			static_assert(std::is_base_of<ISystemBase, TInheritedSystem>::value, "TInheritedSystem must inherit from TSystem, which inherits from ISystemBase");
 			static_assert(std::is_default_constructible<TInheritedSystem>::value, "TInheritedSystem must be default constructable.");
@@ -59,7 +59,7 @@ namespace Engine
 			// Heap Alloc.
 			// TODO: Make sure that the system is no longer heap alloc.
 			TInheritedSystem* ptr = new TInheritedSystem();
-			SetSystemInternal(static_cast<ISystemBase*>(ptr));
+			AddSystemInternal(static_cast<ISystemBase*>(ptr));
 		}
 
 		/**
