@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine.h"
 #include "CameraController.h"
+#include "Engine.h"
 
 namespace GlfwSandbox
 {
@@ -46,11 +46,40 @@ namespace GlfwSandbox
 			cameraController.direction = dir;
 		}
 
+		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity)
+		{
+			if (entity.HasComponent<CameraController>()
+				&& entity.HasComponent<Engine::Transform3DComponent>())
+			{
+				OnUpdate(ts, entity.GetComponent<Engine::Transform3DComponent>(),
+					entity.GetComponent<CameraController>());
+			}
+		}
+
+		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity, CameraController& cameraController)
+		{
+			if (entity.HasComponent<Engine::Transform3DComponent>())
+			{
+				OnUpdate(ts, entity.GetComponent<Engine::Transform3DComponent>(), cameraController);
+			}
+		}
+
 		void OnUpdate(const Engine::Timestep& ts, Engine::Transform3DComponent& transform3D, CameraController& cameraController)
 		{
 			MathLib::Vector3 pos = transform3D.GetLocalPosition();
 			pos += cameraController.direction * ts * s_cameraSpeed;
 			transform3D.SetLocalPosition(pos);
 		}
+	}
+
+
+	// Called to update the camera controller.
+	void CameraControllerSystem::OnUpdate(const Engine::UpdateSystemContext& ctx, Engine::Entity& e, std::tuple<CameraController&, Engine::Transform3DComponent&>& tuple)
+	{
+		CameraController& cameraController = std::get<0>(tuple);
+		Engine::Transform3DComponent& transform3D = std::get<1>(tuple);
+
+		Camera::UpdateInput(cameraController);
+		Camera::OnUpdate(ctx.timestep, transform3D, cameraController);
 	}
 }

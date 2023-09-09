@@ -22,7 +22,7 @@ namespace Engine
 	template<typename T>
 	class EntityComponentRemovedEvent;
 	class EntityHierarchyChangedEvent;
-	
+
 	using Transform3DComponent = MathLib::Transform3D;
 	using Transform2DComponent = MathLib::Transform2D;
 
@@ -101,5 +101,9 @@ namespace Engine
 		friend class Entity;
 		friend class SceneSerializer;
 		friend class SceneManager;
+
+		// TODO: Remove Update System
+		template<typename... TComponents>
+		friend class IUpdateSystem;
 	};
 }

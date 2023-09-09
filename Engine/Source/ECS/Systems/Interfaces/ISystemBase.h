@@ -11,5 +11,6 @@ namespace Engine
 	class ISystemBase
 	{
 	public:
+		virtual ~ISystemBase() { }
 	};
 }

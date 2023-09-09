@@ -72,4 +72,15 @@ namespace Editor
 			transform3D.SetLocalPosition(pos);
 		}
 	}
+
+
+	// Called to update the camera controller.
+	void CameraControllerSystem::OnUpdate(const Engine::UpdateSystemContext& ctx, Engine::Entity& e, Components& components)
+	{
+		CameraController& cameraController = std::get<0>(components);
+		Engine::Transform3DComponent& transform3D = std::get<1>(components);
+
+		Camera::UpdateInput(cameraController);
+		Camera::OnUpdate(ctx.timestep, transform3D, cameraController);
+	}
 }

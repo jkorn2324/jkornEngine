@@ -1,23 +1,45 @@
+#pragma once
+
 #include "SystemHandlerBase.h"
+#include "SystemInvoker.h"
 
 namespace Engine
 {
+	class SystemHandlerBase;
+
 	/**
 	 * The base system manager.
 	 */
-	template<typename TSystem>
 	class SystemManager
 	{
-	public:
+	private:
 		/**
-		 * Gets the system handler base that controls this system.
+		 * Gets the list of all systems.
 		 */
-		static SystemHandlerBase<TSystem>& Get()
+		static SystemHandlerBase& Get();
+
+		// TODO: Need to figure out a way to serialize the systems and then load them in at runtime.
+
+	public:
+		template<typename TSystem, typename... TArgs, typename TFunc>
+		static void Invoke(const TFunc& func, TArgs&&...args)
 		{
-			static SystemHandlerBase<TSystem> s_systemManager;
-			return s_systemManager;
+			SystemInvoker invoker(Get());
+			invoker.InvokeSystem<TSystem>(func, std::forward<TArgs>(args)...);
 		}
 
-		SystemManager() = delete;
+		template<typename TSystem>
+		static void SetSystem()
+		{
+			SystemHandlerBase& system = Get();
+			system.SetSystem<TSystem>();
+		}
+
+		template<typename TSystem, typename...TArgs>
+		static void SetSystem(TArgs&&... args)
+		{
+			SystemHandlerBase& system = Get();
+			system.SetSystem<TSystem, TArgs...>(std::forward<TArgs>(args)...);
+		}
 	};
 }

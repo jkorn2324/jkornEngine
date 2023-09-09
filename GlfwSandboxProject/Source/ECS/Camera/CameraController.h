@@ -1,6 +1,14 @@
 #pragma once
 
-#include "Engine.h"
+#include "Source/Vector.h"
+#include "IUpdateSystem.h"
+#include "Scene.h"
+
+namespace Engine
+{
+	class Timestep;
+	class Entity;
+}
 
 namespace GlfwSandbox
 {
@@ -25,25 +33,12 @@ namespace GlfwSandbox
 		/**
 		 * Called to handle an update.
 		 */
-		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity, CameraController& cameraController)
-		{
-			if (entity.HasComponent<Engine::Transform3DComponent>())
-			{
-				OnUpdate(ts, entity.GetComponent<Engine::Transform3DComponent>(), cameraController);
-			}
-		}
+		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity, CameraController& cameraController);
+
 		/**
 		 * Called to handle an update.
 		 */
-		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity)
-		{
-			if (entity.HasComponent<CameraController>()
-				&& entity.HasComponent<Engine::Transform3DComponent>())
-			{
-				OnUpdate(ts, entity.GetComponent<Engine::Transform3DComponent>(),
-					entity.GetComponent<CameraController>());
-			}
-		}
+		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity);
 	}
 
 	/**
@@ -52,5 +47,12 @@ namespace GlfwSandbox
 	struct CameraController
 	{
 		MathLib::Vector2 direction;
+	};
+
+	// The camera controller system.
+	class CameraControllerSystem : public Engine::IUpdateSystem<CameraController, Engine::Transform3DComponent>
+	{
+	protected:
+		void OnUpdate(const Engine::UpdateSystemContext& ctx, Engine::Entity& e, std::tuple<CameraController&, Engine::Transform3DComponent&>& tuple) override;
 	};
 }

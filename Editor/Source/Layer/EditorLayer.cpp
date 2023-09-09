@@ -15,6 +15,10 @@
 
 #include "CameraController.h"
 
+#include "SystemManager.h"
+#include "IUpdateSystem.h"
+#include "ISystemBase.h"
+
 #include <string>
 
 namespace Editor
@@ -45,6 +49,11 @@ namespace Editor
 
 	void EditorLayer::OnLayerAdded()
 	{
+		// TODO: Initialize Systems
+
+		// Sets the camera system.
+		Engine::SystemManager::SetSystem<Editor::CameraControllerSystem>();
+
 		Engine::GraphicsRenderer::GetRenderingAPI().SetClearColor(
 			MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 
@@ -135,18 +144,28 @@ namespace Editor
 
 		// Updates the camera view.
 		{
+#if false
 			Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
 			Engine::Entity entity = scene.Find("Main Camera");
 			if (entity)
 			{
 				Camera::ExecuteUpdate(timestep, entity);
 			}
+#endif
 		}
 
 		Engine::SceneManager::OnUpdate(timestep);
 
 		if (EditorSceneManager::IsPlaying())
 		{
+			// Call Update System.
+			Engine::UpdateSystemContext updateSystemContext(Engine::SceneManager::GetActiveScene(), timestep);
+			Engine::SystemManager::Invoke<Engine::IUpdateSystemBase>(
+				[](Engine::IUpdateSystemBase& updateSystem, const Engine::UpdateSystemContext& context) -> void {
+					updateSystem.InvokeOnUpdate(context);
+				}, updateSystemContext);
+
+
 			Engine::SceneManager::OnRuntimeUpdate(timestep);
 		}
 		else
