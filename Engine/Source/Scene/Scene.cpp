@@ -244,12 +244,14 @@ namespace Engine
 				int32_t size = (int32_t)entityView.size() - 1;
 				for (int32_t back = size; back >= 0; back--)
 				{
+					auto eid = entityView[back];
 					Entity e = Entity{ entityView[back], this };
+					DirectionalLightComponent& directionalLight = entityView.get<0>(e.GetID());
 					if (e.HasComponent<Engine::Transform3DComponent>())
 					{
 						GraphicsRenderer3D::SetDirectionalLight(
 							e.GetComponent<Engine::Transform3DComponent>().GetWorldForward(),
-							entityView.raw()[back]);
+							directionalLight);
 						break;
 					}
 				}
@@ -360,7 +362,7 @@ namespace Engine
 		const auto entityView = m_entityRegistry.view<const NameComponent>();
 		for (auto entity : entityView)
 		{
-			auto nameComponent = entityView.get(entity);
+			auto nameComponent = entityView.get<0>(entity);
 			if (nameComponent.name == entityName)
 			{
 				return Entity(entity, (Scene*)this);
@@ -374,7 +376,7 @@ namespace Engine
 		const auto entityView = m_entityRegistry.view<const IDComponent>();
 		for (auto entity : entityView)
 		{
-			auto idComponent = entityView.get(entity);
+			auto idComponent = entityView.get<0>(entity);
 			if (idComponent.guid == guid)
 			{
 				return Entity(entity, (Scene*)this);
@@ -388,7 +390,7 @@ namespace Engine
 		const auto entityView = m_entityRegistry.view<const IDComponent>();
 		for (auto entity : entityView)
 		{
-			auto idComponent = entityView.get(entity);
+			auto idComponent = entityView.get<0>(entity);
 			if (idComponent.guid == guid)
 			{
 				return Entity(entity, (Scene*)this);

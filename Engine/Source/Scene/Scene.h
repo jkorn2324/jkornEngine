@@ -6,7 +6,7 @@
 #include "Source\Matrix.h"
 #include "Source\Transform.h"
 
-#include <entt.hpp>
+#include "EnttUtility.h"
 #include <vector>
 #include <string>
 #include <functional>
@@ -54,7 +54,7 @@ namespace Engine
 		class Camera* GetCamera() const;
 
 		const std::vector<Entity>& GetRootEntities() const;
-		uint32_t GetNumEntities() const { return (uint32_t)m_entityRegistry.size(); }
+		uint32_t GetNumEntities() const { return (uint32_t)Engine::Entt::GetTotalEntities(m_entityRegistry); }
 		const std::wstring& GetSceneName() const;
 
 		template<typename ...T>

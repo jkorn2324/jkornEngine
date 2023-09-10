@@ -245,7 +245,7 @@ namespace Engine
 			ReadQuaternion(value["Transform3DComponent"],
 				"Rotation", rotation);
 			ReadVector3(value["Transform3DComponent"],
-					"Scale", scale);
+				"Scale", scale);
 
 			entity.AddComponent<Transform3DComponent>(position,
 				rotation, scale);
@@ -275,9 +275,9 @@ namespace Engine
 			bool enabled = true;
 			MathLib::Vector4 color;
 
-			ReadBool(value["SpriteComponent"], 
+			ReadBool(value["SpriteComponent"],
 				"Enabled", enabled);
-			ReadVector4(value["SpriteComponent"], 
+			ReadVector4(value["SpriteComponent"],
 				"Color", color);
 
 			entity.AddComponent<SpriteComponent>(enabled, color);
@@ -288,7 +288,7 @@ namespace Engine
 		{
 			// TODO: Load a mesh.
 
-			MeshComponent& meshComponent 
+			MeshComponent& meshComponent
 				= entity.AddComponent<MeshComponent>();
 			uint64_t materialGUID;
 
@@ -399,7 +399,8 @@ namespace Engine
 		JsonFileWriter jsonFileWriter(filePath);
 		jsonFileWriter.BeginArray("Entities");
 
-		m_scene->m_entityRegistry.each([&](auto id)
+		auto view = m_scene->m_entityRegistry.view<entt::entity>();
+		view.each([&](auto id)
 			{
 				Entity entity(id, m_scene);
 				if (!entity.IsValid())
@@ -408,7 +409,6 @@ namespace Engine
 				}
 				SerializeEntity(jsonFileWriter, entity);
 			});
-
 		jsonFileWriter.EndArray();
 		jsonFileWriter.Flush();
 	}

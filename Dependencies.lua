@@ -5,7 +5,7 @@ FBXLibSDKLibPath = "%{FBXLibSDKPath}/%{FBXLibSDKVersion}/lib"
 IncludeDirectories = {}
 
 IncludeDirectories["DirectXTK"] = "%{wks.location}/Engine/Libraries/DirectXTK/Inc/"
-IncludeDirectories["entt"] = "%{wks.location}/Engine/Libraries/entt/include/"
+IncludeDirectories["entt"] = "%{wks.location}/Engine/Libraries/entt/single_include/"
 IncludeDirectories["glfw"] = "%{wks.location}/Engine/Libraries/glfw/include/"
 IncludeDirectories["ImGui"] = "%{wks.location}/Engine/Libraries/ImGui/"
 IncludeDirectories["spdlog"] = "%{wks.location}/Engine/Libraries/spdlog/include/"

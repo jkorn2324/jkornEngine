@@ -2,7 +2,7 @@
 
 #include "ISystemBase.h"
 #include "SystemTypes.h"
-#include <entt.hpp>
+#include "EnttUtility.h"
 
 namespace Engine
 {

@@ -4,7 +4,7 @@
 #include <memory>
 #include <utility>
 
-#include <entt.hpp>
+#include "EnttUtility.h"
 
 #include "SceneEvent.h"
 #include "Scene.h"
@@ -79,25 +79,26 @@ namespace Engine
 	template<typename T>
 	T& Entity::GetComponent() const
 	{
-		return m_scene->m_entityRegistry.get<T>(m_entity);
+		return Entt::GetComponent<T>(m_entity, m_scene->m_entityRegistry);
 	}
 
 	template<typename T>
 	T& Entity::GetComponent()
 	{
-		return m_scene->m_entityRegistry.get<T>(m_entity);
+		return Entt::GetComponent<T>(m_entity, m_scene->m_entityRegistry);
 	}
 
 	template<typename T>
 	bool Entity::HasComponent() const
 	{
-		return m_scene->m_entityRegistry.has<T>(m_entity);
+		return Entt::HasComponent<T>(m_entity, m_scene->m_entityRegistry);
 	}
 
 	template<typename T, typename ...Args>
 	T& Entity::AddComponent(Args && ...args)
 	{
-		T& component = m_scene->m_entityRegistry.emplace<T>(m_entity, std::forward<Args>(args)...);
+		DebugAssert(IsValid(), "Entity must be valid for it to be added as a component.");
+		T& component = Entt::AddComponent<T>(m_entity, m_scene->m_entityRegistry, std::forward<Args>(args)...);
 		if (s_componentEventFunc != nullptr)
 		{
 			EntityComponentAddedEvent<T> event(*this, component);
@@ -109,17 +110,22 @@ namespace Engine
 	template<typename T>
 	void Entity::RemoveComponent()
 	{
-		if (!HasComponent<T>())
-		{
-			return;
-		}
+		Entt::RemoveComponent<T>(m_entity, m_scene->m_entityRegistry,
+			[](T& component, Entity& entity) -> void {
+				if (s_componentEventFunc != nullptr)
+				{
+					EntityComponentRemovedEvent<T> event(entity, component);
+					s_componentEventFunc(event);
+				}
+			}, *this);
+#if 0
 		T& component = GetComponent<T>();
 		if (s_componentEventFunc != nullptr)
 		{
 			EntityComponentRemovedEvent<T> event(*this, component);
 			s_componentEventFunc(event);
 		}
-
 		m_scene->m_entityRegistry.remove_if_exists<T>(m_entity);
+#endif
 	}
 }
