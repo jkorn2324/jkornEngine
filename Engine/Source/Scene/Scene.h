@@ -6,7 +6,8 @@
 #include "Source\Matrix.h"
 #include "Source\Transform.h"
 
-#include "EnttUtility.h"
+#include "EntityRef.h"
+
 #include <vector>
 #include <string>
 #include <functional>
@@ -37,19 +38,56 @@ namespace Engine
 
 		void OnEvent(IEvent& event);
 
-		Entity CreateEntity(const GUID& guid, const std::string& entityName, const Engine::Entity& parent);
-		Entity CreateEntity(const std::string& entityName, const Engine::Entity& parent);
-		Entity CreateEntity(const std::string& entityName);
-		Entity CreateEntity(const char* entityName);
-		Entity CreateEntity(const GUID& guid);
-		Entity CreateEntity(const GUID& guid, const Engine::Entity& parent);
-		Entity CreateEntity(const GUID& guid, const std::string& entityName);
-		Entity CreateEntity();
+		EntityRef CreateEntity(const GUID& guid, const std::string& entityName, const Engine::Entity& parent);
+		EntityRef CreateEntity(const std::string& entityName, const Engine::Entity& parent);
+		EntityRef CreateEntity(const std::string& entityName);
+		EntityRef CreateEntity(const char* entityName);
+		EntityRef CreateEntity(const GUID& guid);
+		EntityRef CreateEntity(const GUID& guid, const Engine::Entity& parent);
+		EntityRef CreateEntity(const GUID& guid, const std::string& entityName);
+		EntityRef CreateEntity();
 
 		void DestroyEntity(const Entity& entity);
-		Entity Find(const std::string& entityName) const;
-		Entity Find(const GUID& guid) const;
-		Entity Find(const uint64_t& guid) const;
+
+		decltype(auto) CreateEntityRef(const Entity& entity) const
+		{
+			return TEntityRef(entity, m_entityRegistry);
+		}
+
+		decltype(auto) CreateEntityRef(const Entity& entity)
+		{
+			return TEntityRef(entity, m_entityRegistry);
+		}
+
+		template<typename TComponent, typename TContext, typename TFunc>
+		decltype(auto) FindEntity(const TContext& context, const TFunc& func) const
+		{
+			const auto entityView = m_entityRegistry.view<const TComponent>();
+			for (auto entity : entityView)
+			{
+				auto component = entityView.get<0>(entity);
+				if (func(context, component))
+				{
+					return TEntityRef(entity, m_entityRegistry);
+				}
+			}
+			return TEntityRef(Entity::None, m_entityRegistry);
+		}
+
+		template<typename TComponent, typename TContext, typename TFunc>
+		decltype(auto) FindEntity(const TContext& context, const TFunc& func)
+		{
+			auto entityView = m_entityRegistry.view<const TComponent>();
+			for (auto entity : entityView)
+			{
+				auto component = entityView.get<0>(entity);
+				if (func(context, component))
+				{
+					return TEntityRef(entity, m_entityRegistry);
+				}
+			}
+			return TEntityRef(Entity::None, m_entityRegistry);
+		}
 
 		class Camera* GetCamera() const;
 
@@ -76,11 +114,6 @@ namespace Engine
 		void BindEventFunc(const EventFunc& func);
 
 		bool OnEntityHierarchyChanged(EntityHierarchyChangedEvent& event);
-
-		template<typename T>
-		bool OnComponentAdded(EntityComponentAddedEvent<T>& component);
-		template<typename T>
-		bool OnComponentRemoved(EntityComponentRemovedEvent<T>& component);
 
 	private:
 		class Camera* m_camera;

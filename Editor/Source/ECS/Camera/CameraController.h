@@ -18,7 +18,7 @@ namespace Editor
 		/**
 		 * Executes an update for the camera.
 		 */
-		void ExecuteUpdate(const Engine::Timestep& ts, Engine::Entity& entity);
+		void ExecuteUpdate(const Engine::Timestep& ts, Engine::EntityRef& entity);
 
 		/**
 		 * Called to handle the input.
@@ -32,12 +32,12 @@ namespace Editor
 		/**
 		 * Called to handle an update.
 		 */
-		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity, CameraController& cameraController);
+		void OnUpdate(const Engine::Timestep& ts, Engine::EntityRef& entity, CameraController& cameraController);
 
 		/**
 		 * Called to handle an update.
 		 */
-		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity);
+		void OnUpdate(const Engine::Timestep& ts, Engine::EntityRef& entity);
 	}
 
 	/**
@@ -52,6 +52,6 @@ namespace Editor
 	class CameraControllerSystem : public Engine::IUpdateSystem<CameraController, Engine::Transform3DComponent>
 	{
 	protected:
-		void OnUpdate(const Engine::UpdateSystemContext& ctx, Engine::Entity& e, Components& components) override;
+		void OnUpdate(const Engine::UpdateSystemContext& ctx, Engine::EntityRef& e, Components& components) override;
 	};
 }

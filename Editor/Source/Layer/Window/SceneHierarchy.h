@@ -26,14 +26,14 @@ namespace Editor
 
 		void SetOpen(bool open) { m_open = open; }
 		bool IsOpen() const { return m_open; }
-		
+
 		void OnEvent(Engine::IEvent& event);
 		void Draw();
 
 	private:
 		bool OnEntityDestroyed(Engine::EntityDestroyedEvent& event);
-		
-		void DrawEntity(Engine::Entity& entity, Engine::Entity& duplicatedEntity);
+
+		void DrawEntity(const Engine::Entity& entity, Engine::Entity& duplicatedEntity, Engine::Scene& registry);
 
 	private:
 		EntitySelectionType m_selectionType = TYPE_NONE;

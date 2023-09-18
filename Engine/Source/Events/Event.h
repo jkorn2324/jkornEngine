@@ -14,7 +14,7 @@ namespace Engine
 #define BIND_STATIC_EVENT_FUNCTION(func) [](auto&&...args) -> decltype(auto) { return func(std::forward<decltype(args)>(args)...); }
 
 	/**
-	 * Interface for an event. 
+	 * Interface for an event.
 	 */
 	class IEvent
 	{
@@ -22,7 +22,7 @@ namespace Engine
 		virtual const char* GetName() const = 0;
 		virtual std::string ToString() const { return GetName(); }
 		virtual bool IsValid() const { return true; }
-		
+
 		template<typename TEventClass>
 		static bool StaticIsValid(class IEvent& event)
 		{
@@ -49,7 +49,7 @@ namespace Engine
 	};
 
 	/**
-	 * A templated event dispatcher. Used for invoking a variety of events. 
+	 * A templated event dispatcher. Used for invoking a variety of events.
 	 */
 	class EventDispatcher
 	{
@@ -62,9 +62,9 @@ namespace Engine
 		{
 			// Asserts the the event type param is an enum & that the
 			// event that is searched is a base of an Event<TEventTypeParam>
-			static_assert(std::is_enum<TEventTypeParam>::value, 
+			static_assert(std::is_enum<TEventTypeParam>::value,
 				"TEventType must be constrained to an enum or enum class.");
-			static_assert(std::is_base_of<Event<TEventTypeParam>, TEventType>::value, 
+			static_assert(std::is_base_of<Event<TEventTypeParam>, TEventType>::value,
 				"The TEventType must derive from an Event of type Event<TEventTypeParam>.");
 
 			if (m_event == nullptr)
@@ -85,4 +85,7 @@ namespace Engine
 	private:
 		IEvent* m_event;
 	};
+
+	// The Event Function Declaration.
+	using EventFunc = std::function<void(IEvent&)>;
 }

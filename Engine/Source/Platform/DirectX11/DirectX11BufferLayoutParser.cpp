@@ -220,12 +220,12 @@ namespace Engine
 				description.Format = GetFormatFromParam(param);
 				description.AlignedByteOffset = currentOffset;
 				m_inputElementDesc[descSlot] = description;
-				currentOffset += param.GetStride();
+				currentOffset += (uint32_t)param.GetStride();
 				descSlot++;
 			}
 		}
 	}
-	
+
 	DirectX11BufferLayoutParser::~DirectX11BufferLayoutParser()
 	{
 		for (std::uint32_t i = 0; i < m_numElements; i++)
@@ -235,7 +235,7 @@ namespace Engine
 		}
 		delete[] m_inputElementDesc;
 	}
-	
+
 	const D3D11_INPUT_ELEMENT_DESC* DirectX11BufferLayoutParser::GetD3D11InputElementDesc() const
 	{
 		return m_inputElementDesc;

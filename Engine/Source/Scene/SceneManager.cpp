@@ -5,7 +5,7 @@
 #include "SceneSerializer.h"
 #include "Entity.h"
 
-#include "SceneEvent.h"
+#include "EntityEvents.h"
 #include "EntityHierarchyComponent.h"
 #include "Profiler.h"
 
@@ -21,12 +21,12 @@ namespace Engine
 		Scene::CreateDefaultScene(s_activeScene);
 		s_activeScene->BindEventFunc(s_eventFunc);
 	}
-	
+
 	void SceneManager::Release()
 	{
 		delete s_activeScene;
 	}
-	
+
 	void SceneManager::OnEvent(IEvent& event)
 	{
 		if (s_activeScene != nullptr)
@@ -86,7 +86,7 @@ namespace Engine
 			s_activeScene->OnUpdate(ts);
 		}
 	}
-	
+
 	void SceneManager::OnRuntimeUpdate(const Timestep& ts)
 	{
 		if (s_activeScene != nullptr)
@@ -94,7 +94,7 @@ namespace Engine
 			s_activeScene->OnRuntimeUpdate(ts);
 		}
 	}
-	
+
 	void SceneManager::OnEditorUpdate(const Timestep& ts)
 	{
 		if (s_activeScene != nullptr)
@@ -106,7 +106,7 @@ namespace Engine
 	void SceneManager::BindEventFunc(const EventFunc& func)
 	{
 		s_eventFunc = func;
-		
+
 		if (s_activeScene != nullptr)
 		{
 			s_activeScene->BindEventFunc(s_eventFunc);

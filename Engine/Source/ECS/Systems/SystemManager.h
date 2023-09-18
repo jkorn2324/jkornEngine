@@ -8,7 +8,7 @@ namespace Engine
 	class SystemHandlerBase;
 
 	/**
-	 * The base system manager.
+	 * The base system manager (Used mainly at runtime)
 	 */
 	class SystemManager
 	{

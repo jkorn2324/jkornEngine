@@ -95,7 +95,7 @@ namespace Editor
 			editorCamera.FocusCamera();
 			return;
 		}
-		
+
 		MathLib::Vector2 delta = m_currMousePos - m_prevMousePos;
 		// Moves the camera based on mouse dragging.
 		if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
@@ -153,7 +153,7 @@ namespace Editor
 
 		if (!handledZoom)
 		{
-			editorCamera.ZoomCamera(ts * m_mouseScroll.y * 
+			editorCamera.ZoomCamera(ts * m_mouseScroll.y *
 				(DEFAULT_SCROLL_DISTANCE * 0.25F));
 		}
 	}
@@ -171,7 +171,7 @@ namespace Editor
 		MathLib::Vector2 windowSize = GetResizedWindow();
 		if (windowSize.x <= 0 || windowSize.y <= 0) return;
 		Engine::Texture* entityIDsTexture = m_frameBuffer->GetRenderTargetTexture(1);
-		if (entityIDsTexture != nullptr 
+		if (entityIDsTexture != nullptr
 			&& m_focused
 			&& ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 		{
@@ -198,7 +198,7 @@ namespace Editor
 					return;
 				}
 				Engine::Scene* scenePtr = &Engine::SceneManager::GetActiveScene();
-				Engine::Entity selectedEntity(currentEntityID, scenePtr);
+				auto selectedEntity = scenePtr->CreateEntityRef((entt::entity)currentEntityID);
 				// Sets the selected entity to the one picked by the scene.
 				if (selectedEntity.IsValid())
 				{
@@ -215,7 +215,7 @@ namespace Editor
 		m_transformationWidget.SetEnabled(EditorSelection::HasSelectedEntity());
 		if (m_transformationWidget.IsEnabled())
 		{
-			Engine::Entity entity = EditorSelection::GetSelectedEntity();
+			auto entity = EditorSelection::GetSelectedEntity();
 			if (entity.HasComponent<Engine::Transform3DComponent>())
 			{
 				Engine::Transform3DComponent& transform3D
@@ -348,7 +348,7 @@ namespace Editor
 		m_frameBuffer->UnBind();
 	}
 
-	
+
 	void SceneView::Draw()
 	{
 		if (!m_open)

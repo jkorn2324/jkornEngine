@@ -10,7 +10,7 @@ namespace Editor
 
 	namespace Camera
 	{
-		void ExecuteUpdate(const Engine::Timestep& ts, Engine::Entity& entity)
+		void ExecuteUpdate(const Engine::Timestep& ts, Engine::EntityRef& entity)
 		{
 			if (entity.HasComponent<CameraController>()
 				&& entity.HasComponent<Engine::Transform3DComponent>())
@@ -47,7 +47,7 @@ namespace Editor
 			cameraController.direction = dir;
 		}
 
-		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity)
+		void OnUpdate(const Engine::Timestep& ts, Engine::EntityRef& entity)
 		{
 			if (entity.HasComponent<CameraController>()
 				&& entity.HasComponent<Engine::Transform3DComponent>())
@@ -57,7 +57,7 @@ namespace Editor
 			}
 		}
 
-		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity, CameraController& cameraController)
+		void OnUpdate(const Engine::Timestep& ts, Engine::EntityRef& entity, CameraController& cameraController)
 		{
 			if (entity.HasComponent<Engine::Transform3DComponent>())
 			{
@@ -75,7 +75,7 @@ namespace Editor
 
 
 	// Called to update the camera controller.
-	void CameraControllerSystem::OnUpdate(const Engine::UpdateSystemContext& ctx, Engine::Entity& e, Components& components)
+	void CameraControllerSystem::OnUpdate(const Engine::UpdateSystemContext& ctx, Engine::EntityRef& e, Components& components)
 	{
 		CameraController& cameraController = std::get<0>(components);
 		Engine::Transform3DComponent& transform3D = std::get<1>(components);

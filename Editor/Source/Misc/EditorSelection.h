@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <functional>
+#include "EntityRef.h"
 
 namespace Engine
 {
@@ -18,7 +19,7 @@ namespace Editor
 	public:
 		static void OnEvent(Engine::IEvent& event);
 
-		static Engine::Entity GetSelectedEntity();
+		static Engine::EntityRef GetSelectedEntity();
 		static void SetSelectedEntity(const Engine::Entity& entity);
 		static bool HasSelectedEntity();
 	};

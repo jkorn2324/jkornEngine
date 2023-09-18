@@ -68,14 +68,18 @@ namespace Editor
 
 			// Add Behavior script to camera.
 			{
-				Engine::Entity entity = scene.Find("Main Camera");
+				auto entity = scene.FindEntity<Engine::NameComponent>("Main Camera",
+					[](const char* Name, const Engine::NameComponent& component) -> bool
+					{
+						return component.name == Name;
+					});
 				if (entity)
 				{
 					entity.AddComponent<CameraController>();
 				}
 			}
 
-			Engine::Entity e = scene.CreateEntity("Test Cube");
+			auto e = scene.CreateEntity("Test Cube");
 			Engine::Transform3DComponent& component
 				= e.AddComponent<Engine::Transform3DComponent>();
 			Engine::MeshComponent& meshComponent
@@ -150,9 +154,9 @@ namespace Editor
 			if (entity)
 			{
 				Camera::ExecuteUpdate(timestep, entity);
-			}
+	}
 #endif
-		}
+}
 
 		Engine::SceneManager::OnUpdate(timestep);
 

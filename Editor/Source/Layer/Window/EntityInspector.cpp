@@ -10,13 +10,13 @@
 namespace Editor
 {
 	template<typename T>
-	static void DrawComponent(const Engine::Entity& entity, 
+	static void DrawComponent(const Engine::EntityRef& entity,
 		const std::function<void(T&)>& func)
 	{
 		if (entity.HasComponent<T>())
 		{
 			ImGui::BeginGroup();
-			
+
 			T& component = entity.GetComponent<T>();
 			func(component);
 
@@ -25,7 +25,7 @@ namespace Editor
 	}
 
 	template<typename T>
-	static void DrawTreeNodeComponent(Engine::Entity& entity,
+	static void DrawTreeNodeComponent(Engine::EntityRef& entity,
 		const char* name, ComponentSelectionType& selectionType, const std::function<void(T&)>& func)
 	{
 		if (entity.HasComponent<T>())
@@ -73,7 +73,7 @@ namespace Editor
 	}
 
 	template<typename T>
-	static void DrawComponentInMenu(const char* name, Engine::Entity& entity,
+	static void DrawComponentInMenu(const char* name, Engine::EntityRef& entity,
 		const std::function<void(T&)>& func)
 	{
 		if (!entity.HasComponent<T>())
@@ -87,7 +87,7 @@ namespace Editor
 	}
 
 	template<typename T>
-	static void DrawComponentInMenu(const char* name, Engine::Entity& entity)
+	static void DrawComponentInMenu(const char* name, Engine::EntityRef& entity)
 	{
 		if (!entity.HasComponent<T>())
 		{
@@ -99,11 +99,11 @@ namespace Editor
 	}
 
 
-	static void DrawEntity(Engine::Entity& entity, ComponentSelectionType& selectionType)
+	static void DrawEntity(Engine::EntityRef& entity, ComponentSelectionType& selectionType)
 	{
 		// Draw Name Component.
 		DrawComponent<Engine::NameComponent>(entity,
-			[=](Engine::NameComponent& component) -> void 
+			[=](Engine::NameComponent& component) -> void
 			{
 				char nameOutput[30];
 				std::memcpy(nameOutput, component.name.c_str(), 30);
@@ -117,7 +117,7 @@ namespace Editor
 			});
 
 		// Draw Transform 3D Component.
-		DrawTreeNodeComponent<Engine::Transform3DComponent>(entity, "Transform 3D Component",  selectionType,
+		DrawTreeNodeComponent<Engine::Transform3DComponent>(entity, "Transform 3D Component", selectionType,
 			[=](Engine::Transform3DComponent& component) -> void
 			{
 				MathLib::Vector3 pos = component.GetLocalPosition();
@@ -179,7 +179,7 @@ namespace Editor
 				Engine::SceneCamera& camera = component.camera;
 				Engine::CameraProperties& cameraProperties = camera.GetProperties();
 
-				static const char* cameraTypes[] = {"Perspective", "Orthographic"};
+				static const char* cameraTypes[] = { "Perspective", "Orthographic" };
 
 				int cameraType = (int)camera.GetSceneCameraType();
 				if (ImGui::Combo("Type", &cameraType, cameraTypes, 2))
@@ -203,7 +203,7 @@ namespace Editor
 			[=](Engine::MeshComponent& component) -> void
 			{
 				ImGui::Checkbox("Enabled", &component.enabled);
-				
+
 				ImGui::BeginGroup();
 				ImGui::Text("Material");
 				ImGui::SameLine();
@@ -246,12 +246,12 @@ namespace Editor
 		m_selectionType(ComponentSelectionType::TYPE_NONE)
 	{
 	}
-	
+
 	EntityInspector::~EntityInspector()
 	{
 		// TODO: Implementation
 	}
-	
+
 	void EntityInspector::OnEvent(Engine::IEvent& event)
 	{
 		// TODO: Implementation
@@ -264,7 +264,7 @@ namespace Editor
 			return;
 		}
 		ImGui::Begin("Entity Inspector", &m_open, ImGuiWindowFlags_MenuBar);
-		Engine::Entity entity = EditorSelection::GetSelectedEntity();
+		auto entity = EditorSelection::GetSelectedEntity();
 		// TODO: Fix bug where selected entity points to a non-existing entity.
 
 		if (entity.IsValid())

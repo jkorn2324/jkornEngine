@@ -26,6 +26,15 @@ namespace Engine
 		IDComponent() = default;
 		IDComponent(const GUID& guid)
 			: guid(guid) { }
+
+		IDComponent(const IDComponent& cpy)
+			: guid(cpy.guid) { }
+
+		IDComponent& operator=(const IDComponent& cpy)
+		{
+			guid = cpy.guid;
+			return *this;
+		}
 	};
 
 	struct SpriteComponent
@@ -45,6 +54,17 @@ namespace Engine
 			: color(MathLib::Vector4::One), texture(), enabled(enabled) { }
 		explicit SpriteComponent(bool enabled, const MathLib::Vector4& color)
 			: color(color), enabled(enabled), texture() { }
+
+		SpriteComponent(const SpriteComponent& cpy)
+			: color(cpy.color), texture(cpy.texture), enabled(cpy.enabled) { }
+
+		SpriteComponent& operator=(const SpriteComponent& cpy)
+		{
+			texture = cpy.texture;
+			color = cpy.color;
+			enabled = cpy.enabled;
+			return *this;
+		}
 	};
 
 	struct SceneCameraComponent
@@ -62,13 +82,22 @@ namespace Engine
 		{
 			camera.SetSceneCameraType(cameraType);
 		}
-
 		explicit SceneCameraComponent(bool mainCamera, SceneCameraType type,
 			const CameraProperties& properties)
 			: mainCamera(mainCamera), camera(type, properties) { }
 
-		SceneCameraComponent(const SceneCameraComponent& component) = default;
+		SceneCameraComponent(const SceneCameraComponent& component)
+			: camera(component.camera), mainCamera(component.mainCamera), enabled(component.enabled)
+		{
+		}
 
+		SceneCameraComponent& operator=(const SceneCameraComponent& cpy)
+		{
+			camera = cpy.camera;
+			mainCamera = cpy.mainCamera;
+			enabled = cpy.enabled;
+			return *this;
+		}
 	};
 
 	struct NameComponent
@@ -80,19 +109,42 @@ namespace Engine
 			: name(name) { }
 		explicit NameComponent(const char* name)
 			: name(name) { }
+
+		NameComponent(const NameComponent& component)
+			: name(component.name)
+		{
+
+		}
+
+		NameComponent& operator=(const NameComponent& cpy)
+		{
+			name = cpy.name;
+			return *this;
+		}
 	};
 
 	struct MeshComponent
 	{
 		// TODO: Generate a default material.
 
-		bool enabled = true;
 		AssetRef<Mesh> mesh;
 		AssetRef<Material> material;
+		bool enabled = true;
 
 		explicit MeshComponent()
 			: mesh(), material() { }
 		explicit MeshComponent(const AssetRef<Mesh>& mesh, const AssetRef<Material>& material)
 			: mesh(mesh), material(material) { }
+
+		MeshComponent(const MeshComponent& mesh)
+			: mesh(mesh.mesh), material(mesh.material), enabled(mesh.enabled) { }
+
+		MeshComponent& operator=(const MeshComponent& cpy)
+		{
+			mesh = cpy.mesh;
+			material = cpy.material;
+			enabled = cpy.enabled;
+			return *this;
+		}
 	};
 }

@@ -9,7 +9,7 @@ namespace GlfwSandbox
 
 	namespace Camera
 	{
-		void ExecuteUpdate(const Engine::Timestep& ts, Engine::Entity& entity)
+		void ExecuteUpdate(const Engine::Timestep& ts, Engine::EntityRef& entity)
 		{
 			if (entity.HasComponent<CameraController>()
 				&& entity.HasComponent<Engine::Transform3DComponent>())
@@ -46,7 +46,7 @@ namespace GlfwSandbox
 			cameraController.direction = dir;
 		}
 
-		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity)
+		void OnUpdate(const Engine::Timestep& ts, Engine::EntityRef& entity)
 		{
 			if (entity.HasComponent<CameraController>()
 				&& entity.HasComponent<Engine::Transform3DComponent>())
@@ -56,7 +56,7 @@ namespace GlfwSandbox
 			}
 		}
 
-		void OnUpdate(const Engine::Timestep& ts, Engine::Entity& entity, CameraController& cameraController)
+		void OnUpdate(const Engine::Timestep& ts, Engine::EntityRef& entity, CameraController& cameraController)
 		{
 			if (entity.HasComponent<Engine::Transform3DComponent>())
 			{
@@ -74,7 +74,7 @@ namespace GlfwSandbox
 
 
 	// Called to update the camera controller.
-	void CameraControllerSystem::OnUpdate(const Engine::UpdateSystemContext& ctx, Engine::Entity& e, std::tuple<CameraController&, Engine::Transform3DComponent&>& tuple)
+	void CameraControllerSystem::OnUpdate(const Engine::UpdateSystemContext& ctx, Engine::EntityRef& e, std::tuple<CameraController&, Engine::Transform3DComponent&>& tuple)
 	{
 		CameraController& cameraController = std::get<0>(tuple);
 		Engine::Transform3DComponent& transform3D = std::get<1>(tuple);

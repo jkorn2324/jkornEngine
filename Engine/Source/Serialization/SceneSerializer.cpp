@@ -17,9 +17,11 @@
 namespace Engine
 {
 
+	template<typename TRegistry = entt::registry>
 	static void SerializeEntity(JsonFileWriter& fileWriter,
-		Entity& entity)
+		Entity& entity, TRegistry& registry)
 	{
+		TEntityRef<TRegistry> entityRef(entity, registry);
 		std::vector<Entity> children;
 		{
 			PROFILE_SCOPE(SerializeEntity, Serialization);
@@ -27,9 +29,9 @@ namespace Engine
 			fileWriter.BeginObject();
 
 			// UUID Component
-			if (entity.HasComponent<IDComponent>())
+			if (entityRef.HasComponent<IDComponent>())
 			{
-				IDComponent& component = entity.GetComponent<IDComponent>();
+				IDComponent& component = entityRef.GetComponent<IDComponent>();
 				fileWriter.Write("GUID", component.guid);
 			}
 			else
@@ -38,9 +40,9 @@ namespace Engine
 			}
 
 			// Name Component.
-			if (entity.HasComponent<NameComponent>())
+			if (entityRef.HasComponent<NameComponent>())
 			{
-				NameComponent& nameComponent = entity.GetComponent<NameComponent>();
+				NameComponent& nameComponent = entityRef.GetComponent<NameComponent>();
 				fileWriter.Write("NameComponent", nameComponent.name);
 			}
 			else
@@ -49,10 +51,10 @@ namespace Engine
 			}
 
 			// Transform 3D Component.
-			if (entity.HasComponent<Transform3DComponent>())
+			if (entityRef.HasComponent<Transform3DComponent>())
 			{
 				Transform3DComponent& transform3D =
-					entity.GetComponent<Transform3DComponent>();
+					entityRef.GetComponent<Transform3DComponent>();
 
 				fileWriter.BeginObject("Transform3DComponent");
 				fileWriter.Write("Position", transform3D.GetLocalPosition());
@@ -62,10 +64,10 @@ namespace Engine
 			}
 
 			// Transform 2D Component.
-			if (entity.HasComponent<Transform2DComponent>())
+			if (entityRef.HasComponent<Transform2DComponent>())
 			{
 				Transform2DComponent& transform2D =
-					entity.GetComponent<Transform2DComponent>();
+					entityRef.GetComponent<Transform2DComponent>();
 
 				fileWriter.BeginObject("Transform2DComponent");
 				fileWriter.Write("Position", transform2D.GetLocalPosition());
@@ -75,10 +77,10 @@ namespace Engine
 			}
 
 			// Sprite Component.
-			if (entity.HasComponent<SpriteComponent>())
+			if (entityRef.HasComponent<SpriteComponent>())
 			{
 				SpriteComponent& spriteComponent =
-					entity.GetComponent<SpriteComponent>();
+					entityRef.GetComponent<SpriteComponent>();
 
 				fileWriter.BeginObject("SpriteComponent");
 
@@ -99,10 +101,10 @@ namespace Engine
 			}
 
 			// Mesh Component.
-			if (entity.HasComponent<MeshComponent>())
+			if (entityRef.HasComponent<MeshComponent>())
 			{
 				MeshComponent& meshComponent =
-					entity.GetComponent<MeshComponent>();
+					entityRef.GetComponent<MeshComponent>();
 
 				fileWriter.BeginObject("MeshComponent");
 
@@ -122,10 +124,10 @@ namespace Engine
 			}
 
 			// Scene Camera Component.
-			if (entity.HasComponent<SceneCameraComponent>())
+			if (entityRef.HasComponent<SceneCameraComponent>())
 			{
 				SceneCameraComponent& cameraComponent =
-					entity.GetComponent<SceneCameraComponent>();
+					entityRef.GetComponent<SceneCameraComponent>();
 				CameraProperties& properties =
 					cameraComponent.camera.GetProperties();
 
@@ -144,10 +146,10 @@ namespace Engine
 			}
 
 			// Directional Light Component
-			if (entity.HasComponent<DirectionalLightComponent>())
+			if (entityRef.HasComponent<DirectionalLightComponent>())
 			{
 				DirectionalLightComponent& component
-					= entity.GetComponent<DirectionalLightComponent>();
+					= entityRef.GetComponent<DirectionalLightComponent>();
 
 				fileWriter.BeginObject("DirectionalLightComponent");
 				fileWriter.Write("LightColor", component.lightColor);
@@ -157,10 +159,10 @@ namespace Engine
 			}
 
 			// Point Light Component
-			if (entity.HasComponent<PointLightComponent>())
+			if (entityRef.HasComponent<PointLightComponent>())
 			{
 				PointLightComponent& component
-					= entity.GetComponent<PointLightComponent>();
+					= entityRef.GetComponent<PointLightComponent>();
 
 				fileWriter.BeginObject("PointLightComponent");
 				fileWriter.Write("LightColor", component.lightColor);
@@ -171,16 +173,17 @@ namespace Engine
 				fileWriter.EndObject();
 			}
 
-			if (entity.HasComponent<EntityHierarchyComponent>())
+			if (entityRef.HasComponent<EntityHierarchyComponent>())
 			{
-				EntityHierarchyComponent& ehc = entity.GetComponent<EntityHierarchyComponent>();
+				EntityHierarchyComponent& ehc = entityRef.GetComponent<EntityHierarchyComponent>();
 				fileWriter.BeginObject("EntityHierarchyComponent");
 
 				// Write the parent entity component.
-				if (ehc.HasParent())
+				if (ehc.HasParent(registry))
 				{
 					const Entity& entity = ehc.GetParent();
-					fileWriter.Write("Parent", (uint64_t)entity.GetComponent<IDComponent>().guid);
+					TEntityRef<TRegistry> ref(entity, registry);
+					fileWriter.Write("Parent", (uint64_t)ref.GetComponent<IDComponent>().guid);
 				}
 				else
 				{
@@ -197,23 +200,26 @@ namespace Engine
 		{
 			for (auto e : children)
 			{
-				if (e.IsValid()) SerializeEntity(fileWriter, e);
+				if (e.IsValid(registry)) SerializeEntity(fileWriter, e, registry);
 			}
 		}
 	}
 
 
-	static void DeserializeEntity(rapidjson::Value& value, Entity& entity)
+	template<typename TRegistry = entt::registry>
+	static void DeserializeEntity(rapidjson::Value& value, Entity& entity, TRegistry& registry)
 	{
 		PROFILE_SCOPE(DeserializeEntity, Serialization);
+
+		TEntityRef<TRegistry> entityRef(entity, registry);
 
 		// UUID Component.
 		GUID guid;
 		if (ReadUint64(value, "GUID", *(uint64_t*)&guid))
 		{
-			if (entity.HasComponent<IDComponent>())
+			if (entityRef.HasComponent<IDComponent>())
 			{
-				IDComponent& component = entity.GetComponent<IDComponent>();
+				IDComponent& component = entityRef.GetComponent<IDComponent>();
 				component.guid = guid;
 			}
 		}
@@ -222,14 +228,14 @@ namespace Engine
 		std::string name;
 		if (ReadString(value, "NameComponent", name))
 		{
-			if (entity.HasComponent<NameComponent>())
+			if (entityRef.HasComponent<NameComponent>())
 			{
-				NameComponent& component = entity.GetComponent<NameComponent>();
+				NameComponent& component = entityRef.GetComponent<NameComponent>();
 				component.name = name;
 			}
 			else
 			{
-				entity.AddComponent<NameComponent>(name);
+				entityRef.AddComponent<NameComponent>(name);
 			}
 		}
 
@@ -247,7 +253,7 @@ namespace Engine
 			ReadVector3(value["Transform3DComponent"],
 				"Scale", scale);
 
-			entity.AddComponent<Transform3DComponent>(position,
+			entityRef.AddComponent<Transform3DComponent>(position,
 				rotation, scale);
 		}
 
@@ -265,7 +271,7 @@ namespace Engine
 			ReadVector2(value["Transform2DComponent"],
 				"Scale", scale);
 
-			entity.AddComponent<Transform2DComponent>(position,
+			entityRef.AddComponent<Transform2DComponent>(position,
 				rotation, scale);
 		}
 
@@ -280,7 +286,7 @@ namespace Engine
 			ReadVector4(value["SpriteComponent"],
 				"Color", color);
 
-			entity.AddComponent<SpriteComponent>(enabled, color);
+			entityRef.AddComponent<SpriteComponent>(enabled, color);
 		}
 
 		// Mesh Component
@@ -289,7 +295,7 @@ namespace Engine
 			// TODO: Load a mesh.
 
 			MeshComponent& meshComponent
-				= entity.AddComponent<MeshComponent>();
+				= entityRef.AddComponent<MeshComponent>();
 			uint64_t materialGUID;
 
 			ReadBool(value["MeshComponent"], "Enabled", meshComponent.enabled);
@@ -331,7 +337,7 @@ namespace Engine
 			ReadFloat(value["SceneCameraComponent"],
 				"OrthoHeight", cameraProperties.orthoHeight);
 
-			entity.AddComponent<SceneCameraComponent>(mainCamera,
+			entityRef.AddComponent<SceneCameraComponent>(mainCamera,
 				(SceneCameraType)cameraType, cameraProperties);
 		}
 
@@ -339,7 +345,7 @@ namespace Engine
 		if (value.HasMember("DirectionalLightComponent"))
 		{
 			DirectionalLightComponent& component =
-				entity.AddComponent<DirectionalLightComponent>();
+				entityRef.AddComponent<DirectionalLightComponent>();
 			ReadVector3(value["DirectionalLightComponent"], "LightColor", component.lightColor);
 			ReadFloat(value["DirectionalLightComponent"], "LightIntensity", component.lightIntensity);
 			ReadBool(value["DirectionalLightComponent"], "Enabled", component.enabled);
@@ -349,7 +355,7 @@ namespace Engine
 		if (value.HasMember("PointLightComponent"))
 		{
 			PointLightComponent& component =
-				entity.AddComponent<PointLightComponent>();
+				entityRef.AddComponent<PointLightComponent>();
 			ReadVector3(value["PointLightComponent"], "LightColor", component.lightColor);
 			ReadFloat(value["PointLightComponent"], "InnerRadius", component.innerRadius);
 			ReadFloat(value["PointLightComponent"], "OuterRadius", component.outerRadius);
@@ -364,24 +370,24 @@ namespace Engine
 			uint64_t entityOwnerID;
 			ReadUint64(hierarchyComponent, "Parent", entityOwnerID);
 
-			if (entity.HasComponent<EntityHierarchyComponent>())
+			if (entityRef.HasComponent<EntityHierarchyComponent>())
 			{
 				EntityHierarchyComponent& component
-					= entity.GetComponent<EntityHierarchyComponent>();
+					= entityRef.GetComponent<EntityHierarchyComponent>();
 				if (entityOwnerID != 0)
 				{
-					Entity e = entity.GetScene().Find(entityOwnerID);
-					if (e.IsValid()) component.SetParent(e);
+					TEntityRef<TRegistry> eRef(entityOwnerID, registry);
+					if (eRef.IsValid()) component.SetParent(eRef);
 				}
 			}
 			else
 			{
 				EntityHierarchyComponent& component
-					= entity.AddComponent<EntityHierarchyComponent>(entity);
+					= entityRef.AddComponent<EntityHierarchyComponent>(entity);
 				if (entityOwnerID != 0)
 				{
-					Entity e = entity.GetScene().Find(entityOwnerID);
-					if (e.IsValid()) component.SetParent(e);
+					TEntityRef<TRegistry> eRef(entityOwnerID, registry);
+					if (eRef.IsValid()) component.SetParent(eRef);
 				}
 			}
 		}
@@ -402,12 +408,14 @@ namespace Engine
 		auto view = m_scene->m_entityRegistry.view<entt::entity>();
 		view.each([&](auto id)
 			{
-				Entity entity(id, m_scene);
-				if (!entity.IsValid())
+				entt::registry& registry = m_scene->m_entityRegistry;
+
+				Entity entity(id);
+				if (!entity.IsValid(registry))
 				{
 					return;
 				}
-				SerializeEntity(jsonFileWriter, entity);
+				SerializeEntity(jsonFileWriter, entity, registry);
 			});
 		jsonFileWriter.EndArray();
 		jsonFileWriter.Flush();
@@ -435,7 +443,7 @@ namespace Engine
 					value != entitiesArray.end(); value++)
 				{
 					Entity entity = m_scene->CreateEntity();
-					DeserializeEntity(*value, entity);
+					DeserializeEntity(*value, entity, m_scene->m_entityRegistry);
 				}
 			}
 		}

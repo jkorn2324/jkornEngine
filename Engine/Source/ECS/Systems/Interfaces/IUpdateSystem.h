@@ -2,7 +2,7 @@
 
 #include "ISystemBase.h"
 #include "SystemTypes.h"
-#include "EnttUtility.h"
+#include "EntityRef.h"
 
 namespace Engine
 {
@@ -11,7 +11,6 @@ namespace Engine
 	 */
 	class Timestep;
 	class Scene;
-	class Entity;
 
 	// The context for the update system.
 	struct UpdateSystemContext
@@ -55,7 +54,7 @@ namespace Engine
 			// Iterate through each entity view.
 			for (auto e : entityView)
 			{
-				Entity entity(e, &scene);
+				EntityRef entity(e, registry);
 				auto c = registry.get<TComponents...>(e);
 				OnUpdate(updateSystemContext, entity, c);
 			}
@@ -63,6 +62,6 @@ namespace Engine
 
 	protected:
 		// Called to invoke on Update.
-		virtual void OnUpdate(const UpdateSystemContext& ctx, Entity& e, Components& components) = 0;
+		virtual void OnUpdate(const UpdateSystemContext& ctx, EntityRef& e, Components& components) = 0;
 	};
 }

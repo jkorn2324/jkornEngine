@@ -22,9 +22,9 @@ namespace Editor
 		return true;
 	}
 
-	Engine::Entity EditorSelection::GetSelectedEntity()
+	Engine::EntityRef EditorSelection::GetSelectedEntity()
 	{
-		return s_selectedEntity;
+		return Engine::SceneManager::GetActiveScene().CreateEntityRef(s_selectedEntity);
 	}
 
 	void EditorSelection::SetSelectedEntity(const Engine::Entity& entity)
@@ -32,7 +32,7 @@ namespace Editor
 		s_selectedEntity = entity;
 	}
 
-	bool EditorSelection::HasSelectedEntity() { return s_selectedEntity.IsValid(); }
+	bool EditorSelection::HasSelectedEntity() { return GetSelectedEntity().IsValid(); }
 
 	void EditorSelection::OnEvent(Engine::IEvent& event)
 	{

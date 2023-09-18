@@ -130,7 +130,7 @@ namespace Editor
 	{
 		if (EditorSelection::HasSelectedEntity())
 		{
-			Engine::Entity selectedEntity = EditorSelection::GetSelectedEntity();
+			auto selectedEntity = EditorSelection::GetSelectedEntity();
 			if (selectedEntity.HasComponent<Engine::Transform3DComponent>())
 			{
 				Engine::Transform3DComponent& transform3D =
