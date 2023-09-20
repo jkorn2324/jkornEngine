@@ -6,7 +6,7 @@ project "Editor"
 	cppdialect "C++17"
 	staticruntime "off"
 
-	pchheader "EditorPCH.h"
+	pchheader "%{prj.location}/Source/EditorPCH.h"
 	pchsource "%{prj.location}/Source/EditorPCH.cpp"
 	
 	targetdir "%{wks.location}/%{prj.name}/Builds/%{cfg.buildcfg}/%{cfg.platform}/"

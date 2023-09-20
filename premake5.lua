@@ -17,7 +17,8 @@ workspace "jkornEngine"
 	platforms
 	{
 		"Win64",
-		"Win32"
+		"Win32",
+		"MacOS"
 	}
 
 	filter { "platforms:x64" }
@@ -38,6 +39,16 @@ workspace "jkornEngine"
 		{
 			"PLATFORM_WINDOWS",
 			"PLATFORM_WINDOWS_X86"
+		}
+
+	filter { "platforms:MacOS" }
+		system "MacOSx"
+		architecture "x64"
+
+		defines
+		{
+			"PLATFORM_OSX",
+			"PLATFORM_OSX_X64"
 		}
 
 	filter { "configurations:Debug" }
