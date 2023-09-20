@@ -55,6 +55,7 @@
 # Xcode4 Files
 *.xcodeproj
 *.xcworkspace
+DerivedData/
 
 # MacOS Files
 .DS_Store
