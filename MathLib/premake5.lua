@@ -6,8 +6,8 @@ project "MathLib"
 	cppdialect "C++17"
 	staticruntime "off"
 
-	pchheader "MathPCH.h"
-	pchsource "Source/MathPCH.cpp"
+	pchheader "%{prj.location}/Source/MathPCH.h"
+	pchsource "%{prj.location}/Source/MathPCH.cpp"
 
 	targetdir "%{wks.location}/%{prj.name}/Builds/%{cfg.buildcfg}/%{cfg.platform}"
 	objdir "%{wks.location}/%{prj.name}/Builds-Int/%{cfg.buildcfg}/%{cfg.platform}"

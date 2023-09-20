@@ -6,7 +6,7 @@ project "Engine"
 	cppdialect "C++17"
 	staticruntime "off"
 
-	pchheader "EnginePCH.h"
+	pchheader "%{prj.location}/Source/EnginePCH.h"
 	pchsource "%{prj.location}/Source/EnginePCH.cpp"
 
 	targetdir "%{wks.location}/%{prj.name}/Builds/%{cfg.buildcfg}/%{cfg.platform}/"
