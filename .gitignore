@@ -52,5 +52,11 @@
 */Engine.log
 */Profile.json
 
+# Xcode4 Files
+*.xcodeproj
+*.xcworkspace
+
+# MacOS Files
+.DS_Store
 
 Editor/imgui.ini
