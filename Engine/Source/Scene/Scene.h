@@ -18,16 +18,10 @@ namespace Engine
 	class IEvent;
 	class GUID;
 
-	template<typename T>
-	class EntityComponentAddedEvent;
-	template<typename T>
-	class EntityComponentRemovedEvent;
 	class EntityHierarchyChangedEvent;
 
 	using Transform3DComponent = MathLib::Transform3D;
 	using Transform2DComponent = MathLib::Transform2D;
-
-	using EventFunc = std::function<void(IEvent&)>;
 
 	class Scene
 	{
@@ -111,8 +105,6 @@ namespace Engine
 		void Render(const struct CameraConstants& cameraConstants);
 		void Render();
 
-		void BindEventFunc(const EventFunc& func);
-
 		bool OnEntityHierarchyChanged(EntityHierarchyChangedEvent& event);
 
 	private:
@@ -121,7 +113,6 @@ namespace Engine
 		std::vector<entt::entity> m_markedForDestroyEntities;
 		entt::registry m_entityRegistry;
 		std::wstring m_sceneName;
-		EventFunc m_eventFunc;
 
 	public:
 		static void CreateDefaultScene(Scene*& scene);

@@ -4,6 +4,13 @@
 #include "SystemTypes.h"
 #include "EntityRef.h"
 
+namespace std
+{
+	// Forward declare the vector.
+	template<typename TType, typename TAllocator>
+	class vector;
+}
+
 namespace Engine
 {
 	/**
@@ -17,11 +24,12 @@ namespace Engine
 	{
 		Scene& scene;
 		const Timestep& timestep;
+		// Determines whether or not its updating while playing.
+		bool isPlaying : 1;
 
-		UpdateSystemContext(Scene& scene, const Timestep& ts)
-			: timestep(ts), scene(scene) { }
+		UpdateSystemContext(Scene& scene, const Timestep& ts, bool inIsPlaying)
+			: timestep(ts), scene(scene), isPlaying(inIsPlaying) { }
 	};
-
 
 	/**
 	 * System that gets invoked during the update.
@@ -43,9 +51,40 @@ namespace Engine
 	template<typename...TComponents>
 	class IUpdateSystem : public IUpdateSystemBase
 	{
-	public:
-		using Components = std::tuple<TComponents&...>;
+	private:
+		template<typename... T>
+		struct SystemType
+		{
+			using type = std::tuple<T&...>;
+		};
 
+		template<typename T>
+		struct SystemType<T>
+		{
+			using type = T;
+		};
+
+	public:
+		/**
+		 * The component type information. 
+		 */
+		using Components = typename SystemType<TComponents...>::type;
+
+	protected:
+		/**
+		 * Gets the component from the components type.
+		 */
+		template<size_t Index = 0>
+		decltype(auto) GetComponent(Components& component)
+		{
+			if constexpr (std::is_same<std::tuple<TComponents&...>, Components>::value)
+			{
+				return std::get<Index>(component);
+			}
+			return component;
+		}
+
+	public:
 		void InvokeOnUpdate(const UpdateSystemContext& updateSystemContext)
 		{
 			Scene& scene = updateSystemContext.scene;
@@ -55,7 +94,7 @@ namespace Engine
 			for (auto e : entityView)
 			{
 				EntityRef entity(e, registry);
-				auto c = registry.get<TComponents...>(e);
+				auto c = entityView.get<TComponents...>(e);
 				OnUpdate(updateSystemContext, entity, c);
 			}
 		}

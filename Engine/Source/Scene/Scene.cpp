@@ -22,56 +22,6 @@
 namespace Engine
 {
 
-	template<typename TRegistry = entt::registry>
-	static void UpdateEntityHierarchies(Entity& rootEntity, EntityHierarchyComponent& rootComponent, TRegistry& registry)
-	{
-		if (!rootComponent.HasChildren())
-		{
-			return;
-		}
-
-		EntityRef rootEntityRef(rootEntity, registry);
-		MathLib::Matrix4x4 mat = MathLib::Matrix4x4::Identity;
-		{
-			if (rootEntity.HasComponent<Transform3DComponent, TRegistry>(registry))
-			{
-				mat = rootEntity.GetComponent<Transform3DComponent>(registry).GetTransformMatrix();
-			}
-			if (rootEntity.HasComponent<Transform2DComponent, TRegistry>(registry))
-			{
-				mat = rootEntity.GetComponent<Transform2DComponent, TRegistry>(registry).GetTransformMatrix();
-			}
-		}
-
-		int32_t size = (int32_t)rootComponent.GetChildren().size() - 1;
-		for (int32_t i = size; i >= 0; i--)
-		{
-			auto entity = rootComponent.GetChildren()[i];
-			EntityRef e(entity, registry);
-
-			if (e.HasComponent<Transform3DComponent>())
-			{
-				Transform3DComponent& component
-					= e.GetComponent<Transform3DComponent>();
-				component.SetParentTransformMatrix(mat);
-			}
-
-			if (e.HasComponent<Transform2DComponent>())
-			{
-				Transform2DComponent& component
-					= e.GetComponent<Transform2DComponent>();
-				component.SetParentTransformMatrix(mat);
-			}
-
-			if (e.HasComponent<EntityHierarchyComponent>())
-			{
-				EntityHierarchyComponent& hierarchyComponent
-					= e.GetComponent<EntityHierarchyComponent>();
-				UpdateEntityHierarchies<TRegistry>(entity, hierarchyComponent, registry);
-			}
-		}
-	}
-
 	void Scene::CreateDefaultScene(Scene*& scene)
 	{
 		if (scene == nullptr)
@@ -185,11 +135,6 @@ namespace Engine
 		return cpyScene;
 	}
 
-	void Scene::BindEventFunc(const EventFunc& func)
-	{
-		m_eventFunc = func;
-	}
-
 	void Scene::OnUpdate(const Timestep& ts)
 	{
 		PROFILE_SCOPE(OnUpdate, Scene);
@@ -202,18 +147,6 @@ namespace Engine
 				m_entityRegistry.destroy(m_markedForDestroyEntities[sizeOfVec]);
 				m_markedForDestroyEntities.pop_back();
 				sizeOfVec--;
-			}
-		}
-
-		// Updates the entity hierarchies.
-		{
-			const auto& rootEntities
-				= GetRootEntities();
-			for (auto entity : rootEntities)
-			{
-				EntityHierarchyComponent& hierarchy
-					= entity.GetComponent<EntityHierarchyComponent>(m_entityRegistry);
-				UpdateEntityHierarchies(entity, hierarchy, m_entityRegistry);
 			}
 		}
 
@@ -397,12 +330,8 @@ namespace Engine
 		{
 			m_rootEntities.push_back(createdEntity);
 		}
-
-		if (m_eventFunc != nullptr)
-		{
-			EntityCreatedEvent createdEvent(createdEntity);
-			m_eventFunc(createdEvent);
-		}
+		EntityCreatedEvent createdEvent(createdEntity);
+		EventInvoker::Global().Invoke(createdEvent);
 		return createdEntityRef;
 	}
 
@@ -430,11 +359,8 @@ namespace Engine
 			m_rootEntities.push_back(createdEntity);
 		}
 
-		if (m_eventFunc != nullptr)
-		{
-			EntityCreatedEvent createdEvent(createdEntity);
-			m_eventFunc(createdEvent);
-		}
+		EntityCreatedEvent createdEvent(createdEntity);
+		EventInvoker::Global().Invoke(createdEvent);
 		return createdEntityRef;
 	}
 
@@ -507,12 +433,8 @@ namespace Engine
 				m_rootEntities.erase(found);
 			}
 		}
-
-		if (m_eventFunc != nullptr)
-		{
-			EntityDestroyedEvent destroyedEvent(entity);
-			m_eventFunc(destroyedEvent);
-		}
+		EntityDestroyedEvent destroyedEvent(entity);
+		EventInvoker::Global().Invoke(destroyedEvent);
 	}
 
 	bool Scene::OnEntityHierarchyChanged(EntityHierarchyChangedEvent& event)

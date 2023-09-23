@@ -28,24 +28,13 @@ namespace Engine
 		void RemoveComponent(TRegistry& registry)
 		{
 			Entt::RemoveComponent<TComponent>(m_entity, registry,
-				[](TComponent& component, Entity& entity) -> void {
-					if (s_componentEventFunc != nullptr)
-					{
-						EntityComponentRemovedEvent<TComponent> event(entity, component);
-						s_componentEventFunc(event);
-					}
-				}, *this);
+				[](TComponent& component, Entity& entity) -> void { }, *this);
 		}
 
 		template<typename TComponent, typename ... TArgs, typename TRegistry = entt::registry>
 		TComponent& AddComponent(TRegistry& registry, TArgs&&... args)
 		{
 			TComponent& component = Entt::AddComponent<TComponent, TArgs...>(m_entity, registry, std::forward<TArgs>(args)...);
-			if (s_componentEventFunc != nullptr)
-			{
-				EntityComponentAddedEvent<TComponent> event(*this, component);
-				s_componentEventFunc(event);
-			}
 			return component;
 		}
 
@@ -89,12 +78,6 @@ namespace Engine
 	public:
 		// The none entity.
 		static const Entity None;
-
-	private:
-		static EventFunc s_componentEventFunc;
-
-	public:
-		static void BindEventFunc(const EventFunc& eventFunc);
 
 		template<typename TComponent, typename TRegistry = entt::registry>
 		static void CopyComponent(Entity& from, TRegistry& fromRegistry, Entity& to, TRegistry& toRegistry)

@@ -12,14 +12,12 @@
 namespace Engine
 {
 	static Scene* s_activeScene = nullptr;
-	static EventFunc s_eventFunc = nullptr;
 
 	void SceneManager::Init()
 	{
 		PROFILE_SCOPE(Init, SceneManager);
 
 		Scene::CreateDefaultScene(s_activeScene);
-		s_activeScene->BindEventFunc(s_eventFunc);
 	}
 
 	void SceneManager::Release()
@@ -44,8 +42,6 @@ namespace Engine
 		}
 
 		s_activeScene = new Scene();
-		s_activeScene->BindEventFunc(s_eventFunc);
-
 		SceneSerializer serializer(s_activeScene);
 		serializer.Deserialize(path);
 	}
@@ -58,8 +54,6 @@ namespace Engine
 		}
 
 		s_activeScene = new Scene();
-		s_activeScene->BindEventFunc(s_eventFunc);
-
 		SceneSerializer serializer(s_activeScene);
 		serializer.Deserialize(filePath);
 	}
@@ -71,7 +65,6 @@ namespace Engine
 			delete s_activeScene;
 		}
 		s_activeScene = scene;
-		s_activeScene->BindEventFunc(s_eventFunc);
 	}
 
 	Scene& SceneManager::GetActiveScene()
@@ -100,16 +93,6 @@ namespace Engine
 		if (s_activeScene != nullptr)
 		{
 			s_activeScene->OnEditorUpdate(ts);
-		}
-	}
-
-	void SceneManager::BindEventFunc(const EventFunc& func)
-	{
-		s_eventFunc = func;
-
-		if (s_activeScene != nullptr)
-		{
-			s_activeScene->BindEventFunc(s_eventFunc);
 		}
 	}
 

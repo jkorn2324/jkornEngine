@@ -85,7 +85,4 @@ namespace Engine
 	private:
 		IEvent* m_event;
 	};
-
-	// The Event Function Declaration.
-	using EventFunc = std::function<void(IEvent&)>;
 }

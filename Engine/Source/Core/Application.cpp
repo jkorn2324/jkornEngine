@@ -64,26 +64,25 @@ namespace Engine
 			MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT, true
 		};
 		m_window = Window::GenerateWindow(properties);
+
+		// Bind Event Functions.
 		m_window->SetCallback(BIND_EVENT_FUNCTION(Application::OnEvent));
-		
 		Input::BindInputEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
+		EventInvoker::Global().SetEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
+
 		Input::Init();
 
+		// Initializes the Graphics
 		GraphicsRenderer::Init();
 		GraphicsRenderer2D::Init();
 		GraphicsRenderer3D::Init();
-		
-		SceneManager::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
-		SceneManager::Init();
 
-		// Binds the component add and remove to the event func.
-		Entity::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
-		EntityHierarchyComponent::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
+		SceneManager::Init();
 
 		m_imguiLayer = new ImGuiLayer();
 		m_windowLayerStack.AddOverlay(m_imguiLayer);
 	}
-
+	
 	Application::~Application()
 	{
 		m_windowLayerStack.Clear();

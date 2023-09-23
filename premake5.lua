@@ -10,7 +10,9 @@ workspace "jkornEngine"
 
 	configurations 
 	{ 
+		-- The debug configuration
 		"Debug", 
+		-- The release configuration
 		"Release" 
 	}
 

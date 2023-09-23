@@ -13,11 +13,11 @@ project "Engine"
 
 	filter { "system:Windows" }
 		pchheader "EnginePCH.h"
-	filter{}
+	filter { }
 	
 	filter { "system:MacOSx" }
 		pchheader "%{prj.location}/Source/EnginePCH.h"
-	filter{}
+	filter { }
 
 	files
 	{

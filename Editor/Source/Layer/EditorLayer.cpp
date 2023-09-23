@@ -53,6 +53,7 @@ namespace Editor
 
 		// Sets the camera system.
 		Engine::SystemManager::AddSystem<Editor::CameraControllerSystem>();
+		Engine::SystemManager::AddSystem<Engine::EntityHierarchySystem>();
 
 		Engine::GraphicsRenderer::GetRenderingAPI().SetClearColor(
 			MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f));
@@ -158,18 +159,16 @@ namespace Editor
 #endif
 }
 
-		Engine::SceneManager::OnUpdate(timestep);
+		// Calls the update system and determines whether or not the application is playing.
+		Engine::UpdateSystemContext updateSystemContext(Engine::SceneManager::GetActiveScene(), timestep, EditorSceneManager::IsPlaying());
+		Engine::SystemManager::Invoke<Engine::IUpdateSystemBase>(
+			[](Engine::IUpdateSystemBase& updateSystem, const Engine::UpdateSystemContext& context) -> void {
+				updateSystem.InvokeOnUpdate(context);
+			}, updateSystemContext);
 
+		Engine::SceneManager::OnUpdate(timestep);
 		if (EditorSceneManager::IsPlaying())
 		{
-			// Call Update System.
-			Engine::UpdateSystemContext updateSystemContext(Engine::SceneManager::GetActiveScene(), timestep);
-			Engine::SystemManager::Invoke<Engine::IUpdateSystemBase>(
-				[](Engine::IUpdateSystemBase& updateSystem, const Engine::UpdateSystemContext& context) -> void {
-					updateSystem.InvokeOnUpdate(context);
-				}, updateSystemContext);
-
-
 			Engine::SceneManager::OnRuntimeUpdate(timestep);
 		}
 		else

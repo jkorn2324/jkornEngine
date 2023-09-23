@@ -43,6 +43,10 @@
 
 #include "SystemManager.h"
 #include "ISystemBase.h"
+#include "IUpdateSystem.h"
+#include "IEventSystem.h"
+
+#include "EntityHierarchySystem.h"
 
 #include "Components.h"
 #include "Entity.h"

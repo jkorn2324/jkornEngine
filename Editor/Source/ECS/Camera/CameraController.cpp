@@ -77,6 +77,12 @@ namespace Editor
 	// Called to update the camera controller.
 	void CameraControllerSystem::OnUpdate(const Engine::UpdateSystemContext& ctx, Engine::EntityRef& e, Components& components)
 	{
+		// Don't update when it isn't playing.
+		if (!ctx.isPlaying)
+		{
+			return;
+		}
+
 		CameraController& cameraController = std::get<0>(components);
 		Engine::Transform3DComponent& transform3D = std::get<1>(components);
 

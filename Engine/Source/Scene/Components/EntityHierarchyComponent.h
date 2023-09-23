@@ -1,10 +1,19 @@
 #pragma once
 
 #include "Entity.h"
+#include "EventInvoker.h"
+
 #include <vector>
 
 namespace Engine
 {
+	class EntityHierarchyComponent;
+
+	namespace EHC::Internal
+	{
+		void InvokeHierarchyChanged(Entity& entity, EntityHierarchyComponent& hierarchyChangedEvent);
+	}
+
 	template<typename TRegistry>
 	class TEntityRef;
 
@@ -52,11 +61,7 @@ namespace Engine
 					m_parentEntity.GetComponent<EntityHierarchyComponent>(registry);
 				component.m_children.push_back(m_owner);
 			}
-			if (s_hierarchyEventFunc)
-			{
-				EntityHierarchyChangedEvent event(*this);
-				s_hierarchyEventFunc(event);
-			}
+			EHC::Internal::InvokeHierarchyChanged(m_owner, *this);
 		}
 
 		template<typename TRegistry = entt::registry>
@@ -86,15 +91,5 @@ namespace Engine
 		std::vector<Entity> m_children;
 		Entity m_parentEntity;
 		Entity m_owner;
-
-		/** -------------------------------- STATICS -------------------------- */
-
-	private:
-		static EventFunc s_hierarchyEventFunc;
-
-		static void BindEventFunc(const EventFunc& eventFunc);
-
-		friend class SceneSerializer;
-		friend class Application;
 	};
 }
