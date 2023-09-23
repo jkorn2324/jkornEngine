@@ -21,7 +21,7 @@ workspace "jkornEngine"
 		"MacOS"
 	}
 
-	filter { "platforms:x64" }
+	filter { "platforms:Win64" }
 		system "Windows"
 		architecture "x86_64"
 
@@ -43,7 +43,7 @@ workspace "jkornEngine"
 
 	filter { "platforms:MacOS" }
 		system "MacOSx"
-		architecture "x64"
+		architecture "x86_64"
 
 		defines
 		{
@@ -63,6 +63,7 @@ workspace "jkornEngine"
 			"RELEASE",
 			"NDEBUG"
 		}
+	filter { }
 
 -- Create projects for static libraries.
 

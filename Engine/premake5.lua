@@ -6,11 +6,18 @@ project "Engine"
 	cppdialect "C++17"
 	staticruntime "off"
 
-	pchheader "%{prj.location}/Source/EnginePCH.h"
-	pchsource "%{prj.location}/Source/EnginePCH.cpp"
-
 	targetdir "%{wks.location}/%{prj.name}/Builds/%{cfg.buildcfg}/%{cfg.platform}/"
 	objdir "%{wks.location}/%{prj.name}/Builds-Int/%{cfg.buildcfg}/%{cfg.platform}/"
+
+	pchsource "%{prj.location}/Source/EnginePCH.cpp"
+
+	filter { "system:Windows" }
+		pchheader "EnginePCH.h"
+	filter{}
+	
+	filter { "system:MacOSx" }
+		pchheader "%{prj.location}/Source/EnginePCH.h"
+	filter{}
 
 	files
 	{
@@ -37,18 +44,6 @@ project "Engine"
 		"%{IncludeDirectories.ImGuizmo}ImSequencer.h",
 		"%{IncludeDirectories.ImGuizmo}ImZoomSlider.h"
 	}
-
-	filter { "system:Windows" }
-		flags { "NoPCH" }
-		files
-		{
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_glfw.h",
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_glfw.cpp",
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.h",
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.cpp",
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.h",
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.cpp",
-		}
 
 	includedirs
 	{
@@ -83,6 +78,18 @@ project "Engine"
 		"%{LibraryDirectories.glfw}Builds/%{cfg.buildcfg}/%{cfg.platform}/",
 		"%{LibraryDirectories.ImGui}Builds/%{cfg.buildcfg}/%{cfg.platform}/"
 	}
+	
+	filter { "system:Windows" }
+		flags { "NoPCH" }
+		files
+		{
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_glfw.h",
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_glfw.cpp",
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.h",
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.cpp",
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.h",
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.cpp",
+		}
 
 	filter "configurations:Debug"
 		defines { "DEBUG", "_DEBUG" }

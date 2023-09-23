@@ -6,11 +6,18 @@ project "MathLib"
 	cppdialect "C++17"
 	staticruntime "off"
 
-	pchheader "%{prj.location}/Source/MathPCH.h"
-	pchsource "%{prj.location}/Source/MathPCH.cpp"
-
 	targetdir "%{wks.location}/%{prj.name}/Builds/%{cfg.buildcfg}/%{cfg.platform}"
 	objdir "%{wks.location}/%{prj.name}/Builds-Int/%{cfg.buildcfg}/%{cfg.platform}"
+
+	pchsource "%{prj.location}/Source/MathPCH.cpp"
+
+	filter { "system:Windows" }
+		pchheader "MathPCH.h"
+	filter { }
+	
+	filter { "system:MacOSx" }
+		pchheader "%{prj.location}/Source/MathPCH.h"
+	filter { }
 
 	files
 	{

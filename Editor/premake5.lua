@@ -6,11 +6,18 @@ project "Editor"
 	cppdialect "C++17"
 	staticruntime "off"
 
-	pchheader "%{prj.location}/Source/EditorPCH.h"
-	pchsource "%{prj.location}/Source/EditorPCH.cpp"
-	
 	targetdir "%{wks.location}/%{prj.name}/Builds/%{cfg.buildcfg}/%{cfg.platform}/"
 	objdir "%{wks.location}/%{prj.name}/Builds-Int/%{cfg.buildcfg}/%{cfg.platform}/"
+
+	pchsource "%{prj.location}/Source/EditorPCH.cpp"
+	
+	filter { "system:Windows" }
+		pchheader "EditorPCH.h"
+	filter { }
+		
+	filter { "system:MacOSx" }
+		pchheader "%{prj.location}/Source/EditorPCH.h"
+	filter { }
 
 	files
 	{
