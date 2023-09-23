@@ -3,6 +3,33 @@
 #include <entt/entt.hpp>
 #include <utility>
 
+// ----------------------- Reflection Generation For Copying Entities --------------------------
+
+template<typename Type>
+struct meta_mixin : Type {
+	using allocator_type = typename Type::allocator_type;
+	using value_type = typename Type::value_type;
+
+	explicit meta_mixin(const allocator_type& allocator);
+};
+
+template<typename Type, typename Entity>
+struct entt::storage_type<Type, Entity> {
+	using type = meta_mixin<entt::basic_storage<Type, Entity>>;
+};
+
+template<typename Type>
+meta_mixin<Type>::meta_mixin(const allocator_type& allocator)
+	: Type{ allocator } {
+	using namespace entt::literals;
+
+	entt::meta<value_type>()
+		// cross registry, same type
+		.template func<entt::overload<entt::storage_for_t<value_type, entt::entity>& (const entt::id_type)>(&entt::basic_registry<entt::entity>::storage<value_type>), entt::as_ref_t>("storage"_hs);
+}
+
+// --------------------------------------------------------------------------------------------
+
 namespace Engine
 {
 	template<typename TRegistry>
@@ -28,6 +55,14 @@ namespace Engine
 
 	namespace Entt
 	{
+		using namespace entt::internal;
+
+		template<typename TComponent>
+		static inline void ValidateComponent()
+		{
+			// Used to add reflection types to the components
+			auto metaRegistry = entt::meta<TComponent>();
+		}
 
 		template<typename TRegistry = entt::registry>
 		static inline auto GetEntityStorage(TRegistry& registry)
@@ -48,6 +83,7 @@ namespace Engine
 		static inline bool HasComponent(const entt::entity entity, TRegistry& registry)
 		{
 			static_assert(IsValidRegistry<TRegistry>::value, "Registry must be a valid registry.");
+			ValidateComponent<TComponent>();
 			return registry.any_of<TComponent>(entity);
 		}
 
@@ -56,6 +92,7 @@ namespace Engine
 		{
 			static_assert(IsValidRegistry<TRegistry>::value && !IsValidRegistry<TRegistry>::is_const,
 				"Registry must be a valid registry & it must be non constant.");
+			ValidateComponent<TComponent>();
 			return registry.get<TComponent>(entity);
 		}
 
@@ -64,6 +101,7 @@ namespace Engine
 		{
 			static_assert(IsValidRegistry<TRegistry>::value && !IsValidRegistry<TRegistry>::is_const,
 				"Registry must be a valid registry & it must be a non constant.");
+			ValidateComponent<TComponent>();
 			return registry.get<TComponent>(entity);
 		}
 
@@ -72,6 +110,7 @@ namespace Engine
 		{
 			static_assert(IsValidRegistry<TRegistry>::value && !IsValidRegistry<TRegistry>::is_const,
 				"Registry must be a valid registry & it must be non constant.");
+			ValidateComponent<TComponent>();
 			return registry.emplace<TComponent, TArgs...>(entity, std::forward<TArgs>(args)...);
 		}
 
@@ -80,6 +119,7 @@ namespace Engine
 		{
 			static_assert(IsValidRegistry<TRegistry>::value && !IsValidRegistry<TRegistry>::is_const,
 				"Registry must be a valid registry & it must be non constant.");
+			ValidateComponent<TComponent>();
 			if (!HasComponent<TComponent, TRegistry>(entity, registry))
 			{
 				return;
@@ -92,6 +132,7 @@ namespace Engine
 		{
 			static_assert(IsValidRegistry<TRegistry>::value && !IsValidRegistry<TRegistry>::is_const,
 				"Registry must be a valid registry & it must be non constant.");
+			ValidateComponent<TComponent>();
 			if (!HasComponent<TComponent>(entity, registry))
 			{
 				return;
@@ -105,6 +146,7 @@ namespace Engine
 		static inline void CopyComponent(const entt::entity from, TRegistry& fromRegistry, const entt::entity to, TRegistry& toRegistry,
 			const TFunc& copyFunc, bool createIfNotExist = false)
 		{
+			ValidateComponent<TComponent>();
 			if (!HasComponent<TComponent, TRegistry>(from, fromRegistry))
 			{
 				return;
@@ -134,7 +176,7 @@ namespace Engine
 
 		// Copies the entity from one registry to an entity from another registry.
 		template<typename TRegistry = entt::registry>
-		static inline void CopyEntity(const entt::entity from, entt::registry& fromRegistry, const entt::entity to, entt::registry& toRegistry)
+		static inline void CopyEntity(const entt::entity from, TRegistry& fromRegistry, const entt::entity to, TRegistry& toRegistry)
 		{
 			static_assert(IsValidRegistry<TRegistry>::value, "Registry must be a valid registry.");
 			if (!IsValid(from, fromRegistry) || !IsValid(to, toRegistry))
@@ -148,14 +190,11 @@ namespace Engine
 					auto* other = toRegistry.storage(id);
 					if (!other)
 					{
-						// TODO: Integrate contingincy plan for this
-#if 0
 						using namespace entt::literals;
-						entt::resolve(storage.type()).invoke("storage"_hs, {}, entt::forward_as_meta(toRegistry), id);
+						auto storageType = entt::resolve(storage.type());
+						// Invokes on the meta type for the storage type.
+						storageType.invoke("storage"_hs, {}, entt::forward_as_meta(toRegistry), id);
 						other = toRegistry.storage(id);
-#else
-						return;
-#endif
 					}
 
 					// If contains the to, remove it.

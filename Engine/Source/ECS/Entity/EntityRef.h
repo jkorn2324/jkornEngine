@@ -124,7 +124,7 @@ namespace Engine
 		{
 			static_assert(IsValidRegistry<TRegistry>::value && !IsValidRegistry<TRegistry>::is_const,
 				"Can't copy entity as the registry is const.");
-			Entity::CopyEntity(from.GetEntity(), from.GetRegistry(), to, to.GetRegistry());
+			Entity::CopyEntity(from, from.GetRegistry(), to, to.GetRegistry());
 		}
 
 		template<typename TComponent, typename TRegistry = entt::registry>
