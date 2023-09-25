@@ -30,7 +30,9 @@ namespace Editor
 
 	static void DrawDemo()
 	{
+#if 0
 		ImGui::ShowDemoWindow();
+#endif
 	}
 
 	EditorLayer::EditorLayer()
@@ -147,20 +149,9 @@ namespace Editor
 			EditorSceneManager::GetEditorCamera().OnEditorUpdate(timestep);
 		}
 
-		// Updates the camera view.
-		{
-#if false
-			Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
-			Engine::Entity entity = scene.Find("Main Camera");
-			if (entity)
-			{
-				Camera::ExecuteUpdate(timestep, entity);
-	}
-#endif
-}
-
 		// Calls the update system and determines whether or not the application is playing.
-		Engine::UpdateSystemContext updateSystemContext(Engine::SceneManager::GetActiveScene(), timestep, EditorSceneManager::IsPlaying());
+		Engine::UpdateSystemContext updateSystemContext(Engine::SceneManager::GetActiveScene(), timestep,
+			EditorSceneManager::IsPlaying());
 		Engine::SystemManager::Invoke<Engine::IUpdateSystemBase>(
 			[](Engine::IUpdateSystemBase& updateSystem, const Engine::UpdateSystemContext& context) -> void {
 				updateSystem.InvokeOnUpdate(context);
@@ -189,6 +180,8 @@ namespace Editor
 		DrawEditorTopWindow();
 		DrawEditorMainWindow();
 	}
+
+	// ---------------------- BEGIN EDITOR TOP WINDOW -------------------------
 
 	void EditorLayer::DrawEditorTopWindow()
 	{
@@ -278,10 +271,14 @@ namespace Editor
 		ImGui::EndGroup();
 	}
 
+	// ---------------------- END EDITOR TOP WINDOW -------------------------
+
 	void EditorLayer::OnSceneRuntimeButtonSelected(bool play)
 	{
 		EditorSceneManager::SetPlaying(play);
 	}
+
+	// ---------------------- BEGIN EDITOR MAIN WINDOW -------------------------
 
 	void EditorLayer::DrawEditorMainWindow()
 	{
@@ -341,11 +338,11 @@ namespace Editor
 			m_sceneView.Draw();
 			m_gameView.Draw();
 
-			DrawEditorButtons();
-
 			ImGui::End();
 		}
 	}
+
+	// ----------------------------- END EDITOR MAIN WINDOW ------------------------------
 
 	void EditorLayer::OnEvent(Engine::IEvent& event)
 	{

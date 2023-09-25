@@ -20,6 +20,4 @@ namespace Engine
 		DebugAssert(false, "Failed to generate a window; unsupported type.");
 		return nullptr;
 	}
-
-	Window::Window(const WindowProperties& params) { }
 }

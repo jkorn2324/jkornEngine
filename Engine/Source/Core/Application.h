@@ -7,6 +7,7 @@
 
 #include "LayerStack.h"
 
+// Forward Declare the Main Function
 int main(int argsc, char** argsv);
 
 namespace Engine
@@ -52,16 +53,12 @@ namespace Engine
 
 		bool m_running;
 
-#pragma region static_funcs
-
 	private:
 		static class Application* s_instance;
 		friend int ::main(int argsc, char** argsv);
 
 	public:
 		static class Application& Get();
-
-#pragma endregion
 	};
 
 	Application* Create(const ApplicationArgs& args);

@@ -1,33 +1,54 @@
-FBXLibSDKPath = "C:/Program Files/Autodesk/FBX/FBX SDK"
-FBXLibSDKVersion = "2020.3.4"
-FBXLibSDKLibPath = "%{FBXLibSDKPath}/%{FBXLibSDKVersion}/lib"
 
 IncludeDirectories = {}
-
-IncludeDirectories["DirectXTK"] = "%{wks.location}/Engine/Libraries/DirectXTK/Inc/"
-IncludeDirectories["entt"] = "%{wks.location}/Engine/Libraries/entt/single_include/"
-IncludeDirectories["glfw"] = "%{wks.location}/Engine/Libraries/glfw/include/"
-IncludeDirectories["ImGui"] = "%{wks.location}/Engine/Libraries/ImGui/"
-IncludeDirectories["spdlog"] = "%{wks.location}/Engine/Libraries/spdlog/include/"
-IncludeDirectories["rapidjson"] = "%{wks.location}/Engine/Libraries/rapidjson/include/"
-IncludeDirectories["ImGuizmo"] = "%{wks.location}/Engine/Libraries/ImGuizmo/"
-IncludeDirectories["fbxsdk"] = "%{FBXLibSDKPath}/%{FBXLibSDKVersion}/include"
-
-LibraryDirectories = {}
-
--- TODO: Add proper library directories.
-LibraryDirectories["MathLib"] = "%{wks.location}/MathLib/"
-LibraryDirectories["DirectXTK"] = "%{wks.location}/Engine/Libraries/DirectXTK/"
-LibraryDirectories["glfw"] = "%{wks.location}/Engine/Libraries/Builds/glfw/"
-LibraryDirectories["spdlog"] = "%{wks.location}/Engine/Libraries/Builds/spdlog/"
-LibraryDirectories["ImGui"] = "%{wks.location}/Engine/Libraries/Builds/ImGui/"
-LibraryDirectories["fbxsdk"] = "%{FBXLibSDKPath}/%{FBXLibSDKVersion}/lib/"
-
+BuildDirectories = {}
+ProjectDirectories = {}
 LibraryNames = {}
 
-LibraryNames["MathLib"] = "MathLib.lib"
-LibraryNames["DirectXTK"] = "DirectXTK.lib"
+LibrariesLocation = "%{wks.location}/Engine/Libraries"
+
+-- Cross Platform Dependencies
+
+IncludeDirectories["MathLib"] = "%{wks.location}/MathLib/"
+ProjectDirectories["MathLib"] = "%{wks.location}/MathLib/"
+BuildDirectories["MathLib"] = "%{wks.location}/MathLib/Builds/"
+LibraryNames["MathLib"] = "MathLib"
+
+IncludeDirectories["entt"] = "%{LibrariesLocation}/entt/single_include/"
+
+IncludeDirectories["glfw"] = "%{LibrariesLocation}/glfw/include/"
+ProjectDirectories["glfw"] = "%{LibrariesLocation}/glfw/"
+BuildDirectories["glfw"] = "%{LibrariesLocation}/Builds/glfw/Builds/"
 LibraryNames["glfw"] = "glfw.lib"
-LibraryNames["spdlog"] = "spdlogd.lib"
+
+IncludeDirectories["ImGui"] = "%{LibrariesLocation}/ImGui/"
+BuildDirectories["ImGui"] = "%{LibrariesLocation}/Builds/ImGui/Builds/"
+ProjectDirectories["ImGui"] = "%{LibrariesLocation}/ImGui/"
 LibraryNames["ImGui"] = "ImGui.lib"
-LibraryNames["fbxsdk"] = "libfbxsdk.lib"
+
+IncludeDirectories["spdlog"] = "%{LibrariesLocation}/spdlog/include/"
+BuildDirectories["spdlog"] = "%{LibrariesLocation}/Builds/spdlog/Builds/"
+LibraryNames["spdlog"] = "spdlogd.lib"
+
+IncludeDirectories["rapidjson"] = "%{LibrariesLocation}/rapidjson/include/"
+
+IncludeDirectories["ImGuizmo"] = "%{LibrariesLocation}/ImGuizmo/"
+
+-- Specific Platform Dependencies --
+
+FBXSDKPath_Windows = "C:/Program Files/Autodesk/FBX/FBX SDK"
+FBXSDKVersion_Windows = "2020.3.4"
+FBXSDKVersionPath_Windows = "%{FBXSDKPath_Windows}/%{FBXSDKVersion_Windows}"
+
+-- FBX SDK DEFINITIONS
+IncludeDirectories["fbxsdk_windows"] = "%{FBXSDKVersionPath_Windows}/include/"
+BuildDirectories["fbxsdk_windows"] = "%{FBXSDKVersionPath_Windows}/lib/"
+LibraryNames["fbxsdk_windows"] = "libfbxsdk.lib"
+
+-- DIRECTX DEFINITIONS
+LibraryNames["d3d11"] = "d3d11.lib"
+
+-- DIRECTXTK DEFINITIONS
+IncludeDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/Inc/"
+BuildDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/"
+ProjectDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/"
+LibraryNames["DirectXTK"] = "DirectXTK.lib"

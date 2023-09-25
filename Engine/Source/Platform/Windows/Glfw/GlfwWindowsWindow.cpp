@@ -28,9 +28,7 @@ namespace Engine
 
 	GlfwWindowsWindow::GlfwWindowsWindow(const WindowProperties& properties)
 		: Window(properties),
-		m_window(nullptr),
-		m_windowData(properties),
-		m_dpiScale(1.0f)
+		m_window(nullptr)
 	{
 		Initialize();
 	}
@@ -40,44 +38,14 @@ namespace Engine
 		Shutdown();
 	}
 
-	void GlfwWindowsWindow::SetCallback(const WindowEventCallback& callback)
-	{
-		m_windowData.callback = callback;
-	}
-
-	std::uint32_t GlfwWindowsWindow::GetWidth() const
-	{
-		return m_windowData.properties.width;
-	}
-
-	std::uint32_t GlfwWindowsWindow::GetHeight() const
-	{
-		return m_windowData.properties.height;
-	}
-
-	uint32_t GlfwWindowsWindow::GetMinHeight() const
-	{
-		return m_windowData.properties.minHeight;
-	}
-
-	uint32_t GlfwWindowsWindow::GetMinWidth() const
-	{
-		return m_windowData.properties.minWidth;
-	}
-
 	void GlfwWindowsWindow::SetMinSize(uint32_t w, uint32_t h)
 	{
-		w *= (uint32_t)m_dpiScale;
-		h *= (uint32_t)m_dpiScale;
+		w *= (uint32_t)GetWindowDPIScale();
+		h *= (uint32_t)GetWindowDPIScale();
 
 		glfwSetWindowSizeLimits(m_window, (int)w, (int)h, GLFW_DONT_CARE, GLFW_DONT_CARE);
 		m_windowData.properties.minWidth = w;
 		m_windowData.properties.minHeight = h;
-	}
-
-	float GlfwWindowsWindow::GetWindowDPIScale() const
-	{
-		return m_dpiScale;
 	}
 
 	void GlfwWindowsWindow::OnUpdate()
@@ -107,20 +75,8 @@ namespace Engine
 
 	void GlfwWindowsWindow::SetVSync(bool vsync)
 	{
-		if (vsync)
-		{
-			glfwSwapInterval(1);
-		}
-		else
-		{
-			glfwSwapInterval(0);
-		}
+		glfwSwapInterval((int)vsync);
 		m_windowData.properties.vsync = vsync;
-	}
-
-	bool GlfwWindowsWindow::IsVSync() const
-	{
-		return m_windowData.properties.vsync;
 	}
 
 	HWND GlfwWindowsWindow::GetHWND() const
@@ -159,7 +115,7 @@ namespace Engine
 		{
 			float dpiScaleX, dpiScaleY;
 			glfwGetWindowContentScale(m_window, &dpiScaleX, &dpiScaleY);
-			m_dpiScale = dpiScaleX;
+			m_windowData.dpiScale = dpiScaleX;
 		}
 
 		SetVSync(m_windowData.properties.vsync);

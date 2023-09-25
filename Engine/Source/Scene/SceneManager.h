@@ -32,9 +32,6 @@ namespace Engine
 		static void Render();
 		static void Render(const struct CameraConstants& cameraConstants);
 
-	private:
-		static void BindEventFunc(const EventFunc& func);
-
 		friend class Application;
 	};
 }

@@ -2,8 +2,22 @@
 
 include "Dependencies.lua"
 
+-- Defines the graphics api options
+newoption {
+	trigger = "graphicsapi",
+	value = "API",
+	description = "Choose a particular graphics API",
+	allowed = {
+		{ "directx11", "DirectX11 (Windows Only)" },
+		{ "metal", "Metal (Apple Only)" },
+		{ "none", "No Graphics" }
+	},
+	default = "directx11"
+}
+
 workspace "jkornEngine"
 	
+	-- TODO: Remove this functionality
 	startupprojectname = "Editor"
 	startproject "%{startupprojectname}"
 	startprojectpath = "%{wks.location}%{startupprojectname}"
@@ -11,9 +25,9 @@ workspace "jkornEngine"
 	configurations 
 	{ 
 		-- The debug configuration
-		"Debug", 
+		"Debug",
 		-- The release configuration
-		"Release" 
+		"Release"
 	}
 
 	platforms
@@ -64,6 +78,19 @@ workspace "jkornEngine"
 		{
 			"RELEASE",
 			"NDEBUG"
+		}
+	filter { }
+
+	-- DEFINE GRAPHICS API MACROS --
+	filter { "system:Windows", "options:graphicsapi=directx11" }
+		defines
+		{
+			"GRAPHICS_API_DIRECTX11"
+		}
+	filter { "system:MacOSx", "options:graphicsapi=metal" }
+		defines
+		{
+			"GRAPHICS_API_METAL"
 		}
 	filter { }
 

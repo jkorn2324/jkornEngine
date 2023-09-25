@@ -19,19 +19,208 @@ project "Engine"
 		pchheader "%{prj.location}/Source/EnginePCH.h"
 	filter { }
 
+
 	files
 	{
 		"%{prj.location}/Source/",
 		"%{prj.location}/Source/**.h",
 		"%{prj.location}/Source/**.cpp",
 		"%{prj.location}/Source/**.hpp",
+	}
 
+	includedirs
+	{
+		"%{prj.location}/Source/",
+		"%{prj.location}/Source/**",
+	}
+
+	postbuildcommands
+	{
+		"mkdir \"%{cfg.buildtarget.directory}\"",
+		-- TODO: Remove this functionality as it only is hooked to the Editor Project
+		"xcopy /Y /E /I \"%{prj.location}Shaders\" \"%{startprojectpath}/Shaders\""
+	}
+
+	-- Configuration Defines (Debug)
+	filter "configurations:Debug"
+		defines { "DEBUG", "_DEBUG" }
+		symbols "On"
+		runtime "Debug"
+	filter { }
+
+	-- Configuration Defines (Release)
+	filter "configurations:Release"
+		defines { "RELEASE", "NDEBUG" }
+		optimize "On"
+		runtime "Release"
+	filter { }
+
+	-- 	Additional Platform Defines (Win32)
+	filter { "platforms:Win32" }
+		defines
+		{
+			"PLATFORM_WINDOWS_X86"
+		}
+	-- Additional Platform Defines (Win64)
+	filter { "platforms:Win64"}
+		defines
+		{
+			"PLATFORM_WINDOWS_X64"
+		}
+	-- Additional Platform Defines (MacOS)
+	filter { "platforms:MacOSx" }
+		defines
+		{
+			"PLATFORM_MACOSX_X64"
+		}
+	filter { }
+
+
+	--================================= BEGIN MATHLIB DEPENDENCY ===========================--
+
+	includedirs
+	{
+		"%{IncludeDirectories.MathLib}"
+	}
+
+	links
+	{
+		"%{LibraryNames.MathLib}"
+	}
+
+	libdirs
+	{
+		"%{BuildDirectories.MathLib}%{cfg.buildcfg}/%{cfg.platform}/"
+	}
+
+	--================================== END MATHLIB DEPENDENCY ============================--
+
+	--================================== BEGIN ENTT DEPENDENCY =============================--
+
+	files
+	{
 		"%{IncludeDirectories.entt}**.h",
 		"%{IncludeDirectories.entt}**.cpp",
-		"%{IncludeDirectories.entt}**.hpp",
+		"%{IncludeDirectories.entt}**.hpp"
+	}
 
-		"%{IncludeDirectories.rapidjson}**.h",
+	includedirs
+	{
+		"%{IncludeDirectories.entt}"
+	}
 
+	--================================== END ENTT DEPENDENCY ===============================--
+
+	--================================== BEGIN RAPIDJSON DEPENDENCY ========================--
+
+	files
+	{
+		"%{IncludeDirectories.rapidjson}**.h"
+	}
+
+	includedirs
+	{
+		"%{IncludeDirectories.rapidjson}"
+	}
+
+	--================================== END RAPIDJSON DEPENDENCY ==========================--
+
+	--================================== BEGIN GLFW DEPENDENCY =============================--
+
+	includedirs
+	{
+		"%{IncludeDirectories.glfw}"
+	}
+
+	-- Linking Libraries.
+	links
+	{
+		"%{LibraryNames.glfw}"
+	}
+
+	-- Linking Corresponding Library Directories.
+	libdirs
+	{
+		"%{BuildDirectories.glfw}%{cfg.buildcfg}/%{cfg.platform}/"
+	}
+		
+	-- Pre Build Command that gets added for when the architecture is a x86 system and its on windows
+	filter { "platforms:Win32" }
+		-- Pre Build Commands so that glfw gets built before the Engine lib.
+		prebuildcommands
+		{
+			"msbuild \"%{ProjectDirectories.glfw}glfw.vcxproj\" /p:Configuration=\"%{cfg.buildcfg}\" /p:platform=win32",
+		}
+	-- Pre Build Command that gets added for when the architecture is a x64 system and its on windows
+	filter { "platforms:Win64"}
+		-- Pre Build Commands so that glfw gets built before the Engine lib.
+		prebuildcommands
+		{
+			"msbuild \"%{ProjectDirectories.glfw}glfw.vcxproj\" /p:Configuration=\"%{cfg.buildcfg} Win64\" /p:platform=x64",
+		}
+	filter { }
+
+	--================================== END GLFW DEPENDENCY ===============================--
+
+	--================================== BEGIN IMGUI DEPENDENCY ============================--
+
+	-- TODO: Only do this if our Windowing Api System is glfw
+	files
+	{
+		-- GLFW IMGUI FILES
+		"%{IncludeDirectories.ImGui}backends/imgui_impl_glfw.h",
+		"%{IncludeDirectories.ImGui}backends/imgui_impl_glfw.cpp"
+	}
+	
+	includedirs
+	{
+		"%{IncludeDirectories.ImGui}"
+	}
+
+	links
+	{
+		"%{LibraryNames.ImGui}"
+	}
+
+	libdirs
+	{
+		"%{BuildDirectories.ImGui}%{cfg.buildcfg}/%{cfg.platform}/"
+	}
+
+	-- Ensures that we only add the imgui win32 files if our system is windows.
+	filter { "system:Windows" }
+		files
+		{
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.h",
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.cpp",
+		}
+	-- Ensures that we only add imgui directx files if our system & graphics api are directx11 & windows
+	filter { "system:Windows", "options:graphicsapi=directx11" }
+		files
+		{
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.h",
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.cpp"
+		}
+	filter { "platforms:Win32" }
+		-- Pre Build Commands so that ImGui gets built before the Engine lib (Win32)
+		prebuildcommands
+		{
+			"msbuild \"%{ProjectDirectories.ImGui}ImGui.vcxproj\" /p:Configuration=\"%{cfg.buildcfg}\" /p:platform=win32"
+		}
+	filter { "platforms:Win64" }
+		-- Pre Build Commands so that ImGui gets built before the Engine lib (Win64)
+		prebuildcommands
+		{
+			"msbuild \"%{ProjectDirectories.ImGui}ImGui.vcxproj\" /p:Configuration=\"%{cfg.buildcfg} Win64\" /p:platform=x64"
+		}
+	filter { }
+
+	--================================ END IMGUI DEPENDENCY ========================================--
+
+	--================================ BEGIN IMGUIZMO DEPENDENCY ===================================--
+
+	files
+	{
 		"%{IncludeDirectories.ImGuizmo}GraphEditor.cpp",
 		"%{IncludeDirectories.ImGuizmo}GraphEditor.h",
 		"%{IncludeDirectories.ImGuizmo}ImCurveEdit.cpp",
@@ -47,156 +236,144 @@ project "Engine"
 
 	includedirs
 	{
-		"%{prj.location}/Source/",
-		"%{prj.location}/Source/**",
-
-		"%{wks.location}/MathLib/",
-
-		"%{IncludeDirectories.entt}",
-		"%{IncludeDirectories.glfw}",
-		"%{IncludeDirectories.spdlog}",
-		"%{IncludeDirectories.rapidjson}",
-		"%{IncludeDirectories.ImGui}",
 		"%{IncludeDirectories.ImGuizmo}"
 	}
 
-	-- ImGuizmo macros.
+	-- Macro for using ImGuizmo w/ ImGui
 	defines { "USE_IMGUI_API "}
 
-	-- Linking Libraries.
-	links
+
+	--================================= END IMGUIZMO DEPENDENCY ====================================--
+
+	--================================= BEGIN SPDLOG DEPENDENCY ====================================--
+
+	includedirs
 	{
-		"MathLib",
-		"%{LibraryNames.glfw}",
-		"%{LibraryNames.ImGui}"
+		"%{IncludeDirectories.spdlog}"
 	}
 
-	-- Linking Corresponding Library Directories.
-	libdirs
-	{
-		"%{LibraryDirectories.MathLib}Builds/%{cfg.buildcfg}/%{cfg.platform}/",
-		"%{LibraryDirectories.glfw}Builds/%{cfg.buildcfg}/%{cfg.platform}/",
-		"%{LibraryDirectories.ImGui}Builds/%{cfg.buildcfg}/%{cfg.platform}/"
-	}
-	
+	--================================= END SPDLOG DEPENDENCY ======================================--
+
+
+	--================================= BEGIN FBX DEPENDENCY ======================================--
+
 	filter { "system:Windows" }
-		flags { "NoPCH" }
-		files
+		includedirs
 		{
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_glfw.h",
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_glfw.cpp",
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.h",
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.cpp",
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.h",
-			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.cpp",
+			"%{IncludeDirectories.fbxsdk_windows}"
 		}
+		links
+		{
+			os.findlib("%{LibraryNames.fbxsdk_windows}")
+		}
+		defines
+		{
+			"FBXSDK_SHARED"
+		}
+	
+	-- Define Post Build Actions (Depending on Platform & Action)
+	filter { "platforms:Win32", "action:vs2022" }
+		postbuildcommands
+		{
+			"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2022/x86/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
+		}
+		libdirs
+		{
+			"%{BuildDirectories.fbxsdk_windows}vs2022/x86/%{cfg.buildcfg}/"
+		}
+	filter { "platforms:Win32", "action:vs2019" }
+		postbuildcommands
+		{
+			"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2019/x86/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
+		}
+		libdirs
+		{
+			"%{BuildDirectories.fbxsdk_windows}vs2019/x86/%{cfg.buildcfg}/"
+		}
+	filter { "platforms:Win64", "action:vs2022" }
+		postbuildcommands
+		{
+			"copy /Y /V \"%{BuildDirectories.fbxsdk_windows}vs2022/x64/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
+		}
+		libdirs
+		{
+			"%{BuildDirectories.fbxsdk_windows}vs2022/x64/%{cfg.buildcfg}/"
+		}
+	filter { "platforms:Win64", "action:vs2019" }
+		postbuildcommands
+		{
+			"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2019/x64/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
+		}
+		libdirs
+		{
+			"%{BuildDirectories.fbxsdk_windows}vs2019/x64/%{cfg.buildcfg}/"
+		}
+	filter { }
 
-	filter "configurations:Debug"
-		defines { "DEBUG", "_DEBUG" }
-		symbols "On"
-		runtime "Debug"
+	--================================= END FBX DEPENDENCY ======================================--
 
-	filter "configurations:Release"
-		defines { "RELEASE", "NDEBUG" }
-		optimize "On"
-		runtime "Release"
+	--================================= BEGIN DIRECTX11 + DIRECTXTK DEPENDENCY ==================--
+	
 
-	filter { "system:Windows" }
-
+	filter { "system:Windows", "options:graphicsapi=directx11" }
 		includedirs
 		{
 			"%{IncludeDirectories.DirectXTK}",
-			"%{IncludeDirectories.fbxsdk}"
 		}
-
 		links
 		{
+			"%{LibraryNames.d3d11}",
 			"%{LibraryNames.DirectXTK}",
-			os.findlib("%{LibraryNames.fbxsdk}")
 		}
-
-		defines
-		{
-			"PLATFORM_WINDOWS",
-			"FBXSDK_SHARED"
-		}
-
-		postbuildcommands 
-		{
-			"xcopy /Y /E /I \"%{prj.location}Shaders\" \"%{startprojectpath}/Shaders\""
-		}
-
-		-- Pre Build command so that the MathLib gets built before Engine.
-
-	filter { "architecture:x86", "system:Windows" }
+	-- Platform is Win32 & action is vs2022
+	filter { "platforms:Win32", "options:graphicsapi=directx11", "action:vs2022" }
 		libdirs
 		{
-			"%{LibraryDirectories.DirectXTK}Bin/Desktop_2019/Win32/%{cfg.buildcfg}/",
-			"%{LibraryDirectories.fbxsdk}vs2019/x86/%{cfg.buildcfg}/"
+			"%{BuildDirectories.DirectXTK}Bin/Desktop_2022/Win32/%{cfg.buildcfg}/"
 		}
-		-- Pre Build Commands so that glfw, imgui & DirectXTK gets built before the Engine lib.
 		prebuildcommands
 		{
-			"msbuild \"..\\Engine\\Libraries\\DirectXTK\\DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
-			"msbuild \"..\\Engine\\Libraries\\glfw\\glfw.vcxproj\" /p:Configuration=\"%{cfg.buildcfg}\" /p:platform=win32",
-			"msbuild \"..\\Engine\\Libraries\\ImGui\\ImGui.vcxproj\" /p:Configuration=\"%{cfg.buildcfg}\" /p:platform=win32"
+			"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2022.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
 		}
-
-		postbuildcommands
-		{
-			"mkdir \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\"",
-		}
-
-		defines
-		{
-			"PLATFORM_WINDOWS_X86"
-		}
-
-	filter { "architecture:x86_64", "system:Windows"}
+	-- Platform is Win64 & action is vs2022
+	filter { "platforms:Win64", "options:graphicsapi=directx11", "action:vs2022" }
 		libdirs
 		{
-			"%{LibraryDirectories.DirectXTK}Bin/Desktop_2019/x64/%{cfg.buildcfg}/",
-			"%{LibraryDirectories.fbxsdk}vs2019/x64/%{cfg.buildcfg}/"
+			"%{BuildDirectories.DirectXTK}Bin/Desktop_2022/x64/%{cfg.buildcfg}/"
 		}
-		-- Pre Build Commands so that glfw, imgui & DirectXTK gets built before the Engine lib.
 		prebuildcommands
 		{
-			"msbuild \"..\\Engine\\Libraries\\DirectXTK\\DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
-			"msbuild \"..\\Engine\\Libraries\\glfw\\glfw.vcxproj\" /p:Configuration=\"%{cfg.buildcfg} Win64\" /p:platform=x64",
-			"msbuild \"..\\Engine\\Libraries\\ImGui\\ImGui.vcxproj\" /p:Configuration=\"%{cfg.buildcfg} Win64\" /p:platform=x64"
+			"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2022.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
 		}
-		postbuildcommands
+	-- Platform is Win32 & action is vs2019
+	filter { "platforms:Win32", "options:graphicsapi=directx11", "action:vs2019" }
+		libdirs
 		{
-			"mkdir \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\"",
+			"%{BuildDirectories.DirectXTK}Bin/Desktop_2019/Win32/%{cfg.buildcfg}/"
 		}
+		prebuildcommands
+		{
+			"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
+		}
+	-- Platform is Win64 & action is vs2019
+	filter { "platforms:Win64", "options:graphicsapi=directx11", "action:vs2019" }
+		libdirs
+		{
+			"%{BuildDirectories.DirectXTK}Bin/Desktop_2019/x64/%{cfg.buildcfg}/"
+		}
+		prebuildcommands
+		{
+			"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
+		}
+	filter { }
 
-		defines
-		{
-			"PLATFORM_WINDOWS_X64"
-		}
+	--================================= END DIRECTX11 + DIRECTXTK DEPENDENCY ====================--
 
-	-- If the action/compiler is vs2022
-	filter { "architecture:x86", "system:Windows", "action:vs2022" }
-		postbuildcommands
-		{
-			"copy /Y \"%{FBXLibSDKLibPath}\\vs2022\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\\libfbxsdk.dll\""
-		}
-	
-	-- If the action/compiler is vs2019
-	filter { "architecture:x86", "system:Windows", "action:vs2019" }
-		postbuildcommands
-		{
-			"copy /Y \"%{FBXLibSDKLibPath}\\vs2019\\x86\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win32\\libfbxsdk.dll\""
-		}
 
-	filter { "architecture:x86_64", "system:Windows", "action:vs2022" }
-		postbuildcommands
-		{
-			"copy /Y \"%{FBXLibSDKLibPath}\\vs2022\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
-		}
-		
-	filter { "architecture:x86_64", "system:Windows", "action:vs2019" }
-		postbuildcommands
-		{
-			"copy /Y \"%{FBXLibSDKLibPath}\\vs2019\\x64\\%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{startprojectpath}\\Builds\\%{cfg.buildcfg}\\Win64\\libfbxsdk.dll\""
-		}
+	-- Ensures that all of the files outside of the source file don't have precompiled headers associated with them.
+	filter { "files:not %{prj.location}/Source/**.h", "files:not {%prj.location}/Source/**.cpp", "files:not {%prj.location}/Source/**.hpp" }
+		flags { "NoPCH" }
+	filter { }
+
+
+
