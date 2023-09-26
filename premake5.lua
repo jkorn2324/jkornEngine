@@ -64,7 +64,8 @@ workspace "jkornEngine"
 		defines
 		{
 			"PLATFORM_OSX",
-			"PLATFORM_OSX_X64"
+			"PLATFORM_OSX_X64",
+			"PLATFORM_MACOS"
 		}
 
 	filter { "configurations:Debug" }

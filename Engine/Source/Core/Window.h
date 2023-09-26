@@ -13,7 +13,7 @@ namespace Engine
 	enum class WindowType
 	{
 		NONE,
-		GLFW_WINDOWS_WINDOW,
+		GLFW_WINDOW,
 		WIN32_WINDOWS_WINDOW
 	};
 

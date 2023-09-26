@@ -1,5 +1,5 @@
 #include "EnginePCH.h"
-#include "GlfwWindowsWindow.h"
+#include "GlfwWindow.h"
 
 #include <unordered_map>
 
@@ -36,19 +36,19 @@ namespace Engine
 
 	static std::uint32_t s_numWindows = 0;
 
-	GlfwWindowsWindow::GlfwWindowsWindow(const WindowProperties& properties)
+	GlfwWindow::GlfwWindow(const WindowProperties& properties)
 		: Window(properties),
 		m_window(nullptr)
 	{
 		Initialize();
 	}
 
-	GlfwWindowsWindow::~GlfwWindowsWindow()
+	GlfwWindow::~GlfwWindow()
 	{
 		Shutdown();
 	}
 
-	void GlfwWindowsWindow::SetMinSize(uint32_t w, uint32_t h)
+	void GlfwWindow::SetMinSize(uint32_t w, uint32_t h)
 	{
 		w *= (uint32_t)GetWindowDPIScale();
 		h *= (uint32_t)GetWindowDPIScale();
@@ -58,7 +58,7 @@ namespace Engine
 		m_windowData.properties.minHeight = h;
 	}
 
-	void GlfwWindowsWindow::OnUpdate()
+	void GlfwWindow::OnUpdate()
 	{
 		PROFILE_SCOPE(OnUpdate, Window);
 
@@ -66,7 +66,7 @@ namespace Engine
 		GraphicsRenderer::SwapBuffers();
 	}
 
-	void GlfwWindowsWindow::Shutdown()
+	void GlfwWindow::Shutdown()
 	{
 		glfwDestroyWindow(m_window);
 		s_numWindows--;
@@ -77,13 +77,13 @@ namespace Engine
 		}
 	}
 
-	bool GlfwWindowsWindow::IsValid() const
+	bool GlfwWindow::IsValid() const
 	{
 		return s_numWindows > 0
 			&& m_window != nullptr;
 	}
 
-	void GlfwWindowsWindow::SetVSync(bool vsync)
+	void GlfwWindow::SetVSync(bool vsync)
 	{
 		glfwSwapInterval((int)vsync);
 		m_windowData.properties.vsync = vsync;
@@ -96,7 +96,7 @@ namespace Engine
 	}
 #endif
 
-	void GlfwWindowsWindow::Initialize()
+	void GlfwWindow::Initialize()
 	{
 		PROFILE_SCOPE(Initialize, GlfwWindowsWindow);
 

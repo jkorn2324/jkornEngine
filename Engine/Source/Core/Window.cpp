@@ -2,12 +2,12 @@
 #include "Window.h"
 #include "ApplicationEvent.h"
 
-#include "GlfwWindowsWindow.h"
+#include "GlfwWindow.h"
 #include "Profiler.h"
 
 namespace Engine
 {
-	WindowType Window::s_windowType = WindowType::GLFW_WINDOWS_WINDOW;
+	WindowType Window::s_windowType = WindowType::GLFW_WINDOW;
 
 	std::unique_ptr<Window> Window::GenerateWindow(const WindowProperties& properties)
 	{
@@ -15,7 +15,7 @@ namespace Engine
 
 		switch (s_windowType)
 		{
-		case WindowType::GLFW_WINDOWS_WINDOW: return std::make_unique<GlfwWindowsWindow>(properties);
+		case WindowType::GLFW_WINDOW: return std::make_unique<GlfwWindow>(properties);
 		}
 		DebugAssert(false, "Failed to generate a window; unsupported type.");
 		return nullptr;

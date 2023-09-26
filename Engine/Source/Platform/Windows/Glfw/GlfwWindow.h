@@ -12,11 +12,11 @@ namespace Engine
 {
 
 
-	class GlfwWindowsWindow : public Window
+	class GlfwWindow : public Window
 	{
 	public:
-		explicit GlfwWindowsWindow(const WindowProperties& properties);
-		~GlfwWindowsWindow();
+		explicit GlfwWindow(const WindowProperties& properties);
+		~GlfwWindow();
 
 		 void SetMinSize(uint32_t w, uint32_t h) override;
 

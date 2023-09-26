@@ -11,7 +11,10 @@ namespace Engine
 	enum class RenderingAPIType
 	{
 		NONE,
-		DIRECTX11
+        // The directx graphics rendering api.
+		DIRECTX11,
+        // The metal graphics rendering api.
+        METAL
 	};
 
 	class RenderingAPI
@@ -38,11 +41,8 @@ namespace Engine
 		virtual std::uint32_t GetWidth() const=0;
 		virtual std::uint32_t GetHeight() const=0;
 
-	private:
-		static RenderingAPIType s_renderingAPIType;
-
 	public:
-		static RenderingAPIType GetRenderingAPIType() { return s_renderingAPIType; }
+        static constexpr RenderingAPIType GetRenderingAPIType();
 		static RenderingAPI* Create();
 	};
 }

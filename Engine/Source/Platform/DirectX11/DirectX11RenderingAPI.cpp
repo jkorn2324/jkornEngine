@@ -11,7 +11,7 @@
 #include "DirectX11IndexBuffer.h"
 #include "DirectX11VertexArray.h"
 
-#include "GlfwWindowsWindow.h"
+#include "GlfwWindow.h"
 
 namespace Engine
 {
@@ -25,9 +25,9 @@ namespace Engine
 	{
 		switch (Window::GetWindowType())
 		{
-		case WindowType::GLFW_WINDOWS_WINDOW: 
+		case WindowType::GLFW_WINDOW: 
 		{
-			hwnd = ((GlfwWindowsWindow*)window)->GetHWND();
+			hwnd = ((GlfwWindow*)window)->GetHWND();
 			return true;
 		}
 		}

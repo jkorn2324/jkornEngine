@@ -1,20 +1,22 @@
 #include "EnginePCH.h"
 #include "GlfwImGuiLayer.h"
 
+
 #include <imgui.h>
 #include <backends\imgui_impl_glfw.h>
 #include <Glfw\glfw3.h>
 
 #include "RenderingAPI.h"
 #include "Application.h"
-#include "GlfwWindowsWindow.h"
+#include "GlfwWindow.h"
 
 
 namespace Engine
 {
 	void GlfwImGuiLayer::OnLayerAdded()
 	{
-		GlfwWindowsWindow* window = (GlfwWindowsWindow*)(&Application::Get().GetWindow());
+		GlfwWindow* window = (GlfwWindow*)(&Application::Get().GetWindow());
+        
 		switch (RenderingAPI::GetRenderingAPIType())
 		{
 			case RenderingAPIType::DIRECTX11:
@@ -40,7 +42,7 @@ namespace Engine
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			GlfwWindowsWindow* window = (GlfwWindowsWindow*)&Application::Get().GetWindow();
+			GlfwWindow* window = (GlfwWindow*)&Application::Get().GetWindow();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent((GLFWwindow*)window->GetGlfwWindow());

@@ -92,7 +92,7 @@ project "Engine"
 			"PLATFORM_WINDOWS_X64"
 		}
 	-- Additional Platform Defines (MacOS)
-	filter { "platforms:MacOSx" }
+	filter { "platforms:MacOS" }
 		defines
 		{
 			"PLATFORM_MACOSX_X64"
@@ -101,6 +101,16 @@ project "Engine"
 
 
 	--================================= BEGIN MATHLIB DEPENDENCY ===========================--
+
+	-- "Only include files to compile if its xcode4"
+	filter { "action:xcode4" }
+		files
+		{
+			"%{IncludeDirectories.MathLib}**.cpp",
+			"%{IncludeDirectories.MathLib}**.h",
+			"%{IncludeDirectories.MathLib}**.hpp"
+		}
+	filter { }
 
 	includedirs
 	{
@@ -217,6 +227,16 @@ project "Engine"
 		"%{IncludeDirectories.ImGui}backends/imgui_impl_glfw.h",
 		"%{IncludeDirectories.ImGui}backends/imgui_impl_glfw.cpp"
 	}
+
+	-- Only include these files if we are in xcode.
+	filter { "action:xcode4" }
+		files
+		{
+			"%{IncludeDirectories.ImGui}*.cpp",
+			"%{IncludeDirectories.ImGui}*.h",
+			"%{IncludeDirectories.ImGui}*.hpp"
+		}
+	filter { }
 	
 	includedirs
 	{
@@ -233,12 +253,21 @@ project "Engine"
 		"%{BuildDirectories.ImGui}%{cfg.buildcfg}/%{cfg.platform}/"
 	}
 
-	filter { "platforms:MacOSx" }
+	-- Ensures that we only add the imgui osx files if our platform is windows
+	filter { "platforms:MacOS" }
 		files
 		{
-
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_osx.h",
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_osx.mm"
 		}
-	-- Ensures that we only add the imgui win32 files if our system is windows.
+	-- Ensures that we only add the imgui metal files if our graphics api is metal.
+	filter { "system:MacOSx", "options:graphicsapi=metal" }
+		files
+		{
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_metal.h",
+			"%{IncludeDirectories.ImGui}backends/imgui_impl_metal.mm"
+		}
+	-- Ensures that we only add the imgui win32 files if our platform is windows.
 	filter { "platforms:Win64", "platforms:Win32" }
 		files
 		{

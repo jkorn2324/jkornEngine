@@ -12,7 +12,7 @@ namespace Engine
 	{
 		switch (Window::GetWindowType())
 		{
-		case WindowType::GLFW_WINDOWS_WINDOW: return new GlfwPlatformInput();
+		case WindowType::GLFW_WINDOW: return new GlfwPlatformInput();
 		}
 		return nullptr;
 	}

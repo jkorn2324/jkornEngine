@@ -34,7 +34,7 @@ namespace Engine
 		{
 			switch (Window::GetWindowType())
 			{
-			case WindowType::GLFW_WINDOWS_WINDOW: return ImGuiLayerPlatform::PLATFORM_WINDOW_GLFW;
+			case WindowType::GLFW_WINDOW: return ImGuiLayerPlatform::PLATFORM_WINDOW_GLFW;
 			}
 		}
 		DebugAssert(false, "Platform Layer is not supported.");
