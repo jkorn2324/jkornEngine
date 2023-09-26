@@ -19,6 +19,12 @@ project "Engine"
 		pchheader "%{prj.location}/Source/EnginePCH.h"
 	filter { }
 
+	filter { "action:xcode4" }
+		xcodebuildsettings 
+		{ 
+			["ALWAYS_SEARCH_USER_PATHS"] = "YES" 
+		}
+	filter { }
 
 	files
 	{
@@ -37,9 +43,27 @@ project "Engine"
 	postbuildcommands
 	{
 		"mkdir \"%{cfg.buildtarget.directory}\"",
-		-- TODO: Remove this functionality as it only is hooked to the Editor Project
-		"xcopy /Y /E /I \"%{prj.location}Shaders\" \"%{startprojectpath}/Shaders\""
 	}
+
+	-- Only Copy Shaders like this if it is windows.
+	if system == "windows" then
+
+		postbuildcommands
+		{
+			-- TODO: Remove this functionality as it only is hooked to the Editor Project
+			"xcopy /Y /E /I \"%{prj.location}Shaders\" \"%{startprojectpath}/Shaders\""
+		}
+
+	end
+	if system == "macosx" then
+	
+		postbuildcommands
+		{
+			-- TODO: Remove this functionality as it only is hooked to the Editor Project
+			"cp -R \"%{prj.location}Shaders\" \"%{startprojectpath}/Shaders\""
+		}
+
+	end
 
 	-- Configuration Defines (Debug)
 	filter "configurations:Debug"
@@ -127,10 +151,27 @@ project "Engine"
 
 	--================================== BEGIN GLFW DEPENDENCY =============================--
 
+	filter { "action:xcode4" }
+		files
+		{
+			"%{IncludeDirectories.glfw}**.hpp",
+			"%{IncludeDirectories.glfw}**.h",
+			"%{IncludeDirectories.glfw}**.cpp"
+		}
+	filter { }
+
 	includedirs
 	{
 		"%{IncludeDirectories.glfw}"
 	}
+
+	filter { "action:xcode4" }
+		externalincludedirs
+		{
+			"%{IncludeDirectories.glfw}"
+		}
+	filter { }
+
 
 	-- Linking Libraries.
 	links
@@ -143,22 +184,27 @@ project "Engine"
 	{
 		"%{BuildDirectories.glfw}%{cfg.buildcfg}/%{cfg.platform}/"
 	}
-		
+
+	-- "Ensures that the prebuild commands only gets added if our system is windows"
+	if system == "windows" then
+
 	-- Pre Build Command that gets added for when the architecture is a x86 system and its on windows
-	filter { "platforms:Win32" }
+	filter { "platforms:Win32", "action:vs*" }
 		-- Pre Build Commands so that glfw gets built before the Engine lib.
 		prebuildcommands
 		{
 			"msbuild \"%{ProjectDirectories.glfw}glfw.vcxproj\" /p:Configuration=\"%{cfg.buildcfg}\" /p:platform=win32",
 		}
 	-- Pre Build Command that gets added for when the architecture is a x64 system and its on windows
-	filter { "platforms:Win64"}
+	filter { "platforms:Win64", "action:vs*" }
 		-- Pre Build Commands so that glfw gets built before the Engine lib.
 		prebuildcommands
 		{
 			"msbuild \"%{ProjectDirectories.glfw}glfw.vcxproj\" /p:Configuration=\"%{cfg.buildcfg} Win64\" /p:platform=x64",
 		}
 	filter { }
+
+	end
 
 	--================================== END GLFW DEPENDENCY ===============================--
 
@@ -187,8 +233,13 @@ project "Engine"
 		"%{BuildDirectories.ImGui}%{cfg.buildcfg}/%{cfg.platform}/"
 	}
 
+	filter { "platforms:MacOSx" }
+		files
+		{
+
+		}
 	-- Ensures that we only add the imgui win32 files if our system is windows.
-	filter { "system:Windows" }
+	filter { "platforms:Win64", "platforms:Win32" }
 		files
 		{
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.h",
@@ -201,19 +252,26 @@ project "Engine"
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.h",
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.cpp"
 		}
-	filter { "platforms:Win32" }
+	filter { }
+
+	-- Ensures that this prebuild commands only occurs for windows
+	if system == "windows" then
+	
+	filter { "platforms:Win32", "action:vs*" }
 		-- Pre Build Commands so that ImGui gets built before the Engine lib (Win32)
 		prebuildcommands
 		{
 			"msbuild \"%{ProjectDirectories.ImGui}ImGui.vcxproj\" /p:Configuration=\"%{cfg.buildcfg}\" /p:platform=win32"
 		}
-	filter { "platforms:Win64" }
+	filter { "platforms:Win64", "action:vs*" }
 		-- Pre Build Commands so that ImGui gets built before the Engine lib (Win64)
 		prebuildcommands
 		{
 			"msbuild \"%{ProjectDirectories.ImGui}ImGui.vcxproj\" /p:Configuration=\"%{cfg.buildcfg} Win64\" /p:platform=x64"
 		}
 	filter { }
+
+	end
 
 	--================================ END IMGUI DEPENDENCY ========================================--
 
@@ -251,6 +309,20 @@ project "Engine"
 	{
 		"%{IncludeDirectories.spdlog}"
 	}
+	
+	-- Only Include these if our current action is xcode4.
+	filter { "action:xcode4" }
+		files
+		{
+			"%{IncludeDirectories.spdlog}**.h",
+			"%{IncludeDirectories.spdlog}**.cpp",
+			"%{IncludeDirectories.spdlog}**.hpp"
+		}
+		externalincludedirs
+		{
+			"%{IncludeDirectories.spdlog}"
+		}
+	filter { }
 
 	--================================= END SPDLOG DEPENDENCY ======================================--
 
@@ -273,37 +345,58 @@ project "Engine"
 	
 	-- Define Post Build Actions (Depending on Platform & Action)
 	filter { "platforms:Win32", "action:vs2022" }
-		postbuildcommands
-		{
-			"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2022/x86/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
-		}
+		-- Ensures that the copy command only gets invoked for windows
+		if system == "windows" then
+			postbuildcommands
+			{
+				"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2022/x86/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
+			}
+		end
+		-- TODO: FbxSDK
+
 		libdirs
 		{
 			"%{BuildDirectories.fbxsdk_windows}vs2022/x86/%{cfg.buildcfg}/"
 		}
 	filter { "platforms:Win32", "action:vs2019" }
-		postbuildcommands
-		{
-			"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2019/x86/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
-		}
+
+		-- Ensures that the copy command only gets invoked for windows
+		if system == "windows" then
+			postbuildcommands
+			{
+				"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2019/x86/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
+			}
+		end
+		-- TODO: Sdk
+
 		libdirs
 		{
 			"%{BuildDirectories.fbxsdk_windows}vs2019/x86/%{cfg.buildcfg}/"
 		}
 	filter { "platforms:Win64", "action:vs2022" }
-		postbuildcommands
-		{
-			"copy /Y /V \"%{BuildDirectories.fbxsdk_windows}vs2022/x64/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
-		}
+
+		-- Ensures that the copy command only gets invoked for windows
+		if system == "windows" then
+			postbuildcommands
+			{
+				"copy /Y /V \"%{BuildDirectories.fbxsdk_windows}vs2022/x64/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
+			}
+		end
+
 		libdirs
 		{
 			"%{BuildDirectories.fbxsdk_windows}vs2022/x64/%{cfg.buildcfg}/"
 		}
 	filter { "platforms:Win64", "action:vs2019" }
-		postbuildcommands
-		{
-			"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2019/x64/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
-		}
+
+		-- Ensures that the copy command only gets invoked for windows
+		if system == "windows" then
+			postbuildcommands
+			{
+				"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2019/x64/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
+			}
+		end
+
 		libdirs
 		{
 			"%{BuildDirectories.fbxsdk_windows}vs2019/x64/%{cfg.buildcfg}/"
@@ -331,40 +424,59 @@ project "Engine"
 		{
 			"%{BuildDirectories.DirectXTK}Bin/Desktop_2022/Win32/%{cfg.buildcfg}/"
 		}
-		prebuildcommands
-		{
-			"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2022.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
-		}
+
+		-- ensures that the msbuild commands only get run for windows.
+		if system == "windows" then
+			prebuildcommands
+			{
+				"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2022.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
+			}
+		end
+
 	-- Platform is Win64 & action is vs2022
 	filter { "platforms:Win64", "options:graphicsapi=directx11", "action:vs2022" }
 		libdirs
 		{
 			"%{BuildDirectories.DirectXTK}Bin/Desktop_2022/x64/%{cfg.buildcfg}/"
 		}
-		prebuildcommands
-		{
-			"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2022.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
-		}
+
+		-- ensures that the msbuild commands only get run for windows.
+		if system == "windows" then
+			prebuildcommands
+			{
+				"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2022.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
+			}
+		end
+
 	-- Platform is Win32 & action is vs2019
 	filter { "platforms:Win32", "options:graphicsapi=directx11", "action:vs2019" }
 		libdirs
 		{
 			"%{BuildDirectories.DirectXTK}Bin/Desktop_2019/Win32/%{cfg.buildcfg}/"
 		}
-		prebuildcommands
-		{
-			"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
-		}
+
+		-- ensures that the msbuild commands only get run for windows.
+		if system == "windows" then
+			prebuildcommands
+			{
+				"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
+			}
+		end
+
 	-- Platform is Win64 & action is vs2019
 	filter { "platforms:Win64", "options:graphicsapi=directx11", "action:vs2019" }
 		libdirs
 		{
 			"%{BuildDirectories.DirectXTK}Bin/Desktop_2019/x64/%{cfg.buildcfg}/"
 		}
-		prebuildcommands
-		{
-			"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
-		}
+
+		-- ensures that the msbuild commands only get run for windows.
+		if system == "windows" then
+			prebuildcommands
+			{
+				"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
+			}
+		end
 	filter { }
 
 	--================================= END DIRECTX11 + DIRECTXTK DEPENDENCY ====================--

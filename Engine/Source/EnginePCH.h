@@ -6,8 +6,15 @@
 #include <algorithm>
 #include <memory>
 #include <stdlib.h>
+
+#ifdef PLATFORM_WINDOWS
+
+// Both of these are deprecated on other Platforms
 #include <malloc.h>
 #include <tchar.h>
+
+#endif
+
 #include <string>
 #include <unordered_map>
 #include <chrono>

@@ -1,5 +1,8 @@
 #pragma once
+
+#ifdef PLATFORM_WINDOWS
 #include <intrin.h>
+#endif
 
 #ifndef DEBUG
 #ifdef _DEBUG

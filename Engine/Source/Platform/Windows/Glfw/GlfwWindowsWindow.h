@@ -1,7 +1,10 @@
 #pragma once
 
 #include "Window.h"
+
+#ifdef PLATFORM_WINDOWS
 #include <Windows.h>
+#endif
 
 struct GLFWwindow;
 
@@ -24,7 +27,9 @@ namespace Engine
 
 		 void SetVSync(bool vsync) override;
 
+#ifdef PLATFORM_WINDOWS
 		 HWND GetHWND() const;
+#endif
 		 const GLFWwindow* GetGlfwWindow() const { return m_window; }
 
 	private:

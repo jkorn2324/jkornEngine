@@ -403,9 +403,9 @@ namespace MathLib
 
 		// Intersection Tests.
 		SegmentIntersectionOutput edge1Intersection, edge2Intersection, edge3Intersection;
-		edge1Intersection.intersected = MathLib::Intersects(edge1, ray, edge1Intersection.intersectionPoint);
-		edge2Intersection.intersected = MathLib::Intersects(edge2, ray, edge2Intersection.intersectionPoint);
-		edge3Intersection.intersected = MathLib::Intersects(edge3, ray, edge3Intersection.intersectionPoint);
+		edge1Intersection.intersected = edge1.Intersects(ray, edge1Intersection.intersectionPoint);
+		edge2Intersection.intersected = edge2.Intersects(ray, edge2Intersection.intersectionPoint);
+		edge3Intersection.intersected = edge3.Intersects(ray, edge3Intersection.intersectionPoint);
 
 		if (!edge1Intersection.intersected
 			&& !edge2Intersection.intersected
@@ -448,9 +448,9 @@ namespace MathLib
 
 		// Intersection Tests.
 		SegmentIntersectionOutput edge1Intersection, edge2Intersection, edge3Intersection;
-		edge1Intersection.intersected = MathLib::Intersects(edge1, segment, edge1Intersection.intersectionPoint);
-		edge2Intersection.intersected = MathLib::Intersects(edge2, segment, edge2Intersection.intersectionPoint);
-		edge3Intersection.intersected = MathLib::Intersects(edge3, segment, edge3Intersection.intersectionPoint);
+		edge1Intersection.intersected = edge1.Intersects(segment, edge1Intersection.intersectionPoint);
+		edge2Intersection.intersected = edge2.Intersects(segment, edge2Intersection.intersectionPoint);
+		edge3Intersection.intersected = edge3.Intersects(segment, edge3Intersection.intersectionPoint);
 
 		if (!edge1Intersection.intersected
 			&& !edge2Intersection.intersected

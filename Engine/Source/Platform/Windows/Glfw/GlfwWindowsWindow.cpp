@@ -2,8 +2,18 @@
 #include "GlfwWindowsWindow.h"
 
 #include <unordered_map>
+
+// Defines includes for glfw for Windows
+#ifdef PLATFORM_WINDOWS
 #include <Glfw\glfw3.h>
 #include <Glfw\glfw3native.h>
+#endif
+
+// Defines includes for glfw for Mac
+#ifdef PLATFORM_MACOSX
+#include "glfw3.h"
+#include "glfw3native.h"
+#endif
 
 #include <ApplicationEvent.h>
 
@@ -79,10 +89,12 @@ namespace Engine
 		m_windowData.properties.vsync = vsync;
 	}
 
+#ifdef PLATFORM_WINDOWS
 	HWND GlfwWindowsWindow::GetHWND() const
 	{
 		return glfwGetWin32Window(m_window);
 	}
+#endif
 
 	void GlfwWindowsWindow::Initialize()
 	{
