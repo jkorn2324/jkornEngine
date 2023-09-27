@@ -4,9 +4,6 @@
 #include <windef.h>
 #endif
 
-// Defines a GLFW Window
-struct GLFWwindow;
-
 namespace Engine
 {
 	// Forward Declarations.
@@ -103,9 +100,4 @@ namespace Engine
 	public:
 		T* m_ptr;
 	};
-
-	// The Platform Window Type.
-	using PlatformWindowType = GLFWwindow;
-	// The platform window raw pointer type.
-	using PlatformWindowPtr = WindowPtr<PlatformWindowType>;
 }

@@ -7,8 +7,15 @@
 #include "PlatformWindowPtr.h"
 #include "PlatformDetector.h"
 
+struct GLFWwindow;
+
 namespace Engine
 {
+	// Defines the platform window type.
+	using PlatformWindowType = GLFWwindow;
+	// The platform window raw pointer type.
+	using PlatformWindowPtr = WindowPtr<PlatformWindowType>;
+
 	class IEvent;
 
 	// The Window Event Callback.
@@ -132,7 +139,7 @@ namespace Engine
 		const TRawPtr* GetRawWindowPtr() const { return (const TRawPtr*)m_windowPtr.m_ptr; }
 
 		/**
-		 * Gets the pointer tot he window. 
+		 * Gets the pointer to the window. 
 		 */
 		const PlatformWindowPtr& GetWindowPtr() const { return m_windowPtr; }
 
