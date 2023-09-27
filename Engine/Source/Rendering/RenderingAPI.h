@@ -42,7 +42,17 @@ namespace Engine
 		virtual std::uint32_t GetHeight() const=0;
 
 	public:
-        static constexpr RenderingAPIType GetRenderingAPIType();
+		static inline constexpr RenderingAPIType GetRenderingAPIType()
+		{
+#if defined(GRAPHICS_API_DIRECTX11)
+			return RenderingAPIType::DIRECTX11;
+#elif defined(GRAPHICS_API_METAL)
+			return RenderingAPIType::METAL;
+#else
+			return RenderingAPIType::NONE
+#endif
+		}
+
 		static RenderingAPI* Create();
 	};
 }

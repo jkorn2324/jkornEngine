@@ -7,18 +7,6 @@
 
 namespace Engine
 {
-
-    constexpr RenderingAPIType RenderingAPI::GetRenderingAPIType()
-    {
-#if defined(GRAPHICS_API_DIRECTX11)
-        return RenderingAPIType::DIRECTX11;
-#elif defined(GRAPHICS_API_METAL)
-        return RenderingAPIType::METAL;
-#else
-        return RenderingAPIType::NONE
-#endif
-    }
-
 	RenderingAPI* RenderingAPI::Create()
 	{
 #if defined(GRAPHICS_API_DIRECTX11)

@@ -1,30 +1,22 @@
 #include "EnginePCH.h"
 #include "GlfwImGuiLayer.h"
 
-
 #include <imgui.h>
 #include <backends\imgui_impl_glfw.h>
 #include <Glfw\glfw3.h>
 
 #include "RenderingAPI.h"
 #include "Application.h"
-#include "GlfwWindow.h"
-
+#include "Window.h"
 
 namespace Engine
 {
 	void GlfwImGuiLayer::OnLayerAdded()
 	{
-		GlfwWindow* window = (GlfwWindow*)(&Application::Get().GetWindow());
-        
-		switch (RenderingAPI::GetRenderingAPIType())
-		{
-			case RenderingAPIType::DIRECTX11:
-			{
-				ImGui_ImplGlfw_InitForOther(window->m_window, true);
-				break;
-			}
-		}
+		Window& window = Application::Get().GetWindow();
+#if defined(GRAPHICS_API_DIRECTX11)
+		ImGui_ImplGlfw_InitForOther(window.GetRawWindowPtr<GLFWwindow>(), true);
+#endif
 	}
 
 	void GlfwImGuiLayer::OnShutdown()
@@ -42,10 +34,10 @@ namespace Engine
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			GlfwWindow* window = (GlfwWindow*)&Application::Get().GetWindow();
+			Window& window = Application::Get().GetWindow();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent((GLFWwindow*)window->GetGlfwWindow());
+			glfwMakeContextCurrent(window.GetRawWindowPtr<GLFWwindow>());
 		}
 	}
 }

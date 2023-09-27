@@ -11,8 +11,6 @@
 #include "DirectX11IndexBuffer.h"
 #include "DirectX11VertexArray.h"
 
-#include "GlfwWindow.h"
-
 namespace Engine
 {
 
@@ -23,16 +21,13 @@ namespace Engine
 
 	static bool GetHWND(Window* window, HWND& hwnd)
 	{
-		switch (Window::GetWindowType())
-		{
-		case WindowType::GLFW_WINDOW: 
-		{
-			hwnd = ((GlfwWindow*)window)->GetHWND();
-			return true;
-		}
-		}
+#if defined(PLATFORM_WINDOWS)
+		hwnd = window->GetWindowPtr().GetHWND();
+		return hwnd;
+#else
 		DebugAssert(false, "Unsupported window type for DirectX11.");
 		return false;
+#endif
 	}
 
 	static bool CreateDeviceAndSwapChain(

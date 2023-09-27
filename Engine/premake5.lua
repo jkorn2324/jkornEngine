@@ -13,8 +13,6 @@ project "Engine"
 
 	filter { "system:Windows" }
 		pchheader "EnginePCH.h"
-	filter { }
-	
 	filter { "system:MacOSx" }
 		pchheader "%{prj.location}/Source/EnginePCH.h"
 	filter { }
@@ -46,7 +44,9 @@ project "Engine"
 	}
 
 	-- Only Copy Shaders like this if it is windows.
-	if system == "windows" then
+
+	build_system = os.target()
+	if build_system == "windows" then
 
 		postbuildcommands
 		{
@@ -55,7 +55,7 @@ project "Engine"
 		}
 
 	end
-	if system == "macosx" then
+	if build_system == "macosx" then
 	
 		postbuildcommands
 		{
@@ -196,7 +196,7 @@ project "Engine"
 	}
 
 	-- "Ensures that the prebuild commands only gets added if our system is windows"
-	if system == "windows" then
+	if build_system == "windows" then
 
 	-- Pre Build Command that gets added for when the architecture is a x86 system and its on windows
 	filter { "platforms:Win32", "action:vs*" }
@@ -284,7 +284,7 @@ project "Engine"
 	filter { }
 
 	-- Ensures that this prebuild commands only occurs for windows
-	if system == "windows" then
+	if build_system == "windows" then
 	
 	filter { "platforms:Win32", "action:vs*" }
 		-- Pre Build Commands so that ImGui gets built before the Engine lib (Win32)
@@ -375,7 +375,7 @@ project "Engine"
 	-- Define Post Build Actions (Depending on Platform & Action)
 	filter { "platforms:Win32", "action:vs2022" }
 		-- Ensures that the copy command only gets invoked for windows
-		if system == "windows" then
+		if build_system == "windows" then
 			postbuildcommands
 			{
 				"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2022/x86/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
@@ -390,7 +390,7 @@ project "Engine"
 	filter { "platforms:Win32", "action:vs2019" }
 
 		-- Ensures that the copy command only gets invoked for windows
-		if system == "windows" then
+		if build_system == "windows" then
 			postbuildcommands
 			{
 				"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2019/x86/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
@@ -405,7 +405,7 @@ project "Engine"
 	filter { "platforms:Win64", "action:vs2022" }
 
 		-- Ensures that the copy command only gets invoked for windows
-		if system == "windows" then
+		if build_system == "windows" then
 			postbuildcommands
 			{
 				"copy /Y /V \"%{BuildDirectories.fbxsdk_windows}vs2022/x64/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
@@ -419,7 +419,7 @@ project "Engine"
 	filter { "platforms:Win64", "action:vs2019" }
 
 		-- Ensures that the copy command only gets invoked for windows
-		if system == "windows" then
+		if build_system == "windows" then
 			postbuildcommands
 			{
 				"copy /Y \"%{BuildDirectories.fbxsdk_windows}vs2019/x64/%{cfg.buildcfg}\\libfbxsdk.dll\" \"%{cfg.buildtarget.directory}libfbxsdk.dll\""
@@ -455,7 +455,7 @@ project "Engine"
 		}
 
 		-- ensures that the msbuild commands only get run for windows.
-		if system == "windows" then
+		if build_system == "windows" then
 			prebuildcommands
 			{
 				"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2022.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
@@ -470,7 +470,7 @@ project "Engine"
 		}
 
 		-- ensures that the msbuild commands only get run for windows.
-		if system == "windows" then
+		if build_system == "windows" then
 			prebuildcommands
 			{
 				"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2022.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
@@ -485,7 +485,7 @@ project "Engine"
 		}
 
 		-- ensures that the msbuild commands only get run for windows.
-		if system == "windows" then
+		if build_system == "windows" then
 			prebuildcommands
 			{
 				"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=win32",
@@ -500,7 +500,7 @@ project "Engine"
 		}
 
 		-- ensures that the msbuild commands only get run for windows.
-		if system == "windows" then
+		if build_system == "windows" then
 			prebuildcommands
 			{
 				"msbuild \"%{ProjectDirectories.DirectXTK}DirectXTK_Desktop_2019.vcxproj\" /p:Configuration=%{cfg.buildcfg} /p:platform=x64",
