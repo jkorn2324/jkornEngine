@@ -1,9 +1,9 @@
 #include "MathUnitTests.h"
-#include "Source\Math.h"
-#include "Source\Vector.h"
-#include "Source\Matrix.h"
-#include "Source\Geometry3D.h"
-#include "Source\Geometry2D.h"
+#include "Math.h"
+#include "Vector.h"
+#include "Matrix.h"
+#include "Geometry3D.h"
+#include "Geometry2D.h"
 
 using namespace MathLib;
 

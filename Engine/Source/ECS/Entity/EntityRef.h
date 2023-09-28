@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DebugAssert.h"
+#include "EngineAssert.h"
 #include "Entity.h"
 #include "ComponentUtility.h"
 
@@ -64,13 +64,13 @@ namespace Engine
 
 		TRegistry& GetRegistry()
 		{
-			DebugAssert(m_registry != nullptr, "Registry is not nullptr");
+            JKORN_ENGINE_ASSERT(m_registry != nullptr, "Registry is not nullptr");
 			return *m_registry;
 		}
 
 		TRegistry& GetRegistry() const
 		{
-			DebugAssert(m_registry != nullptr, "Registry is not nullptr");
+            JKORN_ENGINE_ASSERT(m_registry != nullptr, "Registry is not nullptr");
 			return *m_registry;
 		}
 
@@ -127,7 +127,7 @@ namespace Engine
 			Entity::CopyEntity(from, from.GetRegistry(), to, to.GetRegistry());
 		}
 
-		template<typename TComponent, typename TRegistry = entt::registry>
+		template<typename TComponent>
 		static void CopyComponent(TEntityRef<TRegistry>& from, TEntityRef<TRegistry>& to)
 		{
 			static_assert(IsValidRegistry<TRegistry>::value && !IsValidRegistry<TRegistry>::is_const,

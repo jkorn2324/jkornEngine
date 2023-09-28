@@ -32,6 +32,16 @@ project "Engine"
 		"%{prj.location}/Source/**.hpp",
 	}
 
+	-- Removes DirectX Related Files from workspace.
+	filter { "options:not graphicsapi=directx11"}
+		removefiles
+		{
+			"%{prj.location}/Source/Platform/DirectX11/**.h",
+			"%{prj.location}/Source/Platform/DirectX11/**.cpp",
+			"%{prj.location}/Source/Platform/DirectX11/**.hpp"
+		}
+	filter { }
+
 	includedirs
 	{
 		"%{prj.location}/Source/",
@@ -45,7 +55,6 @@ project "Engine"
 
 	-- Only Copy Shaders like this if it is windows.
 
-	build_system = os.target()
 	if build_system == "windows" then
 
 		postbuildcommands
@@ -102,7 +111,10 @@ project "Engine"
 
 	--================================= BEGIN MATHLIB DEPENDENCY ===========================--
 
-	-- "Only include files to compile if its xcode4"
+	--  For MathLib, we includedirs if its visual studio and include the project if its xcode4
+	-- The reason for this is because MathLib has a precompiled header and in xcode causes build to fail
+
+	-- "Only include files to compile if its xcode"
 	filter { "action:xcode4" }
 		files
 		{
@@ -112,10 +124,13 @@ project "Engine"
 		}
 	filter { }
 
-	includedirs
-	{
-		"%{IncludeDirectories.MathLib}"
-	}
+	-- "Only include directories if its in visual studio"
+	filter { "action:vs*"}
+		includedirs
+		{
+			"%{IncludeDirectories.MathLib}"
+		}
+	filter { }
 
 	links
 	{
@@ -149,13 +164,21 @@ project "Engine"
 
 	files
 	{
-		"%{IncludeDirectories.rapidjson}**.h"
+		"%{IncludeDirectories.rapidjson}**.h",
+		"%{IncludeDirectories.rapidjson}**.cpp"
 	}
 
 	includedirs
 	{
 		"%{IncludeDirectories.rapidjson}"
 	}
+
+	filter { "action:xcode4" }
+		externalincludedirs
+		{
+			"%{IncludeDirectories.rapidjson}"
+		}
+	filter { }
 
 	--================================== END RAPIDJSON DEPENDENCY ==========================--
 
@@ -261,7 +284,7 @@ project "Engine"
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_osx.mm"
 		}
 	-- Ensures that we only add the imgui metal files if our graphics api is metal.
-	filter { "system:MacOSx", "options:graphicsapi=metal" }
+	filter { "platforms:MacOS", "options:graphicsapi=metal" }
 		files
 		{
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_metal.h",
@@ -275,7 +298,7 @@ project "Engine"
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.cpp",
 		}
 	-- Ensures that we only add imgui directx files if our system & graphics api are directx11 & windows
-	filter { "system:Windows", "options:graphicsapi=directx11" }
+	filter { "platforms:Win64", "platforms:Win32", "options:graphicsapi=directx11" }
 		files
 		{
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.h",
@@ -327,7 +350,7 @@ project "Engine"
 	}
 
 	-- Macro for using ImGuizmo w/ ImGui
-	defines { "USE_IMGUI_API "}
+	defines { "USE_IMGUI_API"}
 
 
 	--================================= END IMGUIZMO DEPENDENCY ====================================--
@@ -515,6 +538,7 @@ project "Engine"
 	filter { "files:not %{prj.location}/Source/**.h", "files:not {%prj.location}/Source/**.cpp", "files:not {%prj.location}/Source/**.hpp" }
 		flags { "NoPCH" }
 	filter { }
+
 
 
 

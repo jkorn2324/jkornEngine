@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Source\Vector.h"
-#include "Source\Math.h"
+#include "Vector.h"
+#include "Math.h"
 #include "AssetReferenceManager.h"
 
 namespace Engine

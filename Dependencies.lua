@@ -8,7 +8,7 @@ LibrariesLocation = "%{wks.location}/Engine/Libraries"
 
 -- Cross Platform Dependencies
 
-IncludeDirectories["MathLib"] = "%{wks.location}/MathLib/"
+IncludeDirectories["MathLib"] = "%{wks.location}/MathLib/Source/"
 ProjectDirectories["MathLib"] = "%{wks.location}/MathLib/"
 BuildDirectories["MathLib"] = "%{wks.location}/MathLib/Builds/"
 LibraryNames["MathLib"] = "MathLib"

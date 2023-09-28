@@ -37,7 +37,7 @@ namespace Engine::Platform::Internals
 		{
 			// Sets no api so that we can use directx 11.
 			int success = glfwInit();
-			DebugAssert(success, "GLFW Failed to initialize.");
+            JKORN_ENGINE_ASSERT(success, "GLFW Failed to initialize.");
 		}
 
 		s_numWindows++;
@@ -45,11 +45,14 @@ namespace Engine::Platform::Internals
 #if defined(GRAPHICS_API_DIRECTX11)
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
+#if defined(GRAPHICS_API_METAL)
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#endif
 
 		WindowProperties& properties = windowData.properties;
 		ptr.m_ptr = glfwCreateWindow((int)properties.width,
 			(int)properties.height, properties.windowTitle.c_str(), nullptr, nullptr);
-		DebugAssert(ptr.m_ptr != nullptr, "GLFW Failed to create the window.");
+        JKORN_ENGINE_ASSERT(ptr.m_ptr != nullptr, "GLFW Failed to create the window.");
 		glfwMakeContextCurrent(ptr.m_ptr);
 		glfwSetWindowUserPointer(ptr.m_ptr, &windowData);
 

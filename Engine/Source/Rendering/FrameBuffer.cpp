@@ -4,7 +4,10 @@
 #include "Profiler.h"
 #include "GraphicsRenderer.h"
 #include "RenderingAPI.h"
+
+#if defined(GRAPHICS_API_DIRECTX11)
 #include "DirectX11FrameBuffer.h"
+#endif
 
 namespace Engine
 {
@@ -44,15 +47,11 @@ namespace Engine
 	{
 		PROFILE_SCOPE(CreateFrameBuffer, Rendering);
 
-		switch (RenderingAPI::GetRenderingAPIType())
-		{
-		case RenderingAPIType::DIRECTX11:	return new DirectX11FrameBuffer(specification);
-		case RenderingAPIType::NONE:
-		{
-			DebugAssert(false, "Unsupported Frame Buffer Type.");
-			return nullptr;
-		}
-		}
-		return nullptr;
+#if defined(GRAPHICS_API_DIRECTX11)
+        return new DirectX11FrameBuffer(specification);
+#else
+        JKORN_ENGINE_ASSERT(false, "Unsupported Frame Buffer Type.");
+        return nullptr;
+#endif
 	}
 }

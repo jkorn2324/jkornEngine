@@ -17,7 +17,7 @@ namespace Engine
 		case ImGuiLayerPlatform::PLATFORM_GRAPHICS_DIRECTX11: return std::make_unique<DirectX11ImGuiLayer>();
 		case ImGuiLayerPlatform::PLATFORM_WINDOW_GLFW: return std::make_unique<GlfwImGuiLayer>();
 		}
-		DebugAssert(false, "Editor Layer doesn't have a platform.");
+        JKORN_ENGINE_ASSERT(false, "Editor Layer doesn't have a platform.");
 		return nullptr;
 	}
 
@@ -37,7 +37,7 @@ namespace Engine
 			case WindowType::GLFW_WINDOW: return ImGuiLayerPlatform::PLATFORM_WINDOW_GLFW;
 			}
 		}
-		DebugAssert(false, "Platform Layer is not supported.");
+        JKORN_ENGINE_ASSERT(false, "Platform Layer is not supported.");
 		return ImGuiLayerPlatform::NONE;
 	}
 }

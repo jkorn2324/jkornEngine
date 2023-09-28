@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "Source\Vector.h"
+#include "Vector.h"
 #include "GUID.h"
 #include "EngineMacros.h"
 

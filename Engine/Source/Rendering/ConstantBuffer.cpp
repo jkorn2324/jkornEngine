@@ -2,8 +2,11 @@
 #include "ConstantBuffer.h"
 #include "GraphicsRenderer.h"
 #include "RenderingAPI.h"
-#include "DirectX11ConstantBuffer.h"
 #include "Profiler.h"
+
+#if defined(GRAPHICS_API_DIRECTX11)
+#include "DirectX11ConstantBuffer.h"
+#endif
 
 namespace Engine
 {
@@ -18,15 +21,11 @@ namespace Engine
 	{
 		PROFILE_SCOPE(CreateConstantBuffer, Rendering);
 
-		switch (RenderingAPI::GetRenderingAPIType())
-		{
-		case RenderingAPIType::DIRECTX11:	return new DirectX11ConstantBuffer(buffer, stride);
-		case RenderingAPIType::NONE:
-		{
-			DebugAssert(false, "Invalid constant buffer type.");
-			return nullptr;
-		}
-		}
-		return nullptr;
+#if defined(GRAPHICS_API_DIRECTX11)
+        return new DirectX11ConstantBuffer(buffer, stride);'
+#else
+        JKORN_ENGINE_ASSERT(false, "Invalid constant buffer type.");
+        return nullptr;
+#endif
 	}
 }

@@ -2,10 +2,13 @@
 #include "Shader.h"
 
 #include "RenderingAPI.h"
-#include "DirectX11Shader.h"
 #include "Rendering\BufferLayout.h"
 
 #include "AssetSerializer.h"
+
+#if defined(GRAPHICS_API_DIRECTX11)
+#include "DirectX11Shader.h"
+#endif
 
 namespace Engine
 {
@@ -131,29 +134,23 @@ namespace Engine
 
 	bool Shader::Create(Shader** asset)
 	{
-		switch (RenderingAPI::GetRenderingAPIType())
-		{
-		case RenderingAPIType::DIRECTX11:
-		{
-			*asset = new DirectX11Shader();
-			return true;
-		}
-		}
-		DebugAssert(false, "Unsupported shader type.");
+#if defined(GRAPHICS_API_DIRECTX11)
+        *asset = new DirectX11Shader();
+        return true;
+#else
+        JKORN_ENGINE_ASSERT(false, "Unsupported shader type.");
 		return false;
+#endif
 	}
 
 	bool Shader::Create(std::shared_ptr<Shader>& asset)
 	{
-		switch (RenderingAPI::GetRenderingAPIType())
-		{
-		case RenderingAPIType::DIRECTX11:
-		{
-			asset = std::make_shared<DirectX11Shader>();
-			return true;
-		}
-		}
-		DebugAssert(false, "Unsupported shader type.");
-		return false;
+#if defined(GRAPHICS_API_DIRECTX11)
+        asset = std::make_shared<DirectX11Shader>();
+        return true;
+#else
+        JKORN_ENGINE_ASSERT(false, "Unsupported shader type.");
+        return false;
+#endif
 	}
 }

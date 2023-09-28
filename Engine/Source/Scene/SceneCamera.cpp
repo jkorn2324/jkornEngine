@@ -1,6 +1,6 @@
 #include "EnginePCH.h"
 #include "SceneCamera.h"
-#include "Source\Math.h"
+#include "Math.h"
 
 namespace Engine
 {

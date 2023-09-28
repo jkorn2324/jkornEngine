@@ -1,12 +1,15 @@
 #include "EnginePCH.h"
 #include "JsonFileParser.h"
 
+#include "document.h"
+
 namespace Engine
 {
 	JsonFileParser::JsonFileParser(const char* fileName)
 		: m_buffer(nullptr), m_document(), m_bufferSize(0)
 	{
 		FILE* filePath;
+        rapidjson::Document mdoc;
 		fopen_s(&filePath, fileName, "rb");
 		Parse(filePath);
 	}
@@ -54,6 +57,6 @@ namespace Engine
 		m_buffer[readLength] = 0;
 		fclose(file);
 		m_document.Parse(m_buffer);
-		DebugAssert(!m_document.HasParseError(), "Document has trouble parsing the file.");
+        JKORN_ENGINE_ASSERT(!m_document.HasParseError(), "Document has trouble parsing the file.");
 	}
 }

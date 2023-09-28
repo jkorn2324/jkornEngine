@@ -94,7 +94,7 @@ namespace Engine
 			for (auto e : entityView)
 			{
 				EntityRef entity(e, registry);
-				auto c = entityView.get<TComponents...>(e);
+                auto c = entityView.template get<TComponents...>(e);
 				OnUpdate(updateSystemContext, entity, c);
 			}
 		}

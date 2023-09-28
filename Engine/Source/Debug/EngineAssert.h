@@ -13,18 +13,18 @@
 #ifdef DEBUG
 #ifdef PLATFORM_WINDOWS
 
-extern bool DbgAssertFunction(bool expression, const wchar_t* string,
+extern bool EngineAssertFunction(bool expression, const wchar_t* string,
 	const wchar_t* desc, int line_num, const wchar_t* file_name);
 
 #define DBG_WIDEN2(x) L##x
 #define DBG_WIDEN(x) DBG_WIDEN2(x)
 #define __WFILE__ DBG_WIDEN(__FILE__)
 
-#define DebugAssert(expr, description) { if (DbgAssertFunction((expr), L#expr, L##description, __LINE__, __WFILE__)) { __debugbreak(); } }
+#define JKORN_ENGINE_ASSERT(expr, description) { if (DbgAssertFunction((expr), L#expr, L##description, __LINE__, __WFILE__)) { __debugbreak(); } }
 #else
 #include <assert.h>
-#define DebugAssert(expr, description) { assert(expr); }
+#define JKORN_ENGINE_ASSERT(expr, description) { assert(expr); }
 #endif
 #else
-#define DebugAssert(expr, description)
+#define JKORN_ENGINE_ASSERT(expr, description)
 #endif

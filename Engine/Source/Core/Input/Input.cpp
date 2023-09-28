@@ -204,7 +204,7 @@ namespace Engine
 
 	PlatformInput& Input::GetPlatformInput()
 	{
-		DebugAssert(s_platformInput != nullptr, "Platform input exists.");
+        JKORN_ENGINE_ASSERT(s_platformInput != nullptr, "Platform input exists.");
 		return *s_platformInput;
 	}
 

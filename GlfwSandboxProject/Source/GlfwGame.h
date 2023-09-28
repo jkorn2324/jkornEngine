@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Source\Matrix.h"
-#include "Source\Vector.h"
+#include "Matrix.h"
+#include "Vector.h"
 
 #include "Engine.h"
 

@@ -1,3 +1,4 @@
+#pragma once
 
 // The defines for the Math Library.
 

@@ -47,7 +47,7 @@ namespace Engine
 		m_imguiLayer(nullptr),
 		m_rootPath(rootPath)
 	{
-		DebugAssert(s_instance == nullptr, "Application is already running.");
+        JKORN_ENGINE_ASSERT(s_instance == nullptr, "Application is already running.");
 		s_instance = this;
 
 		Logger::Init();

@@ -2,18 +2,41 @@
 
 include "Dependencies.lua"
 
--- Defines the graphics api options
-newoption {
-	trigger = "graphicsapi",
-	value = "API",
-	description = "Choose a particular graphics API",
-	allowed = {
-		{ "directx11", "DirectX11 (Windows Only)" },
-		{ "metal", "Metal (Apple Only)" },
-		{ "none", "No Graphics" }
-	},
-	default = "directx11"
-}
+build_system = os.target()
+
+if build_system == "windows" then
+
+	-- Defines the graphics api options
+	newoption {
+		trigger = "graphicsapi",
+		value = "API",
+		description = "Choose a particular graphics API",
+		allowed = {
+			{ "directx11", "DirectX11 (Windows Only)" },
+			{ "metal", "Metal (Apple Only)" },
+			{ "none", "No Graphics" }
+		},
+		default = "directx11"
+	}
+
+end
+
+if build_system == "macosx" then
+
+	-- Defines the graphics api options
+	newoption {
+		trigger = "graphicsapi",
+		value = "API",
+		description = "Choose a particular graphics API",
+		allowed = {
+			{ "directx11", "DirectX11 (Windows Only)" },
+			{ "metal", "Metal (Apple Only)" },
+			{ "none", "No Graphics" }
+		},
+		default = "metal"
+	}
+
+end
 
 workspace "jkornEngine"
 	

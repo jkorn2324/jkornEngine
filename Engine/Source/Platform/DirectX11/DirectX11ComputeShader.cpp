@@ -172,7 +172,7 @@ namespace Engine
 			HRESULT result = renderingAPI.m_device->CreateComputeShader(shaderBlob->GetBufferPointer(),
 				shaderBlob->GetBufferSize(), nullptr, &m_computeShader);
 			bool success = S_OK == result;
-			DebugAssert(success == true, "Shader Failed to compile.");
+            JKORN_ENGINE_ASSERT(success == true, "Shader Failed to compile.");
 
 			if (!success)
 			{

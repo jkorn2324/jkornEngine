@@ -1,9 +1,6 @@
 #pragma once
 
-#include "MathPCH.h"
 #include "Defines.h"
-
-#include <cmath>
 
 namespace MathLib
 {
@@ -14,50 +11,13 @@ namespace MathLib
 	const float DEG2RAD = PI / 180.0f;
 	const float PIOVER2 = PI / 2.0f;
 
-	static float Sqrt(float input)
-	{
-		return std::sqrtf(input);
-	}
-
-	static double Sqrt(double input)
-	{
-		return std::sqrt(input);
-	}
+    static double Sqrt(double input);
+    static float Sqrt(float input);
+	template<typename T>
+    static T Sqrt(T input);
 
 	template<typename T>
-	static T Sqrt(T input)
-	{
-		ASSERT_IS_ARITHMETIC(T);
-		double casted = static_cast<double>(input);
-		return static_cast<T>(Sqrt(casted));
-	}
-
-	template<>
-	static float Sqrt(float input)
-	{
-		return std::sqrtf(input);
-	}
-
-	template<typename T>
-	static T Abs(T input)
-	{
-		ASSERT_IS_ARITHMETIC(T);
-
-		const T negativeOne = static_cast<T>(-1);
-		return input < 0 ? input * negativeOne : input;
-	}
-
-	template<>
-	static float Abs(float input)
-	{
-		return std::abs(input);
-	}
-
-	template<>
-	static double Abs(double input)
-	{
-		return std::abs(input);
-	}
+    static T Abs(T input);
 
 	template<typename T>
 	static bool IsCloseEnough(T a, T b, T epsilon)
@@ -76,40 +36,12 @@ namespace MathLib
 		return IsCloseEnough(a, b, EPSILON);
 	}
 
-	static float Sin(float input, bool inDegrees = true)
-	{
-		float theta = inDegrees ? DEG2RAD * input : input;
-		return std::sinf(theta);
-	}
-
-	static float Cos(float input, bool inDegrees = true)
-	{
-		float theta = inDegrees ? DEG2RAD * input : input;
-		return std::cosf(theta);
-	}
-
-	static float Tan(float input, bool inDegrees = true)
-	{
-		float theta = inDegrees ? DEG2RAD * input : input;
-		return std::tanf(theta);
-	}
-
-	static float ACos(float input, bool inDegrees = true)
-	{
-		float theta = inDegrees ? DEG2RAD * input : input;
-		return std::acosf(theta);
-	}
-
-	static float ATan2(float y, float x)
-	{
-		return std::atan2f(y, x);
-	}
-
-	static float ASin(float input, bool inDegrees = true)
-	{
-		float theta = inDegrees ? DEG2RAD * input : input;
-		return std::asinf(theta);
-	}
+    static float Sin(float input, bool inDegrees = true);
+    static float Cos(float input, bool inDegrees = true);
+    static float Tan(float input, bool inDegrees = true);
+    static float ACos(float input, bool inDegrees = true);
+    static float ATan2(float y, float x);
+    static float ASin(float input, bool inDegrees = true);
 
 	template<typename T>
 	static T Max(const T& a, const T& b)

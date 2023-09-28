@@ -114,7 +114,7 @@ namespace Engine
 	
 	void Profiler::Init()
 	{
-		DebugAssert(!s_profilerInitialized,
+        JKORN_ENGINE_ASSERT(!s_profilerInitialized,
 			"Profiler has already been initialized.");
 		s_jsonStringWriter.StartArray();
 		s_profilerInitialized = true;
@@ -127,7 +127,7 @@ namespace Engine
 		// Writes the json output to the file.
 		FILE* outputFile;
 		fopen_s(&outputFile, s_outputFile.c_str(), "w");
-		DebugAssert(outputFile, "File failed to open/write.");
+        JKORN_ENGINE_ASSERT(outputFile, "File failed to open/write.");
 		fprintf_s(outputFile, "%s", s_jsonStringBuffer.GetString());
 		fclose(outputFile);
 

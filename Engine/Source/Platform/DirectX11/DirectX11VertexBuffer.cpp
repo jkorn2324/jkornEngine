@@ -29,7 +29,7 @@ namespace Engine
 
 		HRESULT result = renderingAPI.m_device
 			->CreateBuffer(&bufferDesc, &initializationData, &m_vertexBuffer);
-		DebugAssert(result == S_OK, "Failed to create vertex buffer.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create vertex buffer.");
 		SetData(buffer, numVertices, stride);
 	}
 
@@ -56,7 +56,7 @@ namespace Engine
 		D3D11_MAPPED_SUBRESOURCE mapResource;
 		HRESULT result = renderingAPI.m_deviceContext->Map(
 			m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
-		DebugAssert(result == S_OK, "Failed to map the vertex buffer resource.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to map the vertex buffer resource.");
 		std::memcpy(mapResource.pData, buffer, numVertices * stride);
 		renderingAPI.m_deviceContext->Unmap(m_vertexBuffer, 0);
 	}

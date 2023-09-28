@@ -38,14 +38,14 @@ namespace Engine
 	
 	std::shared_ptr<spdlog::logger>& Logger::GetCoreLogger()
 	{
-		DebugAssert(s_coreLogger != nullptr,
+        JKORN_ENGINE_ASSERT(s_coreLogger != nullptr,
 			"Core Logger doesn't exist yet.");
 		return s_coreLogger;
 	}
 
 	std::shared_ptr<spdlog::logger>& Logger::GetExternalLogger()
 	{
-		DebugAssert(s_externalLogger != nullptr,
+        JKORN_ENGINE_ASSERT(s_externalLogger != nullptr,
 			"External Logger doesn't exist yet.");
 		return s_externalLogger;
 	}

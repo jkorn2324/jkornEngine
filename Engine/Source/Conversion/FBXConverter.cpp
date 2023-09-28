@@ -107,14 +107,14 @@ namespace Engine
 
 	bool FBXConverter::Initialize()
 	{
-		DebugAssert(m_fbxManager == nullptr, "FbxManager is not nullptr.");
-		DebugAssert(m_fbxScene == nullptr, "FbxScene is not nullptr");
+		JKORN_ENGINE_ASSERT(m_fbxManager == nullptr, "FbxManager is not nullptr.");
+        JKORN_ENGINE_ASSERT(m_fbxScene == nullptr, "FbxScene is not nullptr");
 
 		m_fbxManager = fbxsdk::FbxManager::Create();
 		if (m_fbxManager == nullptr) return false;
 
 		fbxsdk::FbxIOSettings* settings = fbxsdk::FbxIOSettings::Create(m_fbxManager, IOSROOT);
-		DebugAssert(settings, "Fbx settings shouldn't exist.");
+        JKORN_ENGINE_ASSERT(settings, "Fbx settings shouldn't exist.");
 		m_fbxManager->SetIOSettings(settings);
 		return true;
 	}
@@ -125,7 +125,7 @@ namespace Engine
 		if (m_fbxScene == nullptr) return;
 
 		FbxImporter* fbxImporter = FbxImporter::Create(m_fbxManager, "Imported FBX");
-		DebugAssert(fbxImporter, "Fbx Importer should exist.");
+        JKORN_ENGINE_ASSERT(fbxImporter, "Fbx Importer should exist.");
 		if (!fbxImporter->Initialize(fileName, -1, m_fbxManager->GetIOSettings())
 			&& !fbxImporter->Import(m_fbxScene))
 		{

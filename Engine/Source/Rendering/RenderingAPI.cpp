@@ -12,7 +12,7 @@ namespace Engine
 #if defined(GRAPHICS_API_DIRECTX11)
         return new DirectX11RenderingAPI();
 #else
-        DebugAssert(false, "Unsupported rendering api.");
+        JKORN_ENGINE_ASSERT(false, "Unsupported rendering api.");
         return nullptr;
 #endif
 	}

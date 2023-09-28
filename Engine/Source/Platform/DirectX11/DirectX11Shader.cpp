@@ -69,10 +69,10 @@ namespace Engine
 
 				HRESULT result = renderingAPI.m_device->CreateVertexShader(
 					vertexShader->GetBufferPointer(), vertexShader->GetBufferSize(), nullptr, &m_vertexShader);
-				DebugAssert(result == S_OK, "Failed to load vertex shader.");
+                JKORN_ENGINE_ASSERT(result == S_OK, "Failed to load vertex shader.");
 				result = renderingAPI.m_device->CreatePixelShader(
 					pixelShader->GetBufferPointer(), pixelShader->GetBufferSize(), nullptr, &m_pixelShader);
-				DebugAssert(result == S_OK, "Failed to load pixel shader.");
+                JKORN_ENGINE_ASSERT(result == S_OK, "Failed to load pixel shader.");
 				if (m_vertexShader != nullptr
 					&& m_pixelShader != nullptr)
 				{
@@ -80,7 +80,7 @@ namespace Engine
 					result = renderingAPI.m_device->CreateInputLayout(
 						parsedBufferLayout.GetD3D11InputElementDesc(), parsedBufferLayout.GetNumElements(),
 						vertexShader->GetBufferPointer(), vertexShader->GetBufferSize(), &m_inputLayout);
-					DebugAssert(result == S_OK, "Failed to load input layout.");
+                    JKORN_ENGINE_ASSERT(result == S_OK, "Failed to load input layout.");
 					if (result == S_OK)
 					{
 						m_bufferLayout = bufferLayout;
@@ -90,7 +90,7 @@ namespace Engine
 				return false;
 			}
 		}
-		DebugAssert(false, "Failed to create Shader.");
+        JKORN_ENGINE_ASSERT(false, "Failed to create Shader.");
 		return false;
 	}
 }

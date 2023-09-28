@@ -99,7 +99,7 @@ namespace Engine
 				ID3D11DepthStencilView* depthStencilView;
 				HRESULT result = api->m_device->CreateDepthStencilView(
 					texture, &depthStencilDesc, &depthStencilView);
-				DebugAssert(result == S_OK, "Failed to create the depth stencil view.");
+                JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create the depth stencil view.");
 
 				outViewTexture->m_view = depthStencilView;
 				outViewTexture->texture = new DirectX11Texture(texture, shaderResourceView);
@@ -115,7 +115,7 @@ namespace Engine
 				ID3D11RenderTargetView* renderTargetView;
 				HRESULT result = api->m_device->CreateRenderTargetView(texture,
 					nullptr, &renderTargetView);
-				DebugAssert(result == S_OK, "Render target view was unsuccessfully created.");
+                JKORN_ENGINE_ASSERT(result == S_OK, "Render target view was unsuccessfully created.");
 				outViewTexture->m_view = renderTargetView;
 				outViewTexture->texture = new DirectX11Texture(texture, shaderResource);
 				break;
@@ -130,7 +130,7 @@ namespace Engine
 				ID3D11RenderTargetView* renderTargetView;
 				HRESULT result = api->m_device->CreateRenderTargetView(texture,
 					nullptr, &renderTargetView);
-				DebugAssert(result == S_OK, "Render target view was unsuccessfully created.");
+                JKORN_ENGINE_ASSERT(result == S_OK, "Render target view was unsuccessfully created.");
 				outViewTexture->m_view = renderTargetView;
 				outViewTexture->texture = new DirectX11Texture(texture, shaderResource);
 				break;

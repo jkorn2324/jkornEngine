@@ -68,7 +68,7 @@ namespace Engine
 		static inline auto GetEntityStorage(TRegistry& registry)
 		{
 			static_assert(IsValidRegistry<TRegistry>::value, "Registry must be a valid registry.");
-			return registry.storage<entt::entity>();
+            return registry.template storage<entt::entity>();
 		}
 
 		// Gets the total num entities.
@@ -84,7 +84,7 @@ namespace Engine
 		{
 			static_assert(IsValidRegistry<TRegistry>::value, "Registry must be a valid registry.");
 			ValidateComponent<TComponent>();
-			return registry.any_of<TComponent>(entity);
+            return registry.template any_of<TComponent>(entity);
 		}
 
 		template<typename TComponent, typename TRegistry = entt::registry>
@@ -102,7 +102,7 @@ namespace Engine
 			static_assert(IsValidRegistry<TRegistry>::value && !IsValidRegistry<TRegistry>::is_const,
 				"Registry must be a valid registry & it must be a non constant.");
 			ValidateComponent<TComponent>();
-			return registry.get<TComponent>(entity);
+            return registry.template get<TComponent>(entity);
 		}
 
 		template<typename TComponent, typename ...TArgs, typename TRegistry = entt::registry>
@@ -111,7 +111,7 @@ namespace Engine
 			static_assert(IsValidRegistry<TRegistry>::value && !IsValidRegistry<TRegistry>::is_const,
 				"Registry must be a valid registry & it must be non constant.");
 			ValidateComponent<TComponent>();
-			return registry.emplace<TComponent, TArgs...>(entity, std::forward<TArgs>(args)...);
+            return registry.template emplace<TComponent, TArgs...>(entity, std::forward<TArgs>(args)...);
 		}
 
 		template<typename TComponent, typename TRegistry = entt::registry>
@@ -139,7 +139,7 @@ namespace Engine
 			}
 			TComponent& component = GetComponent<TComponent>(entity, registry);
 			callback(component, std::forward<TArgs>(args)...);
-			registry.remove<TComponent>(entity);
+            registry.template remove<TComponent>(entity);
 		}
 
 		template<typename TComponent, typename TRegistry, typename TFunc>

@@ -2,7 +2,10 @@
 #include "VertexBuffer.h"
 
 #include "RenderingAPI.h"
+
+#if defined(GRAPHICS_API_DIRECTX11)
 #include "DirectX11VertexBuffer.h"
+#endif
 
 namespace Engine
 {
@@ -10,31 +13,25 @@ namespace Engine
 	bool VertexBuffer::Create(VertexBuffer** ptr,
 		const void* bufferData, uint32_t numVertices, uint32_t stride)
 	{
-		switch (RenderingAPI::GetRenderingAPIType())
-		{
-			case RenderingAPIType::DIRECTX11:
-			{
-				*ptr = new DirectX11VertexBuffer(bufferData, numVertices, stride);
-				return true;
-			}
-		}
-		DebugAssert(false, "Unsupported Vertex Buffer type.");
-		return false;
+#if defined(GRAPHICS_API_DIRECTX11)
+        *ptr = new DirectX11VertexBuffer(bufferData, numVertices, stride);
+        return true;
+#else
+        JKORN_ENGINE_ASSERT(false, "Unsupported Vertex Buffer type.");
+        return false;
+#endif
 	}
 
 	bool VertexBuffer::Create(std::shared_ptr<VertexBuffer>& ptr,
 		const void* bufferData, uint32_t numVertices, uint32_t stride)
 	{
-		switch (RenderingAPI::GetRenderingAPIType())
-		{
-			case RenderingAPIType::DIRECTX11:
-			{
-				ptr = std::make_shared<DirectX11VertexBuffer>(bufferData, numVertices, stride);
-				return true;
-			}
-		}
-		DebugAssert(false, "Unsupported Vertex Buffer type.");
-		return false;
+#if defined(GRAPHICS_API_DIRECTX11)
+        ptr = std::make_shared<DirectX11VertexBuffer>(bufferData, numVertices, stride);
+        return true;
+#else
+        JKORN_ENGINE_ASSERT(false, "Unsupported Vertex Buffer type.");
+        return false;
+#endif
 	}
 
 	VertexBuffer::VertexBuffer(const void* buffer, uint32_t numVerts, uint32_t stride)

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "EngineMacros.h"
-#include "Source\Vector.h"
-#include "Source\Matrix.h"
+
+#include "Vector.h"
+#include "Matrix.h"
 
 #include <string>
 #include <memory>

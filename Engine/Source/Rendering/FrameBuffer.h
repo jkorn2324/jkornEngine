@@ -3,8 +3,6 @@
 #include <initializer_list>
 #include <vector>
 
-#include <d3d11.h>
-
 namespace Engine
 {
 

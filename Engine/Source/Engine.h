@@ -2,7 +2,7 @@
 
 // File is only used for external projects.
 
-#include "DebugAssert.h"
+#include "EngineAssert.h"
 #include "PlatformDetector.h"
 #include "Profiler.h"
 

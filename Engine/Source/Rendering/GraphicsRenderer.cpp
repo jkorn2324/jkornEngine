@@ -12,7 +12,7 @@
 #include "Application.h"
 #include "Window.h"
 
-#include "Source\Vector.h"
+#include "Vector.h"
 
 #include "GraphicsRenderer3D.h"
 
@@ -26,7 +26,7 @@ namespace Engine
 	{
 		PROFILE_SCOPE(Init, GraphicsRenderer);
 
-		DebugAssert(s_renderingAPI == nullptr, 
+        JKORN_ENGINE_ASSERT(s_renderingAPI == nullptr,
 			"Graphics Rendering API has already been initialized.");
 		s_renderingAPI = RenderingAPI::Create();
 		if (!s_renderingAPI->Initialize(&Application::Get().GetWindow()))
@@ -48,7 +48,7 @@ namespace Engine
 
 	void GraphicsRenderer::BeginScene(const CameraConstants& cameraConstants)
 	{
-		DebugAssert(s_cameraConstantBuffer != nullptr, 
+        JKORN_ENGINE_ASSERT(s_cameraConstantBuffer != nullptr,
 			"Camera Constant buffer doesn't exist.");
 		s_cameraConstantBuffer->SetData(&cameraConstants,
 			sizeof(cameraConstants));
@@ -66,7 +66,7 @@ namespace Engine
 	void GraphicsRenderer::Draw(VertexBuffer* vBuffer,
 		IndexBuffer* iBuffer)
 	{
-		DebugAssert(s_renderingAPI != nullptr, "Rendering API isn't initialized.");
+        JKORN_ENGINE_ASSERT(s_renderingAPI != nullptr, "Rendering API isn't initialized.");
 		s_renderingAPI->Draw(vBuffer, iBuffer);
 	}
 
@@ -77,7 +77,7 @@ namespace Engine
 
 	RenderingAPI& GraphicsRenderer::GetRenderingAPI()
 	{
-		DebugAssert(s_renderingAPI != nullptr, "RenderingAPI wasn't initialized.");
+        JKORN_ENGINE_ASSERT(s_renderingAPI != nullptr, "RenderingAPI wasn't initialized.");
 		return *s_renderingAPI;
 	}
 

@@ -1,8 +1,16 @@
 #pragma once
 
 #include <filesystem>
+
+#if defined(PLATFORM_MACOSX)
+#include "prettywriter.h"
+#include "stringbuffer.h"
+#endif
+
+#if defined(PLATFORM_WINDOWS)
 #include <rapidjson\prettywriter.h>
 #include <rapidjson\stringbuffer.h>
+#endif
 
 namespace Engine
 {

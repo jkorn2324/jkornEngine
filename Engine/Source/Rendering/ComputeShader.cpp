@@ -42,7 +42,7 @@ namespace Engine
 				return true;
 			}
 		}
-		DebugAssert(false, "Invalid Rendering API type.");
+        JKORN_ENGINE_ASSERT(false, "Invalid Rendering API type.");
 		return false;
 	}
 
@@ -56,7 +56,7 @@ namespace Engine
 				return true;
 			}
 		}
-		DebugAssert(false, "Invalid Rendering API type.");
+        JKORN_ENGINE_ASSERT(false, "Invalid Rendering API type.");
 		return false;
 	}
 }
