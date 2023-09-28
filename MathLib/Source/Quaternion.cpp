@@ -1,7 +1,7 @@
 #include "MathPCH.h"
 #include "Quaternion.h"
 #include "Vector.h"
-#include "Math.h"
+#include "MathLib.h"
 
 namespace MathLib
 {

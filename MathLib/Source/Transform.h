@@ -3,7 +3,7 @@
 #include "Vector.h"
 #include "Quaternion.h"
 #include "Matrix.h"
-#include "Math.h"
+#include "MathLib.h"
 
 namespace MathLib
 {

@@ -1,9 +1,6 @@
 #pragma once
 
-#include <cmath>
 #include <iostream>
+#include <cstdlib>
 #include <memory>
 #include <algorithm>
-
-
-#include "MathPCH.h"

@@ -2,6 +2,8 @@
 
 #include "IndexBuffer.h"
 
+#include <d3d11.h>
+
 namespace Engine
 {
 	class DirectX11IndexBuffer : public IndexBuffer

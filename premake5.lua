@@ -5,7 +5,6 @@ include "Dependencies.lua"
 build_system = os.target()
 
 if build_system == "windows" then
-
 	-- Defines the graphics api options
 	newoption {
 		trigger = "graphicsapi",

@@ -2,7 +2,7 @@
 #include "EntityHierarchySystem.h"
 
 #include "Scene.h"
-#include "Source/Matrix.h"
+#include "Matrix.h"
 
 namespace Engine
 {

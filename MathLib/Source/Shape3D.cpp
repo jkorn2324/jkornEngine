@@ -1,7 +1,7 @@
 #include "MathPCH.h"
 #include "Shape3D.h"
 #include "Geometry3D.h"
-#include "Math.h"
+#include "MathLib.h"
 
 namespace MathLib
 {

@@ -291,14 +291,14 @@ project "Engine"
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_metal.mm"
 		}
 	-- Ensures that we only add the imgui win32 files if our platform is windows.
-	filter { "platforms:Win64", "platforms:Win32" }
+	filter { "platforms:Win32 or Win64" }
 		files
 		{
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.h",
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_win32.cpp",
 		}
 	-- Ensures that we only add imgui directx files if our system & graphics api are directx11 & windows
-	filter { "platforms:Win64", "platforms:Win32", "options:graphicsapi=directx11" }
+	filter { "platforms:Win32 or Win64", "options:graphicsapi=directx11" }
 		files
 		{
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.h",

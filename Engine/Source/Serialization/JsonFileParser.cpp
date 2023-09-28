@@ -1,7 +1,13 @@
 #include "EnginePCH.h"
 #include "JsonFileParser.h"
 
+#ifdef PLATFORM_WINDOWS
+#include <rapidjson/document.h>
+#endif
+
+#ifdef PLATFORM_MACOSX
 #include "document.h"
+#endif
 
 namespace Engine
 {

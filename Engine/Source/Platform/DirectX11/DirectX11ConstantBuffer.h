@@ -2,6 +2,8 @@
 
 #include "ConstantBuffer.h"
 
+struct ID3D11Buffer;
+
 namespace Engine
 {
 

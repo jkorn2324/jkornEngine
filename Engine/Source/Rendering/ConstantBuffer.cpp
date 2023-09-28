@@ -22,7 +22,7 @@ namespace Engine
 		PROFILE_SCOPE(CreateConstantBuffer, Rendering);
 
 #if defined(GRAPHICS_API_DIRECTX11)
-        return new DirectX11ConstantBuffer(buffer, stride);'
+        return new DirectX11ConstantBuffer(buffer, stride);
 #else
         JKORN_ENGINE_ASSERT(false, "Invalid constant buffer type.");
         return nullptr;

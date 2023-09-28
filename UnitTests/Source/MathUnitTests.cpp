@@ -1,5 +1,5 @@
 #include "MathUnitTests.h"
-#include "Math.h"
+#include "MathLib.h"
 #include "Vector.h"
 #include "Matrix.h"
 #include "Geometry3D.h"
@@ -94,7 +94,7 @@ bool RunVector2UnitTests()
 		// Check the side.
 		comparableDotProduct = Vector2(-1.0f, 0.0f);
 		Vector2 b = Vector2(0.0f, 1.0f);
-		isWorking &= IsCloseEnough(Dot(comparableDotProduct, b), 0.0f);
+		isWorking &= MathLib::IsCloseEnough(Dot(comparableDotProduct, b), 0.0f);
 	}
 
 	// Linear interpolation.

@@ -3,17 +3,17 @@
 #include "PlatformDetector.h"
 
 #include <iostream>
-#include <stdlib.h>
-#include <cstdio>
-
 #include <memory>
+#include <algorithm>
 #include <type_traits>
 
 #include <string>
 #include <unordered_map>
 #include <chrono>
+
+#include <cstdlib>
+#include <cstdio>
 #include <cstdint>
-#include <algorithm>
 
 #ifdef PLATFORM_WINDOWS
 

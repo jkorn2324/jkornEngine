@@ -20,7 +20,7 @@ extern bool EngineAssertFunction(bool expression, const wchar_t* string,
 #define DBG_WIDEN(x) DBG_WIDEN2(x)
 #define __WFILE__ DBG_WIDEN(__FILE__)
 
-#define JKORN_ENGINE_ASSERT(expr, description) { if (DbgAssertFunction((expr), L#expr, L##description, __LINE__, __WFILE__)) { __debugbreak(); } }
+#define JKORN_ENGINE_ASSERT(expr, description) { if (EngineAssertFunction((expr), L#expr, L##description, __LINE__, __WFILE__)) { __debugbreak(); } }
 #else
 #include <assert.h>
 #define JKORN_ENGINE_ASSERT(expr, description) { assert(expr); }
