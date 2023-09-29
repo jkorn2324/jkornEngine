@@ -6,9 +6,17 @@ namespace Engine
 {
 
 #define ENABLE_THREADING 0
-
-	// Default Macros.
+	
+// Default Macros.
 #define NAMEOF(v) #v
+
+// Binds functions to a std::function based on its name.
+#define BIND_STATIC_FUNCTION(func) [](auto&&...args) -> decltype(auto) { return func(std::forward<decltype(args)>(args)...); }
+#define BIND_CLASS_FUNCTION(func) [this](auto&&...args) -> decltype(auto) { return this->func(std::forward<decltype(args)>(args)...); }
+
+
+// Windows Specific Macros
+#ifdef PLATFORM_WINDOWS
 
 // Defines the serializable asset macro along with functions.
 // Must forward declare the AssetSerializer & AssetCache classes as a template before using this macro.
@@ -22,10 +30,6 @@ namespace Engine
 	static bool Create(##name** outputAsset); \
 	friend class Engine::AssetSerializer<name>; \
 	friend class Engine::AssetCache<name>
-
-// Binds functions to a std::function based on its name.
-#define BIND_STATIC_FUNCTION(func) [](auto&&...args) -> decltype(auto) { return func(std::forward<decltype(args)>(args)...); }
-#define BIND_CLASS_FUNCTION(func) [this](auto&&...args) -> decltype(auto) { return this->func(std::forward<decltype(args)>(args)...); }
 
 
 // The compile time type_trait that determines whether or not the type has a static function named func
@@ -42,6 +46,7 @@ namespace Engine
 	}; \
 	template<typename T> \
 	using TraitName = HasStaticFunc_##TraitName<T>
+
 
 
 // The compile time type_trait that determines whether or not the type has a member function named func
@@ -74,5 +79,7 @@ namespace Engine
 	}; \
 	template<typename T, typename TParameter> \
 	using TraitName = HasMemberFunc_##TraitName<T, TParameter>
+
+#endif
 
 }
