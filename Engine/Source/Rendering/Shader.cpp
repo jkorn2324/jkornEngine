@@ -2,7 +2,7 @@
 #include "Shader.h"
 
 #include "RenderingAPI.h"
-#include "Rendering\BufferLayout.h"
+#include "BufferLayout.h"
 
 #include "AssetSerializer.h"
 

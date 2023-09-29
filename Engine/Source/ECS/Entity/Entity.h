@@ -112,7 +112,7 @@ namespace Engine
 		static void CopyComponents(Entity& from, TRegistry& fromRegistry, Entity& to, TRegistry& toRegistry)
 		{
 			static_assert(IsValidRegistry<TRegistry>::value && !IsValidRegistry<TRegistry>::is_const, "Registry must be a valid non constant registry.");
-			CopyComponent<TComponents, TRegistry>(from, fromRegistry, to, toRegistry)...;
+			CopyComponent<TComponents..., TRegistry>(from, fromRegistry, to, toRegistry);
 		}
 	};
 }

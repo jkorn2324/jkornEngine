@@ -52,12 +52,25 @@ workspace "jkornEngine"
 		"Release"
 	}
 
-	platforms
-	{
-		"Win64",
-		"Win32",
-		"MacOS"
-	}
+
+	if build_system == "macosx" then
+
+		platforms
+		{
+			"MacOS"
+		}
+
+	end
+
+	if build_system == "windows" then
+
+		platforms
+		{
+			"Win64",
+			"Win32"
+		}
+
+	end
 
 	filter { "platforms:Win64" }
 		system "Windows"

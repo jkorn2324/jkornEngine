@@ -17,3 +17,4 @@ namespace Engine
 	// Defines a type trait static function that determines if its a valid system.
 	DEFINE_TYPE_TRAIT_STATIC_FUNC(IsValidSystem, GetSystemType);
 }
+

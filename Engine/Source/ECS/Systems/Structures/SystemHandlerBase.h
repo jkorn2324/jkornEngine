@@ -47,7 +47,7 @@ namespace Engine
 			static_assert(std::is_constructible<TInheritedSystem, TArgs...>::value, "TInheritedSystem must be constructed based on the arguments inputted.");
 
 			TInheritedSystem* system = new TInheritedSystem(std::forward<TArgs>(args)...);
-			SetSystemInternal(static_cast<ISystemBase*>(system));
+			AddSystemInternal(static_cast<ISystemBase*>(system));
 		}
 
 		template<typename TInheritedSystem>

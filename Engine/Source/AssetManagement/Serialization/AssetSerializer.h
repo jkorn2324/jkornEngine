@@ -6,6 +6,7 @@
 #include "JsonFileWriter.h"
 #include "JsonUtils.h"
 #include "Profiler.h"
+#include "GUID.h"
 
 #include <filesystem>
 
@@ -75,7 +76,7 @@ namespace Engine
 
 		bool SerializeToFile(const std::filesystem::path& path)
 		{
-			GUID guid;
+            GUID guid;
 			return SerializeToFile(guid, path);
 		}
 
