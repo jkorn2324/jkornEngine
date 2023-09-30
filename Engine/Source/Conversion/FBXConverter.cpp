@@ -40,7 +40,8 @@ namespace Engine
 				std::vector<MathLib::Vector2> uvsTempArr;
 				fbxsdk::FbxStringList uvSetList;
 				mesh->GetUVSetNames(uvSetList);
-				for (uint32_t uv = 0; uv < uvSetList.GetCount(); ++uv)
+				uint32_t uvSetListCount = (uint32_t)uvSetList.GetCount();
+				for (uint32_t uv = 0; uv < uvSetListCount; ++uv)
 				{
 					uvsTempArr.clear();
 					FbxGeometryElementUV* uvElement = mesh->GetElementUV(uvSetList.GetStringAt(uv));

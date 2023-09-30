@@ -6,6 +6,9 @@
 namespace Engine
 {
 	class SystemHandlerBase;
+	class Timestep;
+
+	struct UpdateSystemContext;
 
 	/**
 	 * The base system manager (Used mainly at runtime)
@@ -42,4 +45,16 @@ namespace Engine
 			system.AddSystem<TSystem, TArgs...>(std::forward<TArgs>(args)...);
 		}
 	};
+
+	namespace SystemUtility
+	{
+		/**
+		 * Invokes the OnUpdate function for the system manager. 
+		 */
+		void InvokeOnUpdate(const Engine::Timestep& timestep, const bool isPlaying);
+		/**
+		 * Invokes the OnUpdate function for the system.
+		 */
+		void InvokeOnUpdate(const Engine::UpdateSystemContext& context);
+	}
 }

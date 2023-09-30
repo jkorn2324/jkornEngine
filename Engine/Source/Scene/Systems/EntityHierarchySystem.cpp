@@ -1,4 +1,5 @@
 #include "EnginePCH.h"
+#include "EngineMacros.h"
 #include "EntityHierarchySystem.h"
 
 #include "Scene.h"
@@ -61,6 +62,25 @@ namespace Engine
 
 		void UpdateHierarchies(EntityRef& reference, EntityHierarchyComponent& component)
 		{
+			const MathLib::Matrix4x4& identity = MathLib::Matrix4x4::Identity;
+
+			if (reference.HasComponent<Transform3DComponent>())
+			{
+				Transform3DComponent& transform3D = reference.GetComponent<Transform3DComponent>();
+				if (transform3D.GetParentTransformMatrix() != identity)
+				{
+					transform3D.SetParentTransformMatrix(identity);
+				}
+			}
+			else if (reference.HasComponent<Transform2DComponent>())
+			{
+				Transform2DComponent& transform2D = reference.GetComponent<Transform2DComponent>();
+				if (transform2D.GetParentTransformMatrix() != identity)
+				{
+					transform2D.SetParentTransformMatrix(identity);
+				}
+			}
+
 			Entity rootEntity = reference.GetEntity();
 			UpdateEntityHierarchies(rootEntity, component, reference.GetRegistry());
 		}

@@ -16,7 +16,6 @@
 #include "CameraController.h"
 
 #include "SystemManager.h"
-#include "IUpdateSystem.h"
 #include "ISystemBase.h"
 
 #include <string>
@@ -149,13 +148,8 @@ namespace Editor
 			EditorSceneManager::GetEditorCamera().OnEditorUpdate(timestep);
 		}
 
-		// Calls the update system and determines whether or not the application is playing.
-		Engine::UpdateSystemContext updateSystemContext(Engine::SceneManager::GetActiveScene(), timestep,
-			EditorSceneManager::IsPlaying());
-		Engine::SystemManager::Invoke<Engine::IUpdateSystemBase>(
-			[](Engine::IUpdateSystemBase& updateSystem, const Engine::UpdateSystemContext& context) -> void {
-				updateSystem.InvokeOnUpdate(context);
-			}, updateSystemContext);
+		// Calls update for the system.
+		Engine::SystemUtility::InvokeOnUpdate(timestep, EditorSceneManager::IsPlaying());
 
 		Engine::SceneManager::OnUpdate(timestep);
 		if (EditorSceneManager::IsPlaying())

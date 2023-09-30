@@ -153,7 +153,8 @@ namespace MathLib
 		: m_position(0.0f, 0.0f, 0.0f),
 		m_scale(1.0f, 1.0f, 1.0f),
 		m_rotator(),
-		m_parentTransformMatrix(Mat4x4::Identity)
+		m_parentTransformMatrix(Mat4x4::Identity),
+		m_hasParentTransformMatrix(false)
 	{
 	}
 
@@ -234,7 +235,7 @@ namespace MathLib
 
 	MathLib::Matrix4x4 Transform3D::GetTransformMatrix() const
 	{
-		return m_parentTransformMatrix * GetLocalTransformMatrix();
+		return GetLocalTransformMatrix() * m_parentTransformMatrix;
 	}
 
 	Mat4x4 Transform3D::GetLocalTransformMatrix() const

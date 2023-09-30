@@ -182,7 +182,7 @@ namespace Engine
 
 	void Mesh::SetPositions(const MathLib::Vector3* vertices, size_t verticesCount)
 	{
-		m_positions.SetVertices(vertices, verticesCount);
+		m_positions.SetVertices(vertices, (uint32_t)verticesCount);
 
 		// Sets the buffer layout parameters.
 		const auto& buffer = m_vertexColors.GetVertexBuffer();
@@ -262,7 +262,7 @@ namespace Engine
 
 	void Mesh::SetNormals(const MathLib::Vector3* normals, size_t normalsSize)
 	{
-		m_normals.SetVertices(normals, normalsSize);
+		m_normals.SetVertices(normals, (uint32_t)normalsSize);
 
 		// Sets the buffer layout parameters.
 		const auto& buffer = m_normals.GetVertexBuffer();
