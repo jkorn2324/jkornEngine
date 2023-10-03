@@ -5,7 +5,7 @@
 
 #include "EditorSceneManager.h"
 #include "ProjectManager.h"
-#include "Layer\EditorLayer.h"
+#include "EditorLayer.h"
 
 namespace Engine
 {

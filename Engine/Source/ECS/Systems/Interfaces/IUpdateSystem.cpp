@@ -14,9 +14,9 @@ namespace Engine
 {
     namespace UpdateSystem::Internals
     {
-        entt::registry& GetRegistry(Scene& scene)
+        entt::registry& GetEntityRegistry(Scene& scene)
         {
-            return Engine::SceneUtility::Internals::GetRegistry(scene);
+            return Engine::SceneUtility::Internals::GetEntityRegistry(scene);
         }
     }
 }

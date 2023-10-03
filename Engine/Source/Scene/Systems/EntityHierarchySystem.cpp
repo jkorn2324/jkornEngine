@@ -18,7 +18,7 @@ namespace Engine
 				return;
 			}
 
-			EntityRef rootEntityRef(rootEntity, registry);
+			TEntityRef<TRegistry> rootEntityRef(rootEntity, registry);
 			MathLib::Matrix4x4 mat = MathLib::Matrix4x4::Identity;
 			{
 				if (rootEntity.HasComponent<Transform3DComponent, TRegistry>(registry))
@@ -35,7 +35,7 @@ namespace Engine
 			for (int32_t i = size; i >= 0; i--)
 			{
 				auto entity = rootComponent.GetChildren()[i];
-				EntityRef e(entity, registry);
+				TEntityRef<TRegistry> e(entity, registry);
 
 				if (e.HasComponent<Transform3DComponent>())
 				{
