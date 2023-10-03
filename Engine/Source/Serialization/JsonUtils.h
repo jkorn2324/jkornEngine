@@ -1,20 +1,9 @@
 #pragma once
 
-
-#if defined(PLATFORM_MACOSX)
-#include "PrettyWriter.h"
-#include "StringBuffer.h"
-#include "document.h"
-#include "filereadstream.h"
-#endif
-
-#if defined(PLATFORM_WINDOWS)
-#include <rapidjson\PrettyWriter.h>
-#include <rapidjson\stringbuffer.h>
-
-#include <rapidjson\document.h>
-#include <rapidjson\filereadstream.h>
-#endif
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/document.h>
+#include <rapidjson/filereadstream.h>
 
 #include "Vector.h"
 #include "Quaternion.h"

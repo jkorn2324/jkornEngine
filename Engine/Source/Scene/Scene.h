@@ -20,6 +20,11 @@ namespace Engine
 
 	class EntityHierarchyChangedEvent;
 
+    namespace SceneUtility::Internals
+    {
+        entt::registry& GetEntityRegistry(Scene& scene);
+    }
+
 	using Transform3DComponent = MathLib::Transform3D;
 	using Transform2DComponent = MathLib::Transform2D;
 
@@ -95,8 +100,8 @@ namespace Engine
 			return m_entityRegistry.view<T...>();
 		}
 
-		Scene* CopyScene();
-
+        Scene* CopyScene();
+        
 	private:
 		void OnUpdate(const Timestep& ts);
 		void OnRuntimeUpdate(const Timestep& ts);
@@ -125,9 +130,9 @@ namespace Engine
 		friend class Entity;
 		friend class SceneSerializer;
 		friend class SceneManager;
-
-		// TODO: Remove Update System
-		template<typename... TComponents>
-		friend class IUpdateSystem;
+        
+        
+        // Sets the friend function for the entity registry.
+        friend entt::registry& Engine::SceneUtility::Internals::GetEntityRegistry(Scene& scene);
 	};
 }

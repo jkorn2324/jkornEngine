@@ -123,7 +123,8 @@ namespace Engine
 
 	bool Shader::DeserializeFromFile(Shader& shader, AssetDeserializationFileData& value, const BufferLayout& bufferLayout)
 	{
-		return shader.Load(value.filePath.c_str(), bufferLayout);
+        const std::wstring wStr = value.filePath.wstring();
+		return shader.Load(wStr.data(), bufferLayout);
 	}
 
 	// Doesn't do anything as the shaders themselves aren't serialized.

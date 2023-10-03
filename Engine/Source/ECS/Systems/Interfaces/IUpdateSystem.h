@@ -4,13 +4,6 @@
 #include "SystemTypes.h"
 #include "EntityRef.h"
 
-namespace std
-{
-	// Forward declare the vector.
-	template<typename TType, typename TAllocator>
-	class vector;
-}
-
 namespace Engine
 {
 	/**
@@ -18,6 +11,12 @@ namespace Engine
 	 */
 	class Timestep;
 	class Scene;
+
+    namespace UpdateSystem::Internals
+    {
+        // Gets the entity registry.
+        entt::registry& GetEntityRegistry(Scene& scene);
+    }
 
 	// The context for the update system.
 	struct UpdateSystemContext
@@ -88,7 +87,7 @@ namespace Engine
 		void InvokeOnUpdate(const UpdateSystemContext& updateSystemContext)
 		{
 			Scene& scene = updateSystemContext.scene;
-			entt::registry& registry = scene.m_entityRegistry;
+            entt::registry& registry = UpdateSystem::Internals::GetEntityRegistry(scene);
 			auto entityView = registry.view<TComponents...>();
 			// Iterate through each entity view.
 			for (auto e : entityView)

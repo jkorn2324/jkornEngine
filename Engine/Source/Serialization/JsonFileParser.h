@@ -2,13 +2,7 @@
 
 #include <string>
 
-#if defined(PLATFORM_WINDOWS)
-#include <rapidjson\document.h>
-#endif
-
-#if defined(PLATFORM_MACOSX)
-#include "document.h"
-#endif
+#include <rapidjson/document.h>
 
 namespace Engine
 {

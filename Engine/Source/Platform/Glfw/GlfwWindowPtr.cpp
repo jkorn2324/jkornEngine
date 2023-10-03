@@ -11,17 +11,8 @@
 #include "InputEvent.h"
 #include "PlatformInput.h"
 
-#if defined(PLATFORM_WINDOWS)
-
-#include <Glfw\glfw3.h>
-#include <Glfw\glfw3native.h>
-
-#elif defined(PLATFORM_MACOSX)
-
-#include "glfw3.h"
-#include "glfw3native.h"
-
-#endif
+#include <Glfw/glfw3.h>
+#include <Glfw/glfw3native.h>
 
 namespace Engine::Platform::Internals
 {

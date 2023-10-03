@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "GlfwPlatformInput.h"
 
-#include <GLFW\glfw3.h>
+#include <Glfw/glfw3.h>
 
 namespace Engine
 {

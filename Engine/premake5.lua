@@ -153,10 +153,17 @@ project "Engine"
 		"%{IncludeDirectories.entt}**.hpp"
 	}
 
-	includedirs
-	{
-		"%{IncludeDirectories.entt}"
-	}
+	filter { "action:vs*" }
+		includedirs
+		{
+			"%{IncludeDirectories.entt}"
+		}
+	filter { "action:xcode*" }
+		externalincludedirs
+		{
+			"%{IncludeDirectories.entt}"
+		}
+	filter { }
 
 	--================================== END ENTT DEPENDENCY ===============================--
 
@@ -168,11 +175,11 @@ project "Engine"
 		"%{IncludeDirectories.rapidjson}**.cpp"
 	}
 
-	includedirs
-	{
-		"%{IncludeDirectories.rapidjson}"
-	}
-
+	filter { "action:vs*" }
+		includedirs
+		{
+			"%{IncludeDirectories.rapidjson}"
+		}
 	filter { "action:xcode4" }
 		externalincludedirs
 		{
@@ -191,20 +198,16 @@ project "Engine"
 			"%{IncludeDirectories.glfw}**.h",
 			"%{IncludeDirectories.glfw}**.cpp"
 		}
-	filter { }
-
-	includedirs
-	{
-		"%{IncludeDirectories.glfw}"
-	}
-
-	filter { "action:xcode4" }
 		externalincludedirs
 		{
 			"%{IncludeDirectories.glfw}"
 		}
+	filter { "action:vs*" }
+		includedirs
+		{
+			"%{IncludeDirectories.glfw}"
+		}
 	filter { }
-
 
 	-- Linking Libraries.
 	links
@@ -259,12 +262,17 @@ project "Engine"
 			"%{IncludeDirectories.ImGui}*.h",
 			"%{IncludeDirectories.ImGui}*.hpp"
 		}
+		externalincludedirs
+		{
+			"%{IncludeDirectories.ImGui}"
+		}
+	filter { "action:vs*" }
+		includedirs
+		{
+			"%{IncludeDirectories.ImGui}"
+		}
 	filter { }
 	
-	includedirs
-	{
-		"%{IncludeDirectories.ImGui}"
-	}
 
 	links
 	{
@@ -357,11 +365,13 @@ project "Engine"
 
 	--================================= BEGIN SPDLOG DEPENDENCY ====================================--
 
-	includedirs
-	{
-		"%{IncludeDirectories.spdlog}"
-	}
-	
+
+	-- Only include these if the platform is vs2022
+	filter { "action:vs*" }
+		includedirs
+		{
+			"%{IncludeDirectories.spdlog}"
+		}
 	-- Only Include these if our current action is xcode4.
 	filter { "action:xcode4" }
 		files

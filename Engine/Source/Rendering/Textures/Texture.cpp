@@ -60,7 +60,8 @@ namespace Engine
 
 	bool Texture::DeserializeFromFile(Texture& texture, AssetDeserializationFileData& value)
 	{
-		return texture.Load(value.filePath.c_str());
+        std::wstring ws = value.filePath.wstring();
+        return texture.Load(ws.data());
 	}
 
 	bool Texture::SerializeToFile(Texture& texture, AssetSerializationFileData& metaData)

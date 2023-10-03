@@ -4,7 +4,9 @@
 #include "GraphicsRenderer.h"
 #include "RenderingAPI.h"
 
+#if defined(GRAPHICS_API_DIRECTX11)
 #include "DirectX11VertexArray.h"
+#endif
 
 namespace Engine
 {

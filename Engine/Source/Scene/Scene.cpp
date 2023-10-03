@@ -21,6 +21,13 @@
 
 namespace Engine
 {
+    namespace SceneUtility::Internals
+    {
+        entt::registry& GetEntityRegistry(Scene& scene)
+        {
+            return scene.m_entityRegistry;
+        }
+    }
 
 	void Scene::CreateDefaultScene(Scene*& scene)
 	{

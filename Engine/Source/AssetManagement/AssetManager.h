@@ -9,6 +9,7 @@
 
 #include <filesystem>
 #include <memory>
+#include <unordered_map>
 
 namespace Engine
 {
@@ -184,6 +185,12 @@ namespace Engine
 			}
 			m_assetCache.Unload(guid);
 		}
+        
+        bool GetGUID(GUID& guid, const std::filesystem::path& path)
+        {
+            const std::wstring ws = path.wstring();
+            return GetGUID(guid, ws);
+        }
 
 		bool GetGUID(GUID& guid, const std::wstring& name)
 		{

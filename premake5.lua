@@ -100,7 +100,8 @@ workspace "jkornEngine"
 		{
 			"PLATFORM_OSX",
 			"PLATFORM_OSX_X64",
-			"PLATFORM_MACOS"
+			"PLATFORM_MACOS",
+			"PLATFORM_MACOSX"
 		}
 
 	filter { "configurations:Debug" }
@@ -127,6 +128,15 @@ workspace "jkornEngine"
 		defines
 		{
 			"GRAPHICS_API_METAL"
+		}
+	filter { }
+
+	-- Compiler Flags for Clang (https://clang.llvm.org/docs/UsersManual.html#c_ms)
+	filter { "system:MacOSx", "action:xcode*" }
+		buildoptions 
+		{ 
+			-- Allows templates to be parsed for msvc
+			"-fdelayed-template-parsing"
 		}
 	filter { }
 

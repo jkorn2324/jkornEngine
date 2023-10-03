@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <unordered_map>
 
-#include <rapidjson\prettywriter.h>
-#include <rapidjson\stringbuffer.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
 
 #include <thread>
 

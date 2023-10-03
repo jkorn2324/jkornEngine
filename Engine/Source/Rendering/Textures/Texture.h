@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include "EngineMacros.h"
+#include <string>
 
 namespace MathLib
 {
