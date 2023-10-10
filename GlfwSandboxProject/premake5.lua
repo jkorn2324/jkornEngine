@@ -40,6 +40,8 @@ project "GlfwSandboxProject"
 		runtime "Release"
 	filter { }
 
+	include_apple_frameworks()
+
 	--================================= BEGIN ENGINE DEPENDENCIES ===========================--
 
 	includedirs

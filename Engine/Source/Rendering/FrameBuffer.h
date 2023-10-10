@@ -54,8 +54,8 @@ namespace Engine
 	struct FrameBufferSpecification
 	{
 		// Depth Stencil Parameters.
-		std::uint32_t width = 0;
-		std::uint32_t height = 0;
+		uint32_t width = 0;
+		uint32_t height = 0;
 
 		FrameBufferSpecificationAttachmentList attachments;
 

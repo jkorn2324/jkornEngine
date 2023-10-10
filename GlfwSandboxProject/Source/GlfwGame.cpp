@@ -52,7 +52,7 @@ namespace GlfwSandbox
 			&m_entityConstants, sizeof(m_entityConstants));
 
 		Engine::FrameBufferSpecification frameBufferSpecification({
-			{ Engine::FrameBufferAttachmentType::DEPTH_STENCIL }
+			Engine::FrameBufferAttachment{ Engine::FrameBufferAttachmentType::DEPTH_STENCIL }
 			});
 		frameBufferSpecification.width = Engine::GraphicsRenderer::GetRenderingAPI().GetWidth();
 		frameBufferSpecification.height = Engine::GraphicsRenderer::GetRenderingAPI().GetHeight();
