@@ -50,7 +50,7 @@ project "Engine"
 
 	postbuildcommands
 	{
-		"mkdir \"%{cfg.buildtarget.directory}\"",
+		"mkdir -p \"%{cfg.buildtarget.directory}\"",
 	}
 
 	-- Only Copy Shaders like this if it is windows.
@@ -69,7 +69,7 @@ project "Engine"
 		postbuildcommands
 		{
 			-- TODO: Remove this functionality as it only is hooked to the Editor Project
-			"cp -R \"%{prj.location}Shaders\" \"%{startprojectpath}/Shaders\""
+			"cp -R \"%{prj.location}/Shaders\" \"%{startprojectpath}/\""
 		}
 
 	end
@@ -391,7 +391,7 @@ project "Engine"
 
 	--================================= BEGIN FBX DEPENDENCY ======================================--
 
-	filter { "system:Windows" }
+	filter { "platforms:Win32 or Win64" }
 		includedirs
 		{
 			"%{IncludeDirectories.fbxsdk_windows}"
@@ -404,6 +404,14 @@ project "Engine"
 		{
 			"FBXSDK_SHARED"
 		}
+	-- This removes files associated with fbx if we don't have it
+	filter { "platforms:not Win32 or Win64" }
+		removefiles
+		{
+			"%{prj.location}/**/FBX*.cpp",
+			"%{prj.location}/**/FBX*.h"
+		}
+	filter { }
 	
 	-- Define Post Build Actions (Depending on Platform & Action)
 	filter { "platforms:Win32", "action:vs2022" }

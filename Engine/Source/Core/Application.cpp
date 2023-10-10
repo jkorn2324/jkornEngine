@@ -20,6 +20,7 @@
 #include "Entity.h"
 #include "EntityHierarchyComponent.h"
 #include "JobManager.h"
+#include "Logger.h"
 
 namespace Engine
 {

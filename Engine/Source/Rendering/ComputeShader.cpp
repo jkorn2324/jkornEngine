@@ -23,7 +23,8 @@ namespace Engine
 	bool ComputeShader::DeserializeFromFile(ComputeShader& shader, AssetDeserializationFileData& value)
 	{
 		// TODO: Implementation
-		return shader.Load(value.filePath.c_str());
+        const std::wstring str = value.filePath.wstring();
+		return shader.Load(str.c_str());
 	}
 
 	bool ComputeShader::SerializeToFile(ComputeShader& shader, AssetSerializationFileData& value)

@@ -2,6 +2,7 @@
 #include "SceneSerializer.h"
 
 #include "Entity.h"
+#include "EntityRef.h"
 #include "Components.h"
 #include "Scene.h"
 
@@ -29,9 +30,9 @@ namespace Engine
 			fileWriter.BeginObject();
 
 			// UUID Component
-			if (entityRef.HasComponent<IDComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<IDComponent>())
 			{
-				IDComponent& component = entityRef.GetComponent<IDComponent>();
+				IDComponent& component = entityRef.DECLTDEPNAME GetComponent<IDComponent>();
 				fileWriter.Write("GUID", component.guid);
 			}
 			else
@@ -40,9 +41,9 @@ namespace Engine
 			}
 
 			// Name Component.
-			if (entityRef.HasComponent<NameComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<NameComponent>())
 			{
-				NameComponent& nameComponent = entityRef.GetComponent<NameComponent>();
+				NameComponent& nameComponent = entityRef.DECLTDEPNAME GetComponent<NameComponent>();
 				fileWriter.Write("NameComponent", nameComponent.name);
 			}
 			else
@@ -51,10 +52,10 @@ namespace Engine
 			}
 
 			// Transform 3D Component.
-			if (entityRef.HasComponent<Transform3DComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<Transform3DComponent>())
 			{
 				Transform3DComponent& transform3D =
-					entityRef.GetComponent<Transform3DComponent>();
+					entityRef.DECLTDEPNAME GetComponent<Transform3DComponent>();
 
 				fileWriter.BeginObject("Transform3DComponent");
 				fileWriter.Write("Position", transform3D.GetLocalPosition());
@@ -64,10 +65,10 @@ namespace Engine
 			}
 
 			// Transform 2D Component.
-			if (entityRef.HasComponent<Transform2DComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<Transform2DComponent>())
 			{
 				Transform2DComponent& transform2D =
-					entityRef.GetComponent<Transform2DComponent>();
+					entityRef.DECLTDEPNAME GetComponent<Transform2DComponent>();
 
 				fileWriter.BeginObject("Transform2DComponent");
 				fileWriter.Write("Position", transform2D.GetLocalPosition());
@@ -77,10 +78,10 @@ namespace Engine
 			}
 
 			// Sprite Component.
-			if (entityRef.HasComponent<SpriteComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<SpriteComponent>())
 			{
 				SpriteComponent& spriteComponent =
-					entityRef.GetComponent<SpriteComponent>();
+					entityRef.DECLTDEPNAME GetComponent<SpriteComponent>();
 
 				fileWriter.BeginObject("SpriteComponent");
 
@@ -101,10 +102,10 @@ namespace Engine
 			}
 
 			// Mesh Component.
-			if (entityRef.HasComponent<MeshComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<MeshComponent>())
 			{
 				MeshComponent& meshComponent =
-					entityRef.GetComponent<MeshComponent>();
+					entityRef.DECLTDEPNAME GetComponent<MeshComponent>();
 
 				fileWriter.BeginObject("MeshComponent");
 
@@ -124,10 +125,10 @@ namespace Engine
 			}
 
 			// Scene Camera Component.
-			if (entityRef.HasComponent<SceneCameraComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<SceneCameraComponent>())
 			{
 				SceneCameraComponent& cameraComponent =
-					entityRef.GetComponent<SceneCameraComponent>();
+					entityRef.DECLTDEPNAME GetComponent<SceneCameraComponent>();
 				CameraProperties& properties =
 					cameraComponent.camera.GetProperties();
 
@@ -146,10 +147,10 @@ namespace Engine
 			}
 
 			// Directional Light Component
-			if (entityRef.HasComponent<DirectionalLightComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<DirectionalLightComponent>())
 			{
 				DirectionalLightComponent& component
-					= entityRef.GetComponent<DirectionalLightComponent>();
+					= entityRef.DECLTDEPNAME GetComponent<DirectionalLightComponent>();
 
 				fileWriter.BeginObject("DirectionalLightComponent");
 				fileWriter.Write("LightColor", component.lightColor);
@@ -159,10 +160,10 @@ namespace Engine
 			}
 
 			// Point Light Component
-			if (entityRef.HasComponent<PointLightComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<PointLightComponent>())
 			{
 				PointLightComponent& component
-					= entityRef.GetComponent<PointLightComponent>();
+					= entityRef.DECLTDEPNAME GetComponent<PointLightComponent>();
 
 				fileWriter.BeginObject("PointLightComponent");
 				fileWriter.Write("LightColor", component.lightColor);
@@ -173,9 +174,9 @@ namespace Engine
 				fileWriter.EndObject();
 			}
 
-			if (entityRef.HasComponent<EntityHierarchyComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<EntityHierarchyComponent>())
 			{
-				EntityHierarchyComponent& ehc = entityRef.GetComponent<EntityHierarchyComponent>();
+				EntityHierarchyComponent& ehc = entityRef.DECLTDEPNAME GetComponent<EntityHierarchyComponent>();
 				fileWriter.BeginObject("EntityHierarchyComponent");
 
 				// Write the parent entity component.
@@ -183,7 +184,7 @@ namespace Engine
 				{
 					const Entity& entity = ehc.GetParent();
 					TEntityRef<TRegistry> ref(entity, registry);
-					fileWriter.Write("Parent", (uint64_t)ref.GetComponent<IDComponent>().guid);
+					fileWriter.Write("Parent", (uint64_t)ref.DECLTDEPNAME GetComponent<IDComponent>().guid);
 				}
 				else
 				{
@@ -217,9 +218,9 @@ namespace Engine
 		GUID guid;
 		if (ReadUint64(value, "GUID", *(uint64_t*)&guid))
 		{
-			if (entityRef.HasComponent<IDComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<IDComponent>())
 			{
-				IDComponent& component = entityRef.GetComponent<IDComponent>();
+				IDComponent& component = entityRef.DECLTDEPNAME GetComponent<IDComponent>();
 				component.guid = guid;
 			}
 		}
@@ -228,14 +229,14 @@ namespace Engine
 		std::string name;
 		if (ReadString(value, "NameComponent", name))
 		{
-			if (entityRef.HasComponent<NameComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<NameComponent>())
 			{
-				NameComponent& component = entityRef.GetComponent<NameComponent>();
+				NameComponent& component = entityRef.DECLTDEPNAME GetComponent<NameComponent>();
 				component.name = name;
 			}
 			else
 			{
-				entityRef.AddComponent<NameComponent>(name);
+				entityRef.DECLTDEPNAME AddComponent<NameComponent>(name);
 			}
 		}
 
@@ -253,7 +254,7 @@ namespace Engine
 			ReadVector3(value["Transform3DComponent"],
 				"Scale", scale);
 
-			entityRef.AddComponent<Transform3DComponent>(position,
+			entityRef.DECLTDEPNAME AddComponent<Transform3DComponent>(position,
 				rotation, scale);
 		}
 
@@ -271,7 +272,7 @@ namespace Engine
 			ReadVector2(value["Transform2DComponent"],
 				"Scale", scale);
 
-			entityRef.AddComponent<Transform2DComponent>(position,
+			entityRef.DECLTDEPNAME AddComponent<Transform2DComponent>(position,
 				rotation, scale);
 		}
 
@@ -286,7 +287,7 @@ namespace Engine
 			ReadVector4(value["SpriteComponent"],
 				"Color", color);
 
-			entityRef.AddComponent<SpriteComponent>(enabled, color);
+			entityRef.DECLTDEPNAME AddComponent<SpriteComponent>(enabled, color);
 		}
 
 		// Mesh Component
@@ -295,7 +296,7 @@ namespace Engine
 			// TODO: Load a mesh.
 
 			MeshComponent& meshComponent
-				= entityRef.AddComponent<MeshComponent>();
+				= entityRef.DECLTDEPNAME AddComponent<MeshComponent>();
 			uint64_t materialGUID;
 
 			ReadBool(value["MeshComponent"], "Enabled", meshComponent.enabled);
@@ -337,7 +338,7 @@ namespace Engine
 			ReadFloat(value["SceneCameraComponent"],
 				"OrthoHeight", cameraProperties.orthoHeight);
 
-			entityRef.AddComponent<SceneCameraComponent>(mainCamera,
+			entityRef.DECLTDEPNAME AddComponent<SceneCameraComponent>(mainCamera,
 				(SceneCameraType)cameraType, cameraProperties);
 		}
 
@@ -345,7 +346,7 @@ namespace Engine
 		if (value.HasMember("DirectionalLightComponent"))
 		{
 			DirectionalLightComponent& component =
-				entityRef.AddComponent<DirectionalLightComponent>();
+				entityRef.DECLTDEPNAME AddComponent<DirectionalLightComponent>();
 			ReadVector3(value["DirectionalLightComponent"], "LightColor", component.lightColor);
 			ReadFloat(value["DirectionalLightComponent"], "LightIntensity", component.lightIntensity);
 			ReadBool(value["DirectionalLightComponent"], "Enabled", component.enabled);
@@ -355,7 +356,7 @@ namespace Engine
 		if (value.HasMember("PointLightComponent"))
 		{
 			PointLightComponent& component =
-				entityRef.AddComponent<PointLightComponent>();
+				entityRef.DECLTDEPNAME AddComponent<PointLightComponent>();
 			ReadVector3(value["PointLightComponent"], "LightColor", component.lightColor);
 			ReadFloat(value["PointLightComponent"], "InnerRadius", component.innerRadius);
 			ReadFloat(value["PointLightComponent"], "OuterRadius", component.outerRadius);
@@ -370,10 +371,10 @@ namespace Engine
 			uint64_t entityOwnerID;
 			ReadUint64(hierarchyComponent, "Parent", entityOwnerID);
 
-			if (entityRef.HasComponent<EntityHierarchyComponent>())
+			if (entityRef.DECLTDEPNAME HasComponent<EntityHierarchyComponent>())
 			{
 				EntityHierarchyComponent& component
-					= entityRef.GetComponent<EntityHierarchyComponent>();
+					= entityRef.DECLTDEPNAME GetComponent<EntityHierarchyComponent>();
 				if (entityOwnerID != 0)
 				{
 					TEntityRef<TRegistry> eRef(entityOwnerID, registry);
@@ -383,7 +384,7 @@ namespace Engine
 			else
 			{
 				EntityHierarchyComponent& component
-					= entityRef.AddComponent<EntityHierarchyComponent>(entity);
+					= entityRef.DECLTDEPNAME AddComponent<EntityHierarchyComponent>(entity);
 				if (entityOwnerID != 0)
 				{
 					TEntityRef<TRegistry> eRef(entityOwnerID, registry);

@@ -13,6 +13,7 @@ namespace Engine
 
 	class AssetMapper
 	{
+    public:
 		typedef size_t PathIndex;
 		typedef size_t GUIDIndex;
 

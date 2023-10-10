@@ -1,13 +1,8 @@
 #include "EnginePCH.h"
 #include "JsonFileParser.h"
+#include "PlatformFile.h"
 
-#ifdef PLATFORM_WINDOWS
 #include <rapidjson/document.h>
-#endif
-
-#ifdef PLATFORM_MACOSX
-#include "document.h"
-#endif
 
 namespace Engine
 {
@@ -16,7 +11,7 @@ namespace Engine
 	{
 		FILE* filePath;
         rapidjson::Document mdoc;
-		fopen_s(&filePath, fileName, "rb");
+        Platform::File::FOpenFile(&filePath, fileName, "rb");
 		Parse(filePath);
 	}
 
@@ -24,7 +19,7 @@ namespace Engine
 		: m_buffer(nullptr), m_document(), m_bufferSize(0)
 	{
 		FILE* filePath;
-		_wfopen_s(&filePath, fileName, L"rb");
+        Platform::File::FOpenFile(&filePath, fileName, L"rb");
 		Parse(filePath);
 	}
 
@@ -32,7 +27,7 @@ namespace Engine
 		: m_buffer(nullptr), m_document(), m_bufferSize(0)
 	{
 		FILE* filePath;
-		_wfopen_s(&filePath, fileName.c_str(), L"rb");
+        Platform::File::FOpenFile(&filePath, fileName.c_str(), L"rb");
 		Parse(filePath);
 	}
 
@@ -40,7 +35,7 @@ namespace Engine
 		: m_buffer(nullptr), m_document(), m_bufferSize(0)
 	{
 		FILE* filePath;
-		fopen_s(&filePath, fileName.c_str(), "rb");
+        Platform::File::FOpenFile(&filePath, fileName.c_str(), "rb");
 		Parse(filePath);
 	}
 

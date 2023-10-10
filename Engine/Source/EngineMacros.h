@@ -5,6 +5,18 @@
 namespace Engine
 {
 
+// Define Template Dependent Name
+#ifndef DECLTDEPNAME
+
+#if defined(PLATFORM_MACOSX)
+#define DECLTDEPNAME template
+#else
+#define DECLTDEPNAME
+#endif
+
+#endif
+
+
 #define ENABLE_THREADING 0
 	
 // Default Macros.

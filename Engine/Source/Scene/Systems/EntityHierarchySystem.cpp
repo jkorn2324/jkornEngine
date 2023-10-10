@@ -37,24 +37,24 @@ namespace Engine
 				auto entity = rootComponent.GetChildren()[i];
 				TEntityRef<TRegistry> e(entity, registry);
 
-				if (e.HasComponent<Transform3DComponent>())
+				if (e.template HasComponent<Transform3DComponent>())
 				{
 					Transform3DComponent& component
-						= e.GetComponent<Transform3DComponent>();
+						= e.template GetComponent<Transform3DComponent>();
 					component.SetParentTransformMatrix(mat);
 				}
 
-				if (e.HasComponent<Transform2DComponent>())
+				if (e.template HasComponent<Transform2DComponent>())
 				{
 					Transform2DComponent& component
-						= e.GetComponent<Transform2DComponent>();
+						= e.template GetComponent<Transform2DComponent>();
 					component.SetParentTransformMatrix(mat);
 				}
 
-				if (e.HasComponent<EntityHierarchyComponent>())
+				if (e.template HasComponent<EntityHierarchyComponent>())
 				{
 					EntityHierarchyComponent& hierarchyComponent
-						= e.GetComponent<EntityHierarchyComponent>();
+						= e.template GetComponent<EntityHierarchyComponent>();
 					UpdateEntityHierarchies<TRegistry>(entity, hierarchyComponent, registry);
 				}
 			}

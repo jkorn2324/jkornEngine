@@ -125,11 +125,13 @@ namespace Engine
 			{
 				TypedAssetManagerFuncs::SetPath(filePath, guid);
 			}
-			assetReference = AssetRef<TAsset>(asset, guid, filePath, &m_assetReferenceManager);
-			const auto& found = m_namesToGUIDs.find(filePath);
+            
+            const std::wstring wFilePath = filePath.wstring();
+			assetReference = AssetRef<TAsset>(asset, guid, wFilePath, &m_assetReferenceManager);
+			const auto& found = m_namesToGUIDs.find(wFilePath);
 			if (found == m_namesToGUIDs.end())
 			{
-				m_namesToGUIDs.emplace(filePath, guid);
+				m_namesToGUIDs.emplace(wFilePath, guid);
 			}
 			if (!GetGUID(guid, filePath))
 			{
@@ -159,12 +161,13 @@ namespace Engine
 			{
 				TypedAssetManagerFuncs::SetPath(fileName, guid);
 			}
-			assetReference = AssetRef<TAsset>(asset, guid, fileName, &m_assetReferenceManager);
+            const std::wstring wFileName = fileName.wstring();
+			assetReference = AssetRef<TAsset>(asset, guid, wFileName, &m_assetReferenceManager);
 			
-			const auto& found = m_namesToGUIDs.find(fileName);
+			const auto& found = m_namesToGUIDs.find(wFileName);
 			if (found == m_namesToGUIDs.end())
 			{
-				m_namesToGUIDs.emplace(fileName, guid);
+				m_namesToGUIDs.emplace(wFileName, guid);
 			}
 			return true;
 		}

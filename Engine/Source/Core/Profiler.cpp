@@ -2,6 +2,7 @@
 #include "Profiler.h"
 
 #include "Logger.h"
+#include "PlatformFile.h"
 
 #include <stdio.h>
 #include <unordered_map>
@@ -126,9 +127,9 @@ namespace Engine
 
 		// Writes the json output to the file.
 		FILE* outputFile;
-		fopen_s(&outputFile, s_outputFile.c_str(), "w");
+        Platform::File::FOpenFile(&outputFile, s_outputFile.c_str(), "w");
+        FPrintFile(outputFile, "%s", s_jsonStringBuffer.GetString());
         JKORN_ENGINE_ASSERT(outputFile, "File failed to open/write.");
-		fprintf_s(outputFile, "%s", s_jsonStringBuffer.GetString());
 		fclose(outputFile);
 
 		for (const auto& timer : s_timers)

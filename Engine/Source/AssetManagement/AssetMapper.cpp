@@ -7,8 +7,18 @@
 #include "JsonFileWriter.h"
 #include "Profiler.h"
 
+#include <filesystem>
+
 namespace Engine
 {
+    namespace
+    {
+        AssetMapper::PathIndex GetPathIndex(const std::filesystem::path& path)
+        {
+            const std::wstring wStr = path.wstring();
+            return (AssetMapper::PathIndex)std::hash<std::wstring>()(wStr);
+        }
+    }
 
 	void AssetMapper::RemovePath(const GUID& guid)
 	{
@@ -16,7 +26,7 @@ namespace Engine
 		const auto& foundPath = m_guidToPaths.find(guidIndex);
 		if (foundPath != m_guidToPaths.end())
 		{
-			PathIndex pathIndex = std::hash<std::wstring>()(foundPath->second);
+			PathIndex pathIndex = GetPathIndex(foundPath->second);
 			const auto& foundGUID = m_pathToGUIDs.find(pathIndex);
 			if (foundGUID != m_pathToGUIDs.end())
 			{
@@ -28,7 +38,7 @@ namespace Engine
 
 	void AssetMapper::RemovePath(const std::filesystem::path& path)
 	{
-		PathIndex pathIndex = std::hash<std::wstring>()(path);
+        PathIndex pathIndex = GetPathIndex(path);
 		const auto& foundGUID = m_pathToGUIDs.find(pathIndex);
 		if (foundGUID != m_pathToGUIDs.end())
 		{
@@ -58,7 +68,7 @@ namespace Engine
 		}
 
 		// Adds it the path to guids unordered map.
-		PathIndex pathIndex = std::hash<std::wstring>()(path);
+        PathIndex pathIndex = GetPathIndex(path);
 		const auto& foundGUID = m_pathToGUIDs.find(pathIndex);
 		if (foundGUID != m_pathToGUIDs.end())
 		{
@@ -84,7 +94,7 @@ namespace Engine
 
 	bool AssetMapper::GetGUID(const std::filesystem::path& path, GUID& guid) const
 	{
-		PathIndex pathHash = std::hash<std::wstring>()(path);
+        PathIndex pathHash = GetPathIndex(path);
 		const auto& outputGUID = m_pathToGUIDs.find(pathHash);
 		if (outputGUID != m_pathToGUIDs.end())
 		{

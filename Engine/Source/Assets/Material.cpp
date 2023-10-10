@@ -9,7 +9,7 @@
 #include "AssetCache.h"
 #include "AssetMapper.h"
 
-#include <rapidjson\stringbuffer.h>
+#include <rapidjson/stringbuffer.h>
 
 namespace Engine
 {

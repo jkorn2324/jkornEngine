@@ -32,13 +32,13 @@ namespace MathLib
 	}
 
 	template<>
-	static float Sqrt(float input)
+    float Sqrt(float input)
 	{
 		return Sqrt(input);
 	}
 
 	template<>
-	static double Sqrt(double input)
+    double Sqrt(double input)
 	{
 		return Sqrt(input);
 	}
@@ -72,7 +72,7 @@ namespace MathLib
 	}
 
 	template<>
-	static bool IsCloseEnough(float a, float b, float epsilon)
+    bool IsCloseEnough(float a, float b, float epsilon)
 	{
 		return MathLib::Abs(a - b) <= epsilon;
 	}
