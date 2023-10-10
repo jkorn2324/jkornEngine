@@ -101,6 +101,7 @@ project "Engine"
 		}
 	filter { }
 
+	include_apple_frameworks()
 
 	--================================= BEGIN MATHLIB DEPENDENCY ===========================--
 
@@ -185,16 +186,12 @@ project "Engine"
 	--================================== BEGIN GLFW DEPENDENCY =============================--
 
 	filter { "action:xcode4" }
-	---
-	---	files
-	---	{
-	---		"%{IncludeDirectories.glfw}**.hpp",
-	---		"%{IncludeDirectories.glfw}**.h",
-	---		"%{IncludeDirectories.glfw}**.cpp",
-	---		
-	---		"${ProjectDirectories.glfw}src/**.cpp",
-	---		"${ProjectDirectories.glfw}src/**.c",
-	---	}
+		files
+		{
+			"%{IncludeDirectories.glfw}**.hpp",
+			"%{IncludeDirectories.glfw}**.h",
+			"%{IncludeDirectories.glfw}**.cpp",
+		}
 		externalincludedirs
 		{
 			"%{IncludeDirectories.glfw}"
@@ -217,27 +214,6 @@ project "Engine"
 	{
 		"%{BuildDirectories.glfw}%{cfg.buildcfg}/%{cfg.platform}/"
 	}
-
-	-- "Ensures that the prebuild commands only gets added if our system is windows"
-	if build_system == "windows" then
-
-	-- Pre Build Command that gets added for when the architecture is a x86 system and its on windows
-	filter { "platforms:Win32", "action:vs*" }
-		-- Pre Build Commands so that glfw gets built before the Engine lib.
-		prebuildcommands
-		{
-			"msbuild \"%{ProjectDirectories.glfw}glfw.vcxproj\" /p:Configuration=\"%{cfg.buildcfg}\" /p:platform=win32",
-		}
-	-- Pre Build Command that gets added for when the architecture is a x64 system and its on windows
-	filter { "platforms:Win64", "action:vs*" }
-		-- Pre Build Commands so that glfw gets built before the Engine lib.
-		prebuildcommands
-		{
-			"msbuild \"%{ProjectDirectories.glfw}glfw.vcxproj\" /p:Configuration=\"%{cfg.buildcfg} Win64\" /p:platform=x64",
-		}
-	filter { }
-
-	end
 
 	--================================== END GLFW DEPENDENCY ===============================--
 
@@ -310,25 +286,6 @@ project "Engine"
 			"%{IncludeDirectories.ImGui}backends/imgui_impl_dx11.cpp"
 		}
 	filter { }
-
-	-- Ensures that this prebuild commands only occurs for windows
-	if build_system == "windows" then
-	
-	filter { "platforms:Win32", "action:vs*" }
-		-- Pre Build Commands so that ImGui gets built before the Engine lib (Win32)
-		prebuildcommands
-		{
-			"msbuild \"%{ProjectDirectories.ImGui}ImGui.vcxproj\" /p:Configuration=\"%{cfg.buildcfg}\" /p:platform=win32"
-		}
-	filter { "platforms:Win64", "action:vs*" }
-		-- Pre Build Commands so that ImGui gets built before the Engine lib (Win64)
-		prebuildcommands
-		{
-			"msbuild \"%{ProjectDirectories.ImGui}ImGui.vcxproj\" /p:Configuration=\"%{cfg.buildcfg} Win64\" /p:platform=x64"
-		}
-	filter { }
-
-	end
 
 	--================================ END IMGUI DEPENDENCY ========================================--
 

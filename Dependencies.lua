@@ -18,12 +18,12 @@ IncludeDirectories["entt"] = "%{LibrariesLocation}/entt/single_include/"
 IncludeDirectories["glfw"] = "%{LibrariesLocation}/glfw/include/"
 ProjectDirectories["glfw"] = "%{LibrariesLocation}/glfw/"
 BuildDirectories["glfw"] = "%{LibrariesLocation}/Builds/glfw/Builds/"
-LibraryNames["glfw"] = "glfw.lib"
+LibraryNames["glfw"] = "glfw"
 
 IncludeDirectories["ImGui"] = "%{LibrariesLocation}/ImGui/"
 BuildDirectories["ImGui"] = "%{LibrariesLocation}/Builds/ImGui/Builds/"
 ProjectDirectories["ImGui"] = "%{LibrariesLocation}/ImGui/"
-LibraryNames["ImGui"] = "ImGui.lib"
+LibraryNames["ImGui"] = "ImGui"
 
 IncludeDirectories["spdlog"] = "%{LibrariesLocation}/spdlog/include/"
 BuildDirectories["spdlog"] = "%{LibrariesLocation}/Builds/spdlog/Builds/"
@@ -52,3 +52,34 @@ IncludeDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/Inc/"
 BuildDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/"
 ProjectDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/"
 LibraryNames["DirectXTK"] = "DirectXTK.lib"
+
+
+-- Includes apple frameworks
+function include_apple_frameworks()
+    	-- Includes the Frameworks to the Project if we are on macos
+	filter { "action:xcode*", "platforms:MacOS" }
+        links
+        {
+            "CoreFoundation.framework",
+            "Cocoa.framework",
+            "IOKit.framework",
+            "CoreVideo.framework"
+        }
+
+        buildoptions
+        {
+            "-framework Cocoa",
+            "-framework IOKit",
+            "-framework CoreFoundation",
+            "-framework CoreVideo"
+        }
+
+        linkoptions
+        {
+            "-framework Cocoa",
+            "-framework IOKit",
+            "-framework CoreFoundation",
+            "-framework CoreVideo"
+        }
+    filter { }
+end

@@ -65,8 +65,7 @@ project "Editor"
 		"%{IncludeDirectories.ImGui}",
 		"%{IncludeDirectories.spdlog}",
 		"%{IncludeDirectories.ImGuizmo}",
-		"%{IncludeDirectories.rapidjson}",
-		"%{IncludeDirectories.glfw}"
+		"%{IncludeDirectories.rapidjson}"
 	}
 
 	links
@@ -78,6 +77,8 @@ project "Editor"
 	{
 		"%{wks.location}/Engine/Builds/%{cfg.buildcfg}/%{cfg.platform}/"
 	}
+
+	include_apple_frameworks()
 
 	--================================= END ENGINE DEPENDENCIES =============================--
 

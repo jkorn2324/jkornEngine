@@ -4,15 +4,25 @@ project "glfw"
 	kind "StaticLib"
 	language "C"
     cppdialect "C++17"
+	cdialect "C99"
     location "%{wks.location}/Engine/Libraries/glfw/"
 
 	targetdir "%{wks.location}/Engine/Libraries/Builds/glfw/Builds/%{cfg.buildcfg}/%{cfg.platform}/"
 	objdir "%{wks.location}/Engine/Libraries/Builds/glfw/Builds-Int/%{cfg.buildcfg}/%{cfg.platform}/"
 
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "on"
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "on"
+	filter { }
+
 	files
 	{
         "%{prj.location}/include/GLFW/glfw3.h",
         "%{prj.location}/include/GLFW/glfw3native.h",
+
         "%{prj.location}/src/internal.h",
         "%{prj.location}/src/platform.h",
         "%{prj.location}/src/mappings.h",
@@ -33,9 +43,60 @@ project "glfw"
         "%{prj.location}/src/null_window.c",
         "%{prj.location}/src/null_joystick.c"
 	}
-	filter "system:Linux"
-		pic "On"
 
+	filter { "system:MacOSx" }
+		pic "On"
+		staticruntime "off"
+
+		files
+		{
+			"%{prj.location}/src/cocoa_time.h",
+			"%{prj.location}/src/cocoa_time.c",
+
+			"%{prj.location}/src/posix_thread.h",
+			"%{prj.location}/src/posix_module.c",
+			"%{prj.location}/src/posix_thread.c",
+
+			"%{prj.location}/src/cocoa_platform.h",
+			"%{prj.location}/src/cocoa_joystick.h",
+			"%{prj.location}/src/cocoa_init.m",
+			"%{prj.location}/src/cocoa_joystick.m",
+			"%{prj.location}/src/cocoa_monitor.m",
+			"%{prj.location}/src/cocoa_window.m",
+			"%{prj.location}/src/nsgl_context.m"
+		}
+
+		links
+		{
+			"CoreFoundation.framework",
+			"Cocoa.framework",
+			"IOKit.framework",
+			"CoreVideo.framework"
+		}
+
+		defines
+		{
+			"_GLFW_COCOA"
+		}
+
+		buildoptions
+		{
+			"-framework Cocoa",
+			"-framework IOKit",
+			"-framework CoreFoundation",
+			"-framework CoreVideo"
+		}
+
+		linkoptions
+		{
+			"-framework Cocoa",
+			"-framework IOKit",
+			"-framework CoreFoundation",
+			"-framework CoreVideo"
+		}
+
+	filter { "system:Linux" }
+		pic "On"
 		systemversion "latest"
         staticruntime "off"
 
@@ -58,7 +119,7 @@ project "glfw"
 			"_GLFW_X11"
 		}
 
-	filter "system:Windows"
+	filter { "system:Windows" }
 		systemversion "latest"
         staticruntime "off"
 
@@ -83,11 +144,4 @@ project "glfw"
 			"_GLFW_WIN32",
 			"_CRT_SECURE_NO_WARNINGS"
 		}
-
-	filter "configurations:Debug"
-		runtime "Debug"
-		symbols "on"
-
-	filter "configurations:Release"
-		runtime "Release"
-		optimize "on"
+	filter { }
