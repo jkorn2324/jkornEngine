@@ -50,7 +50,8 @@ project "UnitTests"
 		"%{IncludeDirectories.ImGui}",
 		"%{IncludeDirectories.spdlog}",
 		"%{IncludeDirectories.ImGuizmo}",
-		"%{IncludeDirectories.rapidjson}"
+		"%{IncludeDirectories.rapidjson}",
+		"%{IncludeDirectories.MathLib}"
 	}
 
 	links
@@ -64,22 +65,3 @@ project "UnitTests"
 	}
 
 	--================================= END ENGINE DEPENDENCIES =============================--
-
-	--================================= BEGIN MATHLIB DEPENDENCY ===========================--
-
-	includedirs
-	{
-		"%{IncludeDirectories.MathLib}"
-	}
-
-	links
-	{
-		"%{LibraryNames.MathLib}"
-	}
-
-	libdirs
-	{
-		"%{BuildDirectories.MathLib}%{cfg.buildcfg}/%{cfg.platform}/"
-	}
-
-	--================================== END MATHLIB DEPENDENCY ============================--

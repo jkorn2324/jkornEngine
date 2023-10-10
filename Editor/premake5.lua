@@ -65,7 +65,8 @@ project "Editor"
 		"%{IncludeDirectories.ImGui}",
 		"%{IncludeDirectories.spdlog}",
 		"%{IncludeDirectories.ImGuizmo}",
-		"%{IncludeDirectories.rapidjson}"
+		"%{IncludeDirectories.rapidjson}",
+		"%{IncludeDirectories.MathLib}"
 	}
 
 	links
@@ -81,41 +82,6 @@ project "Editor"
 	include_apple_frameworks()
 
 	--================================= END ENGINE DEPENDENCIES =============================--
-
-	--================================= BEGIN MATHLIB DEPENDENCY ===========================--
-
-	--  For MathLib, we includedirs if its visual studio and include the project if its xcode4
-	-- The reason for this is because MathLib has a precompiled header and in xcode causes build to fail
-
-	-- "Only include files to compile if its xcode"
-	filter { "action:xcode4" }
-		files
-		{
-			"%{IncludeDirectories.MathLib}**.cpp",
-			"%{IncludeDirectories.MathLib}**.h",
-			"%{IncludeDirectories.MathLib}**.hpp"
-		}
-	filter { }
-
-	-- "Only include directories if its in visual studio"
-	filter { "action:vs*"}
-		includedirs
-		{
-			"%{IncludeDirectories.MathLib}"
-		}
-	filter { }
-
-	links
-	{
-		"%{LibraryNames.MathLib}"
-	}
-
-	libdirs
-	{
-		"%{BuildDirectories.MathLib}%{cfg.buildcfg}/%{cfg.platform}/"
-	}
-
-	--================================== END MATHLIB DEPENDENCY ============================--
 	
 	filter "files:Source/EditorApplication.cpp"
 		flags "NoPCH"

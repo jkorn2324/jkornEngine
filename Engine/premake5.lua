@@ -105,26 +105,10 @@ project "Engine"
 
 	--================================= BEGIN MATHLIB DEPENDENCY ===========================--
 
-	--  For MathLib, we includedirs if its visual studio and include the project if its xcode4
-	-- The reason for this is because MathLib has a precompiled header and in xcode causes build to fail
-
-	-- "Only include files to compile if its xcode"
-	filter { "action:xcode4" }
-		files
-		{
-			"%{IncludeDirectories.MathLib}**.cpp",
-			"%{IncludeDirectories.MathLib}**.h",
-			"%{IncludeDirectories.MathLib}**.hpp"
-		}
-	filter { }
-
-	-- "Only include directories if its in visual studio"
-	filter { "action:vs*"}
-		includedirs
-		{
-			"%{IncludeDirectories.MathLib}"
-		}
-	filter { }
+	includedirs
+	{
+		"%{IncludeDirectories.MathLib}"
+	}
 
 	links
 	{
@@ -139,13 +123,6 @@ project "Engine"
 	--================================== END MATHLIB DEPENDENCY ============================--
 
 	--================================== BEGIN ENTT DEPENDENCY =============================--
-
-	files
-	{
-		"%{IncludeDirectories.entt}**.h",
-		"%{IncludeDirectories.entt}**.cpp",
-		"%{IncludeDirectories.entt}**.hpp"
-	}
 
 	filter { "action:vs*" }
 		includedirs
@@ -162,12 +139,6 @@ project "Engine"
 	--================================== END ENTT DEPENDENCY ===============================--
 
 	--================================== BEGIN RAPIDJSON DEPENDENCY ========================--
-
-	files
-	{
-		"%{IncludeDirectories.rapidjson}**.h",
-		"%{IncludeDirectories.rapidjson}**.cpp"
-	}
 
 	filter { "action:vs*" }
 		includedirs
@@ -186,12 +157,6 @@ project "Engine"
 	--================================== BEGIN GLFW DEPENDENCY =============================--
 
 	filter { "action:xcode4" }
-		files
-		{
-			"%{IncludeDirectories.glfw}**.hpp",
-			"%{IncludeDirectories.glfw}**.h",
-			"%{IncludeDirectories.glfw}**.cpp",
-		}
 		externalincludedirs
 		{
 			"%{IncludeDirectories.glfw}"
@@ -229,12 +194,6 @@ project "Engine"
 
 	-- Only include these files if we are in xcode.
 	filter { "action:xcode4" }
-		files
-		{
-			"%{IncludeDirectories.ImGui}*.cpp",
-			"%{IncludeDirectories.ImGui}*.h",
-			"%{IncludeDirectories.ImGui}*.hpp"
-		}
 		externalincludedirs
 		{
 			"%{IncludeDirectories.ImGui}"
@@ -328,12 +287,6 @@ project "Engine"
 		}
 	-- Only Include these if our current action is xcode4.
 	filter { "action:xcode4" }
-		files
-		{
-			"%{IncludeDirectories.spdlog}**.h",
-			"%{IncludeDirectories.spdlog}**.cpp",
-			"%{IncludeDirectories.spdlog}**.hpp"
-		}
 		externalincludedirs
 		{
 			"%{IncludeDirectories.spdlog}"
