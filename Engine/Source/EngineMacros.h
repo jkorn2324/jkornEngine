@@ -17,10 +17,14 @@ namespace Engine
 #endif
 
 
+#ifndef ENABLE_THREADING
 #define ENABLE_THREADING 0
-	
+#endif
+
 // Default Macros.
+#ifndef NAMEOF
 #define NAMEOF(v) #v
+#endif
 
 // Binds functions to a std::function based on its name.
 #define BIND_STATIC_FUNCTION(func) [](auto&&...args) -> decltype(auto) { return func(std::forward<decltype(args)>(args)...); }
@@ -144,7 +148,7 @@ struct HasStaticFunc_##TraitName \
 
 // The compile time type_trait that determines whether or not the type has a member function named func
 #define DEFINE_TYPE_TRAIT_MEMBER_FUNC_ONE_PARAM(TraitName, func) template<typename T, typename TParameter> \
-    struct HasMemberFunc_ TraitName \
+    struct HasMemberFunc_##TraitName \
     { \
     private: \
         template<typename U> \
@@ -155,7 +159,7 @@ struct HasStaticFunc_##TraitName \
         static constexpr bool value = decltype(TestFunc<T>(0))::value; \
     }; \
     template<typename T, typename TParameter> \
-    using TraitName = HasMemberFunc_ TraitName<T, TParameter>
+    using TraitName = HasMemberFunc_##TraitName<T, TParameter>
 
 #endif
 

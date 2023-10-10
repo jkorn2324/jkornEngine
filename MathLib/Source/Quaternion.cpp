@@ -85,18 +85,33 @@ namespace MathLib
 
 	float Dot(const Quaternion& a, const Quaternion& b)
 	{
-		return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+        return Quaternion::Dot(a, b);
 	}
+
+    float Quaternion::Dot(const Quaternion &a, const Quaternion &b)
+    {
+        return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+    }
 
 	Vector3 ToEuler(const Quaternion& quaternion)
 	{
-		return quaternion.ToEuler();
+        return Quaternion::ToEuler(quaternion);
 	}
+
+    Vector3 Quaternion::ToEuler(const Quaternion& quaternion)
+    {
+        return quaternion.ToEuler();
+    }
 
 	Vector3 ToEuler(const Quaternion& quat, bool inDegrees)
 	{
-		return quat.ToEuler(inDegrees);
+        return Quaternion::ToEuler(quat, inDegrees);
 	}
+
+    Vector3 Quaternion::ToEuler(const Quaternion &quat, bool inDegrees)
+    {
+        return quat.ToEuler(inDegrees);
+    }
 
 	Quaternion Concatenate(const Quaternion& a, const Quaternion& b)
 	{
@@ -204,7 +219,7 @@ namespace MathLib
 	Quaternion Quaternion::FromDirection(const Vector3& desiredDirection, const Vector3& upDirection, const Vector3& rightDirection)
 	{
 		Vector3 rotationAxis;
-		float dotProduct = Dot(upDirection, desiredDirection);
+		float dotProduct = Vector3::Dot(upDirection, desiredDirection);
 		if (MathLib::IsCloseEnough(dotProduct, 1.0f))
 		{
 			rotationAxis = rightDirection;
@@ -221,13 +236,18 @@ namespace MathLib
 
 	Quaternion Normalize(const Quaternion& quat)
 	{
-		float length = quat.Length();
-		return Quaternion(
-			quat.x / length,
-			quat.y / length,
-			quat.z / length,
-			quat.w / length);
+        return Quaternion::Normalize(quat);
 	}
+
+    Quaternion Quaternion::Normalize(const Quaternion& quat)
+    {
+        float length = quat.Length();
+        return Quaternion(
+            quat.x / length,
+            quat.y / length,
+            quat.z / length,
+            quat.w / length);
+    }
 
 	bool operator==(const Quaternion& a, const Quaternion& b)
 	{

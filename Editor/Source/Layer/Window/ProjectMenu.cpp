@@ -98,8 +98,9 @@ namespace Editor
 
 		// Updates the project menu variables.
 		{
+            ImVec2 cpy = ImGui::GetWindowSize();
 			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(
-				&ImGui::GetWindowSize());
+				&cpy);
 		}
 		
 		ImGui::BeginGroup();

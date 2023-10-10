@@ -289,16 +289,26 @@ namespace MathLib
 
 	float Dot(const Vector3& a, const Vector3& b)
 	{
-		return a.x * b.x + a.y * b.y + a.z * b.z;
+        return Vector3::Dot(a, b);
 	}
+
+    float Vector3::Dot(const Vector3& a, const Vector3& b)
+    {
+        return a.x * b.x + a.y * b.y + a.z * b.z;
+    }
 
 	Vector3 Cross(const Vector3& a, const Vector3& b)
 	{
-		return Vector3(
-			a.y * b.z - a.z * b.y,
-			a.z * b.x - a.x * b.z,
-			a.x * b.y - a.y * b.x);
+        return Vector3::Cross(a, b);
 	}
+
+    Vector3 Vector3::Cross(const Vector3& a, const Vector3& b)
+    {
+        return Vector3(
+            a.y * b.z - a.z * b.y,
+            a.z * b.x - a.x * b.z,
+            a.x * b.y - a.y * b.x);
+    }
 
 	Vector3 Reflect(const Vector3& vec, const Vector3& normal)
 	{
@@ -318,16 +328,21 @@ namespace MathLib
 
 	Vector3 Rotate(const Quaternion& quat, const Vector3& direction)
 	{
-		MathLib::Vector3 normalizedCopy(direction);
-		normalizedCopy.Normalize();
-
-		Quaternion negQuat(-quat);
-		Quaternion outQuat(direction.x, direction.y, direction.z, 0.0f);
-		outQuat = Concatenate(quat, outQuat);
-		outQuat = Concatenate(outQuat, negQuat);
-
-		return Vector3(outQuat.x, outQuat.y, outQuat.z);
+        return Vector3::Rotate(quat, direction);
 	}
+
+    Vector3 Vector3::Rotate(const Quaternion& quat, const Vector3& direction)
+    {
+        MathLib::Vector3 normalizedCopy(direction);
+        normalizedCopy.Normalize();
+
+        Quaternion negQuat(-quat);
+        Quaternion outQuat(direction.x, direction.y, direction.z, 0.0f);
+        outQuat = Concatenate(quat, outQuat);
+        outQuat = Concatenate(outQuat, negQuat);
+
+        return Vector3(outQuat.x, outQuat.y, outQuat.z);
+    }
 
 	Vector3 Min(const Vector3& a, const Vector3& b)
 	{

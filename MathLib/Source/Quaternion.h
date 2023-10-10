@@ -22,9 +22,15 @@ namespace MathLib
 		Vector3 ToEuler(bool inDegrees) const;
 		void Conjugate();
 
+        static Quaternion Normalize(const Quaternion& quat);
 		friend Quaternion Normalize(const Quaternion& quat);
+        
+        static float Dot(const Quaternion& a, const Quaternion& b);
 		friend float Dot(const Quaternion& a, const Quaternion& b);
+        
+        static Vector3 ToEuler(const Quaternion& quat);
 		friend Vector3 ToEuler(const Quaternion& quat);
+        static Vector3 ToEuler(const Quaternion& quat, bool inDegrees);
 		friend Vector3 ToEuler(const Quaternion& quat, bool inDegrees);
 		
 		friend Quaternion Concatenate(const Quaternion& a, const Quaternion& b);

@@ -17,13 +17,6 @@ project "Engine"
 		pchheader "%{prj.location}/Source/EnginePCH.h"
 	filter { }
 
-	filter { "action:xcode4" }
-		xcodebuildsettings 
-		{ 
-			["ALWAYS_SEARCH_USER_PATHS"] = "YES" 
-		}
-	filter { }
-
 	files
 	{
 		"%{prj.location}/Source/",
@@ -192,12 +185,16 @@ project "Engine"
 	--================================== BEGIN GLFW DEPENDENCY =============================--
 
 	filter { "action:xcode4" }
-		files
-		{
-			"%{IncludeDirectories.glfw}**.hpp",
-			"%{IncludeDirectories.glfw}**.h",
-			"%{IncludeDirectories.glfw}**.cpp"
-		}
+	---
+	---	files
+	---	{
+	---		"%{IncludeDirectories.glfw}**.hpp",
+	---		"%{IncludeDirectories.glfw}**.h",
+	---		"%{IncludeDirectories.glfw}**.cpp",
+	---		
+	---		"${ProjectDirectories.glfw}src/**.cpp",
+	---		"${ProjectDirectories.glfw}src/**.c",
+	---	}
 		externalincludedirs
 		{
 			"%{IncludeDirectories.glfw}"

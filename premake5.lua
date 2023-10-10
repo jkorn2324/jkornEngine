@@ -140,6 +140,13 @@ workspace "jkornEngine"
 		}
 	filter { }
 
+	filter { "action:xcode4" }
+		xcodebuildsettings 
+		{ 
+			["ALWAYS_SEARCH_USER_PATHS"] = "YES" 
+		}
+	filter { }
+
 -- Create projects for static libraries.
 
 group "Dependencies"

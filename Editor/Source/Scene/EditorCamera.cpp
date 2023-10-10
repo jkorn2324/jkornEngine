@@ -26,17 +26,17 @@ namespace Editor
 
 	MathLib::Vector3 EditorCamera::GetForward() const
 	{
-		return MathLib::Rotate(GetRotation(), MathLib::Vector3::UnitZ);
+		return MathLib::Vector3::Rotate(GetRotation(), MathLib::Vector3::UnitZ);
 	}
 
 	MathLib::Vector3 EditorCamera::GetUp() const
 	{
-		return MathLib::Rotate(GetRotation(), MathLib::Vector3::UnitY);
+		return MathLib::Vector3::Rotate(GetRotation(), MathLib::Vector3::UnitY);
 	}
 
 	MathLib::Vector3 EditorCamera::GetRight() const
 	{
-		return MathLib::Rotate(GetRotation(), MathLib::Vector3::UnitX);
+		return MathLib::Vector3::Rotate(GetRotation(), MathLib::Vector3::UnitX);
 	}
 
 	MathLib::Quaternion EditorCamera::GetRotation() const

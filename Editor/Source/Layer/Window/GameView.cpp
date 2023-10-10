@@ -162,8 +162,9 @@ namespace Editor
 		// Updates the window properties.
 		{
 			ImGuiWindow* window = ImGui::GetCurrentWindow();
+            ImVec2 windowSize = ImGui::GetWindowSize();
 			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(
-				&ImGui::GetWindowSize());
+				&windowSize);
 			bool isNotHidden = window->DockNode != nullptr && !window->DockNode->IsHiddenTabBar();
 			float textLineHeightSpacing = ImGui::GetTextLineHeightWithSpacing();
 			m_windowMenuBarSpacing = isNotHidden

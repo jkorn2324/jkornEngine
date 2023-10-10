@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EngineTime.h"
+#include "EngineMacros.h"
 
 #include "Vector.h"
 #include "Matrix.h"
@@ -79,7 +80,7 @@ namespace Engine
 			auto entityView = m_entityRegistry.view<const TComponent>();
 			for (auto entity : entityView)
 			{
-				auto component = entityView.get<0>(entity);
+				auto component =  entityView.DECLTDEPNAME get<0>(entity);
 				if (func(context, component))
 				{
 					return TEntityRef(entity, m_entityRegistry);

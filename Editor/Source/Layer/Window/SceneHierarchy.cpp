@@ -96,7 +96,7 @@ namespace Editor
 						auto entityRef = activeScene.CreateEntityRef(*selectedEntityNode);
 						Engine::EntityHierarchyComponent& hierarchy
 							= entityRef.GetComponent<Engine::EntityHierarchyComponent>();
-						hierarchy.SetParent(activeScene.CreateEntityRef(Engine::Entity::None));
+						hierarchy.SetParent(Engine::Entity::None, entityRef.GetRegistry());
 					}
 				}
 				ImGui::EndDragDropTarget();
@@ -222,8 +222,8 @@ namespace Editor
 		if (isEntitySameAsSelection
 			&& ImGui::BeginDragDropSource())
 		{
-			void* selectedEntityNode = &EditorSelection::GetSelectedEntity();
-			ImGui::SetDragDropPayload(ENTITY_SELECTION_DRAG_DROP, selectedEntityNode,
+            Engine::Entity selectedEntity = EditorSelection::GetSelectedEntity().GetEntity();
+			ImGui::SetDragDropPayload(ENTITY_SELECTION_DRAG_DROP, &selectedEntity,
 				sizeof(Engine::Entity));
 			ImGui::Text(nameComponent.name.c_str());
 			ImGui::EndDragDropSource();

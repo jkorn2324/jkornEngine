@@ -596,6 +596,13 @@ namespace MathLib
 		return cpy;
 	}
 
+    Matrix4x4 Matrix4x4::Transpose(const Matrix4x4 &matrix)
+    {
+        Matrix4x4 cpy(matrix);
+        cpy.Transpose();
+        return cpy;
+    }
+
 	Matrix4x4 Invert(const Matrix4x4& matrix)
 	{
 		Matrix4x4 cpy(matrix);
@@ -603,6 +610,12 @@ namespace MathLib
 		return cpy;
 	}
 
+    Matrix4x4 Matrix4x4::Invert(const Matrix4x4& matrix)
+    {
+        Matrix4x4 cpy(matrix);
+        cpy.Invert();
+        return cpy;
+    }
 
 #pragma endregion
 

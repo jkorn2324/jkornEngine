@@ -8,6 +8,8 @@ namespace MathLib
 	// TODO: Add SIMD/intrinsic support (Reason why we don't use SIMD as its different based on platform
 	// ARM, x64, etc...)
 
+    class Quaternion;
+
 	class Vector2
 	{
 	public:
@@ -101,8 +103,12 @@ namespace MathLib
 		void Normalize();
 		bool IsNormalized() const;
 
+        static float Dot(const Vector3& a, const Vector3& b);
 		friend float Dot(const Vector3& a, const Vector3& b);
+        
+        static Vector3 Cross(const Vector3& a, const Vector3& b);
 		friend Vector3 Cross(const Vector3& a, const Vector3& b);
+        
 		friend Vector3 Reflect(const Vector3& dir, const Vector3& normal);
 
 		friend bool IsNormalized(const Vector3& vec);
@@ -111,7 +117,8 @@ namespace MathLib
 		friend Vector3 Lerp(const Vector3& a, const Vector3& b, float alpha);
 		friend Vector3 LerpClamped(const Vector3& a, const Vector3& b, float alpha);
 
-		friend Vector3 Rotate(const class Quaternion& quat, const Vector3& direction);
+		friend Vector3 Rotate(const Quaternion& quat, const Vector3& direction);
+        static Vector3 Rotate(const Quaternion& quat, const Vector3& direction);
 
 		friend Vector3 Min(const Vector3& a, const Vector3& b);
 		friend Vector3 Max(const Vector3& a, const Vector3& b);

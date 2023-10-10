@@ -54,7 +54,7 @@ namespace Editor
         {
             if (m_transform.HasParentTransformMatrix())
             {
-                MathLib::Matrix4x4 inverted = MathLib::Invert(m_transform.GetParentTransformMatrix());
+                MathLib::Matrix4x4 inverted = MathLib::Matrix4x4::Invert(m_transform.GetParentTransformMatrix());
                 transformMatrix = inverted * transformMatrix;
             }
 

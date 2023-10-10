@@ -75,8 +75,9 @@ namespace Editor
 
 	void SceneView::UpdateMousePosition(const Engine::Timestep& ts)
 	{
+        ImVec2 mousePos = ImGui::GetMousePos();
 		MathLib::Vector2 currentPos = *reinterpret_cast<MathLib::Vector2*>(
-			&ImGui::GetMousePos());
+			&mousePos);
 		m_prevMousePos = m_currMousePos;
 		m_currMousePos = currentPos;
 	}
@@ -364,7 +365,8 @@ namespace Editor
 		// Updates scene view attributes.
 		{
 			ImGuiIO& io = ImGui::GetIO();
-			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(&ImGui::GetWindowSize());
+            ImVec2 windowSize = ImGui::GetWindowSize();
+			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(&windowSize);
 			m_focused = ImGui::IsWindowFocused();
 			m_mouseScroll = MathLib::Vector2{ io.MouseWheelH, io.MouseWheel };
 			m_windowBarSpacing = ImGui::GetTextLineHeightWithSpacing() * 2.0f;
@@ -380,7 +382,8 @@ namespace Editor
 		// Adjusts the window position so that the transformation widget fits in the middle
 		// of the corresponding transform.
 		{
-			m_windowPosition = *reinterpret_cast<MathLib::Vector2*>(&ImGui::GetWindowPos());
+            ImVec2 windowPos = ImGui::GetWindowPos();
+			m_windowPosition = *reinterpret_cast<MathLib::Vector2*>(&windowPos);
 			m_windowPosition.x += (m_windowSize.x - ImGui::GetContentRegionAvail().x) * 0.5f;
 			m_windowPosition.y += ImGui::GetTextLineHeight() * 2.0f;
 		}

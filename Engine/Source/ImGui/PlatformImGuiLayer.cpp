@@ -4,8 +4,11 @@
 #include "RenderingAPI.h"
 #include "Window.h"
 
-#include "DirectX11ImGuiLayer.h"
 #include "GlfwImGuiLayer.h"
+
+#if defined(GRAPHICS_API_DIRECTX11)
+#include "DirectX11ImGuiLayer.h"
+#endif
 
 namespace Engine
 {
@@ -14,7 +17,9 @@ namespace Engine
 	{
 		switch (GetPlatformImGuiLayer(type))
 		{
+#if defined(GRAPHICS_API_DIRECTX11)
 		case ImGuiLayerPlatform::PLATFORM_GRAPHICS_DIRECTX11: return std::make_unique<DirectX11ImGuiLayer>();
+#endif
 		case ImGuiLayerPlatform::PLATFORM_WINDOW_GLFW: return std::make_unique<GlfwImGuiLayer>();
 		}
         JKORN_ENGINE_ASSERT(false, "Editor Layer doesn't have a platform.");
@@ -27,7 +32,9 @@ namespace Engine
 		{
 			switch (RenderingAPI::GetRenderingAPIType())
 			{
+#if defined(GRAPHICS_API_DIRECTX11)
 			case RenderingAPIType::DIRECTX11:	return ImGuiLayerPlatform::PLATFORM_GRAPHICS_DIRECTX11;
+#endif
 			}
 		}
 		else
