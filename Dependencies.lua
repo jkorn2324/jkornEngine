@@ -54,11 +54,8 @@ ProjectDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/"
 LibraryNames["DirectXTK"] = "DirectXTK.lib"
 
 -- METAL DEFINITIONS
-IncludeDirectories["metalcpp_macos12_ios15"] = "%{LibrariesLocation}/metal-cpp/metal-cpp-macos12-ios15/Metal/"
--- QUARTZCORE DEFINITIONS
-IncludeDirectories["quartzcore_macos12_ios15"] = "%{LibrariesLocation}/metal-cpp/metal-cpp-macos12-ios15/QuartzCore/"
--- FOUNDATION DEFINITIONS
-IncludeDirectories["foundation_macos12_ios15"] = "%{LibrariesLocation}/metal-cpp/metal-cpp-macos12-ios15/Foundation/"
+IncludeDirectories["metalcpp_macos12_ios15"] = "%{LibrariesLocation}/metal-cpp/metal-cpp-macos12-ios15/"
+LibraryNames["metalcpp_macos12_ios15"] = "%{LibrariesLocation}/metal-cpp/metal-cpp-macos12-ios15/"
 
 -- Includes apple frameworks
 function include_apple_frameworks()
@@ -86,30 +83,6 @@ function include_apple_frameworks()
             "-framework IOKit",
             "-framework CoreFoundation",
             "-framework CoreVideo"
-        }
-    filter { }
-
-    -- Only include these if we are using metal.
-    filter { "action:xcode*", "platforms:MacOS", "options:graphicsapi=metal"}
-        links
-        {
-            "Metal.framework",
-            "QuartzCore.framework",
-            "Foundation.framework"
-        }
-
-        buildoptions
-        {
-            "-framework Metal",
-            "-framework QuartzCore",
-            "-framework Foundation"
-        }
-
-        linkoptions
-        {
-            "-framework Metal",
-            "-framework QuartzCore",
-            "-framework Foundation"
         }
     filter { }
 end

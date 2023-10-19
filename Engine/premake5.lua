@@ -463,14 +463,38 @@ project "Engine"
 	--================================= BEGIN METAL + QUARTZCORE DEPENDENCY ====================--
 
 	-- TODO: Need to integrate options for different ios/macos versions
-	filter { "platforms:MacOS", "options:graphicsapi=metal" }
+	filter { "platforms:MacOS", "options:graphicsapi=metal", "action:xcode*" }
+
+		links
+        {
+            "Metal.framework",
+			"QuartzCore.framework",
+			"Foundation.framework"
+        }
 
 		externalincludedirs
 		{
-			"%{IncludeDirectories.metalcpp_macos12_ios15}",
-			"%{IncludeDirectories.quartzcore_macos12_ios15}",
-			"%{IncludeDirectories.foundation_macos12_ios15}"
+			"%{IncludeDirectories.metalcpp_macos12_ios15}"
 		}
+
+		frameworkdirs
+		{
+			"%{IncludeDirectories}"
+		}
+
+        buildoptions
+        {
+            "-framework Metal",
+            "-framework QuartzCore",
+            "-framework Foundation"
+        }
+
+        linkoptions
+        {
+            "-framework Metal",
+            "-framework QuartzCore",
+            "-framework Foundation"
+        }
 		
 	filter { }
 
