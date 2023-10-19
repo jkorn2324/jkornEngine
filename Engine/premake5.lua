@@ -26,13 +26,15 @@ project "Engine"
 	}
 
 	-- Removes DirectX Related Files from workspace.
-	filter { "options:not graphicsapi=directx11"}
+	filter { "options:not graphicsapi=directx11" }
 		removefiles
 		{
 			"%{prj.location}/Source/Platform/DirectX11/**.h",
 			"%{prj.location}/Source/Platform/DirectX11/**.cpp",
 			"%{prj.location}/Source/Platform/DirectX11/**.hpp"
 		}
+	-- Removes the metal-cpp files from workspace
+	filter { "options:not graphicsapi=metal-cpp" }
 	filter { }
 
 	includedirs
@@ -458,6 +460,21 @@ project "Engine"
 
 	--================================= END DIRECTX11 + DIRECTXTK DEPENDENCY ====================--
 
+	--================================= BEGIN METAL + QUARTZCORE DEPENDENCY ====================--
+
+	-- TODO: Need to integrate options for different ios/macos versions
+	filter { "platforms:MacOS", "options:graphicsapi=metal" }
+
+		externalincludedirs
+		{
+			"%{IncludeDirectories.metalcpp_macos12_ios15}",
+			"%{IncludeDirectories.quartzcore_macos12_ios15}",
+			"%{IncludeDirectories.foundation_macos12_ios15}"
+		}
+		
+	filter { }
+
+	--================================= END METAL + QUARTZCORE DEPENDENCY ====================--
 
 	-- Ensures that all of the files outside of the source file don't have precompiled headers associated with them.
 	filter { "files:not %{prj.location}/Source/**.h", "files:not {%prj.location}/Source/**.cpp", "files:not {%prj.location}/Source/**.hpp" }

@@ -20,3 +20,6 @@
 [submodule "Engine/Libraries/entt"]
 	path = Engine/Libraries/entt
 	url = https://github.com/skypjack/entt.git
+[submodule "Engine/Libraries/metal-cpp"]
+	path = Engine/Libraries/metal-cpp
+	url = https://github.com/jkorn2324/metal-cpp.git
