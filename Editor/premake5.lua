@@ -80,6 +80,7 @@ project "Editor"
 	}
 
 	include_apple_frameworks()
+	include_metal_frameworks()
 
 	--================================= END ENGINE DEPENDENCIES =============================--
 	

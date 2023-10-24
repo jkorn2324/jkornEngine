@@ -22,7 +22,7 @@ namespace Engine
 	static bool GetHWND(Window* window, HWND& hwnd)
 	{
 #if defined(PLATFORM_WINDOWS)
-		hwnd = window->GetWindowPtr().GetHWND();
+		hwnd = (HWND)window->GetWindowPtr().GetDeviceWindowPtr();
 		return hwnd;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported window type for DirectX11.");

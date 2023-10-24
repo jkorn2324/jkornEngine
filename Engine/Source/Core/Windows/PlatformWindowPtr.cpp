@@ -41,14 +41,12 @@ namespace Engine
 		{
 			static_assert(false);
 		}
-
-#if defined(PLATFORM_WINDOWS)
-		template<typename TWindowPtr>
-		HWND GetHWND(const WindowPtr<TWindowPtr>& ptr)
-		{
-			static_assert(false);
-			return nullptr;
-		}
-#endif
+    
+        template<typename TWindowPtr>
+        void* GetDeviceWindowPtr(WindowPtr<TWindowPtr>& ptr)
+        {
+            static_assert(false);
+            return nullptr;
+        }
 	}
 }

@@ -1,9 +1,5 @@
 #pragma once
 
-#if defined(PLATFORM_WINDOWS)
-#include <windef.h>
-#endif
-
 namespace Engine
 {
 	// Forward Declarations.
@@ -31,11 +27,9 @@ namespace Engine
 
 		template<typename TWindowPtr>
 		void SetVSync(WindowPtr<TWindowPtr>& ptr, const bool vSync);
-
-#if defined(PLATFORM_WINDOWS)
-		template<typename TWindowPtr>
-		HWND GetHWND(const WindowPtr<TWindowPtr>& ptr);
-#endif
+    
+        template<typename TWindowPtr>
+        void* GetDeviceWindowPtr(const WindowPtr<TWindowPtr>& ptr);
 	}
 
 	template<typename T>
@@ -91,11 +85,8 @@ namespace Engine
 		{
 			Platform::Internals::SetVSync(*this, vSync);
 		}
-
-#if defined(PLATFORM_WINDOWS)
-		// Gets the HWND from the window.
-		HWND GetHWND() const { return Platform::Internals::GetHWND<T>(*this); }
-#endif
+ 
+        void* GetDeviceWindowPtr() const { return Platform::Internals::GetDeviceWindowPtr<T>(*this); }
 
 	public:
 		T* m_ptr;

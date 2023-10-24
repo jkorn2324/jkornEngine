@@ -41,6 +41,7 @@ project "GlfwSandboxProject"
 	filter { }
 
 	include_apple_frameworks()
+	include_metal_frameworks()
 
 	--================================= BEGIN ENGINE DEPENDENCIES ===========================--
 

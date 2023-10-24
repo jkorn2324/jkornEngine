@@ -1,11 +1,11 @@
 #include "EnginePCH.h"
 #include "DirectX11ImGuiLayer.h"
 
-#include "imgui.h"
-#include "backends\imgui_impl_dx11.h"
-
 #include "GraphicsRenderer.h"
 #include "DirectX11RenderingAPI.h"
+
+#include <imgui.h>
+#include <backends/imgui_impl_dx11.h>
 
 namespace Engine
 {

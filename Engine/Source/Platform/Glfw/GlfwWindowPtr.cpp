@@ -12,6 +12,12 @@
 #include "PlatformInput.h"
 
 #include <Glfw/glfw3.h>
+
+#if defined(__APPLE__)
+#ifndef GLFW_EXPOSE_NATIVE_COCOA
+#define GLFW_EXPOSE_NATIVE_COCOA
+#endif
+#endif
 #include <Glfw/glfw3native.h>
 
 namespace Engine::Platform::Internals
@@ -214,12 +220,15 @@ namespace Engine::Platform::Internals
 		glfwSwapInterval((int)vSync);
 	}
 
+    template<>
+    void* GetDeviceWindowPtr(const WindowPtr<GLFWwindow>& windowPtr)
+    {
 #if defined(PLATFORM_WINDOWS)
-	template<>
-	HWND GetHWND(const WindowPtr<GLFWwindow>& windowPtr)
-	{
-		return glfwGetWin32Window(windowPtr.m_ptr);
-	}
+        return (void*)glfwGetWin32Window(windowPtr.m_ptr);
+#elif defined(PLATFORM_MACOS)
+        return (void*)glfwGetCocoaWindow(windowPtr.m_ptr);
+#else
+        return nullptr;
 #endif
-
+    }
 }

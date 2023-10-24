@@ -66,23 +66,64 @@ function include_apple_frameworks()
             "CoreFoundation.framework",
             "Cocoa.framework",
             "IOKit.framework",
-            "CoreVideo.framework"
+            "CoreVideo.framework",
+            "AppKit.framework"
         }
 
         buildoptions
         {
+            "-framework CoreFoundation",
             "-framework Cocoa",
             "-framework IOKit",
-            "-framework CoreFoundation",
-            "-framework CoreVideo"
+            "-framework CoreVideo",
+            "-framework AppKit"
         }
 
         linkoptions
         {
+            "-framework CoreFoundation",
             "-framework Cocoa",
             "-framework IOKit",
-            "-framework CoreFoundation",
-            "-framework CoreVideo"
+            "-framework CoreVideo",
+            "-framework AppKit"
         }
     filter { }
+end
+
+function include_metal_frameworks()
+	-- TODO: Need to integrate options for different ios/macos versions
+	filter { "platforms:MacOS", "options:graphicsapi=metal", "action:xcode*" }
+
+		links
+        {
+			"Metal.framework",
+			"QuartzCore.framework",
+			"Foundation.framework"
+        }
+
+		externalincludedirs
+		{
+			-- "%{IncludeDirectories.metalcpp_macos12_ios15}"
+		}
+
+		frameworkdirs
+		{
+			-- "%{IncludeDirectories}"
+		}
+
+        buildoptions
+        {
+            "-framework Metal",
+            "-framework QuartzCore",
+            "-framework Foundation"
+        }
+
+        linkoptions
+        {
+            "-framework Metal",
+            "-framework QuartzCore",
+            "-framework Foundation"
+        }
+		
+	filter { }
 end

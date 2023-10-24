@@ -23,6 +23,7 @@ project "Engine"
 		"%{prj.location}/Source/**.h",
 		"%{prj.location}/Source/**.cpp",
 		"%{prj.location}/Source/**.hpp",
+		"%{prj.location}/Source/**.mm"
 	}
 
 	-- Removes DirectX Related Files from workspace.
@@ -462,47 +463,18 @@ project "Engine"
 
 	--================================= BEGIN METAL + QUARTZCORE DEPENDENCY ====================--
 
-	-- TODO: Need to integrate options for different ios/macos versions
-	filter { "platforms:MacOS", "options:graphicsapi=metal", "action:xcode*" }
-
-		links
-        {
-            "Metal.framework",
-			"QuartzCore.framework",
-			"Foundation.framework"
-        }
-
-		externalincludedirs
-		{
-			"%{IncludeDirectories.metalcpp_macos12_ios15}"
-		}
-
-		frameworkdirs
-		{
-			"%{IncludeDirectories}"
-		}
-
-        buildoptions
-        {
-            "-framework Metal",
-            "-framework QuartzCore",
-            "-framework Foundation"
-        }
-
-        linkoptions
-        {
-            "-framework Metal",
-            "-framework QuartzCore",
-            "-framework Foundation"
-        }
-		
-	filter { }
+	include_metal_frameworks()
 
 	--================================= END METAL + QUARTZCORE DEPENDENCY ====================--
 
 	-- Ensures that all of the files outside of the source file don't have precompiled headers associated with them.
-	filter { "files:not %{prj.location}/Source/**.h", "files:not {%prj.location}/Source/**.cpp", "files:not {%prj.location}/Source/**.hpp" }
+	filter { "files:not %{prj.location}/Source/**.h", "files:not %{prj.location}/Source/**.cpp", "files:not %{prj.location}/Source/**.hpp" }
 		flags { "NoPCH" }
+	filter { }
+
+	-- Ensures that the files included in the source project are compiled as objective c++
+	filter { "action:xcode*", "platforms:MacOS", "files:Source/**.cpp" }
+		compileas "Objective-C++"
 	filter { }
 
 
