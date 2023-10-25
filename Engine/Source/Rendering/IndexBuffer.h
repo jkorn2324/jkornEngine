@@ -11,8 +11,8 @@ namespace Engine
 
 		virtual bool IsValid() const=0;
 
-		std::uint32_t GetNumIndices() const;
-		std::uint32_t GetStride() const;
+		uint32_t GetNumIndices() const;
+		uint32_t GetStride() const;
 
 		virtual void SetData(const void* buffer,
 			uint32_t numIndices, uint32_t stride) =0;

@@ -7,6 +7,10 @@
 #include "DirectX11VertexBuffer.h"
 #endif
 
+#if defined(GRAPHICS_API_METAL)
+#include "MetalVertexBuffer.h"
+#endif
+
 namespace Engine
 {
 
@@ -15,6 +19,9 @@ namespace Engine
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
         *ptr = new DirectX11VertexBuffer(bufferData, numVertices, stride);
+        return true;
+#elif defined(GRAPHICS_API_METAL)
+        *ptr = new MetalVertexBuffer(bufferData, numVertices, stride);
         return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported Vertex Buffer type.");
@@ -27,6 +34,9 @@ namespace Engine
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
         ptr = std::make_shared<DirectX11VertexBuffer>(bufferData, numVertices, stride);
+        return true;
+#elif defined(GRAPHICS_API_METAL)
+        ptr = std::make_shared<MetalVertexBuffer>(bufferData, numVertices, stride);
         return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported Vertex Buffer type.");

@@ -35,19 +35,21 @@ public:
 
     uint32_t GetWidth() const override;
     uint32_t GetHeight() const override;
-    
+        
 private:
     MTLDevicePtr m_device;
     CAMetalLayerPtr m_swapChain;
     MTLCommandQueuePtr m_commandQueue;
     MTLRenderPassDescriptorPtr m_renderPassDescriptor;
-    // TODO: Need to make a command buffer ptr to draw stuff to screen
+    MTLCommandBufferPtr m_targetCommandBuffer;
     
     MathLib::Vector4 m_clearColor;
     uint32_t m_width;
     uint32_t m_height;
     
     friend class MetalImGuiLayer;
+    friend class MetalVertexBuffer;
+    friend class MetalIndexBuffer;
 };
 
 }

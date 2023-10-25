@@ -15,7 +15,10 @@ typedef id<MTLCommandQueue> MTLCommandQueuePtr;
 typedef MTLRenderPassDescriptor* MTLRenderPassDescriptorPtr;
 
 @protocol MTLCommandBuffer;
-typedef id<MTLCommandBuffer> MTLCommandbufferPtr;
+typedef id<MTLCommandBuffer> MTLCommandBufferPtr;
+
+@protocol MTLBuffer;
+typedef id<MTLBuffer> MTLBufferPtr;
 
 #else
 
@@ -24,5 +27,6 @@ using CAMetalLayerPtr = void*;
 using MTLCommandQueuePtr = void*;
 using MTLRenderPassDescriptorPtr = void*;
 using MTLCommandBufferPtr = void*;
+using MTLBufferPtr = void*;
 
 #endif

@@ -7,6 +7,10 @@
 #include "DirectX11IndexBuffer.h"
 #endif
 
+#if defined(GRAPHICS_API_METAL)
+#include "MetalIndexBuffer.h"
+#endif
+
 namespace Engine
 {
 
@@ -16,12 +20,12 @@ namespace Engine
 		
 	}
 
-	std::uint32_t IndexBuffer::GetNumIndices() const
+	uint32_t IndexBuffer::GetNumIndices() const
 	{
 		return m_numIndices;
 	}
 
-	std::uint32_t IndexBuffer::GetStride() const
+    uint32_t IndexBuffer::GetStride() const
 	{
 		return m_indexStride;
 	}
@@ -30,6 +34,9 @@ namespace Engine
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
         buf = std::make_shared<DirectX11IndexBuffer>(buffer, indices, stride);
+        return true;
+#elif defined(GRAPHICS_API_METAL)
+        buf = std::make_shared<MetalIndexBuffer>(buffer, indices, stride);
         return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported Index buffer type.");
@@ -42,6 +49,9 @@ namespace Engine
 #if defined(GRAPHICS_API_DIRECTX11)
         buf = std::make_unique<DirectX11IndexBuffer>(buffer, indices, stride);
         return true;
+#elif defined(GRAPHICS_API_METAL)
+        buf = std::make_unique<MetalIndexBuffer>(buffer, indices, stride);
+        return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported Index buffer type.");
         return false;
@@ -52,6 +62,9 @@ namespace Engine
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
         *buf = new DirectX11IndexBuffer(buffer, indices, stride);
+        return true;
+#elif defined(GRAPHICS_API_METAL)
+        *buf = new MetalIndexBuffer(buffer, indices, stride);
         return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported Index buffer type.");

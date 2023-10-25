@@ -16,6 +16,7 @@ MetalRenderingAPI::MetalRenderingAPI()
     m_swapChain(nullptr),
     m_commandQueue(nullptr),
     m_renderPassDescriptor(nullptr),
+    m_targetCommandBuffer(nullptr),
     m_clearColor(MathLib::Vector4::One),
     m_width(0), m_height(0)
 {
@@ -25,6 +26,14 @@ MetalRenderingAPI::MetalRenderingAPI()
 MetalRenderingAPI::~MetalRenderingAPI()
 {
     // TODO: Implementation
+    [m_swapChain release];
+    [m_commandQueue release];
+    [m_renderPassDescriptor release];
+
+    m_swapChain = nullptr;
+    m_commandQueue = nullptr;
+    m_device = nullptr;
+    m_renderPassDescriptor = nullptr;
 }
 
 bool MetalRenderingAPI::Initialize(Window *windowPtr)
