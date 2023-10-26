@@ -35,6 +35,9 @@ public:
 
     uint32_t GetWidth() const override;
     uint32_t GetHeight() const override;
+    
+    MTLDevicePtr GetDevice() const { return m_device; }
+    MTLRenderPassDescriptorPtr GetRenderPassDescriptor() const { return m_renderPassDescriptor; }
         
 private:
     MTLDevicePtr m_device;
@@ -47,7 +50,6 @@ private:
     uint32_t m_width;
     uint32_t m_height;
     
-    friend class MetalImGuiLayer;
     friend class MetalVertexBuffer;
     friend class MetalIndexBuffer;
 };

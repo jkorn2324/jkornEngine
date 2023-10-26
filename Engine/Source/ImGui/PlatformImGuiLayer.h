@@ -1,6 +1,10 @@
 #pragma once
 
 #include <memory>
+#include <type_traits>
+
+#include "RenderingAPIType.h"
+#include "WindowType.h"
 
 namespace Engine
 {
@@ -12,30 +16,47 @@ namespace Engine
 		TYPE_GRAPHICS
 	};
 
-	class PlatformImGuiLayer
-	{
-	private:
-		enum class ImGuiLayerPlatform
-		{
-			NONE,
+    namespace Platform::Internals
+    {
+        template<typename T, T Value>
+        constexpr bool IsDefined();
+    
+        template<typename T, T Value>
+        void OnLayerAddedImpl();
+        template<typename T, T Value>
+        void OnLayerRemovedImpl();
+        template<typename T, T Value>
+        void BeginFrameImpl();
+        template<typename T, T Value>
+        void EndFrameImpl();
+    }
 
-			PLATFORM_WINDOW_GLFW,
-			PLATFORM_WINDOW_WIN32,
+    template<typename T, T Value>
+    struct PlatformImGuiLayerInfo
+    {
+        static constexpr bool IsDefined = Platform::Internals::IsDefined<T, Value>();
+        static constexpr bool IsWindowLayer = std::is_same<T, WindowAPIType>();
+        static constexpr bool IsGraphicsLayer = std::is_same<T, RenderingAPIType>();
+    };
 
-			PLATFORM_GRAPHICS_DIRECTX11
-		};
+    template<typename T, T Value>
+    class TPlatformImGuiLayer
+    {
+    public:
+        // The Layer Information Associated with the ImGuiLayer.
+        static constexpr PlatformImGuiLayerInfo<T, Value> LayerInfo;
+        
+        // Constructor.
+        TPlatformImGuiLayer() = default;
+        
+        void OnLayerAdded() { Platform::Internals::OnLayerAddedImpl<T, Value>(); }
+        void OnLayerRemoved() { Platform::Internals::OnLayerRemovedImpl<T, Value>(); }
+        
+        void BeginFrame() { Platform::Internals::BeginFrameImpl<T, Value>(); }
+        void EndFrame() { Platform::Internals::EndFrameImpl<T, Value>(); }
+    };
 
-	public:
-		virtual void OnLayerAdded() =0;
-		virtual void OnShutdown() =0;
-
-		virtual void BeginFrame() =0;
-		virtual void EndFrame() =0;
-
-	public:
-		static std::unique_ptr<PlatformImGuiLayer> Create(const LayerType& type);
-		
-	private:
-		static ImGuiLayerPlatform GetPlatformImGuiLayer(const LayerType& type);
-	};
+    // Defines the Platform Graphics ImGui Layer.
+    using PlatformGraphicsImGuiLayer = TPlatformImGuiLayer<RenderingAPIType, g_ActiveRenderingAPIType>;
+    using PlatformWindowImGuiLayer = TPlatformImGuiLayer<WindowAPIType, g_ActiveWindowAPIType>;
 }

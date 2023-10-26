@@ -85,7 +85,7 @@ namespace Engine
 		}
 
 		uint32_t GetMinWidth() const
-{
+        {
 			return m_windowData.properties.minWidth;
 		}
 

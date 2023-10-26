@@ -1,5 +1,5 @@
 #include "EnginePCH.h"
-#include "MetalImGuiLayer.h"
+#include "PlatformImGuiLayer.h"
 
 #include "GraphicsRenderer.h"
 #include "MetalRenderingAPI.h"
@@ -10,27 +10,31 @@
 namespace Engine
 {
 
-void MetalImGuiLayer::OnLayerAdded()
+template<>
+constexpr bool Platform::Internals::IsDefined<RenderingAPIType, RenderingAPIType::METAL>() { return true; }
+
+template<>
+void Platform::Internals::OnLayerAddedImpl<RenderingAPIType, RenderingAPIType::METAL>()
 {
     MetalRenderingAPI& renderingAPI = (MetalRenderingAPI&)GraphicsRenderer::GetRenderingAPI();
-    ImGui_ImplMetal_Init(renderingAPI.m_device);
+    ImGui_ImplMetal_Init(renderingAPI.GetDevice());
 }
 
-void MetalImGuiLayer::OnShutdown()
+template<>
+void Platform::Internals::OnLayerRemovedImpl<RenderingAPIType, RenderingAPIType::METAL>()
 {
     ImGui_ImplMetal_Shutdown();
 }
 
-static id<MTLRenderCommandEncoder> s_commandEncoder;
-
-void MetalImGuiLayer::BeginFrame()
+template<>
+void Platform::Internals::BeginFrameImpl<RenderingAPIType, RenderingAPIType::METAL>()
 {
-    // TODO: Implementation
     MetalRenderingAPI& renderingAPI = (MetalRenderingAPI&)GraphicsRenderer::GetRenderingAPI();
-    ImGui_ImplMetal_NewFrame(renderingAPI.m_renderPassDescriptor);
+    ImGui_ImplMetal_NewFrame(renderingAPI.GetRenderPassDescriptor());
 }
 
-void MetalImGuiLayer::EndFrame()
+template<>
+void Platform::Internals::EndFrameImpl<RenderingAPIType, RenderingAPIType::METAL>()
 {
     // TODO: Implementation
     MetalRenderingAPI& renderingAPI = (MetalRenderingAPI&)GraphicsRenderer::GetRenderingAPI();

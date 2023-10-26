@@ -1,5 +1,7 @@
 #pragma once
 
+#include "RenderingAPIType.h"
+
 namespace MathLib
 {
 	class Vector4;
@@ -7,15 +9,6 @@ namespace MathLib
 
 namespace Engine
 {
-
-	enum class RenderingAPIType
-	{
-		NONE,
-        // The directx graphics rendering api.
-		DIRECTX11,
-        // The metal graphics rendering api.
-        METAL
-	};
 
     class Window;
     class VertexArray;
@@ -47,16 +40,7 @@ namespace Engine
 		virtual std::uint32_t GetHeight() const=0;
 
 	public:
-		static inline constexpr RenderingAPIType GetRenderingAPIType()
-		{
-#if defined(GRAPHICS_API_DIRECTX11)
-			return RenderingAPIType::DIRECTX11;
-#elif defined(GRAPHICS_API_METAL)
-			return RenderingAPIType::METAL;
-#else
-			return RenderingAPIType::NONE
-#endif
-		}
+        static inline constexpr RenderingAPIType GetRenderingAPIType() { return g_ActiveRenderingAPIType; }
 
 		static RenderingAPI* Create();
 	};

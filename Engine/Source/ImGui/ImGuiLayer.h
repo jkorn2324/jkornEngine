@@ -5,10 +5,10 @@
 
 #include <memory>
 
+#include "PlatformImGuiLayer.h"
+
 namespace Engine
 {
-
-	class PlatformImGuiLayer;
 	class IEvent;
 
 	class ImGuiLayer : public Layer
@@ -30,7 +30,7 @@ namespace Engine
 		bool OnWindowResized(class WindowResizedEvent& event);
 
 	private:
-		std::unique_ptr<PlatformImGuiLayer> m_windowImGuiLayer;
-		std::unique_ptr<PlatformImGuiLayer> m_graphicsImGuiLayer;
+        PlatformGraphicsImGuiLayer m_graphicsLayer;
+        PlatformWindowImGuiLayer m_windowLayer;
 	};
 }
