@@ -166,7 +166,7 @@ void MetalRenderingAPI::Draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
     // Binds the vertex buffer.
     mtlVtxBuf->Bind();
     
-    if (mtlIdxBuf != nullptr)
+    if (mtlIdxBuf != nullptr && mtlIdxBuf->IsValid())
     {
         MTLIndexType indexType = mtlIdxBuf->GetIndexType<MTLIndexType>();
         [m_renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:mtlIdxBuf->GetNumIndices() indexType:indexType indexBuffer:mtlIdxBuf->GetMTLBufferPtr() indexBufferOffset:0];
