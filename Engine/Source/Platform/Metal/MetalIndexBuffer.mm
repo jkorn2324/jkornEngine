@@ -10,6 +10,27 @@
 namespace Engine
 {
 
+namespace
+{
+
+int8_t GetMetalIndexType(uint32_t stride)
+{
+    switch (stride)
+    {
+        case sizeof(uint32_t): return (uint8_t)MTLIndexTypeUInt32;
+        case sizeof(uint16_t): return (uint8_t)MTLIndexTypeUInt16;
+    }
+    return -1;
+}
+
+bool IsValidIndexType(uint32_t stride)
+{
+    int8_t indexType = GetMetalIndexType(stride);
+    return indexType != -1;
+}
+
+}
+
 MetalIndexBuffer::MetalIndexBuffer(const void* buffer, uint32_t numIndices, uint32_t stride)
     : IndexBuffer(buffer, numIndices, stride), m_bufferPtr(nullptr)
 {
@@ -31,26 +52,25 @@ MetalIndexBuffer::~MetalIndexBuffer()
 
 bool MetalIndexBuffer::IsValid() const
 {
-    return m_bufferPtr;
+    return m_bufferPtr && IsValidIndexType(m_indexStride);
 }
 
 void MetalIndexBuffer::SetData(const void *buffer, uint32_t numIndices, uint32_t stride)
 {
+    JKORN_ENGINE_ASSERT(IsValidIndexType(stride), "Stride must be a valid 16 bit or 32 bit integer.");
+    
     if (!IsValid())
     {
         return;
     }
     void* bufPtr = [m_bufferPtr contents];
     std::memcpy(bufPtr, buffer, numIndices * stride);
+    m_indexStride = stride;
+    m_numIndices = numIndices;
 }
 
-void MetalIndexBuffer::Bind() const
-{
-    if (!m_bufferPtr)
-    {
-        return;
-    }
-    // TODO: Implementation, Set the Index Buffers
-}
+uint8_t MetalIndexBuffer::GetIndexTypeInternal() const { return GetMetalIndexType(m_indexStride); }
+
+
 
 }

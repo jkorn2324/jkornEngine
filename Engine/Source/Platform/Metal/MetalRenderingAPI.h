@@ -22,8 +22,8 @@ public:
     void SetResolution(uint32_t width, uint32_t height) override;
     void SetClearColor(const MathLib::Vector4& vector4) override;
     
-    void OnBeginRender() override;
-    void OnEndRender() override;
+    void OnBeginRender();
+    void OnEndRender();
     
     void Present() override;
     

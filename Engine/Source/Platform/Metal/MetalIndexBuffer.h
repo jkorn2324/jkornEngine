@@ -5,7 +5,6 @@
 
 namespace Engine
 {
-
     class MetalIndexBuffer : public IndexBuffer
     {
     public:
@@ -18,7 +17,20 @@ namespace Engine
         void SetData(const void* buffer,
             uint32_t numIndices, uint32_t stride) override;
         
-        void Bind() const override;
+        /**
+         * Gets the index type.
+         */
+        template<typename T>
+        T GetIndexType() const 
+        {
+            uint8_t indexType = GetIndexTypeInternal();
+            return *reinterpret_cast<T*>(&indexType);
+        }
+        
+        MTLBufferPtr GetMTLBufferPtr() const { return m_bufferPtr; }
+        
+    private:
+        uint8_t GetIndexTypeInternal() const;
         
     private:
         MTLBufferPtr m_bufferPtr;

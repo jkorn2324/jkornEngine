@@ -18,7 +18,11 @@ namespace Engine
 		void SetData(const void* buffer,
 			uint32_t numIndices, uint32_t stride) override;
 
-		void Bind() const override;
+	private:
+		/**
+		 * @brief Binds the index buffer.
+		 */
+		void Bind() const;
 
 	private:
 		ID3D11Buffer* m_indexBuffer;

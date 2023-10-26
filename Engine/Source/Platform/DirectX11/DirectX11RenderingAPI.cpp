@@ -290,16 +290,6 @@ namespace Engine
 		m_clearColor = clearColor;
 	}
 
-	void DirectX11RenderingAPI::OnBeginRender()
-	{
-		// TODO: Implementation
-	}
-
-	void DirectX11RenderingAPI::OnEndRender()
-	{
-		// TODO: Implementation
-	}
-
 	void DirectX11RenderingAPI::ClearRenderTargetViewColors()
 	{
 		for (uint32_t i = 0; i < m_numRenderTargetViews; i++)

@@ -53,8 +53,8 @@ void MetalVertexBuffer::Bind() const
         return;
     }
     MetalRenderingAPI& renderingAPI = (MetalRenderingAPI&)GraphicsRenderer::GetRenderingAPI();
-    // TODO: Sets the active vertex buffer being drawn to the rendering api.
-    // SetVertexBuffer (based on MTL Buffer)
+    JKORN_ENGINE_ASSERT(renderingAPI.m_renderEncoder != nil, "The render encoder must exist.");
+    [renderingAPI.m_renderEncoder setVertexBuffer:m_bufferPtr offset:0 atIndex:0];
 }
 
 }

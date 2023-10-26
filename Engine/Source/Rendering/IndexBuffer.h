@@ -17,8 +17,6 @@ namespace Engine
 		virtual void SetData(const void* buffer,
 			uint32_t numIndices, uint32_t stride) =0;
 
-		virtual void Bind() const =0;
-
 	protected:
 		uint32_t m_numIndices;
 		uint32_t m_indexStride;

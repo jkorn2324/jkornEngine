@@ -8,6 +8,9 @@
 #include <Cocoa/Cocoa.h>
 #include <QuartzCore/QuartzCore.h>
 
+#include "MetalVertexBuffer.h"
+#include "MetalIndexBuffer.h"
+
 namespace Engine
 {
 
@@ -150,14 +153,29 @@ void MetalRenderingAPI::Present()
 
 void MetalRenderingAPI::Draw(VertexArray* vertexArray)
 {
-    // TODO: Implementation
     JKORN_ENGINE_ASSERT(false, "Not Implemented Yet.");
 }
 
 void MetalRenderingAPI::Draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer)
 {
-    // TODO: Implementation
-    JKORN_ENGINE_ASSERT(false, "Not Implemented Yet.");
+    JKORN_ENGINE_ASSERT(m_renderEncoder != nil, "The render encoder doesn't exist.");
+    
+    MetalVertexBuffer* mtlVtxBuf = dynamic_cast<MetalVertexBuffer*>(vertexBuffer);
+    MetalIndexBuffer* mtlIdxBuf = dynamic_cast<MetalIndexBuffer*>(indexBuffer);
+    
+    // Binds the vertex buffer.
+    mtlVtxBuf->Bind();
+    
+    if (mtlIdxBuf != nullptr)
+    {
+        MTLIndexType indexType = mtlIdxBuf->GetIndexType<MTLIndexType>();
+        [m_renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:mtlIdxBuf->GetNumIndices() indexType:indexType indexBuffer:mtlIdxBuf->GetMTLBufferPtr() indexBufferOffset:0];
+    }
+    else
+    {
+        // Draws the primitives.
+        [m_renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:mtlVtxBuf->GetNumVerts()];
+    }
 }
 
 void MetalRenderingAPI::SetWireframe(bool wireframeMode)

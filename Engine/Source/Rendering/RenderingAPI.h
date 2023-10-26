@@ -25,16 +25,6 @@ namespace Engine
 		virtual void SetResolution(std::uint32_t width, std::uint32_t height)=0;
         
         /**
-         * Called when the rendering api begins to render.
-         */
-        virtual void OnBeginRender()=0;
-        
-        /**
-         * Called when the rendering api stops rendering.
-         */
-        virtual void OnEndRender()=0;
-        
-        /**
          * Sets the current clear color.
          */
 		virtual void SetClearColor(const MathLib::Vector4& vector4)=0;
@@ -53,8 +43,8 @@ namespace Engine
 
 		virtual void ClearTexture(uint32_t slot)=0;
 
-		virtual std::uint32_t GetWidth() const=0;
-		virtual std::uint32_t GetHeight() const=0;
+		virtual uint32_t GetWidth() const=0;
+		virtual uint32_t GetHeight() const=0;
 
 	public:
         static inline constexpr RenderingAPIType GetRenderingAPIType() { return g_ActiveRenderingAPIType; }
