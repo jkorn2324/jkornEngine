@@ -19,9 +19,6 @@ namespace Engine
     namespace Platform::Internals
     {
         template<typename T, T Value>
-        constexpr bool IsDefined();
-    
-        template<typename T, T Value>
         void OnLayerAddedImpl();
         template<typename T, T Value>
         void OnLayerRemovedImpl();
@@ -32,9 +29,15 @@ namespace Engine
     }
 
     template<typename T, T Value>
+    struct PlatformImGuiLayerDefined
+    {
+        static constexpr bool IsDefined = false;
+    };
+
+    template<typename T, T Value>
     struct PlatformImGuiLayerInfo
     {
-        static constexpr bool IsDefined = Platform::Internals::IsDefined<T, Value>();
+        static constexpr bool IsDefined = PlatformImGuiLayerDefined<T, Value>::IsDefined;
         static constexpr bool IsWindowLayer = std::is_same<T, WindowAPIType>();
         static constexpr bool IsGraphicsLayer = std::is_same<T, RenderingAPIType>();
     };

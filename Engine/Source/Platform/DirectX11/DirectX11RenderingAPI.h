@@ -39,11 +39,14 @@ namespace Engine
 			class IndexBuffer* indexBuffer = nullptr) override;
 		void SwapBuffers() override;
 
-		std::uint32_t GetWidth() const override;
-		std::uint32_t GetHeight() const override;
+		uint32_t GetWidth() const override;
+		uint32_t GetHeight() const override;
 
 		bool IsWireframe() const override;
 		void SetWireframe(bool wireframeMode) override;
+
+		ID3D11Device* GetDevice() const { return m_device; }
+		ID3D11DeviceContext* GetDeviceContext() const { return m_deviceContext; }
 
 	private:
 		IDXGISwapChain* m_swapChain;
@@ -74,7 +77,6 @@ namespace Engine
 		friend class DirectX11Texture2D;
 		friend class DirectX11ConstantBuffer;
 		friend class DirectX11Shader;
-		friend class DirectX11ImGuiLayer;
 		friend class DirectX11ComputeShader;
 		friend class DirectX11RenderTexture;
 		friend class DirectX11Utils;

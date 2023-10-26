@@ -4,9 +4,6 @@
 namespace Engine
 {
     template<typename T, T Value>
-    constexpr bool Platform::Internals::IsDefined() { return false; }
-
-    template<typename T, T Value>
     void Platform::Internals::OnLayerAddedImpl()
     {
         static_assert(false);

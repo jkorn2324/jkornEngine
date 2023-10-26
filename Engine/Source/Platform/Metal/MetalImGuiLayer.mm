@@ -10,8 +10,12 @@
 namespace Engine
 {
 
+// The platform imgui layer defined.
 template<>
-constexpr bool Platform::Internals::IsDefined<RenderingAPIType, RenderingAPIType::METAL>() { return true; }
+struct PlatformImGuiLayerDefined<RenderingAPIType, RenderingAPIType::METAL>
+{
+    static constexpr bool IsDefined = true;
+};
 
 template<>
 void Platform::Internals::OnLayerAddedImpl<RenderingAPIType, RenderingAPIType::METAL>()

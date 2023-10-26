@@ -35,7 +35,14 @@ project "Engine"
 			"%{prj.location}/Source/Platform/DirectX11/**.hpp"
 		}
 	-- Removes the metal-cpp files from workspace
-	filter { "options:not graphicsapi=metal-cpp" }
+	filter { "options:not graphicsapi=metal" }
+		removefiles
+		{
+			"%{prj.location}/Source/Platform/Metal/**.h",
+			"%{prj.location}/Source/Platform/Metal/**.cpp",
+			"%{prj.location}/Source/Platform/Metal/**.hpp",
+			"%{prj.location}/Source/Platform/Metal/**.mm"
+		}
 	filter { }
 
 	includedirs

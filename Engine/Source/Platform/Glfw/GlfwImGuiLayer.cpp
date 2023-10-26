@@ -11,9 +11,13 @@
 
 namespace Engine
 {
-
+    // The platform imgui layer defined.
     template<>
-    constexpr bool Platform::Internals::IsDefined<WindowAPIType, WindowAPIType::WINDOW_GLFW>() { return true; }
+    struct PlatformImGuiLayerDefined<WindowAPIType, WindowAPIType::WINDOW_GLFW>
+    {
+        static constexpr bool IsDefined = true;
+    };
+
 
     template<>
     void Platform::Internals::OnLayerAddedImpl<WindowAPIType, WindowAPIType::WINDOW_GLFW>()
