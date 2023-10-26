@@ -3,7 +3,6 @@
 
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
-#include "ConstantBuffer.h"
 #include "Shader.h"
 #include "FrameBuffer.h"
 #include "Texture.h"
@@ -12,15 +11,9 @@
 #include "Application.h"
 #include "Window.h"
 
-#include "Vector.h"
-
-#include "GraphicsRenderer3D.h"
-
 namespace Engine
 {
 	RenderingAPI* GraphicsRenderer::s_renderingAPI = nullptr;
-
-	ConstantBuffer* s_cameraConstantBuffer = nullptr;
 	
 	bool GraphicsRenderer::Init()
 	{
@@ -33,30 +26,12 @@ namespace Engine
 		{
 			return false;
 		}
-
-		CameraConstants placeholder;
-		s_cameraConstantBuffer = ConstantBuffer::Create(&placeholder,
-			sizeof(CameraConstants));
 		return true;
 	}
 
 	void GraphicsRenderer::Release()
 	{
-		delete s_cameraConstantBuffer;
 		delete s_renderingAPI;
-	}
-
-	void GraphicsRenderer::BeginScene(const CameraConstants& cameraConstants)
-	{
-        JKORN_ENGINE_ASSERT(s_cameraConstantBuffer != nullptr,
-			"Camera Constant buffer doesn't exist.");
-		s_cameraConstantBuffer->SetData(&cameraConstants,
-			sizeof(cameraConstants));
-		s_cameraConstantBuffer->Bind(0,
-			Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
-
-		// Binds the lights in the 3D Graphics Renderer.
-		GraphicsRenderer3D::BindLights();
 	}
 
 	void GraphicsRenderer::Draw(VertexArray* vertexArray)
@@ -66,13 +41,12 @@ namespace Engine
 	void GraphicsRenderer::Draw(VertexBuffer* vBuffer,
 		IndexBuffer* iBuffer)
 	{
-        JKORN_ENGINE_ASSERT(s_renderingAPI != nullptr, "Rendering API isn't initialized.");
-		s_renderingAPI->Draw(vBuffer, iBuffer);
+		GetRenderingAPI().Draw(vBuffer, iBuffer);
 	}
 
-	void GraphicsRenderer::SwapBuffers()
+	void GraphicsRenderer::Present()
 	{
-		s_renderingAPI->SwapBuffers();
+		GetRenderingAPI().Present();
 	}
 
 	RenderingAPI& GraphicsRenderer::GetRenderingAPI()

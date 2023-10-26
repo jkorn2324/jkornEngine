@@ -31,9 +31,6 @@ namespace Engine
 		static void SetDirectionalLight(const MathLib::Vector3& direction,
 			const DirectionalLightComponent& directionalLight);
 
-	private:
 		static void BindLights();
-
-		friend class GraphicsRenderer;
 	};
 }

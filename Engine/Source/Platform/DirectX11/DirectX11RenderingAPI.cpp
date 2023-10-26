@@ -290,7 +290,17 @@ namespace Engine
 		m_clearColor = clearColor;
 	}
 
-	void DirectX11RenderingAPI::Clear()
+	void DirectX11RenderingAPI::OnBeginRender()
+	{
+		// TODO: Implementation
+	}
+
+	void DirectX11RenderingAPI::OnEndRender()
+	{
+		// TODO: Implementation
+	}
+
+	void DirectX11RenderingAPI::ClearRenderTargetViewColors()
 	{
 		for (uint32_t i = 0; i < m_numRenderTargetViews; i++)
 		{
@@ -340,7 +350,7 @@ namespace Engine
 			vertexArray->GetIndexBuffer()->GetNumIndices(), 0, 0);
 	}
 
-	void DirectX11RenderingAPI::SwapBuffers()
+	void DirectX11RenderingAPI::Present()
 	{
 		// For GLFW & OpenGL, use this:
 		// glfwSwapBuffers(m_window);

@@ -7,15 +7,6 @@ namespace Engine
 {
 	class RenderingAPI;
 
-	struct CameraConstants
-	{
-		MathLib::Matrix4x4 c_viewProjection;
-		MathLib::Vector3 c_cameraPosition;
-
-	private:
-		float pad;
-	};
-
 	class GraphicsRenderer
 	{
 
@@ -23,10 +14,7 @@ namespace Engine
 		static bool Init();
 		static void Release();
 
-		static void BeginScene(const CameraConstants& cameraConstants);
-		static void EndScene() { }
-
-		static void SwapBuffers();
+		static void Present();
 
 		static void Draw(class VertexArray* vertexArray);
 		static void Draw(class VertexBuffer* vertexBuffer,

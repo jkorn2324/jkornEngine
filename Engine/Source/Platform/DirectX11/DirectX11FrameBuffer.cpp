@@ -174,7 +174,7 @@ namespace Engine
 				(ID3D11DepthStencilView*)m_depthTexture.m_view);
 		}
 		
-		renderingAPI.Clear();
+		renderingAPI.ClearRenderTargetViewColors();
 		if (m_depthTexture.m_view != nullptr)
 		{
 			renderingAPI.m_deviceContext->ClearDepthStencilView((ID3D11DepthStencilView*)m_depthTexture.m_view,
@@ -195,7 +195,7 @@ namespace Engine
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
 			GraphicsRenderer::GetRenderingAPI();
 		renderingAPI.SetRenderTarget(renderingAPI.m_backBufferRenderTargetView, nullptr);
-		renderingAPI.Clear();
+		renderingAPI.ClearRenderTargetViewColors();
 	}
 
 	void DirectX11FrameBuffer::Resize(uint32_t width, uint32_t height)

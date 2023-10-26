@@ -21,8 +21,11 @@ public:
     void SetViewport(float x, float y, float width, float height) override;
     void SetResolution(uint32_t width, uint32_t height) override;
     void SetClearColor(const MathLib::Vector4& vector4) override;
-    void SwapBuffers() override;
-    void Clear() override;
+    
+    void OnBeginRender() override;
+    void OnEndRender() override;
+    
+    void Present() override;
     
     void Draw(VertexArray* vertexArray) override;
     void Draw(VertexBuffer* vertexBuffer,
@@ -37,14 +40,17 @@ public:
     uint32_t GetHeight() const override;
     
     MTLDevicePtr GetDevice() const { return m_device; }
-    MTLRenderPassDescriptorPtr GetRenderPassDescriptor() const { return m_renderPassDescriptor; }
+    MTLRenderPassDescriptorPtr GetRenderPassDescriptor() const { return m_renderDescriptor; }
+    MTLCommandQueuePtr GetCommandQueue() const { return m_commandQueue; }
         
 private:
     MTLDevicePtr m_device;
     CAMetalLayerPtr m_swapChain;
     MTLCommandQueuePtr m_commandQueue;
-    MTLRenderPassDescriptorPtr m_renderPassDescriptor;
-    MTLCommandBufferPtr m_targetCommandBuffer;
+    
+    MTLRenderPassDescriptorPtr m_renderDescriptor;
+    MTLCommandBufferPtr m_activeCommandBuf;
+    MTLRenderCommandEncoderPtr m_renderEncoder;
     
     MathLib::Vector4 m_clearColor;
     uint32_t m_width;

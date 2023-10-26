@@ -13,6 +13,7 @@
 #include "Camera.h"
 
 #include "Profiler.h"
+#include "GraphicsUtility.h"
 #include "GraphicsRenderer.h"
 #include "GraphicsRenderer2D.h"
 #include "GraphicsRenderer3D.h"
@@ -233,7 +234,7 @@ namespace Engine
 	{
 		PROFILE_SCOPE(SceneRender, Rendering);
 
-		GraphicsRenderer::BeginScene(cameraConstants);
+		Graphics::Utility::BeginRenderScene(cameraConstants);
 
 		// Render the meshes.
 		{
@@ -284,7 +285,7 @@ namespace Engine
 			}
 		}
 
-		GraphicsRenderer::EndScene();
+		Graphics::Utility::EndRenderScene();
 	}
 
 	void Scene::Render()

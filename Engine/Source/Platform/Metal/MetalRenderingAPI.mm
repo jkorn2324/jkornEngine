@@ -15,8 +15,9 @@ MetalRenderingAPI::MetalRenderingAPI()
     : m_device(nullptr),
     m_swapChain(nullptr),
     m_commandQueue(nullptr),
-    m_renderPassDescriptor(nullptr),
-    m_targetCommandBuffer(nullptr),
+    m_renderDescriptor(nullptr),
+    m_activeCommandBuf(nullptr),
+    m_renderEncoder(nullptr),
     m_clearColor(MathLib::Vector4::One),
     m_width(0), m_height(0)
 {
@@ -28,12 +29,12 @@ MetalRenderingAPI::~MetalRenderingAPI()
     // TODO: Implementation
     [m_swapChain release];
     [m_commandQueue release];
-    [m_renderPassDescriptor release];
+    [m_renderDescriptor release];
 
     m_swapChain = nullptr;
     m_commandQueue = nullptr;
     m_device = nullptr;
-    m_renderPassDescriptor = nullptr;
+    m_renderDescriptor = nullptr;
 }
 
 bool MetalRenderingAPI::Initialize(Window *windowPtr)
@@ -60,7 +61,7 @@ bool MetalRenderingAPI::Initialize(Window *windowPtr)
         return false;
     }
     
-    // Initialize the swap chain (CA Metal Layer)
+    // Initialize the Metal Layer (default metal layer)
     {
         CAMetalLayerPtr swapChain = [CAMetalLayer layer];
         if (!swapChain)
@@ -77,8 +78,9 @@ bool MetalRenderingAPI::Initialize(Window *windowPtr)
         m_swapChain = swapChain;
     }
     
-    m_renderPassDescriptor = [MTLRenderPassDescriptor new];
-    if (!m_renderPassDescriptor)
+    // Initialize the render pass descriptor.
+    m_renderDescriptor = [MTLRenderPassDescriptor new];
+    if (!m_renderDescriptor)
     {
         JKORN_ENGINE_ASSERT(false, "Failed to create the render pass descriptor.");
         return false;
@@ -89,32 +91,61 @@ bool MetalRenderingAPI::Initialize(Window *windowPtr)
 
 void MetalRenderingAPI::SetViewport(float x, float y, float width, float height)
 {
-    // TODO: Implementation
     JKORN_ENGINE_ASSERT(false, "Not Implemented Yet.");
+    // TODO: Implementation
 }
 
 void MetalRenderingAPI::SetResolution(uint32_t width, uint32_t height)
 {
-    // TODO: Implementations
     m_width = width;
     m_height = height;
+    
+#if false
+    // Sets the drawable size for the swap chain.
+    if (m_swapChain)
+    {
+        m_swapChain.drawableSize = CGSizeMake(width, height);
+    }
+#endif
 }
 
 void MetalRenderingAPI::SetClearColor(const MathLib::Vector4 &color)
 {
     m_clearColor = color;
+
+#if false
+    // The render descriptor.
+    if (m_renderDescriptor)
+    {
+        m_renderDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(color.x, color.y, color.z, color.w);
+    }
+#endif
 }
 
-void MetalRenderingAPI::SwapBuffers()
+
+void MetalRenderingAPI::OnBeginRender()
+{
+    JKORN_ENGINE_ASSERT(!m_activeCommandBuf && m_commandQueue && !m_renderEncoder, "Failed to begin rendering.");
+    
+    // The active command buffer.
+    m_activeCommandBuf = [m_commandQueue commandBuffer];
+    m_renderEncoder = [m_activeCommandBuf renderCommandEncoderWithDescriptor: m_renderDescriptor];
+}
+
+void MetalRenderingAPI::OnEndRender()
+{
+    // Called to present to the active render target.
+}
+
+void MetalRenderingAPI::Present()
 {
     // TODO: Implementation
     JKORN_ENGINE_ASSERT(false, "Not Implemented Yet.");
-}
-
-void MetalRenderingAPI::Clear()
-{
-    // TODO: Implementation
-    JKORN_ENGINE_ASSERT(false, "Not Implemented Yet.");
+    
+    // TODO: Change the current drawable to a cached CA Metal Layer.
+    id<MTLDrawable> drawable = [m_swapChain nextDrawable];
+    [m_activeCommandBuf presentDrawable: drawable];
+    [m_activeCommandBuf commit];
 }
 
 void MetalRenderingAPI::Draw(VertexArray* vertexArray)
@@ -144,8 +175,8 @@ bool MetalRenderingAPI::IsWireframe() const
 
 void MetalRenderingAPI::ClearTexture(uint32_t slot)
 {
-    // TODO: Implementation
-    JKORN_ENGINE_ASSERT(false, "Not Implemented Yet.");
+    JKORN_ENGINE_ASSERT(m_renderDescriptor, "The render pass descriptor is null.");
+    // TODO: Sets the current texture.
 }
 
 uint32_t MetalRenderingAPI::GetWidth() const

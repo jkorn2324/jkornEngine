@@ -189,7 +189,7 @@ namespace Engine::Platform::Internals
 		PROFILE_SCOPE(OnUpdate, WindowPtr<GLFWwindow>);
 
 		glfwPollEvents();
-		GraphicsRenderer::SwapBuffers();
+		GraphicsRenderer::Present();
 	}
 
 	// Called to shut down the window.

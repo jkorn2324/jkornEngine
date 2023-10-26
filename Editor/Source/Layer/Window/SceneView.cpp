@@ -4,6 +4,7 @@
 #include "EditorSceneManager.h"
 #include "EditorSelection.h"
 #include "PlatformInput.h"
+#include "GraphicsUtility.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>

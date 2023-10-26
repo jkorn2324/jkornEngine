@@ -14,9 +14,9 @@ MetalVertexBuffer::MetalVertexBuffer(const void* buffer, uint32_t numVertices, u
     : VertexBuffer(buffer, numVertices, stride), m_bufferPtr(nullptr)
 {
     MetalRenderingAPI& renderingAPI = (MetalRenderingAPI&)GraphicsRenderer::GetRenderingAPI();
-    MTLResourceOptions metalResourceOptions = MTLResourceStorageModePrivate | MTLResourceCPUCacheModeWriteCombined;
+    MTLResourceOptions metalResourceOptions = MTLResourceCPUCacheModeWriteCombined;
     NSInteger len = (NSInteger)(numVertices * stride);
-    m_bufferPtr = [renderingAPI.m_device newBufferWithBytes:buffer length:len options:metalResourceOptions];
+    m_bufferPtr = [renderingAPI.m_device newBufferWithBytes:buffer length:len options: metalResourceOptions];
     JKORN_ENGINE_ASSERT(m_bufferPtr, "Failed to create a metal buffer");
 }
 

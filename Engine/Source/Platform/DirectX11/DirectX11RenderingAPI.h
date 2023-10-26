@@ -30,14 +30,22 @@ namespace Engine
 			ID3D11DepthStencilView* depthStencilView);
 
 		void SetClearColor(const MathLib::Vector4& clearColor) override;
-		void Clear() override;
 
+		void OnBeginRender() override;
+		void OnEndRender() override;
+		
+		void Present() override;
 		void ClearTexture(uint32_t slot) override;
+
 
 		void Draw(class VertexArray* vertexArray) override;
 		void Draw(class VertexBuffer* buffer, 
 			class IndexBuffer* indexBuffer = nullptr) override;
-		void SwapBuffers() override;
+
+        /**
+         * Clears the render target view colors.
+         */
+		void ClearRenderTargetViewColors();
 
 		uint32_t GetWidth() const override;
 		uint32_t GetHeight() const override;

@@ -27,7 +27,7 @@ namespace Editor
 		void OnLayerAdded() override;
 		void OnLayerRemoved() override;
 
-		void OnUpdate(const Engine::Timestep& timestep);
+		void OnUpdate(const Engine::Timestep& timestep) override;
 		void OnImGuiRender() override;
 
 		void OnEvent(Engine::IEvent& event) override;
