@@ -52,7 +52,7 @@ namespace Engine
 	bool Texture::Create(Texture** texture, uint32_t width, uint32_t height, const TextureSpecifications& specifications)
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
-        *texture = new DirectX11Texture(specifications);
+		*texture = new DirectX11Texture(width, height, specifications);
         return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");
@@ -75,7 +75,7 @@ namespace Engine
 		const TextureSpecifications& specifications)
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
-        texture = std::make_shared<DirectX11Texture>(specifications);
+        texture = std::make_shared<DirectX11Texture>(width, height, specifications);
         return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");

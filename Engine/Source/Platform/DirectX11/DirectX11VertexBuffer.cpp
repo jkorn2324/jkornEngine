@@ -9,7 +9,7 @@
 namespace Engine
 {
 	DirectX11VertexBuffer::DirectX11VertexBuffer(const void* buffer, 
-		:uint32_t numVertices, uint32_t stride)
+		uint32_t numVertices, uint32_t stride)
 		: VertexBuffer(buffer, numVertices, stride)
 	{
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
@@ -28,8 +28,8 @@ namespace Engine
 		initializationData.SysMemPitch = 0;
 		initializationData.SysMemSlicePitch = 0;
 
-		HRESULT result = renderingAPI.m_device
-			->CreateBuffer(&bufferDesc, &initializationData, &m_vertexBuffer);
+		HRESULT result = renderingAPI.m_device->CreateBuffer(
+			&bufferDesc, &initializationData, &m_vertexBuffer);
         JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create vertex buffer.");
 		SetData(buffer, numVertices, stride);
 	}
