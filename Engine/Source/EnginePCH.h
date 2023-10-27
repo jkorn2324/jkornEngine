@@ -3,19 +3,26 @@
 #include "PlatformDetector.h"
 
 #include <iostream>
-#include <algorithm>
 #include <memory>
-#include <stdlib.h>
-#include <malloc.h>
-#include <tchar.h>
+#include <algorithm>
+#include <type_traits>
+#include <functional>
+
 #include <string>
 #include <unordered_map>
 #include <chrono>
+
+#include <cstdlib>
+#include <cstdio>
 #include <cstdint>
 
 #ifdef PLATFORM_WINDOWS
 
 #include <Windows.h>
+
+// Both of these are deprecated on other Platforms
+#include <malloc.h>
+#include <tchar.h>
 
 #ifdef GetObject
 	#undef GetObject
@@ -53,6 +60,6 @@
 
 #endif
 
-#include "DebugAssert.h"
+#include "EngineAssert.h"
 #include "Logger.h"
 #include "EngineMacros.h"

@@ -1,14 +1,12 @@
 #pragma once
 
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/document.h>
+#include <rapidjson/filereadstream.h>
 
-#include <rapidjson\PrettyWriter.h>
-#include <rapidjson\stringbuffer.h>
-
-#include <rapidjson\document.h>
-#include <rapidjson\filereadstream.h>
-
-#include "Source\Vector.h"
-#include "Source\Quaternion.h"
+#include "Vector.h"
+#include "Quaternion.h"
 
 #include <fstream>
 #include <string>

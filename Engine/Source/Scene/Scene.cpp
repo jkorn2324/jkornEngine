@@ -3,13 +3,14 @@
 #include "Entity.h"
 #include "SceneManager.h"
 
-#include "SceneEvent.h"
+#include "EntityEvents.h"
 #include "Event.h"
 
 #include "Components.h"
 #include "Camera.h"
 
 #include "Profiler.h"
+#include "GraphicsUtility.h"
 #include "GraphicsRenderer.h"
 #include "GraphicsRenderer2D.h"
 #include "GraphicsRenderer3D.h"
@@ -18,52 +19,13 @@
 
 namespace Engine
 {
-
-	static void UpdateEntityHierarchies(Entity& rootEntity, EntityHierarchyComponent& rootComponent)
-	{
-		if (!rootComponent.HasChildren())
-		{
-			return;
-		}
-
-		MathLib::Matrix4x4 mat = MathLib::Matrix4x4::Identity;
-		{
-			if (rootEntity.HasComponent<Transform3DComponent>())
-			{
-				mat = rootEntity.GetComponent<Transform3DComponent>().GetTransformMatrix();
-			}
-			if (rootEntity.HasComponent<Transform2DComponent>())
-			{
-				mat = rootEntity.GetComponent<Transform2DComponent>().GetTransformMatrix();
-			}
-		}
-
-		int32_t size = (int32_t)rootComponent.GetChildren().size() - 1;
-		for (int32_t i = size; i >= 0; i--)
-		{
-			auto e = rootComponent.GetChildren()[i];
-			if (e.HasComponent<Transform3DComponent>())
-			{
-				Transform3DComponent& component
-					= e.GetComponent<Transform3DComponent>();
-				component.SetParentTransformMatrix(mat);
-			}
-
-			if (e.HasComponent<Transform2DComponent>())
-			{
-				Transform2DComponent& component
-					= e.GetComponent<Transform2DComponent>();
-				component.SetParentTransformMatrix(mat);
-			}
-
-			if (e.HasComponent<EntityHierarchyComponent>())
-			{
-				EntityHierarchyComponent& hierarchyComponent
-					= e.GetComponent<EntityHierarchyComponent>();
-				UpdateEntityHierarchies(e, hierarchyComponent);
-			}
-		}
-	}
+    namespace SceneUtility::Internals
+    {
+        entt::registry& GetEntityRegistry(Scene& scene)
+        {
+            return scene.m_entityRegistry;
+        }
+    }
 
 	void Scene::CreateDefaultScene(Scene*& scene)
 	{
@@ -92,7 +54,7 @@ namespace Engine
 	{
 		// Creates the scene camera.
 		{
-			Entity entity = scene.CreateEntity("Main Camera");
+			EntityRef entity = scene.CreateEntity("Main Camera");
 			Transform3DComponent& cameraTransform
 				= entity.AddComponent<Transform3DComponent>();
 			cameraTransform.SetLocalPosition(MathLib::Vector3{ 0.0f, 0.0f, -10.0f });
@@ -102,7 +64,7 @@ namespace Engine
 
 		// Creates the cube.
 		{
-			Entity entity = scene.CreateEntity("Cube");
+			EntityRef entity = scene.CreateEntity("Cube");
 			entity.AddComponent<Transform3DComponent>();
 			MeshComponent& component =
 				entity.AddComponent<MeshComponent>();
@@ -112,7 +74,7 @@ namespace Engine
 
 		// Creates a directional light.
 		{
-			Entity entity = scene.CreateEntity("Directional Light");
+			EntityRef entity = scene.CreateEntity("Directional Light");
 			Transform3DComponent& transform
 				= entity.AddComponent<Transform3DComponent>();
 			transform.SetLocalEulerAngles(MathLib::Vector3{ 45, 0, 0 });
@@ -145,22 +107,18 @@ namespace Engine
 
 	Scene::~Scene()
 	{
-		auto entityView = m_entityRegistry.view<BehaviorComponent>();
-		for (auto e : entityView)
-		{
-			auto behaviorComponent = entityView.get<Engine::BehaviorComponent>(e);
-			behaviorComponent.Destroy();
-		}
 	}
 
-	void Scene::OnEvent(Event& event)
+	void Scene::OnEvent(IEvent& event)
 	{
 		EventDispatcher dispatcher(event);
-		dispatcher.Invoke<EntityComponentAddedEvent<Transform3DComponent>>(
+#if false
+		dispatcher.Invoke<EntityEventType, EntityComponentAddedEvent<Transform3DComponent>>(
 			BIND_EVENT_FUNCTION(OnComponentAdded));
-		dispatcher.Invoke<EntityComponentRemovedEvent<Transform3DComponent>>(
+		dispatcher.Invoke<EntityEventType, EntityComponentRemovedEvent<Transform3DComponent>>(
 			BIND_EVENT_FUNCTION(OnComponentRemoved));
-		dispatcher.Invoke<EntityHierarchyChangedEvent>(
+#endif
+		dispatcher.Invoke<EntityEventType, EntityHierarchyChangedEvent>(
 			BIND_EVENT_FUNCTION(OnEntityHierarchyChanged));
 	}
 
@@ -169,21 +127,16 @@ namespace Engine
 	Scene* Scene::CopyScene()
 	{
 		Scene* cpyScene = new Scene(m_sceneName);
-		for (const auto& e : m_rootEntities)
+		for (auto& e : m_rootEntities)
 		{
-			if (e.IsValid())
+			if (e.IsValid(m_entityRegistry))
 			{
-				Entity copiedEntity
-					= cpyScene->CreateEntity();
-				CopyEntity(e, copiedEntity);
+				EntityRef createdEntity = cpyScene->CreateEntity();
+				Entity pasted = (Entity)createdEntity;
+				Entity::CopyEntity(e, m_entityRegistry, pasted, cpyScene->m_entityRegistry);
 			}
 		}
 		return cpyScene;
-	}
-
-	void Scene::BindEventFunc(const EventFunc& func)
-	{
-		m_eventFunc = func;
 	}
 
 	void Scene::OnUpdate(const Timestep& ts)
@@ -195,35 +148,9 @@ namespace Engine
 			int32_t sizeOfVec = (int32_t)m_markedForDestroyEntities.size() - 1;
 			while (sizeOfVec >= 0)
 			{
-				{
-					Entity e = Entity{ m_markedForDestroyEntities[sizeOfVec], this };
-					e.GetComponent<BehaviorComponent>().Destroy();
-				}
 				m_entityRegistry.destroy(m_markedForDestroyEntities[sizeOfVec]);
 				m_markedForDestroyEntities.pop_back();
 				sizeOfVec--;
-			}
-		}
-
-		// Updates each behavior component generally.
-		{
-			auto entityView = m_entityRegistry.view<BehaviorComponent>();
-			for (auto entity : entityView)
-			{
-				auto behaviorComponent = entityView.get<BehaviorComponent>(entity);
-				behaviorComponent.Get().OnUpdate(ts);
-			}
-		}
-
-		// Updates the entity hierarchies.
-		{
-			const auto& rootEntities
-				= GetRootEntities();
-			for (auto entity : rootEntities)
-			{
-				EntityHierarchyComponent& hierarchy
-					= entity.GetComponent<EntityHierarchyComponent>();
-				UpdateEntityHierarchies(entity, hierarchy);
 			}
 		}
 
@@ -260,12 +187,15 @@ namespace Engine
 				int32_t size = (int32_t)entityView.size() - 1;
 				for (int32_t back = size; back >= 0; back--)
 				{
-					Entity e = Entity{ entityView[back], this };
+					auto eid = entityView[back];
+					EntityRef e(entityView[back], m_entityRegistry);
+					DirectionalLightComponent& directionalLight = entityView.get<0>(
+						(entt::entity)e.GetEntity());
 					if (e.HasComponent<Engine::Transform3DComponent>())
 					{
 						GraphicsRenderer3D::SetDirectionalLight(
-							e.GetComponent<Engine::Transform3DComponent>().GetWorldForward(), 
-							entityView.raw()[back]);
+							e.GetComponent<Engine::Transform3DComponent>().GetWorldForward(),
+							directionalLight);
 						break;
 					}
 				}
@@ -289,38 +219,18 @@ namespace Engine
 	void Scene::OnRuntimeUpdate(const Timestep& ts)
 	{
 		PROFILE_SCOPE(RuntimeUpdate, Scene);
-
-		// Updates each behavior component at runtime.
-		{
-			auto entityView = m_entityRegistry.view<BehaviorComponent>();
-			for (auto entity : entityView)
-			{
-				auto behaviorComponent = entityView.get<BehaviorComponent>(entity);
-				behaviorComponent.Get().OnRuntimeUpdate(ts);
-			}
-		}
 	}
 
 	void Scene::OnEditorUpdate(const Timestep& ts)
 	{
 		PROFILE_SCOPE(EditorUpdate, Scene);
-
-		// Updates each behavior component.
-		{
-			auto entityView = m_entityRegistry.view<BehaviorComponent>();
-			for (auto entity : entityView)
-			{
-				auto behaviorComponent = entityView.get<BehaviorComponent>(entity);
-				behaviorComponent.Get().OnEditorUpdate(ts);
-			}
-		}
 	}
 
-	void Scene::Render(const CameraConstants& cameraConstants)
+	void Scene::Render(const CameraConstants& cameraConstants, ConstantBuffer* cameraBuffer)
 	{
 		PROFILE_SCOPE(SceneRender, Rendering);
 
-		GraphicsRenderer::BeginScene(cameraConstants);
+		Graphics::Utility::BeginRenderScene(cameraConstants, cameraBuffer);
 
 		// Render the meshes.
 		{
@@ -353,10 +263,10 @@ namespace Engine
 				auto sprite = entityView.get<SpriteComponent>(entity);
 				if (!sprite.enabled) return;
 
-				Entity e = Entity{ entity, this };
+				EntityRef e(entity, m_entityRegistry);
 				if (e.HasComponent<Transform2DComponent>())
 				{
-					MathLib::Matrix4x4 transformMat = 
+					MathLib::Matrix4x4 transformMat =
 						e.GetComponent<Transform2DComponent>().GetTransformMatrix();
 					GraphicsRenderer2D::DrawRect(
 						transformMat, sprite.color, sprite.texture, (int32_t)entity);
@@ -371,16 +281,16 @@ namespace Engine
 			}
 		}
 
-		GraphicsRenderer::EndScene();
+		Graphics::Utility::EndRenderScene();
 	}
 
-	void Scene::Render()
+	void Scene::Render(ConstantBuffer* cameraBuffer)
 	{
 		CameraConstants constants;
 		{
 			if (m_camera != nullptr)
 			{
-				auto mat = m_camera->GetViewMatrix();
+				MathLib::Matrix4x4 mat = m_camera->GetViewMatrix();
 				mat.Invert();
 
 				constants.c_cameraPosition = mat.GetTranslation();
@@ -388,49 +298,7 @@ namespace Engine
 					m_camera->GetViewProjectionMatrix();
 			}
 		}
-		Render(constants);
-	}
-
-	Entity Scene::Find(const std::string& entityName) const
-	{
-		const auto entityView = m_entityRegistry.view<const NameComponent>();
-		for (auto entity : entityView)
-		{
-			auto nameComponent = entityView.get(entity);
-			if (nameComponent.name == entityName)
-			{
-				return Entity(entity, (Scene*)this);
-			}
-		}
-		return Entity::None;
-	}
-
-	Entity Scene::Find(const GUID& guid) const
-	{
-		const auto entityView = m_entityRegistry.view<const IDComponent>();
-		for (auto entity : entityView)
-		{
-			auto idComponent = entityView.get(entity);
-			if (idComponent.guid == guid)
-			{
-				return Entity(entity, (Scene*)this);
-			}
-		}
-		return Entity::None;
-	}
-
-	Entity Scene::Find(const uint64_t& guid) const
-	{
-		const auto entityView = m_entityRegistry.view<const IDComponent>();
-		for (auto entity : entityView)
-		{
-			auto idComponent = entityView.get(entity);
-			if (idComponent.guid == guid)
-			{
-				return Entity(entity, (Scene*)this);
-			}
-		}
-		return Entity::None;
+		Render(constants, cameraBuffer);
 	}
 
 	Camera* Scene::GetCamera() const
@@ -443,102 +311,89 @@ namespace Engine
 		return m_rootEntities;
 	}
 
-	Entity Scene::CreateEntity(const GUID& guid, const std::string& entityName, const Engine::Entity& parent)
+	EntityRef Scene::CreateEntity(const GUID& guid, const std::string& entityName, const Engine::Entity& parent)
 	{
 		PROFILE_SCOPE(CreateEntity, Scene);
 
-		Entity createdEntity = Entity(m_entityRegistry.create(), this);
-		createdEntity.AddComponent<NameComponent>(entityName);
-		createdEntity.AddComponent<IDComponent>(guid);
+		Entity createdEntity = Entity(m_entityRegistry.create());
+		EntityRef createdEntityRef = EntityRef(createdEntity, m_entityRegistry);
+		EntityRef parentEntityRef(parent, m_entityRegistry);
 
-		{
-			BehaviorComponent& entity
-				= createdEntity.AddComponent<BehaviorComponent>();
-			entity.Create(createdEntity);
-		}
+		createdEntityRef.AddComponent<NameComponent>(entityName);
+		createdEntityRef.AddComponent<IDComponent>(guid);
 
 		EntityHierarchyComponent& ehc
-			= createdEntity.AddComponent<EntityHierarchyComponent>(createdEntity);
-		if (parent.IsValid())
+			= createdEntityRef.AddComponent<EntityHierarchyComponent>(createdEntity);
+		if (parentEntityRef.IsValid())
 		{
-			ehc.SetParent(parent);
+			ehc.SetParent(parentEntityRef);
 		}
 
 		// Appends the entity back to the root entities.
-		if (!ehc.HasParent())
+		if (!ehc.HasParent(m_entityRegistry))
+		{
+			m_rootEntities.push_back(createdEntity);
+		}
+		EntityCreatedEvent createdEvent(createdEntity);
+		EventInvoker::Global().Invoke(createdEvent);
+		return createdEntityRef;
+	}
+
+	EntityRef Scene::CreateEntity(const std::string& entityName, const Engine::Entity& parent)
+	{
+		PROFILE_SCOPE(CreateEntity, Scene);
+
+		EntityRef parentEntityRef(parent, m_entityRegistry);
+		Entity createdEntity = Entity(m_entityRegistry.create());
+		EntityRef createdEntityRef(createdEntity, m_entityRegistry);
+
+		createdEntityRef.AddComponent<NameComponent>(entityName);
+		createdEntityRef.AddComponent<IDComponent>();
+
+		EntityHierarchyComponent& ehc
+			= createdEntityRef.AddComponent<EntityHierarchyComponent>(createdEntity);
+		if (parentEntityRef.IsValid())
+		{
+			ehc.SetParent(parentEntityRef);
+		}
+
+		// Appends the entity back to the root entities.
+		if (!ehc.HasParent(m_entityRegistry))
 		{
 			m_rootEntities.push_back(createdEntity);
 		}
 
-		if (m_eventFunc != nullptr)
-		{
-			EntityCreatedEvent createdEvent(createdEntity);
-			m_eventFunc(createdEvent);
-		}
-		return createdEntity;
+		EntityCreatedEvent createdEvent(createdEntity);
+		EventInvoker::Global().Invoke(createdEvent);
+		return createdEntityRef;
 	}
 
-	Entity Scene::CreateEntity(const std::string& entityName, const Engine::Entity& parent)
-	{
-		PROFILE_SCOPE(CreateEntity, Scene);
-
-		Entity createdEntity = Entity(m_entityRegistry.create(), this);
-		createdEntity.AddComponent<NameComponent>(entityName);
-		createdEntity.AddComponent<IDComponent>();
-
-		{
-			BehaviorComponent& entity
-				= createdEntity.AddComponent<BehaviorComponent>();
-			entity.Create(createdEntity);
-		}
-
-		EntityHierarchyComponent& ehc
-			= createdEntity.AddComponent<EntityHierarchyComponent>(createdEntity);
-		if (parent.IsValid())
-		{
-			ehc.SetParent(parent);
-		}
-
-		// Appends the entity back to the root entities.
-		if (!ehc.HasParent())
-		{
-			m_rootEntities.push_back(createdEntity);
-		}
-
-		if (m_eventFunc != nullptr)
-		{
-			EntityCreatedEvent createdEvent(createdEntity);
-			m_eventFunc(createdEvent);
-		}
-		return createdEntity;
-	}
-
-	Entity Scene::CreateEntity(const GUID& guid, const Entity& parent)
+	EntityRef Scene::CreateEntity(const GUID& guid, const Entity& parent)
 	{
 		return CreateEntity(guid, "Entity", parent);
 	}
 
-	Entity Scene::CreateEntity(const GUID& guid, const std::string& entity)
+	EntityRef Scene::CreateEntity(const GUID& guid, const std::string& entity)
 	{
 		return CreateEntity(guid, entity, Entity{});
 	}
 
-	Entity Scene::CreateEntity(const GUID& guid)
+	EntityRef Scene::CreateEntity(const GUID& guid)
 	{
 		return CreateEntity(guid, "Entity");
 	}
 
-	Entity Scene::CreateEntity(const std::string& entityName)
+	EntityRef Scene::CreateEntity(const std::string& entityName)
 	{
 		return CreateEntity(entityName.c_str());
 	}
 
-	Entity Scene::CreateEntity(const char* entityName)
+	EntityRef Scene::CreateEntity(const char* entityName)
 	{
 		return CreateEntity(entityName, Entity());
 	}
 
-	Entity Scene::CreateEntity()
+	EntityRef Scene::CreateEntity()
 	{
 		return CreateEntity("Entity");
 	}
@@ -547,15 +402,16 @@ namespace Engine
 	{
 		PROFILE_SCOPE(DestroyEntity, Scene);
 
-		if (!entity.IsValid())
+		EntityRef entityRef(entity, m_entityRegistry);
+		if (!entityRef.IsValid())
 		{
 			return;
 		}
-		
+
 		// Destroys the entity's children.
 		{
 			EntityHierarchyComponent& ehc =
-				entity.GetComponent<EntityHierarchyComponent>();
+				entityRef.GetComponent<EntityHierarchyComponent>();
 			if (ehc.HasChildren())
 			{
 				for (const auto& e : ehc.GetChildren())
@@ -565,18 +421,11 @@ namespace Engine
 			}
 		}
 
-		// Triggers on destroy for the children.
-		{
-			BehaviorComponent& bc =
-				entity.GetComponent<BehaviorComponent>();
-			bc.Get().OnDestroy();
-		}
-
-		const auto& find = std::find(m_markedForDestroyEntities.begin(), 
-			m_markedForDestroyEntities.end(), entity.m_entity);
+		const auto& find = std::find(m_markedForDestroyEntities.begin(),
+			m_markedForDestroyEntities.end(), (entt::entity)entity);
 		if (find == m_markedForDestroyEntities.end())
 		{
-			m_markedForDestroyEntities.push_back(entity.m_entity);
+			m_markedForDestroyEntities.push_back((entt::entity)entity);
 		}
 
 		// Updates the root entities.
@@ -588,12 +437,8 @@ namespace Engine
 				m_rootEntities.erase(found);
 			}
 		}
-
-		if (m_eventFunc != nullptr)
-		{
-			EntityDestroyedEvent destroyedEvent(entity);
-			m_eventFunc(destroyedEvent);
-		}
+		EntityDestroyedEvent destroyedEvent(entity);
+		EventInvoker::Global().Invoke(destroyedEvent);
 	}
 
 	bool Scene::OnEntityHierarchyChanged(EntityHierarchyChangedEvent& event)
@@ -602,52 +447,16 @@ namespace Engine
 			m_rootEntities.end(), event.entityHierarchy.GetOwner());
 		if (found != m_rootEntities.end())
 		{
-			if (event.entityHierarchy.HasParent())
+			if (event.entityHierarchy.HasParent(m_entityRegistry))
 			{
 				m_rootEntities.erase(found);
 			}
 			return true;
 		}
-		if (!event.entityHierarchy.HasParent())
+		if (!event.entityHierarchy.HasParent(m_entityRegistry))
 		{
 			m_rootEntities.push_back(event.entityHierarchy.GetOwner());
 		}
 		return false;
-	}
-
-	template<typename T>
-	bool Scene::OnComponentAdded(EntityComponentAddedEvent<T>& event)
-	{
-		static_assert(false);
-		return true;
-	}
-
-	template<>
-	bool Scene::OnComponentAdded(EntityComponentAddedEvent<Transform3DComponent>& event)
-	{
-		// TODO: Implementation
-		return true;
-	}
-
-	template<typename T>
-	bool Scene::OnComponentRemoved(EntityComponentRemovedEvent<T>& event)
-	{
-		static_assert(false);
-		return true;
-	}
-	
-	template<>
-	bool Scene::OnComponentRemoved(EntityComponentRemovedEvent<BehaviorComponent>& event)
-	{
-		event.component.Get().OnDestroy();
-		event.component.Destroy();
-		return true;
-	}
-
-	template<>
-	bool Scene::OnComponentRemoved(EntityComponentRemovedEvent<Transform3DComponent>& event)
-	{
-		// TODO: Implementation
-		return true;
 	}
 }

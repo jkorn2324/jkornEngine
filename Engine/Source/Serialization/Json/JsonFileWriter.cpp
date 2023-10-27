@@ -2,7 +2,7 @@
 #include "JsonFileWriter.h"
 
 #include "JsonUtils.h"
-#include "Source\Vector.h"
+#include "Vector.h"
 #include "GUID.h"
 
 namespace Engine
@@ -21,7 +21,7 @@ namespace Engine
 	{
 		m_prettyWriter.EndObject();
 
-#ifdef PLATFORM_WINDOWS
+#if defined(PLATFORM_WINDOWS)
 		FILE* file;
 		errno_t errorCode = _wfopen_s(&file, m_path.c_str(), L"w");
 		if (file == nullptr)
@@ -213,4 +213,10 @@ namespace Engine
 	{
 		Write(name, (uint64_t)guid);
 	}
+
+    template<>
+    void JsonFileWriter::Write(const std::string& name, const unsigned long& value)
+    {
+        Write(name, (uint32_t)value);
+    }
 }

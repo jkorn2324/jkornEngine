@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EngineMacros.h"
+#include <string>
 
 #include <memory>
 #include <string>

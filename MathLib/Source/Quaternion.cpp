@@ -1,7 +1,7 @@
 #include "MathPCH.h"
 #include "Quaternion.h"
 #include "Vector.h"
-#include "Math.h"
+#include "MathLib.h"
 
 namespace MathLib
 {
@@ -85,18 +85,33 @@ namespace MathLib
 
 	float Dot(const Quaternion& a, const Quaternion& b)
 	{
-		return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+        return Quaternion::Dot(a, b);
 	}
+
+    float Quaternion::Dot(const Quaternion &a, const Quaternion &b)
+    {
+        return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+    }
 
 	Vector3 ToEuler(const Quaternion& quaternion)
 	{
-		return quaternion.ToEuler();
+        return Quaternion::ToEuler(quaternion);
 	}
+
+    Vector3 Quaternion::ToEuler(const Quaternion& quaternion)
+    {
+        return quaternion.ToEuler();
+    }
 
 	Vector3 ToEuler(const Quaternion& quat, bool inDegrees)
 	{
-		return quat.ToEuler(inDegrees);
+        return Quaternion::ToEuler(quat, inDegrees);
 	}
+
+    Vector3 Quaternion::ToEuler(const Quaternion &quat, bool inDegrees)
+    {
+        return quat.ToEuler(inDegrees);
+    }
 
 	Quaternion Concatenate(const Quaternion& a, const Quaternion& b)
 	{
@@ -196,15 +211,43 @@ namespace MathLib
 			+ Sin(pitch * 0.5f, inDegrees) * Sin(yaw * 0.5f, inDegrees) * Sin(roll * 0.5f, inDegrees));
 	}
 
+	Quaternion Quaternion::FromDirection(const Vector3& desiredDirection)
+	{
+		return FromDirection(desiredDirection, Vector3::UnitY, Vector3::UnitX);
+	}
+
+	Quaternion Quaternion::FromDirection(const Vector3& desiredDirection, const Vector3& upDirection, const Vector3& rightDirection)
+	{
+		Vector3 rotationAxis;
+		float dotProduct = Vector3::Dot(upDirection, desiredDirection);
+		if (MathLib::IsCloseEnough(dotProduct, 1.0f))
+		{
+			rotationAxis = rightDirection;
+		}
+		else
+		{
+			rotationAxis = Cross(desiredDirection, upDirection);
+		}
+		// rotation axis for a quaternion.
+		rotationAxis.Normalize();
+		float rotationAngle = ACos(dotProduct, false);
+		return Quaternion(rotationAxis, rotationAngle, false);
+	}
+
 	Quaternion Normalize(const Quaternion& quat)
 	{
-		float length = quat.Length();
-		return Quaternion(
-			quat.x / length,
-			quat.y / length,
-			quat.z / length,
-			quat.w / length);
+        return Quaternion::Normalize(quat);
 	}
+
+    Quaternion Quaternion::Normalize(const Quaternion& quat)
+    {
+        float length = quat.Length();
+        return Quaternion(
+            quat.x / length,
+            quat.y / length,
+            quat.z / length,
+            quat.w / length);
+    }
 
 	bool operator==(const Quaternion& a, const Quaternion& b)
 	{

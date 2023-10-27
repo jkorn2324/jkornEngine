@@ -1,6 +1,6 @@
 #include "MathPCH.h"
 #include "Geometry3D.h"
-#include "Math.h"
+#include "MathLib.h"
 
 namespace MathLib
 {

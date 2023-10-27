@@ -1,14 +1,12 @@
 #pragma once
 
-#include "Source\Transform.h"
+#include "Transform.h"
 
 #include "Entity.h"
 #include "GUID.h"
-#include "BehaviorScriptContainer.h"
 #include "SceneCamera.h"
 #include "EntityHierarchyComponent.h"
 #include "LightingComponents.h"
-#include "BehaviorScript.h"
 
 namespace Engine
 {
@@ -27,6 +25,15 @@ namespace Engine
 		IDComponent() = default;
 		IDComponent(const GUID& guid)
 			: guid(guid) { }
+
+		IDComponent(const IDComponent& cpy)
+			: guid(cpy.guid) { }
+
+		IDComponent& operator=(const IDComponent& cpy)
+		{
+			guid = cpy.guid;
+			return *this;
+		}
 	};
 
 	struct SpriteComponent
@@ -46,6 +53,17 @@ namespace Engine
 			: color(MathLib::Vector4::One), texture(), enabled(enabled) { }
 		explicit SpriteComponent(bool enabled, const MathLib::Vector4& color)
 			: color(color), enabled(enabled), texture() { }
+
+		SpriteComponent(const SpriteComponent& cpy)
+			: color(cpy.color), texture(cpy.texture), enabled(cpy.enabled) { }
+
+		SpriteComponent& operator=(const SpriteComponent& cpy)
+		{
+			texture = cpy.texture;
+			color = cpy.color;
+			enabled = cpy.enabled;
+			return *this;
+		}
 	};
 
 	struct SceneCameraComponent
@@ -63,13 +81,22 @@ namespace Engine
 		{
 			camera.SetSceneCameraType(cameraType);
 		}
-
 		explicit SceneCameraComponent(bool mainCamera, SceneCameraType type,
 			const CameraProperties& properties)
 			: mainCamera(mainCamera), camera(type, properties) { }
 
-		SceneCameraComponent(const SceneCameraComponent& component) = default;
+		SceneCameraComponent(const SceneCameraComponent& component)
+			: camera(component.camera), mainCamera(component.mainCamera), enabled(component.enabled)
+		{
+		}
 
+		SceneCameraComponent& operator=(const SceneCameraComponent& cpy)
+		{
+			camera = cpy.camera;
+			mainCamera = cpy.mainCamera;
+			enabled = cpy.enabled;
+			return *this;
+		}
 	};
 
 	struct NameComponent
@@ -81,6 +108,18 @@ namespace Engine
 			: name(name) { }
 		explicit NameComponent(const char* name)
 			: name(name) { }
+
+		NameComponent(const NameComponent& component)
+			: name(component.name)
+		{
+
+		}
+
+		NameComponent& operator=(const NameComponent& cpy)
+		{
+			name = cpy.name;
+			return *this;
+		}
 	};
 
 	struct MeshComponent
@@ -95,65 +134,16 @@ namespace Engine
 			: mesh(), material() { }
 		explicit MeshComponent(Mesh* mesh, Material* material)
 			: mesh(mesh), material(material) { }
-	};
 
-	class BehaviorComponent
-	{
-	public:
-		BehaviorComponent()
-			: m_behaviorScriptContainer() { }
-		BehaviorComponent(const BehaviorComponent& component)
-			: m_behaviorScriptContainer() 
+		MeshComponent(const MeshComponent& mesh)
+			: mesh(mesh.mesh), material(mesh.material), enabled(mesh.enabled) { }
+
+		MeshComponent& operator=(const MeshComponent& cpy)
 		{
-			if (component.IsValid())
-			{
-				m_behaviorScriptContainer = component.m_behaviorScriptContainer;
-			}
-		}
-		
-		BehaviorComponent& operator=(const BehaviorComponent& component)
-		{
-			if (component.IsValid())
-			{
-				m_behaviorScriptContainer = component.m_behaviorScriptContainer;
-			}
+			mesh = cpy.mesh;
+			material = cpy.material;
+			enabled = cpy.enabled;
 			return *this;
 		}
-
-		bool IsValid() const { return m_behaviorScriptContainer.get() != nullptr; }
-		BehaviorScriptContainer& Get() { return *m_behaviorScriptContainer.get(); }
-		const BehaviorScriptContainer& Get() const { return *m_behaviorScriptContainer.get(); }
-
-		friend void Copy(const BehaviorComponent& from, BehaviorComponent& to)
-		{
-			to.Copy(from);
-		}
-
-	private:
-		void Copy(const BehaviorComponent& from)
-		{
-			if (from.IsValid())
-			{
-				for (const auto& behavior : from.m_behaviorScriptContainer->GetBehaviors())
-				{
-					m_behaviorScriptContainer->CopyBehavior(behavior);
-				}
-			}
-		}
-
-		void Create(Entity& entity)
-		{
-			m_behaviorScriptContainer = std::make_shared<BehaviorScriptContainer>(entity);
-		}
-
-		void Destroy()
-		{
-			m_behaviorScriptContainer->Deallocate();
-		}
-
-	private:
-		std::shared_ptr<BehaviorScriptContainer> m_behaviorScriptContainer;
-
-		friend class Scene;
 	};
 }

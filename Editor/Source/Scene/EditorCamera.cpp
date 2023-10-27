@@ -3,7 +3,7 @@
 
 #include "EditorSelection.h"
 
-#include "Source\Matrix.h"
+#include "Matrix.h"
 
 namespace Editor
 {
@@ -26,17 +26,17 @@ namespace Editor
 
 	MathLib::Vector3 EditorCamera::GetForward() const
 	{
-		return MathLib::Rotate(GetRotation(), MathLib::Vector3::UnitZ);
+		return MathLib::Vector3::Rotate(GetRotation(), MathLib::Vector3::UnitZ);
 	}
 
 	MathLib::Vector3 EditorCamera::GetUp() const
 	{
-		return MathLib::Rotate(GetRotation(), MathLib::Vector3::UnitY);
+		return MathLib::Vector3::Rotate(GetRotation(), MathLib::Vector3::UnitY);
 	}
 
 	MathLib::Vector3 EditorCamera::GetRight() const
 	{
-		return MathLib::Rotate(GetRotation(), MathLib::Vector3::UnitX);
+		return MathLib::Vector3::Rotate(GetRotation(), MathLib::Vector3::UnitX);
 	}
 
 	MathLib::Quaternion EditorCamera::GetRotation() const
@@ -130,7 +130,7 @@ namespace Editor
 	{
 		if (EditorSelection::HasSelectedEntity())
 		{
-			Engine::Entity selectedEntity = EditorSelection::GetSelectedEntity();
+			auto selectedEntity = EditorSelection::GetSelectedEntity();
 			if (selectedEntity.HasComponent<Engine::Transform3DComponent>())
 			{
 				Engine::Transform3DComponent& transform3D =

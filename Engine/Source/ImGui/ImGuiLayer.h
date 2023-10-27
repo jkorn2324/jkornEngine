@@ -1,15 +1,15 @@
 #pragma once
 
 #include "Layer.h"
-#include "Source\Vector.h"
+#include "Vector.h"
 
 #include <memory>
 
+#include "PlatformImGuiLayer.h"
+
 namespace Engine
 {
-
-	class PlatformImGuiLayer;
-	class Event;
+	class IEvent;
 
 	class ImGuiLayer : public Layer
 	{
@@ -18,7 +18,7 @@ namespace Engine
 		explicit ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnEvent(Event& event) override;
+		void OnEvent(IEvent& event) override;
 
 		void OnLayerAdded() override;
 		void OnLayerRemoved() override;
@@ -30,7 +30,7 @@ namespace Engine
 		bool OnWindowResized(class WindowResizedEvent& event);
 
 	private:
-		std::unique_ptr<PlatformImGuiLayer> m_windowImGuiLayer;
-		std::unique_ptr<PlatformImGuiLayer> m_graphicsImGuiLayer;
+        PlatformGraphicsImGuiLayer m_graphicsLayer;
+        PlatformWindowImGuiLayer m_windowLayer;
 	};
 }

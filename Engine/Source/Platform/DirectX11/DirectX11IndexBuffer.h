@@ -2,6 +2,8 @@
 
 #include "IndexBuffer.h"
 
+#include <d3d11.h>
+
 namespace Engine
 {
 	class DirectX11IndexBuffer : public IndexBuffer
@@ -16,7 +18,10 @@ namespace Engine
 		void SetData(const void* buffer,
 			uint32_t numIndices, uint32_t stride) override;
 
-		void Bind() const override;
+		/**
+		 * @brief Binds the index buffer.
+		 */
+		void Bind() const;
 
 	private:
 		ID3D11Buffer* m_indexBuffer;

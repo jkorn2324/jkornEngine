@@ -1,8 +1,9 @@
 #pragma once
 
 #include <filesystem>
-#include <rapidjson\prettywriter.h>
-#include <rapidjson\stringbuffer.h>
+
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
 
 namespace Engine
 {

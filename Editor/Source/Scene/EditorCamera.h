@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Camera.h"
-#include "Source\Vector.h"
-#include "Source\Quaternion.h"
-#include "Source\Matrix.h"
+#include "Vector.h"
+#include "Quaternion.h"
+#include "Matrix.h"
 
 namespace Engine
 {
 	class Timestep;
-	class Event;
+	class IEvent;
 }
 
 namespace Editor

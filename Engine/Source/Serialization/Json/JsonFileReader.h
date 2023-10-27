@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <rapidjson\document.h>
+#include <rapidjson/document.h>
 
 #include "JsonObjects.h"
 
@@ -32,5 +32,4 @@ namespace Engine
 		rapidjson::Document m_document;
 		size_t m_bufferSize;
 	};
-
 }

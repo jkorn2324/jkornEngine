@@ -106,7 +106,7 @@ namespace Engine
 		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 		HRESULT hr = device->CreateBuffer(&desc, nullptr, &outputBuffer);
-		DebugAssert(hr == S_OK, "Unable to create Structured Buffer");
+        JKORN_ENGINE_ASSERT(hr == S_OK, "Unable to create Structured Buffer");
 		return outputBuffer;
 	}
 
@@ -130,7 +130,7 @@ namespace Engine
 
 		HRESULT result = device->CreateBuffer(&bufferDesc,
 			&subresourceData, &outBuffer);
-		DebugAssert(result == S_OK, "Failed to create a constant buffer.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create a constant buffer.");
 		return outBuffer;
 	}
 
@@ -147,7 +147,7 @@ namespace Engine
 
 		ID3D11ShaderResourceView* srv = nullptr;
 		HRESULT result = device->CreateShaderResourceView(buffer, &srvDesc, &srv);
-		DebugAssert(result == S_OK, "Failed to create buffer shader resource");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create buffer shader resource");
 		return srv;
 	}
 	
@@ -165,7 +165,7 @@ namespace Engine
 
 		ID3D11UnorderedAccessView* uav = nullptr;
 		HRESULT result = device->CreateUnorderedAccessView(buffer, &uavDesc, &uav);
-		DebugAssert(result == S_OK, "Failed to create unordered access view resource.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create unordered access view resource.");
 		return uav;
 	}
 
@@ -240,7 +240,7 @@ namespace Engine
 				(D3D11_USAGE)textureUsage, bindFlags, cpuAccessFlags, 0,
 				DirectX::WIC_LOADER_DEFAULT, resource, shaderResourceView);
 		}
-		DebugAssert(result == S_OK, "Failed to load texture2D from file.")
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to load texture2D from file.")
 		return result == S_OK;
 	}
 	
@@ -294,7 +294,7 @@ namespace Engine
 		}
 		desc.MiscFlags = 0;
 		HRESULT result = device->CreateTexture2D(&desc, nullptr, &texture2D);
-		DebugAssert(result == S_OK, "Failed to create texture2d.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create texture2d.");
 		return texture2D;
 	}
 	
@@ -317,7 +317,7 @@ namespace Engine
 			result = device->CreateShaderResourceView(texture2D,
 				nullptr, &shaderResource);
 		}
-		DebugAssert(result == S_OK, "Shader Resource failed to be created when creating view target.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Shader Resource failed to be created when creating view target.");
 		return shaderResource;
 	}
 }

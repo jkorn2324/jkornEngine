@@ -5,76 +5,84 @@
 namespace Engine
 {
 
-	enum class EventType
-	{
-		WindowClosedEvent, WindowResizedEvent, WindowFocusEvent,
-
-		InputKeyEvent, InputKeyPressedEvent, InputKeyReleasedEvent,
-		InputMouseButtonEvent, InputMouseButtonPressedEvent, InputMouseButtonReleasedEvent,
-		InputMouseMoveEvent, InputMouseScrollEvent,
-
-		EntityCreatedEvent, EntityDestroyedEvent, EntityHierarchyChangedEvent,
-		EntityComponentAddedEvent, EntityComponentRemovedEvent
-	};
-
-	enum class EventCategory
-	{
-		Application,
-		Input,
-		Scene,
-		Editor
-	};
-
-#define EVENT_TYPE_CLASS(type) public:\
-	static EventType GetStaticEventType() { return EventType::type; }\
-	virtual EventType GetEventType() const override { return GetStaticEventType(); }\
-	virtual const char* GetName() const override { return #type; }\
-	static bool StaticIsValid(class Event& event) { return true; }
-#define EVENT_CATEGORY_CLASS(category) public:	virtual int GetEventCategoryFlags() const override { return (int)EventCategory::category; }
+	// The macros for defining an event type.
+#define EVENT_TYPE_CLASS(TEnumType, EnumValue) public:\
+	static TEnumType GetStaticEventType() { return TEnumType::EnumValue; }\
+	virtual TEnumType GetEventType() const override { return GetStaticEventType(); }\
+	virtual const char* GetName() const override { return #EnumValue; }
 #define BIND_EVENT_FUNCTION(func) [this](auto&&...args) -> decltype(auto) { return this->func(std::forward<decltype(args)>(args)...); }
 #define BIND_STATIC_EVENT_FUNCTION(func) [](auto&&...args) -> decltype(auto) { return func(std::forward<decltype(args)>(args)...); }
 
-	class Event
+	/**
+	 * Interface for an event.
+	 */
+	class IEvent
 	{
+	public:
+		virtual const char* GetName() const = 0;
+		virtual std::string ToString() const { return GetName(); }
+		virtual bool IsValid() const { return true; }
+
+		template<typename TEventClass>
+		static bool StaticIsValid(class IEvent& event)
+		{
+			TEventClass* eventClass = dynamic_cast<TEventClass*>(&event);
+			if (eventClass != nullptr)
+			{
+				return eventClass->IsValid();
+			}
+			return false;
+		}
+	};
+
+	template<typename TEventType>
+	class Event : public IEvent
+	{
+		static_assert(std::is_enum<TEventType>::value, "TEventType must be constrained to an enum or enum class.");
+
 	public:
 		virtual ~Event() = default;
 
-		virtual EventType GetEventType() const = 0;
-		virtual const char* GetName() const = 0;
-		virtual std::string ToString() const { return GetName(); }
-
-		virtual int GetEventCategoryFlags() const = 0;
-
-		bool HasEventCategory(EventCategory category)
-		{
-			return GetEventCategoryFlags() & (int)category;
-		}
-
-		virtual bool IsValid() const { return true; }
+		virtual TEventType GetEventType() const = 0;
 
 		bool eventHandled = false;
 	};
 
+	/**
+	 * A templated event dispatcher. Used for invoking a variety of events.
+	 */
 	class EventDispatcher
 	{
-
 	public:
-		explicit EventDispatcher(Event& ev)
-			: m_event(ev) { }
+		explicit EventDispatcher(IEvent& ev)
+			: m_event(&ev) { }
 
-		template<typename EventType, typename Func>
+		template<typename TEventTypeParam, typename TEventType, typename Func>
 		bool Invoke(const Func& callback)
 		{
-			if (m_event.GetEventType() == EventType::GetStaticEventType()
-				&& EventType::StaticIsValid(m_event))
+			// Asserts the the event type param is an enum & that the
+			// event that is searched is a base of an Event<TEventTypeParam>
+			static_assert(std::is_enum<TEventTypeParam>::value,
+				"TEventType must be constrained to an enum or enum class.");
+			static_assert(std::is_base_of<Event<TEventTypeParam>, TEventType>::value,
+				"The TEventType must derive from an Event of type Event<TEventTypeParam>.");
+
+			if (m_event == nullptr)
 			{
-				m_event.eventHandled |= callback(static_cast<EventType&>(m_event));
+				return false;
+			}
+
+			Event<TEventTypeParam>* Casted = static_cast<Event<TEventTypeParam>*>(m_event);
+			if (Casted->GetEventType() == TEventType::GetStaticEventType()
+				&& IEvent::StaticIsValid<TEventType>(*m_event))
+			{
+				Casted->eventHandled |= callback(static_cast<TEventType&>(*m_event));
 				return true;
 			}
 			return false;
 		}
 
 	private:
-		Event& m_event;
+		IEvent* m_event;
 	};
 }

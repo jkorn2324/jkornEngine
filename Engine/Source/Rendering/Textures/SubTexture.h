@@ -2,8 +2,8 @@
 
 #include "RefCounters.h"
 
-#include "Source\Vector.h"
-#include "Source\Math.h"
+#include "Vector.h"
+#include "MathLib.h"
 
 namespace Engine
 {

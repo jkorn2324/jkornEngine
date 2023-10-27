@@ -2,8 +2,11 @@
 #include "ConstantBuffer.h"
 #include "GraphicsRenderer.h"
 #include "RenderingAPI.h"
-#include "DirectX11ConstantBuffer.h"
 #include "Profiler.h"
+
+#if defined(GRAPHICS_API_DIRECTX11)
+#include "DirectX11ConstantBuffer.h"
+#endif
 
 namespace Engine
 {
@@ -18,31 +21,25 @@ namespace Engine
 	{
 		PROFILE_SCOPE(CreateConstantBuffer, Rendering);
 
-		switch (RenderingAPI::GetRenderingAPIType())
-		{
-		case RenderingAPIType::DIRECTX11: 
-		{
-			*outConstantBuffer = new DirectX11ConstantBuffer(buffer, stride);
-			return true;
-		}
-		}
-		DebugAssert(false, "Invalid Rendering API for Constant buffer.");
+#if defined(GRAPHICS_API_DIRECTX11)
+		*outConstantBuffer = new DirectX11ConstantBuffer(buffer, stride);
+		return true;			
+#else
+		JKORN_ENGINE_ASSERT(false, "Invalid Rendering API for Constant buffer.");
 		return false;
+#endif
 	}
 
 	bool ConstantBuffer::Create(std::shared_ptr<ConstantBuffer>& outConstantBuffer, const void* buffer, std::size_t stride)
 	{
 		PROFILE_SCOPE(CreateConstantBuffer, Rendering);
 
-		switch (RenderingAPI::GetRenderingAPIType())
-		{
-		case RenderingAPIType::DIRECTX11:
-		{
-			outConstantBuffer = std::make_shared<DirectX11ConstantBuffer>(buffer, stride);
-			return true;
-		}
-		}
-		DebugAssert(false, "Invalid Rendering API for Constant buffer.");
+#if defined(GRAPHICS_API_DIRECTX11)
+		outConstantBuffer = std::make_shared<DirectX11ConstantBuffer>(buffer, stride);
+		return true;			
+#else
+		JKORN_ENGINE_ASSERT(false, "Invalid Rendering API for Constant buffer.");
 		return false;
+#endif
 	}
 }

@@ -4,29 +4,29 @@
 #include <iostream>
 
 #include "MathUnitTests.h"
-#include "DebugAssert.h"
+#include "EngineAssert.h"
 #include "StringUtils.h"
 
 bool RunWideStringUnitTests();
 
 int main()
 {
-	DebugAssert(RunWideStringUnitTests() == true,
+    JKORN_ENGINE_ASSERT(RunWideStringUnitTests() == true,
 		"Wide String Unit Tests.");
 
-	DebugAssert(RunVector2UnitTests() == true, 
+    JKORN_ENGINE_ASSERT(RunVector2UnitTests() == true,
 		"Vector2 UnitTest Failed.");
-	DebugAssert(RunVector3UnitTests() == true, 
+    JKORN_ENGINE_ASSERT(RunVector3UnitTests() == true,
 		"Vector3 UnitTest Failed.");
-	DebugAssert(RunVector4UnitTests() == true, 
+    JKORN_ENGINE_ASSERT(RunVector4UnitTests() == true,
 		"Vector4 UnitTest Failed.");
-	DebugAssert(RunMatrix3UnitTests() == true,
+    JKORN_ENGINE_ASSERT(RunMatrix3UnitTests() == true,
 		"Matrix3x3 UnitTest Failed.");
-	DebugAssert(RunMatrix4UnitTests() == true,
+    JKORN_ENGINE_ASSERT(RunMatrix4UnitTests() == true,
 		"Matrix4x4 UnitTest Failed.");
-	DebugAssert(Run2DIntersectionUnitTests() == true,
+    JKORN_ENGINE_ASSERT(Run2DIntersectionUnitTests() == true,
 		"2D Intersection UnitTests Failed");
-	DebugAssert(Run3DIntersectionUnitTests() == true,
+    JKORN_ENGINE_ASSERT(Run3DIntersectionUnitTests() == true,
 		"2D Intersection UnitTests Failed");
 
 	std::printf("Unit Tests Passed!\n");

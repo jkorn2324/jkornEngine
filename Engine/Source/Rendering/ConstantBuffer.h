@@ -1,9 +1,5 @@
 #pragma once
 
-#include <memory>
-
-struct ID3D11Buffer;
-
 namespace Engine
 {
 

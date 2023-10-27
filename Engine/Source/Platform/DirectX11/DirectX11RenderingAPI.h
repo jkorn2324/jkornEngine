@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Source\Vector.h"
+#include "Vector.h"
 #include "RenderingAPI.h"
 
 struct IDXGISwapChain;
@@ -13,6 +13,9 @@ struct ID3D11RasterizerState;
 
 namespace Engine
 {
+	class VertexArray;
+	class VertexBuffer;
+	class IndexBuffer;
 
 	class DirectX11RenderingAPI : public RenderingAPI
 	{
@@ -22,7 +25,7 @@ namespace Engine
 
 		bool Initialize(class Window* window) override;
 		void SetViewport(float x, float y, float width, float height) override;
-		void SetResolution(std::uint32_t width, std::uint32_t height) override;
+		void SetResolution(uint32_t width, uint32_t height) override;
 
 		void SetRenderTarget(ID3D11RenderTargetView* renderTargetView,
 			ID3D11DepthStencilView* depthStencilView);
@@ -30,20 +33,28 @@ namespace Engine
 			ID3D11DepthStencilView* depthStencilView);
 
 		void SetClearColor(const MathLib::Vector4& clearColor) override;
-		void Clear() override;
-
+		
+		void Present() override;
 		void ClearTexture(uint32_t slot) override;
 
-		void Draw(class VertexArray* vertexArray) override;
-		void Draw(class VertexBuffer* buffer, 
-			class IndexBuffer* indexBuffer = nullptr) override;
-		void SwapBuffers() override;
 
-		std::uint32_t GetWidth() const override;
-		std::uint32_t GetHeight() const override;
+		void Draw(VertexArray* vertexArray) override;
+		void Draw(VertexBuffer* buffer, 
+			IndexBuffer* indexBuffer = nullptr) override;
+
+        /**
+         * Clears the render target view colors.
+         */
+		void ClearRenderTargetViewColors();
+
+		uint32_t GetWidth() const override;
+		uint32_t GetHeight() const override;
 
 		bool IsWireframe() const override;
 		void SetWireframe(bool wireframeMode) override;
+
+		ID3D11Device* GetDevice() const { return m_device; }
+		ID3D11DeviceContext* GetDeviceContext() const { return m_deviceContext; }
 
 	private:
 		IDXGISwapChain* m_swapChain;
@@ -74,7 +85,6 @@ namespace Engine
 		friend class DirectX11Texture2D;
 		friend class DirectX11ConstantBuffer;
 		friend class DirectX11Shader;
-		friend class DirectX11ImGuiLayer;
 		friend class DirectX11ComputeShader;
 		friend class DirectX11RenderTexture;
 		friend class DirectX11Utils;

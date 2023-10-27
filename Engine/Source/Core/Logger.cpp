@@ -1,8 +1,8 @@
 #include "EnginePCH.h"
 #include "Logger.h"
 
-#include <spdlog\sinks\stdout_color_sinks.h>
-#include <spdlog\sinks\basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 namespace Engine
 {
@@ -38,14 +38,14 @@ namespace Engine
 	
 	std::shared_ptr<spdlog::logger>& Logger::GetCoreLogger()
 	{
-		DebugAssert(s_coreLogger != nullptr,
+        JKORN_ENGINE_ASSERT(s_coreLogger != nullptr,
 			"Core Logger doesn't exist yet.");
 		return s_coreLogger;
 	}
 
 	std::shared_ptr<spdlog::logger>& Logger::GetExternalLogger()
 	{
-		DebugAssert(s_externalLogger != nullptr,
+        JKORN_ENGINE_ASSERT(s_externalLogger != nullptr,
 			"External Logger doesn't exist yet.");
 		return s_externalLogger;
 	}

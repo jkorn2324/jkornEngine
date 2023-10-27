@@ -45,6 +45,9 @@
 **.vcxproj.filters
 **.vcxproj.user
 
+# Jetbrains Files
+.idea/
+
 # Visual Studio Code Files
 .vscode/
 
@@ -52,5 +55,12 @@
 */Engine.log
 */Profile.json
 
+# Xcode4 Files
+*.xcodeproj
+*.xcworkspace
+DerivedData/
+
+# MacOS Files
+.DS_Store
 
 Editor/imgui.ini

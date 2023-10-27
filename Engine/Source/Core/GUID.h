@@ -1,7 +1,12 @@
 #pragma once
 
 #include <stdint.h>
+
+#ifdef PLATFORM_WINDOWS
 #include <xhash>
+#else
+#include <functional>
+#endif
 
 namespace Engine
 {

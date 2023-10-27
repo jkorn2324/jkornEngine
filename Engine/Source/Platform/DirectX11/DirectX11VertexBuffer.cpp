@@ -9,7 +9,7 @@
 namespace Engine
 {
 	DirectX11VertexBuffer::DirectX11VertexBuffer(const void* buffer, 
-		std::uint32_t numVertices, std::uint32_t stride)
+		:uint32_t numVertices, uint32_t stride)
 		: VertexBuffer(buffer, numVertices, stride)
 	{
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
@@ -30,7 +30,7 @@ namespace Engine
 
 		HRESULT result = renderingAPI.m_device
 			->CreateBuffer(&bufferDesc, &initializationData, &m_vertexBuffer);
-		DebugAssert(result == S_OK, "Failed to create vertex buffer.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create vertex buffer.");
 		SetData(buffer, numVertices, stride);
 	}
 
@@ -47,7 +47,7 @@ namespace Engine
 		return m_vertexBuffer != nullptr;
 	}
 
-	void DirectX11VertexBuffer::SetData(const void* buffer, std::uint32_t numVertices, std::uint32_t stride)
+	void DirectX11VertexBuffer::SetData(const void* buffer, uint32_t numVertices, uint32_t stride)
 	{
 		m_numVerts = numVertices;
 		m_stride = stride;
@@ -57,7 +57,7 @@ namespace Engine
 		D3D11_MAPPED_SUBRESOURCE mapResource;
 		HRESULT result = renderingAPI.m_deviceContext->Map(
 			m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
-		DebugAssert(result == S_OK, "Failed to map the vertex buffer resource.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to map the vertex buffer resource.");
 		Memory::Memcpy(mapResource.pData, buffer, numVertices * stride);
 		renderingAPI.m_deviceContext->Unmap(m_vertexBuffer, 0);
 	}
@@ -71,7 +71,7 @@ namespace Engine
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
 			GraphicsRenderer::GetRenderingAPI();
 		unsigned int offsets = 0;
-		std::uint32_t stride = GetStride();
+		uint32_t stride = GetStride();
 		renderingAPI.m_deviceContext->IASetVertexBuffers(0, 1,
 			&m_vertexBuffer, &stride, &offsets);
 	}

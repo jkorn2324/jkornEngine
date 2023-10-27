@@ -1,22 +1,26 @@
 #include "EnginePCH.h"
 #include "RenderingAPI.h"
 
+#ifdef GRAPHICS_API_DIRECTX11
 #include "DirectX11RenderingAPI.h"
+#endif
+
+#ifdef GRAPHICS_API_METAL
+#include "MetalRenderingAPI.h"
+#endif
 
 namespace Engine
 {
-
-	RenderingAPIType RenderingAPI::s_renderingAPIType = RenderingAPIType::DIRECTX11;
-
-
 	RenderingAPI* RenderingAPI::Create()
 	{
-		switch (s_renderingAPIType)
-		{
-			case RenderingAPIType::DIRECTX11:	return new DirectX11RenderingAPI();
-		}
-		DebugAssert(false, "Unsupported rendering api.");
-		return nullptr;
+#if defined(GRAPHICS_API_DIRECTX11)
+        return new DirectX11RenderingAPI();
+#elif defined(GRAPHICS_API_METAL)
+        return new MetalRenderingAPI();
+#else
+        JKORN_ENGINE_ASSERT(false, "Unsupported rendering api.");
+        return nullptr;
+#endif
 	}
 
 }

@@ -5,29 +5,33 @@
 #include "SceneSerializer.h"
 #include "Entity.h"
 
-#include "SceneEvent.h"
+#include "EntityEvents.h"
 #include "EntityHierarchyComponent.h"
 #include "Profiler.h"
+
+#include "ConstantBuffer.h"
 
 namespace Engine
 {
 	static Scene* s_activeScene = nullptr;
-	static EventFunc s_eventFunc = nullptr;
+	static ConstantBuffer* c_cameraBuffer = nullptr;
 
 	void SceneManager::Init()
 	{
 		PROFILE_SCOPE(Init, SceneManager);
 
 		Scene::CreateDefaultScene(s_activeScene);
-		s_activeScene->BindEventFunc(s_eventFunc);
 	}
-	
+
 	void SceneManager::Release()
 	{
 		delete s_activeScene;
+		delete c_cameraBuffer;
+
+		c_cameraBuffer = nullptr;
 	}
-	
-	void SceneManager::OnEvent(Event& event)
+
+	void SceneManager::OnEvent(IEvent& event)
 	{
 		if (s_activeScene != nullptr)
 		{
@@ -44,8 +48,6 @@ namespace Engine
 		}
 
 		s_activeScene = new Scene();
-		s_activeScene->BindEventFunc(s_eventFunc);
-
 		SceneSerializer serializer(s_activeScene);
 		serializer.Deserialize(path);
 	}
@@ -58,8 +60,6 @@ namespace Engine
 		}
 
 		s_activeScene = new Scene();
-		s_activeScene->BindEventFunc(s_eventFunc);
-
 		SceneSerializer serializer(s_activeScene);
 		serializer.Deserialize(filePath);
 	}
@@ -71,7 +71,6 @@ namespace Engine
 			delete s_activeScene;
 		}
 		s_activeScene = scene;
-		s_activeScene->BindEventFunc(s_eventFunc);
 	}
 
 	Scene& SceneManager::GetActiveScene()
@@ -86,7 +85,7 @@ namespace Engine
 			s_activeScene->OnUpdate(ts);
 		}
 	}
-	
+
 	void SceneManager::OnRuntimeUpdate(const Timestep& ts)
 	{
 		if (s_activeScene != nullptr)
@@ -94,7 +93,7 @@ namespace Engine
 			s_activeScene->OnRuntimeUpdate(ts);
 		}
 	}
-	
+
 	void SceneManager::OnEditorUpdate(const Timestep& ts)
 	{
 		if (s_activeScene != nullptr)
@@ -103,21 +102,11 @@ namespace Engine
 		}
 	}
 
-	void SceneManager::BindEventFunc(const EventFunc& func)
-	{
-		s_eventFunc = func;
-		
-		if (s_activeScene != nullptr)
-		{
-			s_activeScene->BindEventFunc(s_eventFunc);
-		}
-	}
-
 	void SceneManager::Render()
 	{
 		if (s_activeScene != nullptr)
 		{
-			s_activeScene->Render();
+			s_activeScene->Render(c_cameraBuffer);
 		}
 	}
 
@@ -125,7 +114,7 @@ namespace Engine
 	{
 		if (s_activeScene != nullptr)
 		{
-			s_activeScene->Render(cameraConstants);
+			s_activeScene->Render(cameraConstants, c_cameraBuffer);
 		}
 	}
 }

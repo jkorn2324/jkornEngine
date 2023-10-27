@@ -4,6 +4,7 @@
 #include "EditorSceneManager.h"
 #include "EditorSelection.h"
 #include "PlatformInput.h"
+#include "GraphicsUtility.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -49,7 +50,7 @@ namespace Editor
 		delete m_frameBuffer;
 	}
 
-	void SceneView::OnEvent(Engine::Event& event)
+	void SceneView::OnEvent(Engine::IEvent& event)
 	{
 		// TODO: Implementation
 	}
@@ -75,8 +76,9 @@ namespace Editor
 
 	void SceneView::UpdateMousePosition(const Engine::Timestep& ts)
 	{
+        ImVec2 mousePos = ImGui::GetMousePos();
 		MathLib::Vector2 currentPos = *reinterpret_cast<MathLib::Vector2*>(
-			&ImGui::GetMousePos());
+			&mousePos);
 		m_prevMousePos = m_currMousePos;
 		m_currMousePos = currentPos;
 	}
@@ -95,7 +97,7 @@ namespace Editor
 			editorCamera.FocusCamera();
 			return;
 		}
-		
+
 		MathLib::Vector2 delta = m_currMousePos - m_prevMousePos;
 		// Moves the camera based on mouse dragging.
 		if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
@@ -153,7 +155,7 @@ namespace Editor
 
 		if (!handledZoom)
 		{
-			editorCamera.ZoomCamera(ts * m_mouseScroll.y * 
+			editorCamera.ZoomCamera(ts * m_mouseScroll.y *
 				(DEFAULT_SCROLL_DISTANCE * 0.25F));
 		}
 	}
@@ -171,7 +173,7 @@ namespace Editor
 		MathLib::Vector2 windowSize = GetResizedWindow();
 		if (windowSize.x <= 0 || windowSize.y <= 0) return;
 		Engine::Texture* entityIDsTexture = m_frameBuffer->GetRenderTargetTexture(1);
-		if (entityIDsTexture != nullptr 
+		if (entityIDsTexture != nullptr
 			&& m_focused
 			&& ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 		{
@@ -198,7 +200,7 @@ namespace Editor
 					return;
 				}
 				Engine::Scene* scenePtr = &Engine::SceneManager::GetActiveScene();
-				Engine::Entity selectedEntity(currentEntityID, scenePtr);
+				auto selectedEntity = scenePtr->CreateEntityRef((entt::entity)currentEntityID);
 				// Sets the selected entity to the one picked by the scene.
 				if (selectedEntity.IsValid())
 				{
@@ -215,7 +217,7 @@ namespace Editor
 		m_transformationWidget.SetEnabled(EditorSelection::HasSelectedEntity());
 		if (m_transformationWidget.IsEnabled())
 		{
-			Engine::Entity entity = EditorSelection::GetSelectedEntity();
+			auto entity = EditorSelection::GetSelectedEntity();
 			if (entity.HasComponent<Engine::Transform3DComponent>())
 			{
 				Engine::Transform3DComponent& transform3D
@@ -348,7 +350,7 @@ namespace Editor
 		m_frameBuffer->UnBind();
 	}
 
-	
+
 	void SceneView::Draw()
 	{
 		if (!m_open)
@@ -364,7 +366,8 @@ namespace Editor
 		// Updates scene view attributes.
 		{
 			ImGuiIO& io = ImGui::GetIO();
-			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(&ImGui::GetWindowSize());
+            ImVec2 windowSize = ImGui::GetWindowSize();
+			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(&windowSize);
 			m_focused = ImGui::IsWindowFocused();
 			m_mouseScroll = MathLib::Vector2{ io.MouseWheelH, io.MouseWheel };
 			m_windowBarSpacing = ImGui::GetTextLineHeightWithSpacing() * 2.0f;
@@ -380,7 +383,8 @@ namespace Editor
 		// Adjusts the window position so that the transformation widget fits in the middle
 		// of the corresponding transform.
 		{
-			m_windowPosition = *reinterpret_cast<MathLib::Vector2*>(&ImGui::GetWindowPos());
+            ImVec2 windowPos = ImGui::GetWindowPos();
+			m_windowPosition = *reinterpret_cast<MathLib::Vector2*>(&windowPos);
 			m_windowPosition.x += (m_windowSize.x - ImGui::GetContentRegionAvail().x) * 0.5f;
 			m_windowPosition.y += ImGui::GetTextLineHeight() * 2.0f;
 		}

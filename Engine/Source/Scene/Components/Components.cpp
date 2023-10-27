@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "Components.h"
 
-#include "Rendering\ConstantBuffer.h"
+#include "ConstantBuffer.h"
 
 namespace Engine
 {

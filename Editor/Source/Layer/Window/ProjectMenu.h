@@ -2,11 +2,11 @@
 
 #include <filesystem>
 
-#include "Source\Vector.h"
+#include "Vector.h"
 
 namespace Engine
 {
-	class Event;
+	class IEvent;
 	class Timestep;
 }
 
@@ -32,7 +32,7 @@ namespace Editor
 		bool IsOpen() const { return m_open; }
 
 		void OnUpdate(const Engine::Timestep& ts);
-		void OnEvent(Engine::Event& event);
+		void OnEvent(Engine::IEvent& event);
 
 		void Draw(const std::filesystem::path& rootPath);
 

@@ -1,33 +1,129 @@
-FBXLibSDKPath = "C:/Program Files/Autodesk/FBX/FBX SDK"
-FBXLibSDKVersion = "2020.3.4"
-FBXLibSDKLibPath = "%{FBXLibSDKPath}/%{FBXLibSDKVersion}/lib"
 
 IncludeDirectories = {}
-
-IncludeDirectories["DirectXTK"] = "%{wks.location}/Engine/Libraries/DirectXTK/Inc/"
-IncludeDirectories["entt"] = "%{wks.location}/Engine/Libraries/entt/include/"
-IncludeDirectories["glfw"] = "%{wks.location}/Engine/Libraries/glfw/include/"
-IncludeDirectories["ImGui"] = "%{wks.location}/Engine/Libraries/ImGui/"
-IncludeDirectories["spdlog"] = "%{wks.location}/Engine/Libraries/spdlog/include/"
-IncludeDirectories["rapidjson"] = "%{wks.location}/Engine/Libraries/rapidjson/include/"
-IncludeDirectories["ImGuizmo"] = "%{wks.location}/Engine/Libraries/ImGuizmo/"
-IncludeDirectories["fbxsdk"] = "%{FBXLibSDKPath}/%{FBXLibSDKVersion}/include"
-
-LibraryDirectories = {}
-
--- TODO: Add proper library directories.
-LibraryDirectories["MathLib"] = "%{wks.location}/MathLib/"
-LibraryDirectories["DirectXTK"] = "%{wks.location}/Engine/Libraries/DirectXTK/"
-LibraryDirectories["glfw"] = "%{wks.location}/Engine/Libraries/Builds/glfw/"
-LibraryDirectories["spdlog"] = "%{wks.location}/Engine/Libraries/Builds/spdlog/"
-LibraryDirectories["ImGui"] = "%{wks.location}/Engine/Libraries/Builds/ImGui/"
-LibraryDirectories["fbxsdk"] = "%{FBXLibSDKPath}/%{FBXLibSDKVersion}/lib/"
-
+BuildDirectories = {}
+ProjectDirectories = {}
 LibraryNames = {}
 
-LibraryNames["MathLib"] = "MathLib.lib"
-LibraryNames["DirectXTK"] = "DirectXTK.lib"
-LibraryNames["glfw"] = "glfw.lib"
+LibrariesLocation = "%{wks.location}/Engine/Libraries"
+
+-- Cross Platform Dependencies
+
+IncludeDirectories["MathLib"] = "%{wks.location}/MathLib/Source/"
+ProjectDirectories["MathLib"] = "%{wks.location}/MathLib/"
+BuildDirectories["MathLib"] = "%{wks.location}/MathLib/Builds/"
+LibraryNames["MathLib"] = "MathLib"
+
+IncludeDirectories["entt"] = "%{LibrariesLocation}/entt/single_include/"
+
+IncludeDirectories["glfw"] = "%{LibrariesLocation}/glfw/include/"
+ProjectDirectories["glfw"] = "%{LibrariesLocation}/glfw/"
+BuildDirectories["glfw"] = "%{LibrariesLocation}/Builds/glfw/Builds/"
+LibraryNames["glfw"] = "glfw"
+
+IncludeDirectories["ImGui"] = "%{LibrariesLocation}/ImGui/"
+BuildDirectories["ImGui"] = "%{LibrariesLocation}/Builds/ImGui/Builds/"
+ProjectDirectories["ImGui"] = "%{LibrariesLocation}/ImGui/"
+LibraryNames["ImGui"] = "ImGui"
+
+IncludeDirectories["spdlog"] = "%{LibrariesLocation}/spdlog/include/"
+BuildDirectories["spdlog"] = "%{LibrariesLocation}/Builds/spdlog/Builds/"
 LibraryNames["spdlog"] = "spdlogd.lib"
-LibraryNames["ImGui"] = "ImGui.lib"
-LibraryNames["fbxsdk"] = "libfbxsdk.lib"
+
+IncludeDirectories["rapidjson"] = "%{LibrariesLocation}/rapidjson/include/"
+
+IncludeDirectories["ImGuizmo"] = "%{LibrariesLocation}/ImGuizmo/"
+
+-- Specific Platform Dependencies --
+
+FBXSDKPath_Windows = "C:/Program Files/Autodesk/FBX/FBX SDK"
+FBXSDKVersion_Windows = "2020.3.4"
+FBXSDKVersionPath_Windows = "%{FBXSDKPath_Windows}/%{FBXSDKVersion_Windows}"
+
+-- FBX SDK DEFINITIONS
+IncludeDirectories["fbxsdk_windows"] = "%{FBXSDKVersionPath_Windows}/include/"
+BuildDirectories["fbxsdk_windows"] = "%{FBXSDKVersionPath_Windows}/lib/"
+LibraryNames["fbxsdk_windows"] = "libfbxsdk.lib"
+
+-- DIRECTX DEFINITIONS
+LibraryNames["d3d11"] = "d3d11.lib"
+
+-- DIRECTXTK DEFINITIONS
+IncludeDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/Inc/"
+BuildDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/"
+ProjectDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/"
+LibraryNames["DirectXTK"] = "DirectXTK.lib"
+
+-- METAL DEFINITIONS
+IncludeDirectories["metalcpp_macos12_ios15"] = "%{LibrariesLocation}/metal-cpp/metal-cpp-macos12-ios15/"
+LibraryNames["metalcpp_macos12_ios15"] = "%{LibrariesLocation}/metal-cpp/metal-cpp-macos12-ios15/"
+
+-- Includes apple frameworks
+function include_apple_frameworks()
+    	-- Includes the Frameworks to the Project if we are on macos
+	filter { "action:xcode*", "platforms:MacOS" }
+        links
+        {
+            "CoreFoundation.framework",
+            "Cocoa.framework",
+            "IOKit.framework",
+            "CoreVideo.framework",
+            "AppKit.framework"
+        }
+
+        buildoptions
+        {
+            "-framework CoreFoundation",
+            "-framework Cocoa",
+            "-framework IOKit",
+            "-framework CoreVideo",
+            "-framework AppKit"
+        }
+
+        linkoptions
+        {
+            "-framework CoreFoundation",
+            "-framework Cocoa",
+            "-framework IOKit",
+            "-framework CoreVideo",
+            "-framework AppKit"
+        }
+    filter { }
+end
+
+function include_metal_frameworks()
+	-- TODO: Need to integrate options for different ios/macos versions
+	filter { "platforms:MacOS", "options:graphicsapi=metal", "action:xcode*" }
+
+		links
+        {
+			"Metal.framework",
+			"QuartzCore.framework",
+			"Foundation.framework"
+        }
+
+		externalincludedirs
+		{
+			-- "%{IncludeDirectories.metalcpp_macos12_ios15}"
+		}
+
+		frameworkdirs
+		{
+			-- "%{IncludeDirectories}"
+		}
+
+        buildoptions
+        {
+            "-framework Metal",
+            "-framework QuartzCore",
+            "-framework Foundation"
+        }
+
+        linkoptions
+        {
+            "-framework Metal",
+            "-framework QuartzCore",
+            "-framework Foundation"
+        }
+		
+	filter { }
+end

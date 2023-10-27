@@ -19,6 +19,7 @@
 #include "Entity.h"
 #include "EntityHierarchyComponent.h"
 #include "JobManager.h"
+#include "Logger.h"
 
 namespace Engine
 {
@@ -46,7 +47,7 @@ namespace Engine
 		m_imguiLayer(nullptr),
 		m_rootPath(rootPath)
 	{
-		DebugAssert(s_instance == nullptr, "Application is already running.");
+        JKORN_ENGINE_ASSERT(s_instance == nullptr, "Application is already running.");
 		s_instance = this;
 
 		Logger::Init();
@@ -62,26 +63,25 @@ namespace Engine
 			MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT, true
 		};
 		m_window = Window::GenerateWindow(properties);
+
+		// Bind Event Functions.
 		m_window->SetCallback(BIND_EVENT_FUNCTION(Application::OnEvent));
-		
 		Input::BindInputEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
+		EventInvoker::Global().SetEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
+
 		Input::Init();
 
+		// Initializes the Graphics
 		GraphicsRenderer::Init();
 		GraphicsRenderer2D::Init();
 		GraphicsRenderer3D::Init();
-		
-		SceneManager::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
-		SceneManager::Init();
 
-		// Binds the component add and remove to the event func.
-		Entity::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
-		EntityHierarchyComponent::BindEventFunc(BIND_EVENT_FUNCTION(Application::OnEvent));
+		SceneManager::Init();
 
 		m_imguiLayer = new ImGuiLayer();
 		m_windowLayerStack.AddOverlay(m_imguiLayer);
 	}
-
+	
 	Application::~Application()
 	{
 		m_windowLayerStack.Clear();
@@ -170,14 +170,14 @@ namespace Engine
 		return *m_window.get();
 	}
 
-	void Application::OnEvent(Event& event)
+	void Application::OnEvent(IEvent& event)
 	{
 		Input::OnEvent(event);
 		SceneManager::OnEvent(event);
 
 		EventDispatcher dispatcher(event);
-		dispatcher.Invoke<WindowClosedEvent>(BIND_EVENT_FUNCTION(Application::OnWindowClosed));
-		dispatcher.Invoke<WindowResizedEvent>(BIND_EVENT_FUNCTION(Application::OnWindowResized));
+		dispatcher.Invoke<WindowEventType, WindowClosedEvent>(BIND_EVENT_FUNCTION(Application::OnWindowClosed));
+		dispatcher.Invoke<WindowEventType, WindowResizedEvent>(BIND_EVENT_FUNCTION(Application::OnWindowResized));
 
 		for(auto iterator = m_windowLayerStack.rbegin(); iterator != m_windowLayerStack.rend(); iterator++)
 		{

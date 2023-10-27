@@ -78,6 +78,9 @@ namespace MathLib
 
 		friend Matrix4x4 Transpose(const Matrix4x4& matrix);
 		friend Matrix4x4 Invert(const Matrix4x4& matrix);
+        
+        static Matrix4x4 Transpose(const Matrix4x4& matrix);
+        static Matrix4x4 Invert(const Matrix4x4& matrix);
 
 		static Matrix4x4 CreateRotationX(float rotation, bool inDegrees = true);
 		static Matrix4x4 CreateRotationY(float rotation, bool inDegrees = true);

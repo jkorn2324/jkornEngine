@@ -11,6 +11,14 @@ project "ImGui"
 	targetdir "%{wks.location}/Engine/Libraries/Builds/ImGui/Builds/%{cfg.buildcfg}/%{cfg.platform}/"
 	objdir "%{wks.location}/Engine/Libraries/Builds/ImGui/Builds-Int/%{cfg.buildcfg}/%{cfg.platform}/"
 
+	filter { "configurations:Debug" }
+		runtime "Debug"
+		symbols "on"
+	filter { "configurations:Release" }
+		runtime "Release"
+		optimize "on"
+	filter { }
+
 	files
 	{
 		"%{prj.location}/*.h",
@@ -25,17 +33,7 @@ project "ImGui"
 
 	filter "system:Windows"
 		systemversion "latest"
-		cppdialect "C++17"
 
 	filter "system:Linux"
 		pic "On"
 		systemversion "latest"
-		cppdialect "C++17"
-
-	filter "configurations:Debug"
-		runtime "Debug"
-		symbols "on"
-
-	filter "configurations:Release"
-		runtime "Release"
-		optimize "on"

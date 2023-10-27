@@ -11,8 +11,6 @@
 #include "DirectX11IndexBuffer.h"
 #include "DirectX11VertexArray.h"
 
-#include "GlfwWindowsWindow.h"
-
 namespace Engine
 {
 
@@ -23,16 +21,13 @@ namespace Engine
 
 	static bool GetHWND(Window* window, HWND& hwnd)
 	{
-		switch (Window::GetWindowType())
-		{
-		case WindowType::GLFW_WINDOWS_WINDOW: 
-		{
-			hwnd = ((GlfwWindowsWindow*)window)->GetHWND();
-			return true;
-		}
-		}
-		DebugAssert(false, "Unsupported window type for DirectX11.");
+#if defined(PLATFORM_WINDOWS)
+		hwnd = (HWND)window->GetWindowPtr().GetDeviceWindowPtr();
+		return hwnd;
+#else
+        JKORN_ENGINE_ASSERT(false, "Unsupported window type for DirectX11.");
 		return false;
+#endif
 	}
 
 	static bool CreateDeviceAndSwapChain(
@@ -78,7 +73,7 @@ namespace Engine
 			&outFeatureLevel,
 			context);
 
-		DebugAssert(result == S_OK, "Failed to create the device and swap chain.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create the device and swap chain.");
 		return result == S_OK;
 	}
 
@@ -91,10 +86,10 @@ namespace Engine
 		ID3D11Texture2D* backBuffer;
 		HRESULT result = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
 			(LPVOID*)&backBuffer);
-		DebugAssert(result == S_OK, "Failed to create the back buffer.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create the back buffer.");
 		result = device->CreateRenderTargetView(backBuffer,
 			nullptr, renderTargetView);
-		DebugAssert(result == S_OK, "Failed to set the render target view.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Failed to set the render target view.");
 		backBuffer->Release();
 		return result == S_OK;
 	}
@@ -117,7 +112,7 @@ namespace Engine
 
 		HRESULT output = device->CreateSamplerState(
 			&samplerDesc, samplerState);
-		DebugAssert(output == S_OK, "Something went wrong with creating sampler.");
+        JKORN_ENGINE_ASSERT(output == S_OK, "Something went wrong with creating sampler.");
 		context->PSSetSamplers(startSlot, 1, samplerState);
 		return output == S_OK;
 	}
@@ -135,7 +130,7 @@ namespace Engine
 		desc.FrontCounterClockwise = true;
 
 		HRESULT result = device->CreateRasterizerState(&desc, rasterizerState);
-		DebugAssert(result == S_OK, "Rasterizer state failed to generate.");
+        JKORN_ENGINE_ASSERT(result == S_OK, "Rasterizer state failed to generate.");
 		return result == S_OK;
 	}
 
@@ -162,7 +157,7 @@ namespace Engine
 		{
 			HRESULT result = m_device->QueryInterface(__uuidof(ID3D11Debug),
 				reinterpret_cast<void**>(&debug));
-			DebugAssert(result == S_OK, "Unable to create debug device.");
+            JKORN_ENGINE_ASSERT(result == S_OK, "Unable to create debug device.");
 		}
 #endif
 		m_currentRenderTargetViews = nullptr;
@@ -258,7 +253,7 @@ namespace Engine
 			m_backBufferRenderTargetView->Release();
 			m_backBufferRenderTargetView = nullptr;
 		}
-		DebugAssert(m_swapChain != nullptr, "Swap Chain doesn't exist.");
+        JKORN_ENGINE_ASSERT(m_swapChain != nullptr, "Swap Chain doesn't exist.");
 		m_swapChain->ResizeBuffers(0, (UINT)m_width, (UINT)m_height, DXGI_FORMAT_UNKNOWN, 0);
 		CreateBackBuffer(m_swapChain, m_device, &m_backBufferRenderTargetView);
 	}
@@ -295,7 +290,7 @@ namespace Engine
 		m_clearColor = clearColor;
 	}
 
-	void DirectX11RenderingAPI::Clear()
+	void DirectX11RenderingAPI::ClearRenderTargetViewColors()
 	{
 		for (uint32_t i = 0; i < m_numRenderTargetViews; i++)
 		{
@@ -345,7 +340,7 @@ namespace Engine
 			vertexArray->GetIndexBuffer()->GetNumIndices(), 0, 0);
 	}
 
-	void DirectX11RenderingAPI::SwapBuffers()
+	void DirectX11RenderingAPI::Present()
 	{
 		// For GLFW & OpenGL, use this:
 		// glfwSwapBuffers(m_window);

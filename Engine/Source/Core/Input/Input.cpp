@@ -2,8 +2,11 @@
 #include "Input.h"
 #include "PlatformInput.h"
 
-#include <chrono>
 #include "Window.h"
+#include "InputEvent.h"
+#include "InputTypes.h"
+
+#include <chrono>
 
 namespace Engine
 {
@@ -13,9 +16,6 @@ namespace Engine
 	static const float MIN_MOUSE_HELD_TIME = 1.0f / 50.0f;
 	static const float MAX_SCROLL_TIME = 1.0f / 30.0f;
 
-
-	InputMouseMoveEvent::InputMouseMoveEvent(const MathLib::Vector2& mousePos)
-		: mousePos(mousePos), prevMousePos(Input::GetMouseScreenPos()) { }
 
 
 	static Timestep CalculateTimestepDiff(const TimePoint& prevTime)
@@ -101,16 +101,16 @@ namespace Engine
 		s_inputEventFunc = func;
 	}
 
-	void Input::OnEvent(Event& event)
+	void Input::OnEvent(IEvent& event)
 	{
 		EventDispatcher eventDispatcher(event);
-		eventDispatcher.Invoke<InputKeyEvent>(
+		eventDispatcher.Invoke<InputEventType, InputKeyEvent>(
 			BIND_STATIC_EVENT_FUNCTION(Input::OnInputKeyEvent));
-		eventDispatcher.Invoke<InputMouseButtonEvent>(
+		eventDispatcher.Invoke<InputEventType, InputMouseButtonEvent>(
 			BIND_STATIC_EVENT_FUNCTION(Input::OnInputMouseButtonEvent));
-		eventDispatcher.Invoke<InputMouseMoveEvent>(
+		eventDispatcher.Invoke<InputEventType, InputMouseMoveEvent>(
 			BIND_STATIC_EVENT_FUNCTION(Input::OnInputMouseMoveEvent));
-		eventDispatcher.Invoke<InputMouseScrollEvent>(
+		eventDispatcher.Invoke<InputEventType, InputMouseScrollEvent>(
 			BIND_STATIC_EVENT_FUNCTION(Input::OnInputMouseScrollEvent));
 	}
 
@@ -204,7 +204,7 @@ namespace Engine
 
 	PlatformInput& Input::GetPlatformInput()
 	{
-		DebugAssert(s_platformInput != nullptr, "Platform input exists.");
+        JKORN_ENGINE_ASSERT(s_platformInput != nullptr, "Platform input exists.");
 		return *s_platformInput;
 	}
 

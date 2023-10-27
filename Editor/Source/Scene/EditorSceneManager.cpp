@@ -39,10 +39,10 @@ namespace Editor
 		}
 	}
 
-	void EditorSceneManager::OnEvent(Engine::Event& event)
+	void EditorSceneManager::OnEvent(Engine::IEvent& event)
 	{
 		Engine::EventDispatcher dispatcher(event);
-		dispatcher.Invoke<Engine::WindowResizedEvent>(
+		dispatcher.Invoke<Engine::WindowEventType, Engine::WindowResizedEvent>(
 			BIND_STATIC_EVENT_FUNCTION(OnWindowSizeChanged));
 	}
 

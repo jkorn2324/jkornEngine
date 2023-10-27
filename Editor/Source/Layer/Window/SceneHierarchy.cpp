@@ -24,27 +24,27 @@ namespace Editor
 
 		switch (type)
 		{
-			case TYPE_EMPTY:
-			{
-				EditorSelection::SetSelectedEntity(scene.CreateEntity());
-				break;
-			}
+		case TYPE_EMPTY:
+		{
+			EditorSelection::SetSelectedEntity(scene.CreateEntity());
+			break;
+		}
 		}
 	}
 
 	SceneHierarchy::SceneHierarchy()
 		: m_open(true)
-	{ 
+	{
 	}
 
 	SceneHierarchy::~SceneHierarchy()
 	{
 	}
-	
-	void SceneHierarchy::OnEvent(Engine::Event& event)
+
+	void SceneHierarchy::OnEvent(Engine::IEvent& event)
 	{
 		Engine::EventDispatcher eventDispatcher(event);
-		eventDispatcher.Invoke<Engine::EntityDestroyedEvent>(
+		eventDispatcher.Invoke<Engine::EntityEventType, Engine::EntityDestroyedEvent>(
 			BIND_EVENT_FUNCTION(SceneHierarchy::OnEntityDestroyed));
 	}
 
@@ -78,9 +78,10 @@ namespace Editor
 
 		// Entities Display
 		{
+			Engine::Scene& activeScene = Engine::SceneManager::GetActiveScene();
 			// Scene Name Tree Node.
 			std::string sceneName;
-			Engine::WStringToString(Engine::SceneManager::GetActiveScene().GetSceneName(),
+			Engine::WStringToString(activeScene.GetSceneName(),
 				sceneName);
 
 			bool sceneNodeOpened = ImGui::TreeNode(sceneName.c_str());
@@ -92,9 +93,10 @@ namespace Editor
 					Engine::Entity* selectedEntityNode = (Engine::Entity*)dragAndDropPayload->Data;
 					if (selectedEntityNode != nullptr)
 					{
+						auto entityRef = activeScene.CreateEntityRef(*selectedEntityNode);
 						Engine::EntityHierarchyComponent& hierarchy
-							= selectedEntityNode->GetComponent<Engine::EntityHierarchyComponent>();
-						hierarchy.SetParent(Engine::Entity::None);
+							= entityRef.GetComponent<Engine::EntityHierarchyComponent>();
+						hierarchy.SetParent(Engine::Entity::None, entityRef.GetRegistry());
 					}
 				}
 				ImGui::EndDragDropTarget();
@@ -102,33 +104,35 @@ namespace Editor
 
 			if (sceneNodeOpened)
 			{
-				const std::vector<Engine::Entity>& entities = 
-					Engine::SceneManager::GetActiveScene().GetRootEntities();
+				Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
+				const std::vector<Engine::Entity>& entities =
+					scene.GetRootEntities();
 				Engine::Entity duplicatedEntity;
 				for (uint32_t i = 0; i < entities.size(); i++)
 				{
-					DrawEntity((Engine::Entity&)entities[i], duplicatedEntity);
+					DrawEntity(entities[i], duplicatedEntity, scene);
 				}
 				ImGui::TreePop();
 
-				if (duplicatedEntity.IsValid())
+				Engine::EntityRef duplicatedRef(scene.CreateEntityRef(duplicatedEntity));
+				if (duplicatedRef.IsValid())
 				{
-					Engine::Entity createdEntity =
+					auto createdEntity =
 						Engine::SceneManager::GetActiveScene().CreateEntity(
-							duplicatedEntity.GetComponent<Engine::NameComponent>().name + " (Clone)");
-					Engine::CopyEntity(duplicatedEntity, createdEntity, false);
+							duplicatedRef.GetComponent<Engine::NameComponent>().name + " (Clone)");
+					Engine::EntityRef::CopyEntity(duplicatedRef, createdEntity);
 				}
 			}
 		}
 		ImGui::End();
 	}
-	
+
 	bool SceneHierarchy::OnEntityDestroyed(Engine::EntityDestroyedEvent& event)
 	{
 		return true;
 	}
-	
-	void SceneHierarchy::DrawEntity(Engine::Entity& entity, Engine::Entity& duplicatedEntity)
+
+	void SceneHierarchy::DrawEntity(const Engine::Entity& entity, Engine::Entity& duplicatedEntity, Engine::Scene& scene)
 	{
 		enum EntitySelectionMode
 		{
@@ -137,7 +141,8 @@ namespace Editor
 			Duplicate
 		};
 
-		if (!entity.IsValid())
+		Engine::EntityRef entityRef = scene.CreateEntityRef(entity);
+		if (!entityRef.IsValid())
 		{
 			return;
 		}
@@ -154,15 +159,15 @@ namespace Editor
 		nodeFlags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 
 		Engine::EntityHierarchyComponent& ehc
-			= entity.GetComponent<Engine::EntityHierarchyComponent>();
+			= entityRef.GetComponent<Engine::EntityHierarchyComponent>();
 		if (!ehc.HasChildren())
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Leaf;
 		}
 
 		Engine::NameComponent& nameComponent
-			= entity.GetComponent<Engine::NameComponent>();
-		bool isOpened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity.GetID(), nodeFlags,
+			= entityRef.GetComponent<Engine::NameComponent>();
+		bool isOpened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entityRef.GetID(), nodeFlags,
 			nameComponent.name.c_str());
 
 		if (ImGui::IsItemClicked())
@@ -204,9 +209,10 @@ namespace Editor
 				if (selectedEntityNode != nullptr
 					&& *selectedEntityNode != entity)
 				{
+					Engine::EntityRef selectedRef = scene.CreateEntityRef(*selectedEntityNode);
 					Engine::EntityHierarchyComponent& hierarchy
-						= selectedEntityNode->GetComponent<Engine::EntityHierarchyComponent>();
-					hierarchy.SetParent(entity);
+						= selectedRef.GetComponent<Engine::EntityHierarchyComponent>();
+					hierarchy.SetParent(entityRef);
 				}
 			}
 			ImGui::EndDragDropTarget();
@@ -216,8 +222,8 @@ namespace Editor
 		if (isEntitySameAsSelection
 			&& ImGui::BeginDragDropSource())
 		{
-			void* selectedEntityNode = &EditorSelection::GetSelectedEntity();
-			ImGui::SetDragDropPayload(ENTITY_SELECTION_DRAG_DROP, selectedEntityNode,
+            Engine::Entity selectedEntity = EditorSelection::GetSelectedEntity().GetEntity();
+			ImGui::SetDragDropPayload(ENTITY_SELECTION_DRAG_DROP, &selectedEntity,
 				sizeof(Engine::Entity));
 			ImGui::Text(nameComponent.name.c_str());
 			ImGui::EndDragDropSource();
@@ -230,7 +236,7 @@ namespace Editor
 				auto children = ehc.GetChildren();
 				for (size_t i = 0; i < children.size(); i++)
 				{
-					DrawEntity(children[i], duplicatedEntity);
+					DrawEntity(children[i], duplicatedEntity, scene);
 				}
 			}
 			ImGui::TreePop();
@@ -241,8 +247,7 @@ namespace Editor
 		switch (selectionMode)
 		{
 		case Delete:
-			Engine::SceneManager::GetActiveScene().DestroyEntity(
-				entity);
+			Engine::SceneManager::GetActiveScene().DestroyEntity(entity);
 			break;
 		case Duplicate:
 		{

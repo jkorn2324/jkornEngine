@@ -8,7 +8,7 @@ namespace Engine
 {
 	class FrameBuffer;
 	class Timestep;
-	class Event;
+	class IEvent;
 	class Texture;
 }
 
@@ -21,7 +21,7 @@ namespace Editor
 		SceneView();
 		~SceneView();
 
-		void OnEvent(Engine::Event& event);
+		void OnEvent(Engine::IEvent& event);
 
 		void OnUpdate(const Engine::Timestep& ts);
 		void RenderScene();

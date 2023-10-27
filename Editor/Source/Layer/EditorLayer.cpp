@@ -4,7 +4,7 @@
 #include "Engine.h"
 #include <imgui.h>
 
-#include "Source\Vector.h"
+#include "Vector.h"
 
 #include "EditorSelection.h"
 #include "EditorSceneManager.h"
@@ -15,16 +15,14 @@
 
 #include "CameraController.h"
 
+#include "SystemManager.h"
+#include "ISystemBase.h"
+#include "SystemUtility.h"
+
 #include <string>
 
 namespace Editor
 {
-
-	class TestBehavior : public Engine::BehaviorScript
-	{
-		MathLib::Vector2 m_direction;
-		MathLib::Vector3 m_position;
-	};
 
 	static const float TOP_WINDOW_HEIGHT = 60.0f;
 	static const float WINDOW_HEIGHT_DIFFERENCE = 15.0f;
@@ -32,7 +30,9 @@ namespace Editor
 
 	static void DrawDemo()
 	{
+#if 0
 		ImGui::ShowDemoWindow();
+#endif
 	}
 
 	EditorLayer::EditorLayer()
@@ -51,6 +51,12 @@ namespace Editor
 
 	void EditorLayer::OnLayerAdded()
 	{
+		// TODO: Initialize Systems
+
+		// Sets the camera system.
+		Engine::SystemManager::AddSystem<Editor::CameraControllerSystem>();
+		Engine::SystemManager::AddSystem<Engine::EntityHierarchySystem>();
+
 		Engine::GraphicsRenderer::GetRenderingAPI().SetClearColor(
 			MathLib::Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 
@@ -58,24 +64,26 @@ namespace Editor
 		// Sets the ambient light for the scene.
 		Engine::GraphicsRenderer3D::SetAmbientLight(
 			MathLib::Vector3 { 0.25f, 0.25f, 0.25f });
-		
+
 		// Creates a cube to test phong lighting calculations.
 		{
 			Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
 
 			// Add Behavior script to camera.
 			{
-				Engine::Entity entity = scene.Find("Main Camera");
-				if (entity.IsValid())
+				auto entity = scene.FindEntity<Engine::NameComponent>("Main Camera",
+					[](const char* Name, const Engine::NameComponent& component) -> bool
+					{
+						return component.name == Name;
+					});
+				if (entity)
 				{
-					Engine::BehaviorComponent& component
-						= entity.GetComponent<Engine::BehaviorComponent>();
-					component.Get().AddBehavior<CameraController>();
+					entity.AddComponent<CameraController>();
 				}
 			}
 
-			Engine::Entity e = scene.CreateEntity("Test Cube");
-			Engine::Transform3DComponent& component 
+			auto e = scene.CreateEntity("Test Cube");
+			Engine::Transform3DComponent& component
 				= e.AddComponent<Engine::Transform3DComponent>();
 			Engine::MeshComponent& meshComponent
 				= e.AddComponent<Engine::MeshComponent>();
@@ -102,8 +110,8 @@ namespace Editor
 			meshComponent.material->SetTexture(0, texture.get());
 
 			{
-				Engine::BufferLayout bufferLayout = 
-				{ 
+				Engine::BufferLayout bufferLayout =
+				{
 					{
 						Engine::BufferLayoutParam::Position0
 					},
@@ -136,15 +144,17 @@ namespace Editor
 		// For testing purposes.
 		m_projectMenu.OnUpdate(timestep);
 		m_gameView.OnUpdate(timestep);
-		
+
 		// Updates the scene view.
 		{
 			m_sceneView.OnUpdate(timestep);
 			EditorSceneManager::GetEditorCamera().OnEditorUpdate(timestep);
 		}
-		
-		Engine::SceneManager::OnUpdate(timestep);
 
+		// Calls update for the system.
+		Engine::SystemUtility::InvokeOnUpdate(timestep, EditorSceneManager::IsPlaying());
+
+		Engine::SceneManager::OnUpdate(timestep);
 		if (EditorSceneManager::IsPlaying())
 		{
 			Engine::SceneManager::OnRuntimeUpdate(timestep);
@@ -167,6 +177,8 @@ namespace Editor
 		DrawEditorTopWindow();
 		DrawEditorMainWindow();
 	}
+
+	// ---------------------- BEGIN EDITOR TOP WINDOW -------------------------
 
 	void EditorLayer::DrawEditorTopWindow()
 	{
@@ -256,10 +268,14 @@ namespace Editor
 		ImGui::EndGroup();
 	}
 
+	// ---------------------- END EDITOR TOP WINDOW -------------------------
+
 	void EditorLayer::OnSceneRuntimeButtonSelected(bool play)
 	{
 		EditorSceneManager::SetPlaying(play);
 	}
+
+	// ---------------------- BEGIN EDITOR MAIN WINDOW -------------------------
 
 	void EditorLayer::DrawEditorMainWindow()
 	{
@@ -319,13 +335,13 @@ namespace Editor
 			m_sceneView.Draw();
 			m_gameView.Draw();
 
-			DrawEditorButtons();
-
 			ImGui::End();
 		}
 	}
-	
-	void EditorLayer::OnEvent(Engine::Event& event)
+
+	// ----------------------------- END EDITOR MAIN WINDOW ------------------------------
+
+	void EditorLayer::OnEvent(Engine::IEvent& event)
 	{
 		EditorSceneManager::OnEvent(event);
 		EditorSelection::OnEvent(event);

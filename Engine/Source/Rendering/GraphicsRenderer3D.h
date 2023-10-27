@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Source\Matrix.h"
+#include "Matrix.h"
 
 namespace Engine
 {
@@ -35,7 +35,5 @@ namespace Engine
 
 	private:
 		static void BindLights();
-
-		friend class GraphicsRenderer;
 	};
 }

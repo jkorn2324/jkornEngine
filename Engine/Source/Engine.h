@@ -2,7 +2,7 @@
 
 // File is only used for external projects.
 
-#include "DebugAssert.h"
+#include "EngineAssert.h"
 #include "PlatformDetector.h"
 #include "Profiler.h"
 
@@ -26,7 +26,7 @@
 
 #include "ApplicationEvent.h"
 #include "Event.h"
-#include "SceneEvent.h"
+#include "EntityEvents.h"
 
 #include "ImGuiLayer.h"
 
@@ -44,8 +44,12 @@
 #include "Shader.h"
 #include "VertexBuffer.h"
 
-#include "BehaviorScript.h"
-#include "BehaviorScriptContainer.h"
+#include "SystemManager.h"
+#include "ISystemBase.h"
+#include "IUpdateSystem.h"
+#include "IEventSystem.h"
+
+#include "EntityHierarchySystem.h"
 
 #include "Components.h"
 #include "Entity.h"

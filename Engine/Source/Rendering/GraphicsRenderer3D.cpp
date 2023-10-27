@@ -372,7 +372,7 @@ namespace Engine
 	{
 		GraphicsDirectionalLightData& directionalLightData
 			= s_lightingData.constantBufferData.c_directionalLight;
-		directionalLightData.direction = MathLib::Normalize(direction);
+		directionalLightData.direction = Normalize(direction);
 		directionalLightData.lightColor = directionalLight.lightColor;
 		directionalLightData.intensity = directionalLight.lightIntensity;
 		directionalLightData.isEnabled = directionalLight.enabled;

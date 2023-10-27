@@ -41,7 +41,7 @@ namespace Engine
 			D3D11_MAPPED_SUBRESOURCE mapResource;
 			HRESULT result = renderingAPI.m_deviceContext->Map(
 				m_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
-			DebugAssert(result == S_OK, "Failed to map the vertex buffer resource.");
+            JKORN_ENGINE_ASSERT(result == S_OK, "Failed to map the vertex buffer resource.");
 			Memory::Memcpy(mapResource.pData, buffer, stride);
 			renderingAPI.m_deviceContext->Unmap(m_constantBuffer, 0);
 		}

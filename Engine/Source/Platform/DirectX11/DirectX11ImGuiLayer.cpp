@@ -1,8 +1,8 @@
 #include "EnginePCH.h"
-#include "DirectX11ImGuiLayer.h"
+#include "PlatformImGuiLayer.h"
 
-#include "imgui.h"
-#include "backends\imgui_impl_dx11.h"
+#include <imgui.h>
+#include <backends/imgui_impl_dx11.h>
 
 #include "GraphicsRenderer.h"
 #include "DirectX11RenderingAPI.h"
@@ -10,23 +10,34 @@
 namespace Engine
 {
 
-	void DirectX11ImGuiLayer::OnLayerAdded()
+	// The platform imgui layer defined.
+	template<>
+	struct PlatformImGuiLayerDefined<RenderingAPIType, RenderingAPIType::DIRECTX11>
+	{
+		static constexpr bool IsDefined = true;
+	};
+
+	template<>
+	void Platform::Internals::OnLayerAddedImpl<RenderingAPIType, RenderingAPIType::DIRECTX11>()
 	{
 		DirectX11RenderingAPI& api = (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
-		ImGui_ImplDX11_Init(api.m_device, api.m_deviceContext);
+		ImGui_ImplDX11_Init(api.GetDevice(), api.GetDeviceContext());
 	}
-	
-	void DirectX11ImGuiLayer::OnShutdown()
+
+	template<>
+	void Platform::Internals::OnLayerRemovedImpl<RenderingAPIType, RenderingAPIType::DIRECTX11>()
 	{
 		ImGui_ImplDX11_Shutdown();
 	}
-	
-	void DirectX11ImGuiLayer::BeginFrame()
+
+	template<>
+	void Platform::Internals::BeginFrameImpl<RenderingAPIType, RenderingAPIType::DIRECTX11>()
 	{
 		ImGui_ImplDX11_NewFrame();
 	}
-	
-	void DirectX11ImGuiLayer::EndFrame()
+
+	template<>
+	void Platform::Internals::EndFrameImpl<RenderingAPIType, RenderingAPIType::DIRECTX11>()
 	{
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	}

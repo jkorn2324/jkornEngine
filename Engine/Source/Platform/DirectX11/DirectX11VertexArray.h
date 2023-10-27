@@ -9,7 +9,6 @@ namespace Engine
 {
 	class DirectX11IndexBuffer;
 	class DirectX11VertexBuffer;
-	class IndexBuffer;
 
 	class DirectX11VertexArray : public VertexArray
 	{

@@ -20,41 +20,48 @@ project "UnitTests"
 	includedirs
 	{
 		"%{prj.location}/Source/",
-		"%{prj.location}/Source/**",
-
-		"%{wks.location}/Engine/Source/",
-		"%{wks.location}/Engine/Source/**",
-
-		"%{wks.location}/MathLib/",
-
-		"%{IncludeDirectories.entt}",
-		"%{IncludeDirectories.ImGui}",
-		"%{IncludeDirectories.spdlog}",
-		"%{IncludeDirectories.ImGuizmo}"
-	}
-
-	links
-	{
-		"MathLib",
-		"Engine"
+		"%{prj.location}/Source/**"
 	}
 
 	libdirs
 	{
-		"../MathLib/Builds/%{cfg.buildcfg}/%{cfg.platform}/",
-		"../Engine/Builds/%{cfg.buildcfg}/%{cfg.platform}/",
 		"%{prj.location}/Builds/%{cfg.buildcfg}/%{cfg.platform}/"
 	}
-
-	filter "system:Windows"
-		links { "d3d11.lib" }
 
 	filter "configurations:Debug"
 		defines { "DEBUG", "_DEBUG" }
 		symbols "On"
 		runtime "Debug"
-
 	filter "configurations:Release"
 		defines { "RELEASE", "NDEBUG" }
 		optimize "On"
 		runtime "Release"
+	filter { }
+
+	--================================= BEGIN ENGINE DEPENDENCIES ===========================--
+
+	includedirs
+	{
+		"%{wks.location}/Engine/Source/",
+		"%{wks.location}/Engine/Source/**",
+
+		-- Engine Dependencies
+		"%{IncludeDirectories.entt}",
+		"%{IncludeDirectories.ImGui}",
+		"%{IncludeDirectories.spdlog}",
+		"%{IncludeDirectories.ImGuizmo}",
+		"%{IncludeDirectories.rapidjson}",
+		"%{IncludeDirectories.MathLib}"
+	}
+
+	links
+	{
+		"Engine"
+	}
+
+	libdirs
+	{
+		"%{wks.location}/Engine/Builds/%{cfg.buildcfg}/%{cfg.platform}/"
+	}
+
+	--================================= END ENGINE DEPENDENCIES =============================--
