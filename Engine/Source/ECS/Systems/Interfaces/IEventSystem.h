@@ -2,6 +2,7 @@
 
 #include "EngineMacros.h"
 #include "SystemTypes.h"
+#include "ISystemBase.h"
 
 namespace Engine
 {

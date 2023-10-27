@@ -18,7 +18,6 @@ namespace Engine
 		void SetData(const void* buffer,
 			uint32_t numIndices, uint32_t stride) override;
 
-	private:
 		/**
 		 * @brief Binds the index buffer.
 		 */

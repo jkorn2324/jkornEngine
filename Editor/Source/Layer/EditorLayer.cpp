@@ -17,6 +17,7 @@
 
 #include "SystemManager.h"
 #include "ISystemBase.h"
+#include "SystemUtility.h"
 
 #include <string>
 

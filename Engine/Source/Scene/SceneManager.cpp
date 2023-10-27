@@ -9,9 +9,12 @@
 #include "EntityHierarchyComponent.h"
 #include "Profiler.h"
 
+#include "ConstantBuffer.h"
+
 namespace Engine
 {
 	static Scene* s_activeScene = nullptr;
+	static ConstantBuffer* c_cameraBuffer = nullptr;
 
 	void SceneManager::Init()
 	{
@@ -23,6 +26,9 @@ namespace Engine
 	void SceneManager::Release()
 	{
 		delete s_activeScene;
+		delete c_cameraBuffer;
+
+		c_cameraBuffer = nullptr;
 	}
 
 	void SceneManager::OnEvent(IEvent& event)
@@ -100,7 +106,7 @@ namespace Engine
 	{
 		if (s_activeScene != nullptr)
 		{
-			s_activeScene->Render();
+			s_activeScene->Render(c_cameraBuffer);
 		}
 	}
 
@@ -108,7 +114,7 @@ namespace Engine
 	{
 		if (s_activeScene != nullptr)
 		{
-			s_activeScene->Render(cameraConstants);
+			s_activeScene->Render(cameraConstants, c_cameraBuffer);
 		}
 	}
 }

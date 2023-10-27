@@ -5,6 +5,8 @@
 
 namespace Engine
 {
+    class ConstantBuffer;
+
     /**
      * @brief The camera constants.
      */
@@ -19,17 +21,19 @@ namespace Engine
 
     namespace Graphics::Utility
     {
+
         /**
-		 * @brief Set the Camera Constants.
-		 * @param cameraConstants 
-		 */
-        static void SetCameraConstants(const CameraConstants& cameraConstants);
+         * @brief Set the Camera Constants.
+         * @param cameraConstants
+         * @param cBuffer
+         */
+        static void SetCameraConstants(const CameraConstants& cameraConstants, ConstantBuffer** cBuffer);
 
         /**
          * @brief Begins the scene.
          * @param cameraConstants 
          */
-        void BeginRenderScene(const CameraConstants& cameraConstants);
+        void BeginRenderScene(const CameraConstants& cameraConstants, ConstantBuffer* cBuffer);
 
         /**
          * @brief Ends rendering the scene.

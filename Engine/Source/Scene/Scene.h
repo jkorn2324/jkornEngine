@@ -21,6 +21,9 @@ namespace Engine
 
 	class EntityHierarchyChangedEvent;
 
+	struct CameraConstants;
+	class ConstantBuffer;
+
     namespace SceneUtility::Internals
     {
         entt::registry& GetEntityRegistry(Scene& scene);
@@ -108,8 +111,8 @@ namespace Engine
 		void OnRuntimeUpdate(const Timestep& ts);
 		void OnEditorUpdate(const Timestep& ts);
 
-		void Render(const struct CameraConstants& cameraConstants);
-		void Render();
+		void Render(const CameraConstants& cameraConstants, ConstantBuffer* cBuffer);
+		void Render(ConstantBuffer* cBuffer);
 
 		bool OnEntityHierarchyChanged(EntityHierarchyChangedEvent& event);
 

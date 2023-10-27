@@ -2,6 +2,7 @@
 
 #include "EntityHierarchyComponent.h"
 #include "IUpdateSystem.h"
+#include "IEventSystem.h"
 
 namespace Engine
 {

@@ -230,11 +230,11 @@ namespace Engine
 		PROFILE_SCOPE(EditorUpdate, Scene);
 	}
 
-	void Scene::Render(const CameraConstants& cameraConstants)
+	void Scene::Render(const CameraConstants& cameraConstants, ConstantBuffer* cameraBuffer)
 	{
 		PROFILE_SCOPE(SceneRender, Rendering);
 
-		Graphics::Utility::BeginRenderScene(cameraConstants);
+		Graphics::Utility::BeginRenderScene(cameraConstants, cameraBuffer);
 
 		// Render the meshes.
 		{
@@ -288,13 +288,13 @@ namespace Engine
 		Graphics::Utility::EndRenderScene();
 	}
 
-	void Scene::Render()
+	void Scene::Render(ConstantBuffer* cameraBuffer)
 	{
 		CameraConstants constants;
 		{
 			if (m_camera != nullptr)
 			{
-				auto mat = m_camera->GetViewMatrix();
+				MathLib::Matrix4x4 mat = m_camera->GetViewMatrix();
 				mat.Invert();
 
 				constants.c_cameraPosition = mat.GetTranslation();
@@ -302,7 +302,7 @@ namespace Engine
 					m_camera->GetViewProjectionMatrix();
 			}
 		}
-		Render(constants);
+		Render(constants, cameraBuffer);
 	}
 
 	Camera* Scene::GetCamera() const

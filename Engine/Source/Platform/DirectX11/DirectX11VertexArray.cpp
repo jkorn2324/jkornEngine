@@ -4,7 +4,7 @@
 
 #include "DirectX11RenderingAPI.h"
 #include "GraphicsRenderer.h"
-#include "IndexBuffer.h"
+#include "DirectX11IndexBuffer.h"
 
 #include <d3d11.h>
 
@@ -62,8 +62,11 @@ namespace Engine
 	
 	void DirectX11VertexArray::Bind() const
 	{
-		if (!IsValid()) return;
-		
+		if (!IsValid()) 
+		{
+			return;
+		}
+
 		static const uint32_t s_numVertexBuffers = 32;
 		static UINT s_vertexBufferOffsets[s_numVertexBuffers] = { 0 };
 		
@@ -81,6 +84,9 @@ namespace Engine
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
 		renderingAPI.m_deviceContext->IASetVertexBuffers(0, (uint16_t)vertexBufferSize,
 			&vertexBuffers[0], &vertexBufferStrides[0], &s_vertexBufferOffsets[0]);
-		m_indexBuffer->Bind();
+
+		// Binds the index buffer to the vertex array.
+		DirectX11IndexBuffer* indexBuffer = reinterpret_cast<DirectX11IndexBuffer*>(m_indexBuffer.get());
+		indexBuffer->Bind();
 	}
 }

@@ -3,6 +3,7 @@
 #include "SystemHandlerBase.h"
 #include "SystemInvoker.h"
 
+
 namespace Engine
 {
 	class SystemHandlerBase;
@@ -45,16 +46,4 @@ namespace Engine
 			system.AddSystem<TSystem, TArgs...>(std::forward<TArgs>(args)...);
 		}
 	};
-
-	namespace SystemUtility
-	{
-		/**
-		 * Invokes the OnUpdate function for the system manager. 
-		 */
-		void InvokeOnUpdate(const Engine::Timestep& timestep, const bool isPlaying);
-		/**
-		 * Invokes the OnUpdate function for the system.
-		 */
-		void InvokeOnUpdate(const Engine::UpdateSystemContext& context);
-	}
 }

@@ -6,29 +6,28 @@
 
 namespace Engine
 {
-    // Sets the camera constant buffer.
-	ConstantBuffer* s_cameraConstantBuffer = nullptr;
-
-	void Graphics::Utility::SetCameraConstants(const CameraConstants &cameraConstants)
-	{
-        if (!s_cameraConstantBuffer)
+    void Graphics::Utility::SetCameraConstants(const CameraConstants& cameraConstants, ConstantBuffer** cBuffer)
+    {
+        ConstantBuffer* cBufRef = *cBuffer;
+        if (!cBufRef)
         {
-            s_cameraConstantBuffer = ConstantBuffer::Create(&cameraConstants,
+            cBufRef = ConstantBuffer::Create(&cameraConstants,
                 sizeof(CameraConstants));
         }
-        else 
+        else
         {
-            s_cameraConstantBuffer->SetData(&cameraConstants,
-                sizeof(cameraConstants));
+            cBufRef->SetData(&cameraConstants,
+                sizeof(CameraConstants));
         }
-        JKORN_ENGINE_ASSERT(s_cameraConstantBuffer, "The camera constant buffer must exist.");
-		s_cameraConstantBuffer->Bind(0,
-			Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
-	}
+        JKORN_ENGINE_ASSERT(cBufRef, "The camera constant buffer must exist.");
+        cBufRef->Bind(0,
+            Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
+        cBuffer = &cBufRef;
+    }
 
-    void Graphics::Utility::BeginRenderScene(const CameraConstants &cameraConstants)
+    void Graphics::Utility::BeginRenderScene(const CameraConstants &cameraConstants, ConstantBuffer* cBuffer)
     {
-        Graphics::Utility::SetCameraConstants(cameraConstants);
+        Graphics::Utility::SetCameraConstants(cameraConstants, &cBuffer);
         GraphicsRenderer3D::BindLights();
     }
 }
