@@ -33,7 +33,6 @@ namespace Engine
 
 		static Mesh& GetCubeMesh();
 
-	private:
 		static void BindLights();
 	};
 }

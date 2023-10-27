@@ -13,7 +13,7 @@ namespace Engine
 	class Memory
 	{
 	public:
-		static constexpr MemoryEndianessType GetEndianess();
+		static MemoryEndianessType GetEndianess();
 
 		template<typename T>
 		static void Memcpy(T* dst, const T* src)

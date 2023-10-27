@@ -9,10 +9,9 @@ namespace Engine
     void Graphics::Utility::SetCameraConstants(const CameraConstants& cameraConstants, ConstantBuffer** cBuffer)
     {
         ConstantBuffer* cBufRef = *cBuffer;
-        if (!cBufRef)
+        if (!*cBuffer)
         {
-            cBufRef = ConstantBuffer::Create(&cameraConstants,
-                sizeof(CameraConstants));
+            ConstantBuffer::Create(cBuffer, &cameraConstants, sizeof(CameraConstants));
         }
         else
         {

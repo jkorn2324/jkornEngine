@@ -17,7 +17,12 @@ namespace Engine
 		JsonFileReader(const std::string& fileName);
 		~JsonFileReader();
 
-		ReadJsonObject GetJsonObject() const;
+        template<bool TConst=false>
+		ReadJsonObject<TConst> GetJsonObject() const
+        {
+            auto object = m_document.GetObject();
+            return ReadJsonObject<TConst>(object);
+        }
 
 		rapidjson::Document& GetDocument() { return m_document; }
 		const rapidjson::Document& GetDocument() const { return m_document; }

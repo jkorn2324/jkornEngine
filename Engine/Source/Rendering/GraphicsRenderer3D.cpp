@@ -289,7 +289,7 @@ namespace Engine
 
 	Mesh& GraphicsRenderer3D::GetCubeMesh()
 	{
-		DebugAssert(s_initialized, "Graphics Renderer Should be Initialized");
+		JKORN_ENGINE_ASSERT(s_initialized, "Graphics Renderer Should be Initialized");
 		return *s_cubeMesh;
 	}
 

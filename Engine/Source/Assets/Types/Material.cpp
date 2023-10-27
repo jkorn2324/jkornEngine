@@ -4,7 +4,7 @@
 #include "JsonFileReader.h"
 #include "JsonUtils.h"
 
-#include <rapidjson\stringbuffer.h>
+#include <rapidjson/stringbuffer.h>
 
 namespace Engine
 {

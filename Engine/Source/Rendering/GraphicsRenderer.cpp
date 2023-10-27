@@ -36,7 +36,7 @@ namespace Engine
 
 	void GraphicsRenderer::Draw(VertexArray* vertexArray)
 	{
-		DebugAssert(s_renderingAPI != nullptr, "Rendering API isn't initialized.");
+		JKORN_ENGINE_ASSERT(s_renderingAPI != nullptr, "Rendering API isn't initialized.");
 		s_renderingAPI->Draw(vertexArray);
 	}
 

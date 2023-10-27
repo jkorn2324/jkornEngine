@@ -4,44 +4,6 @@
 namespace Engine
 {
 
-	// ---------------------------------------- Parsed Json Object ----------------------------------------------
-
-
-	ReadJsonObject::ReadJsonObject(GenericObject& object)
-		: m_object(object), m_valid(true)
-	{
-	}
-
-	ReadJsonObject::ReadJsonObject(rapidjson::Document& document)
-		: m_object(document.GetObject()), m_valid(true) 
-	{ 
-	}
-
-	ReadJsonObject::ReadJsonObject(const ReadJsonObject& jsonObject)
-		: m_object(jsonObject.m_object), m_valid(jsonObject.m_valid)
-	{
-
-	}
-
-	ReadJsonObject::ReadJsonObject(const rapidjson::Document& document)
-		: m_object(const_cast<rapidjson::Document&>(document).GetObject()), m_valid(true) 
-	{ 
-	}
-
-	ReadJsonObject& ReadJsonObject::operator=(const ReadJsonObject& jsonObject)
-	{
-		m_object = jsonObject.m_object;
-		m_valid = jsonObject.m_valid;
-		return *this;
-	}
-
-	bool ReadJsonObject::GetValue(const std::string& inString, ReadJsonValue& inValue) const
-	{
-		if (!IsValid()) return false;
-		if (m_object.HasMember(inString.c_str())) return false;
-		inValue = ReadJsonValue(m_object[inString.c_str()]);
-		return true;
-	}
 
 	// ------------------------------------------ Parsed Json Array ----------------------------------------------
 
@@ -110,22 +72,12 @@ namespace Engine
 		return *this;
 	}
 
-	bool ReadJsonValue::GetJsonObject(ReadJsonObject& jsonObject) const
-	{
-		if (IsValid()
-			&& m_value.IsObject())
-		{
-			jsonObject = ReadJsonObject(m_value.GetObject());
-			return true;
-		}
-		return false;
-	}
-
 	bool ReadJsonValue::GetJsonArray(ReadJsonArray& jsonArray) const
 	{
 		if (IsArray())
 		{
-			jsonArray = ReadJsonArray(m_value.GetArray());
+            auto arr = m_value.GetArray();
+			jsonArray = ReadJsonArray(arr);
 			return true;
 		}
 		return false;

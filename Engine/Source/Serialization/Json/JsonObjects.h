@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rapidjson\document.h>
+#include <rapidjson/document.h>
 #include <string>
 
 namespace Engine
@@ -11,10 +11,11 @@ namespace Engine
 	/// <summary>
 	/// Parsed Json Object - Wrapper for the rapidjson object.
 	/// </summary>
+    template<bool TIsConst = false>
 	class ReadJsonObject
 	{
 	private:
-		using GenericObject = rapidjson::GenericObject<false, rapidjson::Value>;
+		using GenericObject = rapidjson::GenericObject<TIsConst, rapidjson::Value>;
 		static GenericObject s_defaultObject;
 
 	public:
@@ -23,16 +24,34 @@ namespace Engine
 		{
 		}
 
-		ReadJsonObject(GenericObject& object);
-		ReadJsonObject(rapidjson::Document& document);
-		ReadJsonObject(const rapidjson::Document& document);
-		ReadJsonObject(const ReadJsonObject& jsonObject);
+		ReadJsonObject(GenericObject& object)
+            : m_object(object), m_valid(true)
+        {
+            
+        }
+        
+		ReadJsonObject(const ReadJsonObject& jsonObject)
+            : m_object(jsonObject.m_object), m_valid(jsonObject.m_valid)
+        {
+            
+        }
 
-		ReadJsonObject& operator=(const ReadJsonObject& jsonObject);
+		ReadJsonObject& operator=(const ReadJsonObject& jsonObject)
+        {
+            m_object = jsonObject.m_object;
+            m_valid = jsonObject.m_valid;
+            return *this;
+        }
 
 		const bool IsValid() const { return m_valid; }
 
-		bool GetValue(const std::string& inString, ReadJsonValue& inValue) const;
+		bool GetValue(const std::string& inString, ReadJsonValue& inValue) const
+        {
+            if (!IsValid()) return false;
+            if (m_object.HasMember(inString.c_str())) return false;
+            inValue = ReadJsonValue(m_object[inString.c_str()]);
+            return true;
+        }
 
 	private:
 		GenericObject& m_object;
@@ -50,7 +69,7 @@ namespace Engine
 		static GenericArray s_defaultArray;
 
 	public:
-		ReadJsonArray::ReadJsonArray()
+        ReadJsonArray()
 			: m_array(s_defaultArray), m_valid(false)
 		{
 
@@ -177,7 +196,19 @@ namespace Engine
 			return false;
 		}
 
-		bool GetJsonObject(ReadJsonObject& jsonObject) const;
+        template<bool TIsConst = false>
+		bool GetJsonObject(ReadJsonObject<TIsConst>& jsonObject) const
+        {
+            if (IsValid()
+                && m_value.IsObject())
+            {
+                auto obj = m_value.GetObject();
+                jsonObject = ReadJsonObject<TIsConst>(obj);
+                return true;
+            }
+            return false;
+        }
+        
 		bool GetJsonArray(ReadJsonArray& jsonArray) const;
 
 	private:

@@ -5,10 +5,10 @@
 
 namespace Engine
 {
-	constexpr MemoryEndianessType Memory::GetEndianess()
+    MemoryEndianessType Memory::GetEndianess()
 	{
-		uint32_t endian = 1;
-		uint8_t* ptr = (uint8_t*)&endian;
+        uint32_t endian = 1;
+        uint8_t* ptr = (uint8_t*)&endian;
 		if (*ptr == 1) return MemoryEndianessType::Type_LittleEndian;
 		return MemoryEndianessType::Type_BigEndian;
 	}

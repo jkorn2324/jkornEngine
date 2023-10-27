@@ -47,11 +47,6 @@ namespace Engine
 		delete m_buffer;
 	}
 
-	ReadJsonObject JsonFileReader::GetJsonObject() const
-	{
-		return ReadJsonObject(m_document);
-	}
-
 	void JsonFileReader::Parse(FILE* file)
 	{
 		if (file == nullptr)
