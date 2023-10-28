@@ -1,10 +1,6 @@
 #pragma once
 
-namespace std
-{
-	template<typename T>
-	class shared_ptr;
-}
+#include "Memory.h"
 
 namespace Engine
 {

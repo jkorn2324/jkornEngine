@@ -1,12 +1,14 @@
 #include "EnginePCH.h"
 #include "AssetManager.h"
 
+#include "Cache.h"
+
 namespace Engine
 {
 
 	void AssetManager::Initialize()
 	{
-		// TODO: Should Initialize the asset caches & then load asset mapper files.
+
 	}
 
 	void AssetManager::RefreshAssets()
