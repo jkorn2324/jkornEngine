@@ -111,8 +111,8 @@ namespace Engine
 		void OnRuntimeUpdate(const Timestep& ts);
 		void OnEditorUpdate(const Timestep& ts);
 
-		void Render(const CameraConstants& cameraConstants, ConstantBuffer* cBuffer);
-		void Render(ConstantBuffer* cBuffer);
+		void Render(const CameraConstants& cameraConstants, ConstantBuffer** cBuffer);
+		void Render(ConstantBuffer** cBuffer);
 
 		bool OnEntityHierarchyChanged(EntityHierarchyChangedEvent& event);
 

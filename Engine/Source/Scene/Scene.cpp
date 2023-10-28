@@ -226,7 +226,7 @@ namespace Engine
 		PROFILE_SCOPE(EditorUpdate, Scene);
 	}
 
-	void Scene::Render(const CameraConstants& cameraConstants, ConstantBuffer* cameraBuffer)
+	void Scene::Render(const CameraConstants& cameraConstants, ConstantBuffer** cameraBuffer)
 	{
 		PROFILE_SCOPE(SceneRender, Rendering);
 
@@ -284,7 +284,7 @@ namespace Engine
 		Graphics::Utility::EndRenderScene();
 	}
 
-	void Scene::Render(ConstantBuffer* cameraBuffer)
+	void Scene::Render(ConstantBuffer** cameraBuffer)
 	{
 		CameraConstants constants;
 		{

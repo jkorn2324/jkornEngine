@@ -195,6 +195,7 @@ namespace Engine
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
 			GraphicsRenderer::GetRenderingAPI();
 		renderingAPI.SetRenderTarget(renderingAPI.m_backBufferRenderTargetView, nullptr);
+		// Clears the render target view colors.
 		renderingAPI.ClearRenderTargetViewColors();
 	}
 

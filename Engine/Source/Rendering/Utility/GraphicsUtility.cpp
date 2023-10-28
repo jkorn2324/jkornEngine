@@ -22,9 +22,9 @@ namespace Engine
             Engine::ConstantBufferFlags::VERTEX_SHADER | Engine::ConstantBufferFlags::PIXEL_SHADER);
     }
 
-    void Graphics::Utility::BeginRenderScene(const CameraConstants &cameraConstants, ConstantBuffer* cBuffer)
+    void Graphics::Utility::BeginRenderScene(const CameraConstants &cameraConstants, ConstantBuffer** cBuffer)
     {
-        Graphics::Utility::SetCameraConstants(cameraConstants, &cBuffer);
+        Graphics::Utility::SetCameraConstants(cameraConstants, cBuffer);
         GraphicsRenderer3D::BindLights();
     }
 }
