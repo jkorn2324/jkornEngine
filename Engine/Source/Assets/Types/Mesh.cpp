@@ -4,10 +4,9 @@
 #include "StringUtils.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
-
 #include "JsonFileWriter.h"
-#include "AssetSerializer.h"
 
+#include "Memory.h"
 
 #include <memory>
 #include <locale>
@@ -27,6 +26,8 @@ namespace Engine
 			BufferLayoutParameterSet::Uv0
 		};
 	}
+
+	const BufferLayout Mesh::c_defaultLayout = c_defaultMeshLayoutInternal;
 
 	Mesh::Mesh()
 		: m_positions(),
@@ -77,7 +78,7 @@ namespace Engine
 	void Mesh::SetIndices(const uint32_t* indices, uint32_t indexCount)
 	{
 		m_indices = new std::uint32_t[indexCount];
-		std::memcpy(m_indices, indices,
+		Memory::Memcpy(m_indices, indices,
 			sizeof(std::uint32_t) * indexCount);
 
 		// Creates the index buffer.
@@ -286,32 +287,6 @@ namespace Engine
 		return m_indexCount;
 	}
 
-	bool Mesh::DeserializeFromFile(Mesh& mesh, AssetDeserializationFileData& value)
-	{
-		// TODO: Read from a normal file.
-		return true;
-	}
-
-	bool Mesh::SerializeToFile(Mesh& mesh, AssetSerializationFileData& metaData)
-	{
-		// TODO: Write to a file.
-		return true;
-	}
-
-	bool Mesh::SerializeToMetaFile(Mesh& mesh, AssetSerializationMetaFileData& metaData)
-	{
-		// Writes to the meta file.
-		JsonFileWriter metaFileWriter(metaData.metaFilePath);
-		metaFileWriter.Write("GUID", metaData.guid);
-		metaFileWriter.Flush();
-		return true;
-	}
-
-	bool Mesh::DeserializeMetaFile(Mesh& mesh, AssetDeserializationMetaFileData& metaData)
-	{
-		// TODO: Implementation
-		return true;
-	}
 
 	bool Mesh::Create(Mesh** mesh)
 	{

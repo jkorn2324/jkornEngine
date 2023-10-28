@@ -1,13 +1,58 @@
 #include "GlfwGame.h"
 
-#include "imgui.h"
 #include "CameraController.h"
+#include <imgui.h>
+
+#include "SystemUtility.h"
 
 namespace GlfwSandbox
 {
 	static const wchar_t* CARDS_LARGE_TILEMAP = L"Assets/Textures/PlayingCards/Tilesheet/cardsLarge_tilemap.png";
 
 	static float s_rotation = 0.0f;
+
+	namespace
+	{
+		void InitializeSystems()
+		{
+			Engine::SystemManager::AddSystem<CameraControllerSystem>();
+		}
+
+		void InitializeCameraEntity(Engine::Scene& scene)
+		{
+			{
+				auto cameraEntity = scene.FindEntity<Engine::NameComponent>("CameraEntity",
+					[](const char* Name, const Engine::NameComponent& component) -> bool {
+						return component.name == Name;
+					});
+				if (cameraEntity.IsValid())
+				{
+					// Adds the Camera Controller.
+					cameraEntity.AddComponent<CameraController>();
+					return;
+				}
+			}
+
+			auto cameraEntity = scene.CreateEntity("CameraEntity");
+			{
+				Engine::Transform3DComponent& camComponentTransform
+					= cameraEntity.AddComponent<Engine::Transform3DComponent>();
+				camComponentTransform.SetLocalPosition(MathLib::Vector3(-1.0f, 0.0f, 0.0f));
+				camComponentTransform.LookAt(MathLib::Vector3(0.0f, 0.0f, 0.0f));
+
+				Engine::SceneCameraComponent& camComponent
+					= cameraEntity.AddComponent<Engine::SceneCameraComponent>();
+				Engine::CameraProperties& properties
+					= camComponent.camera.GetProperties();
+				camComponent.camera.SetSceneCameraType(Engine::SceneCameraType::TYPE_ORTHOGRAPHIC);
+				Engine::Application& app = Engine::Application::Get();
+				properties.orthoWidth = (float)app.GetWindow().GetWidth();
+				properties.orthoHeight = (float)app.GetWindow().GetHeight();
+
+				cameraEntity.AddComponent<CameraController>();
+			}
+		}
+	}
 
 	// The func ptr for finding by name.
 	constexpr auto FindByNameFuncPtr = [](const char* Name, const Engine::NameComponent& component) -> bool {
@@ -24,13 +69,11 @@ namespace GlfwSandbox
 	{
 		InitializeRenderBuffers();
 		InitializeSceneComponents();
+		InitializeSystems();
 	}
 
 	GlfwGame::~GlfwGame()
 	{
-		Engine::SceneSerializer serializer(&Engine::SceneManager::GetActiveScene());
-		serializer.Serialize(L"GlfwGameScene.json");
-
 		delete m_frameBuffer;
 		delete m_subTexture;
 		delete m_entityConstantBuffer;
@@ -40,16 +83,17 @@ namespace GlfwSandbox
 
 	void GlfwGame::InitializeRenderBuffers()
 	{
-		Engine::TypedAssetManager<Engine::Texture>& textureAssetManager =
-			Engine::AssetManager::GetTextures();
 		{
-			Engine::AssetRef<Engine::Texture> texture;
-			textureAssetManager.Load(CARDS_LARGE_TILEMAP, texture);
-			m_subTexture = Engine::SubTexture::CreateFromTexCoords(texture,
-				MathLib::Vector2(11.0f, 2.0f), MathLib::Vector2(51.0f, 61.0f));
+			Engine::Texture* texture;
+			if (Engine::Texture::LoadFromFile(&texture, CARDS_LARGE_TILEMAP))
+			{
+				m_subTexture = Engine::SubTexture::CreateFromTexCoords(texture,
+					MathLib::Vector2(11.0f, 2.0f), MathLib::Vector2(51.0f, 61.0f));
+			}
 		}
-		m_entityConstantBuffer = Engine::ConstantBuffer::Create(
-			&m_entityConstants, sizeof(m_entityConstants));
+
+		// Creates a constant buffer.
+		Engine::ConstantBuffer::Create(&m_entityConstantBuffer, &m_entityConstants, sizeof(m_entityConstants));
 
 		Engine::FrameBufferSpecification frameBufferSpecification({
 			Engine::FrameBufferAttachment{ Engine::FrameBufferAttachmentType::DEPTH_STENCIL }
@@ -64,48 +108,17 @@ namespace GlfwSandbox
 		Engine::SceneManager::LoadScene(L"GlfwGameScene.json");
 		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
 
-		{
-			auto cameraEntity = scene.FindEntity<Engine::NameComponent>("CameraEntity",
-				[](const char* Name, const Engine::NameComponent& component) -> bool {
-					return component.name == Name;
-				});
-			if (cameraEntity.IsValid())
-			{
-				// Adds the Camera Controller.
-				cameraEntity.AddComponent<CameraController>();
-				return;
-			}
-		}
-
-		auto cameraEntity = scene.CreateEntity("CameraEntity");
-		{
-			Engine::Transform3DComponent& camComponentTransform
-				= cameraEntity.AddComponent<Engine::Transform3DComponent>();
-			camComponentTransform.SetLocalPosition(MathLib::Vector3(-1.0f, 0.0f, 0.0f));
-			camComponentTransform.LookAt(MathLib::Vector3(0.0f, 0.0f, 0.0f));
-
-			Engine::SceneCameraComponent& camComponent
-				= cameraEntity.AddComponent<Engine::SceneCameraComponent>();
-			Engine::CameraProperties& properties
-				= camComponent.camera.GetProperties();
-			camComponent.camera.SetSceneCameraType(Engine::SceneCameraType::TYPE_ORTHOGRAPHIC);
-			Engine::Application& app = Engine::Application::Get();
-			properties.orthoWidth = (float)app.GetWindow().GetWidth();
-			properties.orthoHeight = (float)app.GetWindow().GetHeight();
-
-			cameraEntity.AddComponent<CameraController>();
-		}
+		InitializeCameraEntity(scene);
 
 		auto entity = scene.CreateEntity("HappyFace");
 		{
-			Engine::TypedAssetManager<Engine::Texture>& textureAssetManager =
-				Engine::AssetManager::GetTextures();
 			Engine::Transform3DComponent& component
 				= entity.AddComponent<Engine::Transform3DComponent>();
-			component.SetLocalScale(200.0f, 200.0f, 1.0f);
+			component.SetLocalScale(1.0f, 1.0f, 1.0f);
 			Engine::SpriteComponent& sprite
 				= entity.AddComponent<Engine::SpriteComponent>();
-			textureAssetManager.Load(L"Assets/Textures/happy-face.png", sprite.texture);
+
+			Engine::Texture::LoadFromFile(&sprite.texture, L"Assets/Textures/happy-face.png");
 		}
 	}
 
@@ -114,14 +127,10 @@ namespace GlfwSandbox
 		Engine::SceneManager::OnUpdate(ts);
 		Engine::SceneManager::OnRuntimeUpdate(ts);
 
-		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
+		// Invokes Update on the systems.
+		Engine::SystemUtility::InvokeOnUpdate(ts, true);
 
-		auto cameraEntity = scene.FindEntity<Engine::NameComponent>("CameraEntity", FindByNameFuncPtr);
-		if (cameraEntity)
-		{
-			// Executes an update for the camera.
-			Camera::ExecuteUpdate(ts, cameraEntity);
-		}
+		Engine::Scene& scene = Engine::SceneManager::GetActiveScene();
 
 		auto entity = scene.FindEntity<Engine::NameComponent>("HappyFace", FindByNameFuncPtr);
 		if (entity.IsValid())
@@ -149,9 +158,9 @@ namespace GlfwSandbox
 			{
 				Engine::Transform3DComponent& transformComponent
 					= entity.GetComponent<Engine::Transform3DComponent>();
-				MathLib::Vector3 scale = transformComponent.GetLocalScale() + MathLib::Vector3::One *
+				/* MathLib::Vector3 scale = transformComponent.GetLocalScale() + MathLib::Vector3::One *
 					Engine::Input::GetMouseScrollOffset().y * 0.02f;
-				transformComponent.SetLocalScale(scale);
+				transformComponent.SetLocalScale(scale); */
 			}
 
 			if (Engine::Input::IsMouseButtonHeld(Engine::MOUSE_BUTTON_MIDDLE))
@@ -220,9 +229,11 @@ namespace GlfwSandbox
 		Engine::SceneManager::Render();
 
 		{
-			Engine::GraphicsRenderer2D::DrawRect(MathLib::Vector2(20.0f, 0.0f),
-				MathLib::Vector2::One, m_subTexture);
+			MathLib::Vector2 scale = { 1.0f, 1.0f };
+			Engine::GraphicsRenderer2D::DrawRect(MathLib::Vector2(0.0f, 0.0f),
+				scale, m_subTexture);
 		}
-        m_frameBuffer->UnBind();
+		// Don't want to unbind this because then it will result in render target view being cleared. 
+        // m_frameBuffer->UnBind();
 	}
 }

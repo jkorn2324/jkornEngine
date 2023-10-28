@@ -10,7 +10,7 @@ namespace Engine
 	{
 	public:
 		explicit DirectX11Texture();
-		explicit DirectX11Texture(const TextureSpecifications& flags);
+		explicit DirectX11Texture(uint32_t width, uint32_t height, const TextureSpecifications& specifications);
 		explicit DirectX11Texture(ID3D11Resource* resource,
 			ID3D11ShaderResourceView* shaderResourceView);
 		~DirectX11Texture();
@@ -26,7 +26,7 @@ namespace Engine
 		void CopyPixels(FixedArray& pixelArray) const override;
 	
 	protected:
-		bool Load(const wchar_t* texturePath, const TextureSerializedData& specifications) override;
+		bool LoadFromFile_Internal(const wchar_t* texturePath) override;
 		void Free();
 		bool CopyTo(Texture& texture) override;
 

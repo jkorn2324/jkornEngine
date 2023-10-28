@@ -4,7 +4,6 @@
 #include <filesystem>
 
 #include "RenderingAPI.h"
-#include "AssetSerializer.h"
 
 #if defined(GRAPHICS_API_DIRECTX11)
 #include "DirectX11Texture.h"
@@ -13,11 +12,13 @@
 namespace Engine
 {
 
-	Texture::Texture()
-		: m_width(0), m_height(0), m_serializedData() { }
+	static const TextureSpecifications c_defaultSpecification;
 
-	Texture::Texture(const TextureSpecifications& specifications)
-		: m_width(specifications.width), m_height(specifications.height), m_serializedData(specifications.readWriteFlags, specifications.textureFormat)
+	Texture::Texture()
+		: m_width(0), m_height(0), m_specifications() { }
+
+	Texture::Texture(uint32_t width, uint32_t height, const TextureSpecifications& specifications)
+		: m_width(width), m_height(height), m_specifications(specifications.readWriteFlags, specifications.textureFormat)
 	{
 	}
 
@@ -31,108 +32,11 @@ namespace Engine
 		return m_height;
 	}
 
-	Texture* Texture::CreateTexture()
+	bool Texture::LoadFromFile_Internal(const wchar_t* texturePath, const TextureSpecifications& specifications)
 	{
-		// TODO: Implementation
-		return nullptr;
+		m_specifications = specifications;
+		return LoadFromFile_Internal(texturePath);
 	}
-
-	Texture* Texture::CreateTexture(const std::wstring& filePath)
-	{
-		// TODO: Implementation
-		Texture* texture = nullptr;
-		if(texture != nullptr)
-		{
-			Engine::AssetSerializer<Texture> serializer(*texture);
-			if (serializer.DeserializeFromFile(filePath))
-			{
-				return texture;
-			}
-		}
-		delete texture;
-		return nullptr;
-	}
-
-	bool Texture::Load(const wchar_t* texturePath)
-	{
-		return Load(texturePath, m_serializedData);
-	}
-
-	bool Texture::DeserializeFromFile(Texture& texture, AssetDeserializationFileData& value)
-	{
-        std::wstring ws = value.filePath.wstring();
-        return texture.Load(ws.data());
-	}
-
-	bool Texture::SerializeToFile(Texture& texture, AssetSerializationFileData& metaData)
-	{
-		return true;
-	}
-
-	bool Texture::SerializeToMetaFile(Texture& texture, AssetSerializationMetaFileData& metaData)
-	{
-		// Writes to a file path.
-		{
-			JsonFileWriter fileWriter(metaData.metaFilePath);
-			fileWriter.Write<uint64_t>("GUID", (uint64_t)metaData.guid);
-			
-			fileWriter.BeginObject("ReadWriteFlags");
-			fileWriter.Write<bool>("Readable_CPU", texture.m_serializedData.readWriteFlags & Flag_CPU_ReadTexture);
-			fileWriter.Write<bool>("Writable_CPU", texture.m_serializedData.readWriteFlags & Flag_CPU_WriteTexture);
-			fileWriter.Write<bool>("Readable_GPU", texture.m_serializedData.readWriteFlags & Flag_GPU_ReadTexture);
-			fileWriter.Write<bool>("Writable_GPU", texture.m_serializedData.readWriteFlags & Flag_GPU_WriteTexture);
-			fileWriter.EndObject();
-
-			fileWriter.Write<uint32_t>("TextureFormat", texture.m_serializedData.textureFormat);
-			
-			fileWriter.Flush();
-		}
-		return true;
-	}
-
-	bool Texture::DeserializeMetaFile(Texture& texture, AssetDeserializationMetaFileData& metaData)
-	{
-		JsonFileParser fileReader(metaData.metaFilePath);
-		if (!fileReader.IsValid()) return false;
-
-		const auto& document = fileReader.GetDocument();
-		if (document.HasMember("ReadWriteFlags"))
-		{
-			uint32_t deserializedRWFlags = 0;
-			const auto& readWriteFlags = document["ReadWriteFlags"].GetObject();
-			if (readWriteFlags.HasMember("Readable_CPU")
-				&& readWriteFlags["Readable_CPU"].GetBool())
-			{
-				deserializedRWFlags |= Flag_CPU_ReadTexture;
-			}
-			if (readWriteFlags.HasMember("Readable_GPU")
-				&& readWriteFlags["Readable_CPU"].GetBool())
-			{
-				deserializedRWFlags |= Flag_GPU_ReadTexture;
-			}
-			if (readWriteFlags.HasMember("Writable_CPU")
-				&& readWriteFlags["Writable_CPU"].GetBool())
-			{
-				deserializedRWFlags |= Flag_CPU_WriteTexture;
-			}
-			if (readWriteFlags.HasMember("Writable_GPU")
-				&& readWriteFlags["Writable_GPU"].GetBool())
-			{
-				deserializedRWFlags |= Flag_GPU_WriteTexture;
-			}
-			texture.m_serializedData.readWriteFlags 
-				= (TextureReadWriteFlags)deserializedRWFlags;
-		}
-
-		if (document.HasMember("TextureFormat")
-			&& document["TextureFormat"].IsUint())
-		{
-			texture.m_serializedData.textureFormat =
-				(TextureFormat)document["TextureFormat"].GetUint();
-		}
-		return true;
-	}
-
 
 	bool Texture::Create(Texture** texture)
 	{
@@ -145,10 +49,10 @@ namespace Engine
 #endif
 	}
 
-	bool Texture::Create(Texture** texture, const TextureSpecifications& specifications)
+	bool Texture::Create(Texture** texture, uint32_t width, uint32_t height, const TextureSpecifications& specifications)
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
-        *texture = new DirectX11Texture(specifications);
+		*texture = new DirectX11Texture(width, height, specifications);
         return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");
@@ -167,10 +71,11 @@ namespace Engine
 #endif
 	}
 
-	bool Texture::Create(std::shared_ptr<Texture>& texture, const TextureSpecifications& specifications)
+	bool Texture::Create(std::shared_ptr<Texture>& texture, uint32_t width, uint32_t height,
+		const TextureSpecifications& specifications)
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
-        texture = std::make_shared<DirectX11Texture>(specifications);
+        texture = std::make_shared<DirectX11Texture>(width, height, specifications);
         return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");
@@ -186,5 +91,42 @@ namespace Engine
 	bool CopyTexture(Texture& a, Texture& b)
 	{
 		return a.CopyTo(b);
+	}
+
+	bool Texture::LoadFromFile(Texture** texture, const wchar_t* texturePath)
+	{
+		return LoadFromFile(texture, texturePath, c_defaultSpecification);
+	}
+
+	bool Texture::LoadFromFile(Texture** texture, const wchar_t* texturePath,
+		const TextureSpecifications& specifications)
+	{
+		if (!Create(texture)) return false;
+		Texture* textureReference = *texture;
+		if (!textureReference->LoadFromFile_Internal(texturePath, specifications))
+		{
+			delete textureReference;
+			*texture = nullptr;
+			return false;
+		}
+		return true;
+	}
+
+	bool Texture::LoadFromFile(std::shared_ptr<Texture>& texture,
+		const wchar_t* texturePath)
+	{
+		return LoadFromFile(texture, texturePath, c_defaultSpecification);
+	}
+
+	bool Texture::LoadFromFile(std::shared_ptr<Texture>& texture,
+		const wchar_t* texturePath, const TextureSpecifications& specifications)
+	{
+		if (!Create(texture)) return false;
+		if (!texture->LoadFromFile_Internal(texturePath, specifications))
+		{
+			texture.reset();
+			return false;
+		}
+		return false;
 	}
 }

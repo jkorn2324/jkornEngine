@@ -18,6 +18,7 @@ namespace Engine
 
 	DirectX11VertexArray::~DirectX11VertexArray()
 	{
+		ClearVertexBuffers();
 	}
 
 	void DirectX11VertexArray::SetVertexBuffers(const std::vector<std::shared_ptr<VertexBuffer>>& buffers)

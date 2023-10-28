@@ -7,8 +7,6 @@
 #include "Material.h"
 #include "BufferLayout.h"
 
-#include "AssetManager.h"
-#include "AssetCache.h"
 #include "Profiler.h"
 
 #include "Texture.h"
@@ -44,8 +42,8 @@ namespace Engine
 	static ConstantBuffer* s_spriteObjectConstantBuffer = nullptr;
 	static GraphicsObjectConstants s_spriteObjectConstants;
 
-	static AssetRef<Material> s_spriteMaterial;
-	static AssetRef<Shader> s_spriteShader;
+	static Material* s_spriteMaterial;
+	static Shader* s_spriteShader;
 
 	static GraphicsSpriteVertex vertices[4] =
 	{
@@ -61,32 +59,45 @@ namespace Engine
 		2, 3, 0
 	};
 
-	static void DrawRectInternal(const MathLib::Matrix4x4& transform, const MathLib::Vector4& color, 
-		const AssetRef<Texture>& texture, uint32_t entityID)
+	namespace
 	{
-		PROFILE_SCOPE(DrawRectInternal, Rendering);
+		void ApplySizeToMatrix(MathLib::Matrix4x4& transformMatrix, MathLib::Vector2 size)
+		{
+#if 0
+			MathLib::Matrix4x4 scaleMatrix = MathLib::Matrix4x4::CreateScale(size);
+			transformMatrix = scaleMatrix * transformMatrix;
+#else
 
-		// Clears the texture at the initial texture slot.
-		GraphicsRenderer::GetRenderingAPI().ClearTexture(0);
+#endif
+		}
 
-		// Bind Material.
-		MaterialConstants& constants = s_spriteMaterial->GetMaterialConstants();
-		constants.SetMaterialConstant("c_spriteColor", color);
-		s_spriteMaterial->SetTexture(0, texture);
-		s_spriteMaterial->Bind();
+		void DrawRectInternal(const MathLib::Matrix4x4& transform, const MathLib::Vector4& color,
+			Texture* texture, uint32_t entityID)
+		{
+			PROFILE_SCOPE(DrawRectInternal, Rendering);
 
-		s_spriteObjectConstants.c_objectToWorld = transform;
-		s_spriteObjectConstants.c_entityID = entityID;
+			// Clears the texture at the initial texture slot.
+			GraphicsRenderer::GetRenderingAPI().ClearTexture(0);
 
-		// Bind Per Object Constants.
-		s_spriteObjectConstantBuffer->SetData(&s_spriteObjectConstants, 
-			sizeof(GraphicsObjectConstants));
+			// Bind Material.
+			MaterialConstants& constants = s_spriteMaterial->GetMaterialConstants();
+			constants.SetMaterialConstant("c_spriteColor", color);
+			s_spriteMaterial->SetTexture(0, texture);
+			s_spriteMaterial->Bind();
 
-		s_spriteObjectConstantBuffer->Bind(1, ConstantBufferFlags::PIXEL_SHADER
-			| ConstantBufferFlags::VERTEX_SHADER);
+			s_spriteObjectConstants.c_objectToWorld = transform;
+			s_spriteObjectConstants.c_entityID = entityID;
 
-		GraphicsRenderer::Draw(s_spriteVertexBuffer,
-			s_spriteIndexBuffer);
+			// Bind Per Object Constants.
+			s_spriteObjectConstantBuffer->SetData(&s_spriteObjectConstants,
+				sizeof(GraphicsObjectConstants));
+
+			s_spriteObjectConstantBuffer->Bind(1, ConstantBufferFlags::PIXEL_SHADER
+				| ConstantBufferFlags::VERTEX_SHADER);
+
+			GraphicsRenderer::Draw(s_spriteVertexBuffer,
+				s_spriteIndexBuffer);
+		}
 	}
 
 
@@ -111,36 +122,28 @@ namespace Engine
 
 		// Loads the Sprite Shader.
 		{
-			Engine::TypedAssetManager<Engine::Shader>& shaderAssetCache =
-				Engine::AssetManager::GetShaders();
-			shaderAssetCache.Load(s_spriteShader,
-				L"Shaders/SpriteShader.hlsl", 
-				BufferLayout{ s_spriteVertexBuffer->GetBufferLayoutParameters() });
-
-			Engine::TypedAssetManager<Engine::Material>& materialCache =
-				Engine::AssetManager::GetMaterials();
-			// Defines the sprite material.
-			materialCache.Cache(s_spriteMaterial, 
-				L"SpriteMaterial", 
-				MaterialConstantsLayout {
-					{ "c_spriteColor", LayoutType_Vector4 }
-				});
+			// TODO: Replace with Asset Caching, but for now this will due.
+			Engine::Shader::LoadFromFile(&s_spriteShader,
+				L"Shaders/SpriteShader.hlsl",
+				{ s_spriteVertexBuffer->GetBufferLayoutParameters() });
+			Engine::Material::Create(&s_spriteMaterial, { {"c_spriteColor", LayoutType_Vector4 }});
 			s_spriteMaterial->SetShader(s_spriteShader);
 		}
-
-		s_spriteObjectConstantBuffer = ConstantBuffer::Create(
+		ConstantBuffer::Create(&s_spriteObjectConstantBuffer,
 			&s_spriteObjectConstants, sizeof(GraphicsObjectConstants));
 	}
 
 	void GraphicsRenderer2D::Release()
 	{
+		delete s_spriteShader;
+		delete s_spriteMaterial;
 		delete s_spriteObjectConstantBuffer;
 		delete s_spriteVertexBuffer;
 		delete s_spriteIndexBuffer;
 	}
 
 	void GraphicsRenderer2D::DrawRect(const MathLib::Vector2& pos, const MathLib::Vector2& scale, 
-		const AssetRef<Texture>& texture, int32_t entityID)
+		Texture* texture, int32_t entityID)
 	{
 		Mat4x4 mat = Mat4x4::CreateScale(scale.x, scale.y, 1.0f)
 			* Mat4x4::CreateTranslation(pos.x, pos.y, 0.0f);
@@ -148,7 +151,7 @@ namespace Engine
 	}
 	
 	void GraphicsRenderer2D::DrawRect(const MathLib::Matrix4x4& transformMat, const MathLib::Vector4& color, 
-		const AssetRef<Texture>& texture, int32_t entityID)
+		Texture* texture, int32_t entityID)
 	{
 		// Used so that the vertex buffers are always set to a default rect.
 		if (!s_spriteVertexBufferDefault)
@@ -161,7 +164,7 @@ namespace Engine
 		Mat4x4 mat = transformMat;
 		if (texture)
 		{
-			mat = Mat4x4::CreateScale((float)texture->GetWidth(), (float)texture->GetHeight(), 1.0f) * mat;
+			ApplySizeToMatrix(mat, { (float)texture->GetWidth(), (float)texture->GetHeight() });
 		}
 		DrawRectInternal(mat, color, texture, entityID);
 	}
@@ -180,13 +183,14 @@ namespace Engine
 		// Only changes UVs if it doesn't have defaults.
 		if (texture->HasDefaultUVS())
 		{
-			DrawRect(transformMat, color, texture->GetTexture());
+			DrawRect(transformMat, color, (Texture*)texture->GetTexture(), entityID);
 			return;
 		}
-
+		// TODO: Create Bounds so that it can be rendered in its specific aspect ratio
+		// 
 		// Changes the UVs so that is based on the sub texture.
 		GraphicsSpriteVertex verts[4];
-		std::memcpy(&verts[0], &vertices[0], sizeof(vertices));
+		Memory::Memcpy(&verts[0], &vertices[0], sizeof(vertices));
 		verts[0].uv = texture->GetUVS()[0];
 		verts[1].uv = texture->GetUVS()[1];
 		verts[2].uv = texture->GetUVS()[2];
@@ -194,10 +198,10 @@ namespace Engine
 
 		s_spriteVertexBuffer->SetData(&verts, 4, sizeof(GraphicsSpriteVertex));
 		s_spriteVertexBufferDefault = false;
-		
-		DrawRectInternal(Mat4x4::CreateScale(
-			texture->GetSize().x, texture->GetSize().y, 1.0f) * transformMat, 
-			color, texture->GetTexture(), entityID);
+
+		Mat4x4 cpy = transformMat;
+		ApplySizeToMatrix(cpy, texture->GetSize());
+		DrawRectInternal(cpy, color, (Texture*)texture->GetTexture(), entityID);
 	}
 
 }

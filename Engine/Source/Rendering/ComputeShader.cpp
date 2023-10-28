@@ -1,63 +1,37 @@
 #include "EnginePCH.h"
 #include "ComputeShader.h"
 
-#include "DirectX11ComputeShader.h"
 #include "RenderingAPI.h"
-#include "AssetSerializer.h"
+
+#if defined(GRAPHICS_API_DIRECTX11)
+#include "DirectX11ComputeShader.h"
+#endif
 
 namespace Engine
 {
 
-	bool ComputeShader::SerializeToMetaFile(ComputeShader& shader, AssetSerializationMetaFileData& metaData)
-	{
-		// TODO: Implementation
-		return true;
-	}
-
-	bool ComputeShader::DeserializeMetaFile(ComputeShader& shader, AssetDeserializationMetaFileData& metaData)
-	{
-		// TODO: Implementation
-		return true;
-	}
-
-	bool ComputeShader::DeserializeFromFile(ComputeShader& shader, AssetDeserializationFileData& value)
-	{
-		// TODO: Implementation
-        const std::wstring str = value.filePath.wstring();
-		return shader.Load(str.c_str());
-	}
-
-	bool ComputeShader::SerializeToFile(ComputeShader& shader, AssetSerializationFileData& value)
-	{
-		// TODO: Implementation
-		return true;
-	}
-
 	bool ComputeShader::Create(ComputeShader** shader)
 	{
-		switch (RenderingAPI::GetRenderingAPIType())
-		{
-			case RenderingAPIType::DIRECTX11:
-			{
-				*shader = new DirectX11ComputeShader();
-				return true;
-			}
-		}
+		// TODO: Metal Integration.
+
+#if defined(GRAPHICS_API_DIRECTX11)
+		*shader = new DirectX11ComputeShader();
+		return true;
+#else
         JKORN_ENGINE_ASSERT(false, "Invalid Rendering API type.");
 		return false;
+#endif
 	}
 
 	bool ComputeShader::Create(std::shared_ptr<ComputeShader>& shader)
 	{
-		switch (RenderingAPI::GetRenderingAPIType())
-		{
-			case RenderingAPIType::DIRECTX11:
-			{
-				shader = std::make_shared<DirectX11ComputeShader>();
-				return true;
-			}
-		}
+		// TODO: Metal Integration.
+#if defined(GRAPHICS_API_DIRECTX11)
+		shader = std::make_shared<DirectX11ComputeShader>();
+		return true;
+#else
         JKORN_ENGINE_ASSERT(false, "Invalid Rendering API type.");
 		return false;
+#endif
 	}
 }

@@ -7,7 +7,6 @@
 #include "SceneCamera.h"
 #include "EntityHierarchyComponent.h"
 #include "LightingComponents.h"
-#include "AssetReferenceManager.h"
 
 namespace Engine
 {
@@ -39,16 +38,16 @@ namespace Engine
 
 	struct SpriteComponent
 	{
-		AssetRef<Texture> texture;
+		Texture* texture;
 		MathLib::Vector4 color = MathLib::Vector4::One;
 		bool enabled = true;
 
 		explicit SpriteComponent() = default;
 		explicit SpriteComponent(const MathLib::Vector4& color)
 			: color(color), texture(), enabled(true) { }
-		explicit SpriteComponent(const AssetRef<Texture> texture, const MathLib::Vector4& color)
+		explicit SpriteComponent(Texture* texture, const MathLib::Vector4& color)
 			: color(color), texture(texture), enabled(true) { }
-		explicit SpriteComponent(const AssetRef<Texture> texture)
+		explicit SpriteComponent(Texture* texture)
 			: color(MathLib::Vector4::One), texture(texture), enabled(true) { }
 		explicit SpriteComponent(bool enabled)
 			: color(MathLib::Vector4::One), texture(), enabled(enabled) { }
@@ -127,13 +126,13 @@ namespace Engine
 	{
 		// TODO: Generate a default material.
 
-		AssetRef<Mesh> mesh;
-		AssetRef<Material> material;
 		bool enabled = true;
+		Mesh* mesh;
+		Material* material;
 
 		explicit MeshComponent()
 			: mesh(), material() { }
-		explicit MeshComponent(const AssetRef<Mesh>& mesh, const AssetRef<Material>& material)
+		explicit MeshComponent(Mesh* mesh, Material* material)
 			: mesh(mesh), material(material) { }
 
 		MeshComponent(const MeshComponent& mesh)

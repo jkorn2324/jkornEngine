@@ -1,11 +1,9 @@
 #pragma once
 
-#include <string>
+#include "EngineMacros.h"
 
 #include "Vector.h"
 #include "GUID.h"
-#include "EngineMacros.h"
-
 #include "VertexBuffer.h"
 
 #include <string>
@@ -14,11 +12,6 @@ namespace Engine
 {
 	class IndexBuffer;
 	class VertexArray;
-
-	template<typename T>
-	class AssetSerializer;
-	template<typename T>
-	class AssetCache;
 
 	template<typename T>
 	class MeshBuffer
@@ -51,6 +44,7 @@ namespace Engine
 
 		~MeshBuffer()
 		{
+			m_vertexBuffer.reset();
 		}
 
 		void SetVertices(const T* data, uint32_t numVertices, bool resetVertexCount = true)
@@ -78,7 +72,7 @@ namespace Engine
 
 			if (m_vertices != nullptr)
 			{
-				std::memcpy(m_vertices, data, sizeof(T) * (size_t)numVertices);
+				Memory::Memcpy(m_vertices, data, sizeof(T) * (size_t)numVertices);
 			}
 		}
 
@@ -155,7 +149,7 @@ namespace Engine
 			{
 				size_t size = m_vertexBuffer->GetNumVerts() * m_vertexBuffer->GetStride();
 				m_vertices = new char[size];
-				std::memcpy(m_vertices, buffer.m_vertices, size);
+				Memory::Memcpy(m_vertices, buffer.m_vertices, size);
 			}
 		}
 	
@@ -235,6 +229,10 @@ namespace Engine
 
 		bool m_skinned;
 
-		SERIALIZABLE_ASSET(Mesh);
+	public:
+		static bool Create(Mesh** mesh);
+		static bool Create(std::shared_ptr<Mesh>& mesh);
+
+		static const BufferLayout c_defaultLayout;
 	};
 }

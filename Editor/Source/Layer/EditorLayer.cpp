@@ -88,24 +88,26 @@ namespace Editor
 			Engine::MeshComponent& meshComponent
 				= e.AddComponent<Engine::MeshComponent>();
 
-			Engine::AssetManager::GetMaterials().Cache(
-				L"LitShader", meshComponent.material);
-			meshComponent.material->SetConstantsLayout(
-				{
-					{ "c_diffuseColor", Engine::LayoutType_Vector4 },
-					{ "c_specularColor", Engine::LayoutType_Vector4 },
-					{ "c_specularPower", Engine::LayoutType_Float },
-					{ Engine::LayoutType_Vector3 }
-				});
+			// TODO: Temporary (Remove Soon), makes sure that the material is getting deleted.
+			static std::shared_ptr<Engine::Material> material;
+			Engine::Material::Create(material, 
+			{
+				{ "c_diffuseColor", Engine::LayoutType_Vector4 },
+				{ "c_specularColor", Engine::LayoutType_Vector4 },
+				{ "c_specularPower", Engine::LayoutType_Float },
+				{ Engine::LayoutType_Vector3 }
+			});
 
+			meshComponent.material = material.get();
 			Engine::MaterialConstants& constants = meshComponent.material->GetMaterialConstants();
 			constants.SetMaterialConstant("c_diffuseColor", MathLib::Vector4::One);
 			constants.SetMaterialConstant("c_specularPower", 10.0f);
 			constants.SetMaterialConstant("c_specularColor", MathLib::Vector4::One);
-
-			Engine::AssetRef<Engine::Texture> texture;
-			Engine::AssetManager::GetTextures().Load(L"Assets/brick-texture.png", texture);
-			meshComponent.material->SetTexture(0, texture);
+			
+			// TODO: Temporary, makes sure that it gets deleted when program ends.
+			static std::shared_ptr<Engine::Texture> texture;
+			Engine::Texture::LoadFromFile(texture, L"Assets/brick-texture.png");
+			meshComponent.material->SetTexture(0, texture.get());
 
 			{
 				Engine::BufferLayout bufferLayout =
@@ -121,13 +123,13 @@ namespace Editor
 					}
 				};
 
-				Engine::AssetRef<Engine::Shader> shader;
-				Engine::AssetManager::GetShaders().Load(
-					L"Shaders/LitShader.hlsl", shader, bufferLayout);
-				meshComponent.material->SetShader(shader);
+				// TODO: Temporary, makes sure that it gets deleted when program ends.
+				static std::shared_ptr<Engine::Shader> shader;
+				Engine::Shader::LoadFromFile(shader,
+					L"Shaders/LitShader.hlsl", bufferLayout);
+				meshComponent.material->SetShader(shader.get());
 			}
-			Engine::AssetManager::GetMeshes().Get(L"DefaultCube",
-				meshComponent.mesh);
+			meshComponent.mesh = &Engine::GraphicsRenderer3D::GetCubeMesh();
 		}
 	}
 

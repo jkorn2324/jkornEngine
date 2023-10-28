@@ -171,7 +171,7 @@ namespace Engine
 		m_deviceContext->Release();
 
 #ifdef _DEBUG
-		debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL);
+		debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL | D3D11_RLDO_SUMMARY);
 		debug->Release();
 #endif
 	}

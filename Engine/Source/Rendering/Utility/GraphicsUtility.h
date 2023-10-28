@@ -33,7 +33,7 @@ namespace Engine
          * @brief Begins the scene.
          * @param cameraConstants 
          */
-        void BeginRenderScene(const CameraConstants& cameraConstants, ConstantBuffer* cBuffer);
+        void BeginRenderScene(const CameraConstants& cameraConstants, ConstantBuffer** cBuffer);
 
         /**
          * @brief Ends rendering the scene.

@@ -106,7 +106,9 @@ namespace Engine
 	{
 		if (s_activeScene != nullptr)
 		{
-			s_activeScene->Render(c_cameraBuffer);
+			ConstantBuffer** refCpy = &c_cameraBuffer;
+			s_activeScene->Render(refCpy);
+			c_cameraBuffer = *refCpy;
 		}
 	}
 
@@ -114,7 +116,9 @@ namespace Engine
 	{
 		if (s_activeScene != nullptr)
 		{
-			s_activeScene->Render(cameraConstants, c_cameraBuffer);
+			ConstantBuffer** refCpy = &c_cameraBuffer;
+			s_activeScene->Render(cameraConstants, refCpy);
+			c_cameraBuffer = *refCpy;
 		}
 	}
 }

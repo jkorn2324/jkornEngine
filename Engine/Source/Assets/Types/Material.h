@@ -2,9 +2,8 @@
 
 #include "ConstantBuffer.h"
 #include "GraphicsRenderer.h"
+#include "Memory.h"
 
-#include "AssetReferenceManager.h"
-#include "ConstantBuffer.h"
 #include "Texture.h"
 #include "Shader.h"
 #include "MaterialConstants.h"
@@ -25,12 +24,18 @@ namespace Engine
 
 	struct MaterialTextureData
 	{
-		AssetRef<Texture> texture;
+		Texture* texture;
 
 		MaterialTextureData()
 			: texture() { }
-		MaterialTextureData(const AssetRef<Texture>& texture)
+		MaterialTextureData(Texture* texture)
 			: texture(texture) { }
+
+		MaterialTextureData& operator=(const MaterialTextureData& textureData)
+		{
+			texture = textureData.texture;
+			return *this;
+		}
 	};
 
 	enum MaterialFlags
@@ -59,10 +64,11 @@ namespace Engine
 		void SetConstantsLayout(const MaterialConstantsLayout& layout);
 		void SetConstantsLayout(const MaterialConstantsLayout& layout, size_t layoutSize);
 
-		void SetShader(const AssetRef<Shader>& shader);
-		void SetTexture(uint32_t slot, const AssetRef<Texture>& texture);
+		void SetShader(Shader* shader);
+		const Shader* GetShader() const { return m_shader; }
+		bool HasShader() const { return m_shader != nullptr; }
 
-		bool HasShader() const { return m_shader; }
+		void SetTexture(uint32_t slot, Texture* texture);
 
 		const MaterialTextureData& GetTextureData(uint32_t slot) const { return m_textures[slot]; }
 		const MaterialConstants& GetMaterialConstants() const { return m_materialConstants; }
@@ -82,18 +88,21 @@ namespace Engine
 		}
 
 	private:
+		void RefreshBuffer();
 		void SetTextureData(uint32_t slot, const MaterialTextureData& materialTextureData);
 
-		AssetRef<Shader> m_shader;
+	private:
+		Shader* m_shader;
 		ConstantBuffer* m_materialConstantBuffer;
 		MaterialTextureData* m_textures;
 		MaterialConstants m_materialConstants;
 		InternalMaterialConstants m_internalMaterialConstants;
 		uint32_t m_numTextures;
 
-		static bool Create(Material** material, const MaterialConstantsLayout& constants);
-		static bool Create(std::shared_ptr<Material>& material, const MaterialConstantsLayout& constants);
-
-		SERIALIZABLE_ASSET(Material);
+	public:
+		static bool Create(Material** material);
+		static bool Create(Material** material, const MaterialConstantsLayout& constantsLayout);
+		static bool Create(std::shared_ptr<Material>& material);
+		static bool Create(std::shared_ptr<Material>& material, const MaterialConstantsLayout& constantsLayout);
 	};
 }

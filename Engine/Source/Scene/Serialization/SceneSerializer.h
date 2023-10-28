@@ -6,7 +6,7 @@ namespace Engine
 {
 	class Scene;
 	class Entity;
-	class JsonFileParser;
+	class JsonFileReader;
 
 	class SceneSerializer
 	{
@@ -17,7 +17,7 @@ namespace Engine
 		void Deserialize(const std::filesystem::path& filePath);
 
 	private:
-		void Deserialize(const JsonFileParser& jsonParser);
+		void Deserialize(const JsonFileReader& jsonParser);
 
 	private:
 		Scene* m_scene;

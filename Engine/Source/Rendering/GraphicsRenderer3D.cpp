@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "GraphicsRenderer3D.h"
 
+#include "Profiler.h"
 #include "Material.h"
 #include "ConstantBuffer.h"
 #include "BufferLayout.h"
@@ -8,7 +9,6 @@
 #include "Mesh.h"
 #include "GraphicsRenderer.h"
 #include "RenderingAPI.h"
-#include "AssetManager.h"
 
 #include "LightingComponents.h"
 
@@ -102,8 +102,8 @@ namespace Engine
 	static GraphicsObjectConstants s_objectConstants;
 	static ConstantBuffer* s_objectConstantBuffer = nullptr;
 
-	static AssetRef<Mesh> s_cubeMesh;
-	static AssetRef<Material> s_defaultMaterial;
+	static Mesh* s_cubeMesh;
+	static Material* s_defaultMaterial;
 
 	static LightingData s_lightingData;
 	static ConstantBuffer* s_lightingConstantBuffer = nullptr;
@@ -241,38 +241,31 @@ namespace Engine
 		s_initialized = true;
 		// Initialize the lighting components.
 		{
-			s_lightingConstantBuffer = ConstantBuffer::Create(&s_lightingData.constantBufferData, 
+			ConstantBuffer::Create(&s_lightingConstantBuffer, &s_lightingData.constantBufferData, 
 				sizeof(s_lightingData.constantBufferData));
 		}
 
 		// Initializes the default material.
 		{
-			AssetManager::GetMaterials().Cache(L"Unlit-ColorUV",
-				s_defaultMaterial,
-				MaterialConstantsLayout {
-					{"c_materialColor", LayoutType_Vector4 }
-				});
+			Material::Create(&s_defaultMaterial, { { "c_materialColor", LayoutType_Vector4 } });
 
-			AssetRef<Shader> defaultShader;
-			AssetManager::GetShaders().Load(defaultShader,
-					L"Shaders/Unlit-VertUvPosShader.hlsl",
-				Engine::BufferLayout {
-					Engine::BufferLayoutParameterSet::Position,
-					Engine::BufferLayoutParameterSet::Normal,
-					Engine::BufferLayoutParameterSet::Uv0
-				});
-			s_defaultMaterial->SetShader(defaultShader);
+			// TODO: Temporary, should be loaded from an asset.
+			static std::shared_ptr<Shader> shader;
+			Shader::LoadFromFile(shader,
+				L"Shaders/Unlit-VertUvPosShader.hlsl", Mesh::c_defaultLayout);
+			s_defaultMaterial->SetShader(shader.get());
 		}
 
 		// Initialize the constant buffer and buffer layout.
 		{
-			s_objectConstantBuffer = ConstantBuffer::Create(
+			ConstantBuffer::Create(
+				&s_objectConstantBuffer,
 				&s_objectConstants, sizeof(GraphicsObjectConstants));
 		}
 
 		// Generates the cube mesh, but should be stored in asset manager.
 		{
-			AssetManager::GetMeshes().Cache(s_cubeMesh, L"DefaultCube");
+			Mesh::Create(&s_cubeMesh);
 
 			s_cubeMesh->SetVertexCount(sizeof(s_cubeMeshVertexPositions) / sizeof(MathLib::Vector3));
 			s_cubeMesh->SetPositions(s_cubeMeshVertexPositions,
@@ -290,6 +283,14 @@ namespace Engine
 	{
 		delete s_lightingConstantBuffer;
 		delete s_objectConstantBuffer;
+		delete s_defaultMaterial;
+		delete s_cubeMesh;
+	}
+
+	Mesh& GraphicsRenderer3D::GetCubeMesh()
+	{
+		JKORN_ENGINE_ASSERT(s_initialized, "Graphics Renderer Should be Initialized");
+		return *s_cubeMesh;
 	}
 
 	void GraphicsRenderer3D::DrawMesh(const MathLib::Vector3& position, Mesh& mesh, int32_t entityID)

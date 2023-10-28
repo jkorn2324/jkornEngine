@@ -17,15 +17,29 @@ namespace Engine
 		SetData((void*)bufferData, stride);
 	}
 
-	ConstantBuffer* ConstantBuffer::Create(const void* buffer, std::size_t stride)
+	bool ConstantBuffer::Create(ConstantBuffer** outConstantBuffer, const void* buffer, std::size_t stride)
 	{
 		PROFILE_SCOPE(CreateConstantBuffer, Rendering);
 
 #if defined(GRAPHICS_API_DIRECTX11)
-        return new DirectX11ConstantBuffer(buffer, stride);
+		*outConstantBuffer = new DirectX11ConstantBuffer(buffer, stride);
+		return true;			
 #else
-        JKORN_ENGINE_ASSERT(false, "Invalid constant buffer type.");
-        return nullptr;
+		JKORN_ENGINE_ASSERT(false, "Invalid Rendering API for Constant buffer.");
+		return false;
+#endif
+	}
+
+	bool ConstantBuffer::Create(std::shared_ptr<ConstantBuffer>& outConstantBuffer, const void* buffer, std::size_t stride)
+	{
+		PROFILE_SCOPE(CreateConstantBuffer, Rendering);
+
+#if defined(GRAPHICS_API_DIRECTX11)
+		outConstantBuffer = std::make_shared<DirectX11ConstantBuffer>(buffer, stride);
+		return true;			
+#else
+		JKORN_ENGINE_ASSERT(false, "Invalid Rendering API for Constant buffer.");
+		return false;
 #endif
 	}
 }

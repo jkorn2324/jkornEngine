@@ -6,10 +6,6 @@
 #include "PlatformDetector.h"
 #include "Profiler.h"
 
-#include "AssetCache.h"
-#include "AssetReferenceManager.h"
-#include "AssetSerializer.h"
-#include "AssetManager.h"
 #include "Material.h"
 #include "Mesh.h"
 
@@ -20,6 +16,13 @@
 #include "Logger.h"
 #include "EngineTime.h"
 #include "Window.h"
+
+#include "IStream.h"
+#include "BinaryStream.h"
+#include "Memory.h"
+#include "JsonFileReader.h"
+#include "JsonFileWriter.h"
+#include "JsonObjects.h"
 
 #include "ApplicationEvent.h"
 #include "Event.h"

@@ -7,11 +7,8 @@
 #include "Scene.h"
 
 #include "JsonUtils.h"
-#include "JsonFileParser.h"
+#include "JsonFileReader.h"
 #include "JsonFileWriter.h"
-
-#include "AssetManager.h"
-#include "AssetMapper.h"
 
 #include "Profiler.h"
 
@@ -88,7 +85,7 @@ namespace Engine
 				if (spriteComponent.texture)
 				{
 					GUID guid;
-					spriteComponent.texture.GetGUID(guid);
+					// TODO: Get GUID from Asset
 					fileWriter.Write("Texture", (uint64_t)guid);
 				}
 				else
@@ -112,7 +109,7 @@ namespace Engine
 				if (meshComponent.material)
 				{
 					GUID guid;
-					meshComponent.material.GetGUID(guid);
+					// TODO: Get GUID from Asset
 					fileWriter.Write("Material", (uint64_t)guid);
 				}
 				else
@@ -302,11 +299,7 @@ namespace Engine
 			ReadBool(value["MeshComponent"], "Enabled", meshComponent.enabled);
 			ReadUint64(value["MeshComponent"], "Material", materialGUID);
 
-			std::filesystem::path path;
-			if (AssetManager::GetAssetMapper().GetPath(materialGUID, path))
-			{
-				AssetManager::GetMaterials().Load(meshComponent.material, path);
-			}
+			// TODO: Load Material
 		}
 
 		// Scene Camera Component.
@@ -426,11 +419,11 @@ namespace Engine
 	{
 		PROFILE_SCOPE(DeserializeScene, Serialization);
 
-		JsonFileParser parser = { filePath };
+		JsonFileReader parser = { filePath };
 		Deserialize(parser);
 	}
 
-	void SceneSerializer::Deserialize(const JsonFileParser& jsonParser)
+	void SceneSerializer::Deserialize(const JsonFileReader& jsonParser)
 	{
 		if (jsonParser.IsValid())
 		{

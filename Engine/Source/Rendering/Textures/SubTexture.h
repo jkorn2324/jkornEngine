@@ -2,7 +2,6 @@
 
 #include "Vector.h"
 #include "MathLib.h"
-#include "AssetReferenceManager.h"
 
 namespace Engine
 {
@@ -16,8 +15,8 @@ namespace Engine
 	class SubTexture
 	{
 	public:
-		explicit SubTexture(const AssetRef<Texture>& texture);
-		explicit SubTexture(const AssetRef<Texture>& texture, const Vec2& minUV,
+		explicit SubTexture(Texture* texture);
+		explicit SubTexture(Texture* texture, const Vec2& minUV,
 			const Vec2& maxUV);
 		~SubTexture();
 
@@ -28,17 +27,17 @@ namespace Engine
 
 		const Vec2& GetSize() const;
 
-		const AssetRef<Texture>& GetTexture() const;
+		const Texture* GetTexture() const;
 
-		static SubTexture* CreateFromTexCoords(const AssetRef<Texture>& texture,
+		static SubTexture* CreateFromTexCoords(Texture* texture,
 			const Vec2& minTextureCoord, const Vec2& maxTextureCoord);
-		static SubTexture* CreateFromSizeAndTexCoord(const AssetRef<Texture>& texture,
+		static SubTexture* CreateFromSizeAndTexCoord(Texture* texture,
 			const Vec2& texturePos, const Vec2& size);
-		static SubTexture* CreateFromTextureAtlas(const AssetRef<Texture>& texture,
+		static SubTexture* CreateFromTextureAtlas(Texture* texture,
 			const Vec2& cellSize, const Vec2Int& atlasRowCol, const Vec2& scale = Vec2::One);
 
 	private:
-		AssetRef<Texture> m_texture;
+		Texture* m_texture;
 		Vec2 m_uvs[UV_COUNT];
 		Vec2 m_size;
 		bool m_defaultUVs;

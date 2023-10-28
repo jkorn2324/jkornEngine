@@ -20,6 +20,15 @@ namespace Engine
 	{
 	}
 
+	DirectX11Shader::DirectX11Shader(const BufferLayout& bufferLayout)
+		: Shader(bufferLayout),
+		m_vertexShader(nullptr),
+		m_pixelShader(nullptr),
+		m_inputLayout(nullptr)
+	{
+
+	}
+
 	DirectX11Shader::~DirectX11Shader()
 	{
 		if (m_vertexShader != nullptr)
@@ -56,7 +65,7 @@ namespace Engine
 		renderingAPI.m_deviceContext->IASetInputLayout(m_inputLayout);
 	}
 	
-	bool DirectX11Shader::Load(const wchar_t* fileName, const BufferLayout& bufferLayout)
+	bool DirectX11Shader::LoadFromFile_Internal(const wchar_t* fileName)
 	{
 		ID3DBlob* vertexShader = nullptr;
 		if (DirectX11Utils::CompileShader(fileName, "VS", "vs_4_0", vertexShader))
@@ -76,14 +85,13 @@ namespace Engine
 				if (m_vertexShader != nullptr
 					&& m_pixelShader != nullptr)
 				{
-					DirectX11BufferLayoutParser parsedBufferLayout(bufferLayout);
+					DirectX11BufferLayoutParser parsedBufferLayout(m_bufferLayout);
 					result = renderingAPI.m_device->CreateInputLayout(
 						parsedBufferLayout.GetD3D11InputElementDesc(), parsedBufferLayout.GetNumElements(),
 						vertexShader->GetBufferPointer(), vertexShader->GetBufferSize(), &m_inputLayout);
                     JKORN_ENGINE_ASSERT(result == S_OK, "Failed to load input layout.");
 					if (result == S_OK)
 					{
-						m_bufferLayout = bufferLayout;
 						return true;
 					}
 				}

@@ -5,6 +5,7 @@
 #include "DirectX11RenderingAPI.h"
 #include "DirectX11Utils.h"
 #include "FixedStructures.h"
+#include "Memory.h"
 
 namespace Engine
 {
@@ -78,7 +79,7 @@ namespace Engine
 				size_t sizeOffset = (size_t)sizeof(float);
 				const uint8_t* startPixel = pixels + (pixelIndexSize * sizeOffset);
 				float newPixel = 0.0f;
-				std::memcpy(&newPixel, startPixel, sizeOffset);
+				Memory::Memcpy(&newPixel, startPixel, sizeOffset);
 				outputPixels.Set(pixelIndex, newPixel);
 				break;
 			}
@@ -87,7 +88,7 @@ namespace Engine
 				uint32_t sizeOffset = (uint32_t)sizeof(int32_t);
 				const uint8_t* startPixel = pixels + (pixelIndexSize * sizeOffset);
 				int32_t pixel = 0;
-				std::memcpy(&pixel, startPixel, sizeOffset);
+				Memory::Memcpy(&pixel, startPixel, sizeOffset);
 				outputPixels.Set(pixelIndex, pixel);
 				break;
 			}
@@ -113,7 +114,9 @@ namespace Engine
 
 	}
 
-	DirectX11Texture::DirectX11Texture(const TextureSpecifications& specifications) : Texture(specifications),
+	DirectX11Texture::DirectX11Texture(uint32_t width, uint32_t height,
+		const TextureSpecifications& specifications)
+		: Texture(width, height, specifications),
 		m_shaderResourceView(nullptr),
 		m_texture(nullptr),
 		m_pixels(nullptr)
@@ -158,8 +161,8 @@ namespace Engine
 			{
 				readWriteFlags |= Flag_GPU_ReadTexture | Flag_GPU_WriteTexture;
 			}
-			m_serializedData.readWriteFlags = (TextureReadWriteFlags)readWriteFlags;
-			m_serializedData.textureFormat = FromD3D11Format(textureDesc.Format);
+			m_specifications.readWriteFlags = (TextureReadWriteFlags)readWriteFlags;
+			m_specifications.textureFormat = FromD3D11Format(textureDesc.Format);
 
 			m_pixels = new uint32_t[m_width * m_height];
 		}
@@ -308,7 +311,7 @@ namespace Engine
 			uint8_t* buffer = pixelArray.GetRawBuffer();
 			for (uint32_t i = 0; i < m_height; i++)
 			{
-				std::memcpy(
+				Memory::Memcpy(
 					buffer + m_width * formatSize * i,
 					(uint8_t*)resourceDesc.pData + resourceDesc.RowPitch * i,
 					m_width * formatSize);
@@ -359,12 +362,12 @@ namespace Engine
 		return true;
 	}
 
-	bool DirectX11Texture::Load(const wchar_t* texturePath, const TextureSerializedData& serializedData)
+	bool DirectX11Texture::LoadFromFile_Internal(const wchar_t* texturePath)
 	{
 		Free();
 
 		if (!DirectX11Utils::LoadTextureFromFile(GetRenderingAPI().m_device,
-			texturePath, serializedData.readWriteFlags, &m_texture, &m_shaderResourceView, D3D10_BIND_SHADER_RESOURCE))
+			texturePath, m_specifications.readWriteFlags, &m_texture, &m_shaderResourceView, D3D10_BIND_SHADER_RESOURCE))
 		{
 			return false;
 		}

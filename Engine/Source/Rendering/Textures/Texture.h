@@ -3,6 +3,9 @@
 #include "EngineMacros.h"
 #include <string>
 
+#include <memory>
+#include <string>
+
 namespace MathLib
 {
 	class Vector4;
@@ -58,26 +61,12 @@ namespace Engine
 
 	struct TextureSpecifications
 	{
-	public:
-		uint32_t width = 0;
-		uint32_t height = 0;
 		TextureReadWriteFlags readWriteFlags;
 		TextureFormat textureFormat;
 
 		TextureSpecifications()
 			: readWriteFlags((TextureReadWriteFlags)c_readWriteFlags), textureFormat(TextureFormat_RGBA32) { }
-		TextureSpecifications(uint32_t width, uint32_t height, int32_t flags, TextureFormat textureFormat)
-			: width(width), height(height), readWriteFlags((TextureReadWriteFlags)flags), textureFormat(textureFormat) { }
-	};
-
-	struct TextureSerializedData
-	{
-		TextureReadWriteFlags readWriteFlags;
-		TextureFormat textureFormat;
-
-		TextureSerializedData()
-			: readWriteFlags((TextureReadWriteFlags)c_readWriteFlags), textureFormat(TextureFormat_RGBA32) { }
-		TextureSerializedData(uint32_t flags, TextureFormat textureFormat)
+		TextureSpecifications(uint32_t flags, TextureFormat textureFormat)
 			: readWriteFlags((TextureReadWriteFlags)flags), textureFormat(textureFormat) { }
 	};
 
@@ -90,7 +79,7 @@ namespace Engine
 	{
 	public:
 		explicit Texture();
-		explicit Texture(const TextureSpecifications& specifications);
+		explicit Texture(uint32_t width, uint32_t height, const TextureSpecifications& specifications);
 		virtual ~Texture() { }
 
 		uint32_t GetWidth() const;
@@ -100,36 +89,48 @@ namespace Engine
 		virtual void Bind(std::uint32_t textureSlot) const =0;
 		virtual const void* GetTextureID() const =0;
 
-		TextureFormat GetTextureFormat() const { return m_serializedData.textureFormat; }
+		TextureFormat GetTextureFormat() const { return m_specifications.textureFormat; }
 
-		bool IsReadable() const { return m_serializedData.readWriteFlags & Flag_CPU_ReadTexture; }
-		bool IsWritable() const { return m_serializedData.readWriteFlags & Flag_CPU_WriteTexture; }
+		bool IsReadable() const { return m_specifications.readWriteFlags & Flag_CPU_ReadTexture; }
+		bool IsWritable() const { return m_specifications.readWriteFlags & Flag_CPU_WriteTexture; }
 
 		virtual bool GetPixel(uint32_t x, uint32_t y, MathLib::Vector4& pixel) const =0;
 		virtual void SetPixel(uint32_t x, uint32_t y, const MathLib::Vector4& pixel) =0;
 
 		virtual void CopyPixels(FixedArray& pixelArray) const = 0;
-		static Texture* CreateTexture();
-		static Texture* CreateTexture(const std::wstring& filePath);
 
 		friend bool CopyTexture(Texture& a, Texture& b);
 		static bool CopyTexture(Texture& a, Texture& b);
 
 	protected:
-		bool Load(const wchar_t* texturePath);
-		virtual bool Load(const wchar_t* texturePath, const TextureSerializedData& serializedData) =0;
+		bool LoadFromFile_Internal(const wchar_t* texturePath, const TextureSpecifications& specifications);
+		virtual bool LoadFromFile_Internal(const wchar_t* texturePath) =0;
 		virtual bool CopyTo(Texture& b) = 0;
 
 	protected:
-		TextureSerializedData m_serializedData;
+		TextureSpecifications m_specifications;
 		uint32_t m_width, m_height;
 
-	private:
-		static bool Create(Texture** texture, const TextureSpecifications& specifications);
-		static bool Create(std::shared_ptr<Texture>& texture, const TextureSpecifications& specifications);
+	public:
+		static bool Create(Texture** texture);
+		static bool Create(Texture** texture, uint32_t width, uint32_t height, 
+			const TextureSpecifications& specifications);
+		static bool Create(std::shared_ptr<Texture>& texture);
+		static bool Create(std::shared_ptr<Texture>& texture, uint32_t width, uint32_t height, 
+			const TextureSpecifications& specifications);
 
-		SERIALIZABLE_ASSET(Texture);
+		static bool LoadFromFile(Texture** texture,
+			const wchar_t* texturePath);
+		static bool LoadFromFile(Texture** texture,
+			const wchar_t* texturePath,
+			const TextureSpecifications& specifications);
 		
+		static bool LoadFromFile(std::shared_ptr<Texture>& texture,
+			const wchar_t* texturePath);
+		static bool LoadFromFile(std::shared_ptr<Texture>& texture,
+			const wchar_t* texturePath,
+			const TextureSpecifications& specifications);
+
 		friend class GraphicsRenderer;
 	};
 }

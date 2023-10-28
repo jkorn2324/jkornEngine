@@ -3,9 +3,6 @@
 #include "Entity.h"
 #include "SceneManager.h"
 
-#include "AssetManager.h"
-#include "AssetCache.h"
-
 #include "EntityEvents.h"
 #include "Event.h"
 
@@ -71,8 +68,7 @@ namespace Engine
 			entity.AddComponent<Transform3DComponent>();
 			MeshComponent& component =
 				entity.AddComponent<MeshComponent>();
-			AssetManager::GetMeshes().Get(L"DefaultCube", component.mesh);
-			AssetManager::GetMaterials().Get(L"Unlit - ColorUV", component.material);
+			component.mesh = &GraphicsRenderer3D::GetCubeMesh();
 			component.enabled = true;
 		}
 
@@ -230,7 +226,7 @@ namespace Engine
 		PROFILE_SCOPE(EditorUpdate, Scene);
 	}
 
-	void Scene::Render(const CameraConstants& cameraConstants, ConstantBuffer* cameraBuffer)
+	void Scene::Render(const CameraConstants& cameraConstants, ConstantBuffer** cameraBuffer)
 	{
 		PROFILE_SCOPE(SceneRender, Rendering);
 
@@ -288,7 +284,7 @@ namespace Engine
 		Graphics::Utility::EndRenderScene();
 	}
 
-	void Scene::Render(ConstantBuffer* cameraBuffer)
+	void Scene::Render(ConstantBuffer** cameraBuffer)
 	{
 		CameraConstants constants;
 		{

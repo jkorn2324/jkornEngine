@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ComputeShader.h"
-#include "AssetReferenceManager.h"
 
 #include <memory>
 
@@ -16,7 +15,7 @@ namespace Engine
 
 	struct DirectX11ComputeTexture
 	{
-		AssetRef<Texture> texture;
+		Texture* texture;
 		uint32_t index;
 	};
 
@@ -38,7 +37,7 @@ namespace Engine
 		void Dispatch(uint32_t x, uint32_t y, uint32_t z) override;
 		bool IsValid() const override;
 
-		void SetTexture(const AssetRef<Texture>& texture) override;
+		void SetTexture(Texture* texture) override;
 		void SetBuffer(const std::shared_ptr<ComputeBuffer>& buffer) override;
 
 	protected:

@@ -7,8 +7,6 @@
 #include "DirectX11Utils.h"
 #include "Texture.h"
 
-#include "AssetReferenceManager.h"
-
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
@@ -73,7 +71,7 @@ namespace Engine
 		return m_computeShader != nullptr;
 	}
 
-	void DirectX11ComputeShader::SetTexture(const AssetRef<Texture>& texture)
+	void DirectX11ComputeShader::SetTexture(Texture* texture)
 	{
 		static DirectX11RenderingAPI& s_renderingAPI
 			= (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();

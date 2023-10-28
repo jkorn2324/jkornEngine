@@ -12,6 +12,8 @@ General Rendering:
       to macros []
    -> OpenGL Implementation []
    -> Vulkan Implementation []
+   -> Metal Implementation []
+   -> DirectX12 Implementation []
 
 -> Objects are sorted by material when being processed for Rendering []
    -> Limits the amount of times that buffers need to be
@@ -21,7 +23,7 @@ General Rendering:
 
 3D Rendering:
 -> Can Render Basic Objects in API calls []
-   - Can draw cube []
+   - Can draw cube [x]
    - Can draw a mesh [x]
 -> Supports batch rendering - See in 2D Rendering Section []
 -> Supports instanced rendering - See in 2D Rendering Section []
