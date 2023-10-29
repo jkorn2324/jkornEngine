@@ -98,11 +98,5 @@ namespace Engine
 		MaterialConstants m_materialConstants;
 		InternalMaterialConstants m_internalMaterialConstants;
 		uint32_t m_numTextures;
-
-	public:
-		static bool Create(Material** material);
-		static bool Create(Material** material, const MaterialConstantsLayout& constantsLayout);
-		static bool Create(std::shared_ptr<Material>& material);
-		static bool Create(std::shared_ptr<Material>& material, const MaterialConstantsLayout& constantsLayout);
 	};
 }

@@ -211,28 +211,4 @@ namespace Engine
 			}
 		}
 	}
-
-	bool Material::Create(Material** material)
-	{
-		*material = new Material();
-		return true;
-	}
-
-	bool Material::Create(Material** material, const MaterialConstantsLayout& constantsLayout)
-	{
-		*material = new Material(constantsLayout);
-		return true;
-	}
-
-	bool Material::Create(std::shared_ptr<Material>& material)
-	{
-		material = std::make_shared<Material>();
-		return true;
-	}
-
-	bool Material::Create(std::shared_ptr<Material>& material, const MaterialConstantsLayout& constantsLayout)
-	{
-		material = std::make_shared<Material>(constantsLayout);
-		return true;
-	}
 }

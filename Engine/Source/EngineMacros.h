@@ -34,20 +34,6 @@ namespace Engine
 // Windows Specific Macros
 #if defined(PLATFORM_WINDOWS)
 
-// Defines the serializable asset macro along with functions.
-// Must forward declare the AssetSerializer & AssetCache classes as a template before using this macro.
-#define SERIALIZABLE_ASSET(name) \
-	private: \
-	static bool DeserializeFromFile(##name& asset, struct AssetDeserializationFileData& deserializeData); \
-	static bool SerializeToFile(##name& asset, struct AssetSerializationFileData& serializeData); \
-	static bool DeserializeMetaFile(##name& asset, struct AssetDeserializationMetaFileData& metaFileData); \
-	static bool SerializeToMetaFile(##name& asset, struct AssetSerializationMetaFileData& metaFileData); \
-	static bool Create(std::shared_ptr<##name>& outputAsset); \
-	static bool Create(##name** outputAsset); \
-	friend class Engine::AssetSerializer<name>; \
-	friend class Engine::AssetCache<name>
-
-
 // The compile time type_trait that determines whether or not the type has a static function named func
 #define DEFINE_TYPE_TRAIT_STATIC_FUNC(TraitName, func) template<typename T> \
 	struct HasStaticFunc_##TraitName \

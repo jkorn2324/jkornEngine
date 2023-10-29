@@ -126,7 +126,7 @@ namespace Engine
 			Engine::Shader::LoadFromFile(&s_spriteShader,
 				L"Shaders/SpriteShader.hlsl",
 				{ s_spriteVertexBuffer->GetBufferLayoutParameters() });
-			Engine::Material::Create(&s_spriteMaterial, { {"c_spriteColor", LayoutType_Vector4 }});
+			s_spriteMaterial = new Material({ { "c_spriteColor", LayoutType_Vector4 } });
 			s_spriteMaterial->SetShader(s_spriteShader);
 		}
 		ConstantBuffer::Create(&s_spriteObjectConstantBuffer,

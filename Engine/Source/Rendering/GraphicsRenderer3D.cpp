@@ -247,7 +247,7 @@ namespace Engine
 
 		// Initializes the default material.
 		{
-			Material::Create(&s_defaultMaterial, { { "c_materialColor", LayoutType_Vector4 } });
+			s_defaultMaterial = new Material({ { "c_materialColor", LayoutType_Vector4 } });
 
 			// TODO: Temporary, should be loaded from an asset.
 			static std::shared_ptr<Shader> shader;
