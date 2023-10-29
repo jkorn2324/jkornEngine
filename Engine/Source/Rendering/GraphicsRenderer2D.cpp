@@ -80,8 +80,7 @@ namespace Engine
 			GraphicsRenderer::GetRenderingAPI().ClearTexture(0);
 
 			// Bind Material.
-			MaterialConstants& constants = s_spriteMaterial->GetMaterialConstants();
-			constants.SetMaterialConstant("c_spriteColor", color);
+			s_spriteMaterial->SetConstantValue("c_spriteColor", color);
 			s_spriteMaterial->SetTexture(0, texture);
 			s_spriteMaterial->Bind();
 

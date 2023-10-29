@@ -11,94 +11,73 @@ namespace Engine
 	static ConstantBuffer* s_internalMaterialConstantBuffer = nullptr;
 	static uint32_t s_numMaterials = 0;
 
-	Material::Material()
-		: m_shader(),
-		m_materialConstantBuffer(nullptr),
-		m_textures(nullptr),
-		m_numTextures(1),
-		m_materialConstants({}),
-		m_internalMaterialConstants({})
+	Material::Material(const MaterialConstantsLayout& layout)
+		: Material(MaterialConstants(layout))
 	{
-		if (s_numMaterials <= 0)
-		{
-			ConstantBuffer::Create(
-				&s_internalMaterialConstantBuffer,
-				&m_internalMaterialConstants, sizeof(InternalMaterialConstants));
-		}
-		s_numMaterials++;
-
-		m_textures = new MaterialTextureData[m_numTextures];
-		for (uint32_t i = 0; i < m_numTextures; i++)
-		{
-			m_textures[i] = MaterialTextureData();
-		}
 	}
 
-	Material::Material(const MaterialConstantsLayout& layout)
+	Material::Material(const MaterialConstants& materialConstants)
 		: m_shader(),
 		m_materialConstantBuffer(nullptr),
-		m_textures(nullptr),
-		m_numTextures(1),
-		m_materialConstants(layout),
-		m_internalMaterialConstants({})
+		m_materialConstants(materialConstants),
+		m_internalMaterialConstants({}),
+		m_buffer(materialConstants.GetLayoutBufferSize()),
+		m_numTextures(1)
 	{
-		if (s_numMaterials <= 0)
+		if (s_numMaterials <= 0 && !s_internalMaterialConstantBuffer)
 		{
 			ConstantBuffer::Create(
 				&s_internalMaterialConstantBuffer,
 				&m_internalMaterialConstants, sizeof(InternalMaterialConstants));
 		}
 		s_numMaterials++;
-
-		m_textures = new MaterialTextureData[m_numTextures];
-		for (uint32_t i = 0; i < m_numTextures; i++)
-		{
-			m_textures[i] = MaterialTextureData();
-		}
 		RefreshBuffer();
 	}
 
 	Material::Material(const Material& material)
 		: m_shader(material.m_shader),
 		m_materialConstantBuffer(nullptr),
-		m_textures(nullptr),
-		m_numTextures(material.m_numTextures),
 		m_materialConstants(material.m_materialConstants),
-		m_internalMaterialConstants(material.m_internalMaterialConstants)
+		m_internalMaterialConstants(material.m_internalMaterialConstants),
+		m_buffer(material.m_materialConstants.GetLayoutBufferSize()),
+		m_numTextures(material.m_numTextures)
 	{
-		s_numMaterials++;
-		m_textures = new MaterialTextureData[m_numTextures];
+		// Copy over the textures.
 		for (uint32_t i = 0; i < m_numTextures; i++)
 		{
 			m_textures[i] = MaterialTextureData(
 				material.m_textures[i].texture);
 		}
+		if (s_numMaterials <= 0 && !s_internalMaterialConstantBuffer)
+		{
+			ConstantBuffer::Create(
+				&s_internalMaterialConstantBuffer,
+				&m_internalMaterialConstants, sizeof(InternalMaterialConstants));
+		}
+		s_numMaterials++;
 		RefreshBuffer();
 	}
 
 	Material::~Material()
 	{
 		s_numMaterials--;
-
 		if (s_numMaterials <= 0)
 		{
 			delete s_internalMaterialConstantBuffer;
 		}
-		delete[] m_textures;
 		delete m_materialConstantBuffer;
 	}
 
 	Material& Material::operator=(const Material& material)
 	{
-		delete[] m_textures;
 		delete m_materialConstantBuffer;
 
 		m_shader = material.m_shader;
 		m_numTextures = material.m_numTextures;
 		m_materialConstants = material.m_materialConstants;
 		m_internalMaterialConstants = material.m_internalMaterialConstants;
+		m_buffer = Buffer(m_materialConstants.GetLayoutBufferSize());
 
-		m_textures = new MaterialTextureData[m_numTextures];
 		for (uint32_t i = 0; i < m_numTextures; i++)
 		{
 			m_textures[i] = MaterialTextureData(
@@ -113,27 +92,15 @@ namespace Engine
 		if (m_materialConstantBuffer != nullptr)
 		{
 			m_materialConstantBuffer->SetData(
-				m_materialConstants.GetRawBuffer(), m_materialConstants.GetBufferSize());
+				m_buffer.GetBuffer(), m_materialConstants.GetLayoutBufferSize());
 		}
 		else
 		{
 			ConstantBuffer::Create(
 				&m_materialConstantBuffer,
-				m_materialConstants.GetRawBuffer(),
-				m_materialConstants.GetBufferSize());
+				m_buffer.GetBuffer(),
+				m_buffer.GetBufferSize());
 		}
-	}
-
-	void Material::SetConstantsLayout(const MaterialConstantsLayout& layout)
-	{
-		m_materialConstants = MaterialConstants(layout);
-		RefreshBuffer();
-	}
-
-	void Material::SetConstantsLayout(const MaterialConstantsLayout& layout, size_t layoutSize)
-	{
-		m_materialConstants = MaterialConstants(layout, layoutSize);
-		RefreshBuffer();
 	}
 
 	void Material::SetShader(Shader* shader)
@@ -193,7 +160,7 @@ namespace Engine
 		m_shader->Bind();
 		
 		m_materialConstantBuffer->SetData(
-			m_materialConstants.GetRawBuffer(), m_materialConstants.GetBufferSize());
+			m_buffer.GetBuffer(), m_buffer.GetBufferSize());
 		m_materialConstantBuffer->Bind(constantBufferSlot,
 			PIXEL_SHADER | VERTEX_SHADER);
 

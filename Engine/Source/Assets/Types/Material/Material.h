@@ -2,6 +2,7 @@
 
 #include "ConstantBuffer.h"
 #include "GraphicsRenderer.h"
+#include "Buffer.h"
 #include "Memory.h"
 
 #include "Texture.h"
@@ -9,6 +10,9 @@
 #include "MaterialConstants.h"
 #include "EngineMacros.h"
 #include "GUID.h"
+
+#include "Allocator.h"
+#include "Buffer.h"
 
 #include <stdint.h>
 
@@ -43,26 +47,29 @@ namespace Engine
 		MaterialFlag_DefaultTexture = 1 << 0
 	};
 
-	struct InternalMaterialConstants
-	{
-		uint32_t c_materialFlags = 0;
-
-	private:
-		float pad1, pad2, pad3;
-	};
 
 	class Material
 	{
 	public:
-		explicit Material();
+		static const uint32_t c_maxTextures = 16;
+		using Buffer = FixedRuntimeBuffer<DefaultAllocator>;
+
+	private:
+		struct InternalMaterialConstants
+		{
+			uint32_t c_materialFlags = 0;
+
+		private:
+			float pad1, pad2, pad3;
+		};
+
+	public:
 		explicit Material(const MaterialConstantsLayout& layout);
+		explicit Material(const MaterialConstants& constants);
 		explicit Material(const Material& material);
 		~Material();
 
 		Material& operator=(const Material& material);
-
-		void SetConstantsLayout(const MaterialConstantsLayout& layout);
-		void SetConstantsLayout(const MaterialConstantsLayout& layout, size_t layoutSize);
 
 		void SetShader(Shader* shader);
 		const Shader* GetShader() const { return m_shader; }
@@ -71,8 +78,20 @@ namespace Engine
 		void SetTexture(uint32_t slot, Texture* texture);
 
 		const MaterialTextureData& GetTextureData(uint32_t slot) const { return m_textures[slot]; }
-		const MaterialConstants& GetMaterialConstants() const { return m_materialConstants; }
-		MaterialConstants& GetMaterialConstants() { return m_materialConstants; }
+
+		template<typename T>
+		T* GetConstantValue(const std::string& name) const
+		{
+			MaterialConstantsView<Buffer> view(m_buffer, m_materialConstants);
+			return view.GetValue<T>(name);
+		}
+
+		template<typename T>
+		void SetConstantValue(const std::string& name, const T& value)
+		{
+			MaterialConstantsModifier<Buffer> view(m_buffer, m_materialConstants);
+			return view.SetValue<T>(name, value);
+		}
 
 		void Bind() const;
 		void Bind(uint32_t constantBufferSlot) const;
@@ -94,9 +113,10 @@ namespace Engine
 	private:
 		Shader* m_shader;
 		ConstantBuffer* m_materialConstantBuffer;
-		MaterialTextureData* m_textures;
+		MaterialTextureData m_textures[c_maxTextures];
 		MaterialConstants m_materialConstants;
 		InternalMaterialConstants m_internalMaterialConstants;
+		Buffer m_buffer;
 		uint32_t m_numTextures;
 	};
 }

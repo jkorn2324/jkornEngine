@@ -86,7 +86,7 @@ namespace Engine
 		uint32_t GetHeight() const;
 
 		virtual bool IsValid() const =0;
-		virtual void Bind(std::uint32_t textureSlot) const =0;
+		virtual void Bind(uint32_t textureSlot) const =0;
 		virtual const void* GetTextureID() const =0;
 
 		TextureFormat GetTextureFormat() const { return m_specifications.textureFormat; }

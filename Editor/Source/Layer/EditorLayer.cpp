@@ -89,20 +89,18 @@ namespace Editor
 				= e.AddComponent<Engine::MeshComponent>();
 
 			// TODO: Temporary (Remove Soon), makes sure that the material is getting deleted.
-			static std::shared_ptr<Engine::Material> material;
-			Engine::Material::Create(material, 
-			{
-				{ "c_diffuseColor", Engine::LayoutType_Vector4 },
-				{ "c_specularColor", Engine::LayoutType_Vector4 },
-				{ "c_specularPower", Engine::LayoutType_Float },
-				{ Engine::LayoutType_Vector3 }
-			});
-
+			static std::shared_ptr<Engine::Material> material = std::make_shared<Engine::Material, Engine::MaterialConstantsLayout>(
+				{
+					{ "c_diffuseColor", Engine::LayoutType_Vector4 },
+					{ "c_specularColor", Engine::LayoutType_Vector4 },
+					{ "c_specularPower", Engine::LayoutType_Float },
+					{ Engine::LayoutType_Vector3 }
+				});
 			meshComponent.material = material.get();
-			Engine::MaterialConstants& constants = meshComponent.material->GetMaterialConstants();
-			constants.SetMaterialConstant("c_diffuseColor", MathLib::Vector4::One);
-			constants.SetMaterialConstant("c_specularPower", 10.0f);
-			constants.SetMaterialConstant("c_specularColor", MathLib::Vector4::One);
+
+			meshComponent.material->SetConstantValue("c_diffuseColor", MathLib::Vector4::One);
+			meshComponent.material->SetConstantValue("c_specularPower", 10.0f);
+			meshComponent.material->SetConstantValue("c_specularColor", MathLib::Vector4::One);
 			
 			// TODO: Temporary, makes sure that it gets deleted when program ends.
 			static std::shared_ptr<Engine::Texture> texture;
