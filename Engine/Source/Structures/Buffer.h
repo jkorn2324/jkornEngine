@@ -256,13 +256,13 @@ namespace Engine
 	private:
 		void Allocate(const size_t length)
 		{
-			m_bufferBytes = m_allocator.Allocate<Byte>(length);
+            m_bufferBytes = m_allocator.template Allocate<Byte>(length);
 			Memory::Memset(m_bufferBytes, 0, length);
 		}
 
 		void DeAllocate(const size_t length)
 		{
-			m_allocator.DeAllocate<Byte>(m_bufferBytes, length);
+			m_allocator.template DeAllocate<Byte>(m_bufferBytes, length);
 		}
 
 	private:

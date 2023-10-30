@@ -214,7 +214,7 @@ namespace Engine
 			{
 				return;
 			}
-			m_buffer.Set<T>(value, val.offset);
+			m_buffer.template Set<T>(value, val.offset);
 		}
 
 	private:
