@@ -1,9 +1,9 @@
 #pragma once
 
 #include "EngineMacros.h"
-#include <string>
 
-#include <memory>
+#include "Buffer.h"
+
 #include <string>
 
 namespace MathLib
@@ -13,8 +13,6 @@ namespace MathLib
 
 namespace Engine
 {
-	class FixedArray;
-
 	enum TextureReadWriteFlags
 	{
 		Flag_CPU_ReadTexture = 1 << 0,
@@ -97,7 +95,17 @@ namespace Engine
 		virtual bool GetPixel(uint32_t x, uint32_t y, MathLib::Vector4& pixel) const =0;
 		virtual void SetPixel(uint32_t x, uint32_t y, const MathLib::Vector4& pixel) =0;
 
-		virtual void CopyPixels(FixedArray& pixelArray) const = 0;
+		template<typename TAllocator = DefaultAllocator>
+		void CopyPixels(FixedRuntimeBuffer<TAllocator>& buffer)
+		{
+			size_t formatSize = SizeOfFormat(GetTextureFormat());
+			size_t bufferSize = formatSize * m_width * m_height;
+			buffer = FixedRuntimeBuffer<TAllocator>(bufferSize);
+			BufferModifier view = BufferModifier::Create(buffer);
+			CopyPixels(view);
+		}
+
+		virtual void CopyPixels(BufferModifier& pixels) const = 0;
 
 		friend bool CopyTexture(Texture& a, Texture& b);
 		static bool CopyTexture(Texture& a, Texture& b);

@@ -4,7 +4,7 @@
 #include "GraphicsRenderer.h"
 #include "DirectX11RenderingAPI.h"
 #include "DirectX11Utils.h"
-#include "FixedStructures.h"
+#include "Buffer.h"
 #include "Memory.h"
 
 namespace Engine
@@ -66,44 +66,6 @@ namespace Engine
 			return DXGI_FORMAT_R8G8B8A8_TYPELESS;
 		}
 		return DXGI_FORMAT_UNKNOWN;
-	}
-
-	static void DirectX11ConvertToPixelFormat(TextureFormat format, uint32_t pixelIndex,
-		const uint8_t* pixels, FixedArray& outputPixels)
-	{
-		size_t pixelIndexSize = (size_t)pixelIndex;
-		switch (format)
-		{
-			case TextureFormat_Float32:
-			{
-				size_t sizeOffset = (size_t)sizeof(float);
-				const uint8_t* startPixel = pixels + (pixelIndexSize * sizeOffset);
-				float newPixel = 0.0f;
-				Memory::Memcpy(&newPixel, startPixel, sizeOffset);
-				outputPixels.Set(pixelIndex, newPixel);
-				break;
-			}
-			case TextureFormat_Int32:
-			{
-				uint32_t sizeOffset = (uint32_t)sizeof(int32_t);
-				const uint8_t* startPixel = pixels + (pixelIndexSize * sizeOffset);
-				int32_t pixel = 0;
-				Memory::Memcpy(&pixel, startPixel, sizeOffset);
-				outputPixels.Set(pixelIndex, pixel);
-				break;
-			}
-			default:
-			{
-				size_t formatSize = SizeOfFormat(format);
-				pixelIndexSize *= formatSize;
-				for (size_t offset = 0; offset < formatSize; offset++)
-				{
-					size_t byteOffset = pixelIndexSize + offset;
-					uint8_t resource = pixels[byteOffset];
-					outputPixels.Set((uint32_t)byteOffset, resource);
-				}
-			}
-		}
 	}
 
 	DirectX11Texture::DirectX11Texture() : Texture(),
@@ -274,7 +236,7 @@ namespace Engine
 		return true;
 	}
 	
-	void DirectX11Texture::CopyPixels(FixedArray& pixelArray) const
+	void DirectX11Texture::CopyPixels(BufferModifier& view) const
 	{
 		if (m_texture == nullptr) return;
 
@@ -305,16 +267,15 @@ namespace Engine
 		}
 
 		size_t formatSize = SizeOfFormat(textureFormat);
-		pixelArray = FixedArray(m_width * m_height, formatSize);
 		if (resourceDesc.pData)
 		{
-			uint8_t* buffer = pixelArray.GetRawBuffer();
-			for (uint32_t i = 0; i < m_height; i++)
+			size_t h = (size_t)m_height;
+			for (size_t i = 0; i < h; i++)
 			{
-				Memory::Memcpy(
-					buffer + m_width * formatSize * i,
-					(uint8_t*)resourceDesc.pData + resourceDesc.RowPitch * i,
-					m_width * formatSize);
+				size_t dstOffset = m_width * formatSize * i;
+				size_t srcOffset = resourceDesc.RowPitch * i;
+				size_t size = m_width * formatSize;
+				view.Set((BufferView::Byte*)resourceDesc.pData + srcOffset, size, dstOffset);
 			}
 		}
 		GetRenderingAPI().m_deviceContext->Unmap(

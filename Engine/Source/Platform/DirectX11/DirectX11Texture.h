@@ -23,7 +23,7 @@ namespace Engine
 		bool GetPixel(uint32_t x, uint32_t y, MathLib::Vector4& color) const override;
 		void SetPixel(uint32_t x, uint32_t y, const MathLib::Vector4& pixelColor) override;
 
-		void CopyPixels(FixedArray& pixelArray) const override;
+		void CopyPixels(BufferModifier& view) const override;
 	
 	protected:
 		bool LoadFromFile_Internal(const wchar_t* texturePath) override;

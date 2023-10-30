@@ -2,7 +2,6 @@
 
 #include "EditorCamera.h"
 #include "EditorWidgets.h"
-#include "FixedStructures.h"
 
 namespace Engine
 {
@@ -51,7 +50,7 @@ namespace Editor
 
 	private:
 		Engine::FrameBuffer* m_frameBuffer;
-		Engine::FixedArray m_sceneViewEntityIDs;
+		Engine::FixedRuntimeBuffer<Engine::DefaultAllocator> m_sceneViewEntityIDs;
 
 		TransformationWidget m_transformationWidget;
 

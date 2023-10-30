@@ -191,7 +191,7 @@ namespace Editor
 			uint32_t pixelY = (uint32_t)localMousePos.y;
 			int32_t entityID;
 			uint32_t index = pixelX + pixelY * entityIDsTexture->GetWidth();
-			if (m_sceneViewEntityIDs.Get(index, entityID))
+			if (m_sceneViewEntityIDs.GetViaIndex((size_t)index, entityID))
 			{
 				int32_t currentEntityID = entityID - 1;
 				if (currentEntityID < 0)
