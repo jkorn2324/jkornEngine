@@ -21,11 +21,6 @@ namespace Engine
 	const uint32_t MATERIAL_CONSTANTS_SLOT = 2;
 	const uint32_t PER_SHADER_CONSTANTS_SLOT = 3;
 
-	template<typename T>
-	class AssetSerializer;
-	template<typename T>
-	class AssetCache;
-
 	struct MaterialTextureData
 	{
 		Texture* texture;

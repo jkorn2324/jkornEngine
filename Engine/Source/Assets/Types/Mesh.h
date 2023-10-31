@@ -230,9 +230,6 @@ namespace Engine
 		bool m_skinned;
 
 	public:
-		static bool Create(Mesh** mesh);
-		static bool Create(std::shared_ptr<Mesh>& mesh);
-
 		static const BufferLayout c_defaultLayout;
 	};
 }

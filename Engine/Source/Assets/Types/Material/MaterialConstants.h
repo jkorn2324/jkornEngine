@@ -51,11 +51,6 @@ namespace Engine
 		return 0;
 	}
 
-	// How Material Constants will work is the following:
-	// Create a material constants layout builder, fill it with attributes
-	// Create a material constants layout from the builder
-	// Fill a Material Layout Buffer utilizing the material constants layout.
-
 	struct MaterialConstantLayoutAttribute
 	{
 		std::string name;

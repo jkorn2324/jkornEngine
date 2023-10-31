@@ -286,17 +286,4 @@ namespace Engine
 	{
 		return m_indexCount;
 	}
-
-
-	bool Mesh::Create(Mesh** mesh)
-	{
-		*mesh = new Mesh();
-		return true;
-	}
-
-	bool Mesh::Create(std::shared_ptr<Mesh>& mesh)
-	{
-		mesh = std::make_shared<Mesh>();
-		return true;
-	}
 }

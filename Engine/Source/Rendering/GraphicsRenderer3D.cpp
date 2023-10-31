@@ -265,8 +265,7 @@ namespace Engine
 
 		// Generates the cube mesh, but should be stored in asset manager.
 		{
-			Mesh::Create(&s_cubeMesh);
-
+            s_cubeMesh = new Mesh();
 			s_cubeMesh->SetVertexCount(sizeof(s_cubeMeshVertexPositions) / sizeof(MathLib::Vector3));
 			s_cubeMesh->SetPositions(s_cubeMeshVertexPositions,
 				sizeof(s_cubeMeshVertexPositions) / sizeof(MathLib::Vector3));

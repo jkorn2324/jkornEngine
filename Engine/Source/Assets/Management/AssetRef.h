@@ -1,25 +1,115 @@
 #pragma once
 
+#include "Asset.h"
 #include "Cache.h"
+#include "Allocator.h"
 
 namespace Engine
 {
+
+    namespace Internals::Assets
+    {
+
+        template<typename TAsset, typename TAllocator, size_t InitialAssets, size_t ResizeAmount>
+        class TAssetManager
+        {
+			static_assert(IsAsset<TAsset>::Value, "The asset must be a valid asset.");
+            static_assert(IsAllocator<TAllocator>::Value, "The allocator must be a valid allocator.");
+            
+        public:
+            using Cache = typename RuntimeCache<TAsset*, TAllocator>;
+            using CachedAssetID = typename Cache::CacheID;
+            
+        public:
+            TAssetManager() : m_runtimeCache(InitialAssets, ResizeAmount), m_allocator() { }
+            
+            /**
+             * Clears the assets.
+             */
+            void Clear()
+            {
+                const size_t capacity = m_runtimeCache.GetCapacity();
+                for (size_t i = 0; i < capacity; ++i)
+                {
+                    CachedAssetID assetID = (CachedAssetID)i;
+                    Remove(assetID);
+                }
+            }
+            
+            template<typename ... TArgs>
+            CachedAssetID Create(TArgs&&... args)
+            {
+                TAsset* assetCreated = m_allocator.typename Allocate<TAsset, TArgs...>(std::forward<TArgs>(args)...);
+                CachedAssetID cachedAssetID = m_cache.Cache(assetCreated);
+                return cachedAssetID;
+            }
+            
+            void Remove(CachedAssetID cachedAssetID)
+            {
+                if (!m_cache.IsCached(cachedAssetID))
+                {
+                    return;
+                }
+                // Uncaches the asset.
+                TAsset* asset = m_cache[cachedAssetID];
+                m_cache.UnCache(m_runtimeID);
+                m_allocator.typename DeAllocate<TAsset>(asset);
+            }
+            
+            /**
+             * Gets the asset from the cached asset id.
+             */
+            TAsset* Get(CachedAssetID cachedAssetID) const
+            {
+                return m_cache[cachedAssetID];
+            }
+            
+            /**
+             * Searches through the asset cache for the "right" asset.
+             * The func callback has the following structure: (CachedAssetID id, const TContext& context) -> bool;
+             */
+            template<typename TContext, typename TFunc>
+            CachedAssetID Find(const TContext& context, const TFunc& callback) const
+            {
+                // If there isn't a callback, than we aren't doing anything.
+                if (!callback)
+                {
+                    return -1;
+                }
+                size_t capacity = m_cache.GetCapacity();
+                for (size_t i = 0; i < capacity; ++i)
+                {
+                    CachedAssetID cacheID = (CachedAssetID)i;
+                    // If we are cached and the callback is valid, this is
+                    // the one we are looking for.
+                    if (m_cache.IsCached(cacheID)
+                        && callback(cacheID, context))
+                    {
+                        return cacheID;
+                    }
+                }
+                return -1;
+            }
+            
+        private:
+            Cache m_cache;
+            TAllocator m_allocator;
+        };
+    }
 	/**
 	 * The reference to the asset that we are referring to.
 	 */
 	template<typename TAsset>
 	class AssetRef
 	{
-		/**
-		 * ================================ BEGIN STATIC OPERATIONS ================================
-		 */
-
-	private:
-		using TCachedAsset = typename TAsset*;
-		static RuntimeCache<TCachedAsset> s_assetCache;
-		static DefaultAllocator s_assetAllocator;
-
-	public:
+        /**
+         * ================================ BEGIN STATIC OPERATIONS ==================================
+         */
+        
+    private:
+        static Internals::Assets::TAssetManager<TAsset*, DefaultAllocator, 32, 16> s_assetManager;
+	
+    public:
 
 		/**
 		 * Creates an asset.
@@ -27,14 +117,30 @@ namespace Engine
 		template<typename... TArgs>
 		static AssetRef<TAsset> CreateAsset(TArgs&& ...args)
 		{
-			TAsset* assetCreated = s_assetAllocator.Allocate<TAsset, TArgs...>(std::forward<TArgs>(args)...);
-			return AssetRef(s_assetCache.Cache(assetCreated));
+            return s_assetManager.Create(std::forward<TArgs>(args)...);
 		}
+        
+        /**
+         * Finds an asset from the context & based on a callback.
+         */
+        template<typename TContext, typename TFunc>
+        static AssetRef<TAsset> FindAsset(const TContext& context, const TFunc& callback) const
+        {
+            return AssetRef<TAsset>(s_assetManager.Find(context, callback));
+        }
+        
+        /**
+         * Clears the assets in the typed asset manager.
+         */
+        static void ClearAssets()
+        {
+            s_assetManager.Clear();
+        }
 
-		/**
-		 * ================================ END STATIC OPERATIONS =================================
+        /**
+		 * ================================ END STATIC OPERATIONS ==================================
 		 */
-
+        
 	public:
 		AssetRef()
 			: m_runtimeID(-1) { }
@@ -71,14 +177,7 @@ namespace Engine
 		 */
 		void Release()
 		{
-			auto asset = GetCachedAsset();
-			if (!asset)
-			{
-				return;
-			}
-			// Uncaches the asset.
-			s_assetCache.UnCache(m_runtimeID);
-			s_assetAllocator.DeAllocate(asset);
+            s_assetManager.Remove(m_runtimeID);
 		}
 
 		/**
@@ -102,15 +201,10 @@ namespace Engine
 		}
 
 	private:
-		TCachedAsset GetCachedAsset() const { return *(GetCachedAssetPtr()); }
-		TCachedAsset* GetCachedAssetPtr() const { return s_assetCache.Get(m_runtimeID); }
+		TAsset* GetCachedAsset() const { return *(GetCachedAssetPtr()); }
+		TAsset** GetCachedAssetPtr() const { return s_assetManager.Get(m_runtimeID); }
 
 	private:
 		int32_t m_runtimeID;
 	};
-
-	template<typename TAsset>
-	RuntimeCache<typename AssetRef<TAsset>::TCachedAsset> AssetRef<TAsset>::s_assetCache = RuntimeCache<typename AssetRef<TAsset>::TCachedAsset>(24, 16);
-	template<typename TAsset>
-	DefaultAllocator AssetRef<TAsset>::s_assetAllocator;
 }

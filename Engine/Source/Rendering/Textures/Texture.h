@@ -68,11 +68,6 @@ namespace Engine
 			: readWriteFlags((TextureReadWriteFlags)flags), textureFormat(textureFormat) { }
 	};
 
-	template<typename T>
-	class AssetSerializer;
-	template<typename T>
-	class AssetCache;
-
 	class Texture
 	{
 	public:

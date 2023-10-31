@@ -177,6 +177,17 @@ namespace Engine
             }
             return -1;
         }
+        
+        void ClearCache()
+        {
+            if constexpr (std::is_pointer<T>::value)
+            {
+                Memory::Memset(m_cache, 0, m_capacity);
+                Memory::Memset(m_bits, 0, m_capacity);
+                return;
+            }
+            Memory::Memset(m_bits, 0, m_capacity);
+        }
 
     private:
         /**
@@ -329,6 +340,17 @@ namespace Engine
             }
             return -1;
         }
+        
+        void ClearCache()
+        {
+            if constexpr (std::is_pointer<T>::value)
+            {
+                Memory::Memset(m_cache, 0, m_capacity);
+                Memory::Memset(m_bits, 0, m_capacity);
+                return;
+            }
+            Memory::Memset(m_bits, 0, m_capacity);
+        }
 
     private:
         /**
@@ -453,6 +475,19 @@ namespace Engine
                 }
             }
             return -1;
+        }
+        
+        constexpr size_t GetCapacity() const { return MaxCacheSize; }
+        
+        void ClearCache()
+        {
+            if constexpr (std::is_pointer<T>::value)
+            {
+                Memory::Memset(m_cache, 0, m_capacity);
+                Memory::Memset(m_bits, 0, m_capacity);
+                return;
+            }
+            Memory::Memset(m_bits, 0, m_capacity);
         }
         
     private:

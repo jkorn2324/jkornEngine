@@ -4,14 +4,26 @@
 
 namespace Engine
 {
+    namespace Internals::Allocation
+    {
+        /**
+         * Determines whether or not there is an override allocator.
+         */
+        template<typename T, typename TAllocator>
+        struct HasOverrideAllocator
+        {
+            static constexpr bool Value = false;
+        };
+    
+        template<typename TAllocator, typename T, typename... TArgs>
+        T* Allocate(TAllocator& allocator, TArgs&&... args);
+    }
 
 	template<typename TAllocator>
 	struct IsAllocator
 	{
 		static constexpr bool Value = false;
 	};
-
-
 	/**
 	 * The default allocator class (uses new & delete functionality)
 	 */
@@ -25,6 +37,10 @@ namespace Engine
 		template<typename T, typename... TArgs>
 		T* Allocate(TArgs&&... args)
 		{
+            if constexpr (Internals::Allocation::HasOverrideAllocator<T, DefaultAllocator>::Value)
+            {
+                return Internals::Allocation::Allocate<DefaultAllocator, T, TArgs...>(*this, std::forward<TArgs>(args)...);
+            }
 			return Memory::Alloc<T>(std::forward<TArgs>(args)...);
 		}
 
@@ -73,7 +89,11 @@ namespace Engine
 		T* Allocate(TArgs&&... args)
 		{
 			static_assert(std::is_constructible<T, ...TArgs>::value, "Object must be constructable using those args.");
-
+            
+            if constexpr (Internals::Allocation::HasOverrideAllocator<T, HeapAllocator>::Value)
+            {
+                return Internals::Allocation::Allocate<HeapAllocator, T, TArgs...>(*this, std::forward<TArgs>(args)...);
+            }
 			void* mallocMemory = (void*)Memory::Malloc(sizeof(T));
 			return Memory::Construct(mallocMemory, std::forward<TArgs>(args)...);
 		}
