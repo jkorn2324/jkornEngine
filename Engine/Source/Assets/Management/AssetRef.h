@@ -52,7 +52,7 @@ namespace Engine
                 }
                 // Uncaches the asset.
                 TAsset* asset = m_cache[cachedAssetID];
-                m_cache.UnCache(m_runtimeID);
+                m_cache.UnCache(cachedAssetID);
                 m_allocator.typename DeAllocate<TAsset>(asset);
             }
             
