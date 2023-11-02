@@ -21,9 +21,9 @@ namespace Engine
 		 * @brief Get the Rendering API object.
 		 * @return DirectXRenderingAPI& 
 		 */
-		DirectXRenderingAPI& GetRenderingAPI()
+		DirectX11RenderingAPI& GetRenderingAPI()
 		{
-			DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI():
+			DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
 			return renderingAPI;
 		}
 	}
@@ -38,7 +38,7 @@ namespace Engine
 				return TextureFormat_RGBA32_SInt;
 			case DXGI_FORMAT_R32G32B32A32_UINT:
 				return TextureFormat_RGBA32_UInt;
-			case DXGI_FORMAT_R32G32B32A32_TYPELESS;	
+			case DXGI_FORMAT_R32G32B32A32_TYPELESS:	
 				return TextureFormat_RGBA32_Typeless;
 
 			case DXGI_FORMAT_R8G8B8A8_SINT:
@@ -77,7 +77,7 @@ namespace Engine
 			case TextureFormat_Float32:
 				return DXGI_FORMAT_R32_FLOAT;
 			case TextureFormat_Int32:
-				return DXGI_FORMAT_R32_INT;
+				return DXGI_FORMAT_R32_SINT;
 			case TextureFormat_Int16:
 				return DXGI_FORMAT_R16_TYPELESS;
 			case TextureFormat_Int8:
