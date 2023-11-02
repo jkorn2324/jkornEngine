@@ -9,6 +9,10 @@
 #include "DirectX11Texture.h"
 #endif
 
+#if defined(GRAPHICS_API_METAL)
+#include "MetalTexture.h"
+#endif
+
 namespace Engine
 {
 
@@ -22,12 +26,12 @@ namespace Engine
 	{
 	}
 
-	std::uint32_t Texture::GetWidth() const
+	uint32_t Texture::GetWidth() const
 	{
 		return m_width;
 	}
 
-	std::uint32_t Texture::GetHeight() const
+	uint32_t Texture::GetHeight() const
 	{
 		return m_height;
 	}
@@ -43,6 +47,9 @@ namespace Engine
 #if defined(GRAPHICS_API_DIRECTX11)
         *texture = new DirectX11Texture();
         return true;
+#elif defined(GRAPHICS_API_METAL)
+        *texture = (Texture*)(new MetalTexture());
+        return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");
         return false;
@@ -53,6 +60,9 @@ namespace Engine
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
 		*texture = new DirectX11Texture(width, height, specifications);
+        return true;
+#elif defined(GRAPHICS_API_METAL)
+        *texture = new MetalTexture(width, height, specifications);
         return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");
@@ -65,6 +75,9 @@ namespace Engine
 #if defined(GRAPHICS_API_DIRECTX11)
         texture = std::make_shared<DirectX11Texture>();
         return true;
+#elif defined(GRAPHICS_API_METAL)
+        texture = std::make_shared<MetalTexture>();
+        return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");
         return false;
@@ -76,6 +89,9 @@ namespace Engine
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
         texture = std::make_shared<DirectX11Texture>(width, height, specifications);
+        return true;
+#elif defined(GRAPHICS_API_METAL)
+        texture = std::make_shared<MetalTexture>(width, height, specifications);
         return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");

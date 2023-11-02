@@ -15,34 +15,57 @@ namespace Engine
 	static const uint32_t s_d3d11PxGreenMask = 0x00f0;
 	static const uint32_t s_d3d11PxBlueMask = 0x000f;
 
+	namespace
+	{
+		/**
+		 * @brief Get the Rendering API object.
+		 * @return DirectXRenderingAPI& 
+		 */
+		DirectXRenderingAPI& GetRenderingAPI()
+		{
+			DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI():
+			return renderingAPI;
+		}
+	}
 
 	static TextureFormat FromD3D11Format(DXGI_FORMAT format)
 	{
 		switch (format)
 		{
-		case DXGI_FORMAT_R32G32B32A32_FLOAT: return TextureFormat_RGBA32;
-		case DXGI_FORMAT_R8G8B8A8_SINT:
-		case DXGI_FORMAT_R8G8B8A8_UINT:
-		case DXGI_FORMAT_R8G8B8A8_SNORM:
-		case DXGI_FORMAT_R8G8B8A8_TYPELESS:
-		case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
-			return TextureFormat_RGBA8;
-		case DXGI_FORMAT_R32_SINT:
-		case DXGI_FORMAT_R32_UINT:
-		case DXGI_FORMAT_R32_TYPELESS:
-			return TextureFormat_Int32;
-		case DXGI_FORMAT_R32_FLOAT:
-			return TextureFormat_Float32;
-		case DXGI_FORMAT_R16_UNORM:
-		case DXGI_FORMAT_R16_TYPELESS:
-		case DXGI_FORMAT_R16_UINT:
-		case DXGI_FORMAT_R16_SINT:
-			return TextureFormat_Int16;
-		case DXGI_FORMAT_R8_UNORM:
-		case DXGI_FORMAT_R8_TYPELESS:
-		case DXGI_FORMAT_R8_UINT:
-		case DXGI_FORMAT_R8_SINT:
-			return TextureFormat_Int8;
+			case DXGI_FORMAT_R32G32B32A32_FLOAT: 
+				return TextureFormat_RGBA32_Float;
+			case DXGI_FORMAT_R32G32B32A32_SINT:
+				return TextureFormat_RGBA32_SInt;
+			case DXGI_FORMAT_R32G32B32A32_UINT:
+				return TextureFormat_RGBA32_UInt;
+			case DXGI_FORMAT_R32G32B32A32_TYPELESS;	
+				return TextureFormat_RGBA32_Typeless;
+
+			case DXGI_FORMAT_R8G8B8A8_SINT:
+				return TextureFormat_RGBA8_SInt;
+			case DXGI_FORMAT_R8G8B8A8_UINT:
+				return TextureFormat_RGBA8_UInt;
+			case DXGI_FORMAT_R8G8B8A8_SNORM:
+			case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+			case DXGI_FORMAT_R8G8B8A8_TYPELESS:
+				return TextureFormat_RGBA8_Typeless;
+
+			case DXGI_FORMAT_R32_SINT:
+			case DXGI_FORMAT_R32_UINT:
+			case DXGI_FORMAT_R32_TYPELESS:
+				return TextureFormat_Int32;
+			case DXGI_FORMAT_R32_FLOAT:
+				return TextureFormat_Float32;
+			case DXGI_FORMAT_R16_UNORM:
+			case DXGI_FORMAT_R16_TYPELESS:
+			case DXGI_FORMAT_R16_UINT:
+			case DXGI_FORMAT_R16_SINT:
+				return TextureFormat_Int16;
+			case DXGI_FORMAT_R8_UNORM:
+			case DXGI_FORMAT_R8_TYPELESS:
+			case DXGI_FORMAT_R8_UINT:
+			case DXGI_FORMAT_R8_SINT:
+				return TextureFormat_Int8;
 		}
 		return TextureFormat_Unknown;
 	}
@@ -51,19 +74,30 @@ namespace Engine
 	{
 		switch (format)
 		{
-		case TextureFormat_ARGB32:
-		case TextureFormat_RGBA32:
-			return DXGI_FORMAT_R32G32B32A32_TYPELESS;
-		case TextureFormat_Float32:
-			return DXGI_FORMAT_R32_FLOAT;
-		case TextureFormat_Int32:
-			return DXGI_FORMAT_R32_TYPELESS;
-		case TextureFormat_Int16:
-			return DXGI_FORMAT_R16_TYPELESS;
-		case TextureFormat_Int8:
-			return DXGI_FORMAT_R8_TYPELESS;
-		case TextureFormat_RGBA8:
-			return DXGI_FORMAT_R8G8B8A8_TYPELESS;
+			case TextureFormat_Float32:
+				return DXGI_FORMAT_R32_FLOAT;
+			case TextureFormat_Int32:
+				return DXGI_FORMAT_R32_INT;
+			case TextureFormat_Int16:
+				return DXGI_FORMAT_R16_TYPELESS;
+			case TextureFormat_Int8:
+				return DXGI_FORMAT_R8_TYPELESS;
+
+			case TextureFormat_RGBA32_Float:
+				return DXGI_FORMAT_R32G32B32A32_FLOAT;
+			case TextureFormat_RGBA32_SInt:
+				return DXGI_FORMAT_R32G32B32A32_SINT;
+			case TextureFormat_RGBA32_UInt:
+				return DXGI_FORMAT_R32G32B32A32_UINT;
+			case TextureFormat_RGBA32_Typeless:
+				return DXGI_FORMAT_R32G32B32A32_TYPELESS;
+
+			case TextureFormat_RGBA8_Typeless:
+				return DXGI_FORMAT_R8G8B8A8_TYPELESS;
+			case TextureFormat_RGBA8_UInt:
+				return DXGI_FORMAT_R8G8B8A8_UINT;
+			case TextureFormat_RGBA8_SInt:
+				return DXGI_FORMAT_R8G8B8A8_SINT;
 		}
 		return DXGI_FORMAT_UNKNOWN;
 	}
@@ -163,11 +197,6 @@ namespace Engine
 		}
 		m_width = 0;
 		m_height = 0;
-	}
-
-	DirectX11RenderingAPI& DirectX11Texture::GetRenderingAPI()
-	{
-		return (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
 	}
 
 	bool DirectX11Texture::IsValid() const

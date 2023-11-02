@@ -16,7 +16,7 @@ namespace Engine
 		~DirectX11Texture();
 
 		bool IsValid() const override;
-		void Bind(const std::uint32_t slot) const override;
+		void Bind(const uint32_t slot) const override;
 
 		const void* GetTextureID() const override;
 
@@ -31,7 +31,6 @@ namespace Engine
 		bool CopyTo(Texture& texture) override;
 
 	private:
-		static class DirectX11RenderingAPI& GetRenderingAPI();
 		void UpdatePixels() const;
 
 	private:

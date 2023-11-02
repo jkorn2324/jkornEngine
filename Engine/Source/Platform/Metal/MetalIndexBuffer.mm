@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "MetalIndexBuffer.h"
 
-#include <memory>
+#include "Memory.h"
 #include <Metal/Metal.h>
 
 #include "MetalRenderingAPI.h"
@@ -64,7 +64,7 @@ void MetalIndexBuffer::SetData(const void *buffer, uint32_t numIndices, uint32_t
         return;
     }
     void* bufPtr = [m_bufferPtr contents];
-    std::memcpy(bufPtr, buffer, numIndices * stride);
+    Memory::Memcpy(bufPtr, buffer, numIndices * stride);
     m_indexStride = stride;
     m_numIndices = numIndices;
 }

@@ -24,12 +24,24 @@ namespace Engine
 	enum TextureFormat
 	{
 		TextureFormat_Unknown,
-		// 1 Byte Per Color Channel, 1 32 Bit Integer
-		TextureFormat_RGBA8,
-		// 4 Floats, 1 Float Per Color Channel
-		TextureFormat_RGBA32,
-		// 4 Bytes Per Channel, 4 Floats
-		TextureFormat_ARGB32,
+        
+		// 1 Byte Per Color Channel, 4 Bytes Total, Unknown Type, Red,Green,Blue,Alpha
+		TextureFormat_RGBA8_Typeless,
+        TextureFormat_RGBA8_SInt,
+        TextureFormat_RGBA8_UInt,
+        
+		// 1 Float Per Color Channel, 16 Bytes Total, 4 Floats
+		TextureFormat_RGBA32_Float,
+        TextureFormat_RGBA32_SInt,
+        TextureFormat_RGBA32_UInt,
+        TextureFormat_RGBA32_Typeless,
+        
+		// 4 Bytes Per Color Channel, 16 Bytes Total, 4 Floats
+		TextureFormat_ARGB32_Float = TextureFormat_RGBA32_Float,
+        TextureFormat_ARGB32_SInt = TextureFormat_RGBA32_SInt,
+        TextureFormat_ARGB32_UInt = TextureFormat_RGBA32_UInt,
+        TextureFormat_ARGB32_Typeless = TextureFormat_RGBA32_Typeless,
+        
 		// Non Color Channel, 1 32 Bit Integer
 		TextureFormat_Int32,
 		// 1 32 Bit Float
@@ -40,17 +52,28 @@ namespace Engine
 		TextureFormat_Int16,
 	};
 
-	static size_t SizeOfFormat(TextureFormat format)
+	static constexpr size_t SizeOfFormat(TextureFormat format)
 	{
 		switch (format)
 		{
-		case TextureFormat_ARGB32: return sizeof(float) * 4;
-		case TextureFormat_RGBA32: return sizeof(float) * 4;
-		case TextureFormat_Float32: return sizeof(float);
-		case TextureFormat_Int32: return sizeof(uint32_t);
-		case TextureFormat_Int16: return sizeof(uint16_t);
-		case TextureFormat_Int8: return sizeof(uint8_t);
-		case TextureFormat_RGBA8: return sizeof(float);
+            case TextureFormat_RGBA32_Float:
+            case TextureFormat_RGBA32_SInt:
+            case TextureFormat_RGBA32_UInt:
+            {
+                return sizeof(uint32_t) * 4;
+            }
+            case TextureFormat_Float32: return sizeof(float);
+            case TextureFormat_Int16: return sizeof(uint16_t);
+            case TextureFormat_Int8: return sizeof(uint8_t);
+                
+            // Size of an integer.
+            case TextureFormat_Int32:
+            case TextureFormat_RGBA8_UInt:
+            case TextureFormat_RGBA8_SInt:
+            case TextureFormat_RGBA8_Typeless:
+            {
+                return sizeof(uint32_t);
+            }
 		}
 		return 0;
 	}
@@ -61,11 +84,16 @@ namespace Engine
 	{
 		TextureReadWriteFlags readWriteFlags;
 		TextureFormat textureFormat;
+        bool temporary;
 
 		TextureSpecifications()
-			: readWriteFlags((TextureReadWriteFlags)c_readWriteFlags), textureFormat(TextureFormat_RGBA32) { }
+			: readWriteFlags((TextureReadWriteFlags)c_readWriteFlags), textureFormat(TextureFormat_RGBA32_Float), temporary(false) { }
 		TextureSpecifications(uint32_t flags, TextureFormat textureFormat)
-			: readWriteFlags((TextureReadWriteFlags)flags), textureFormat(textureFormat) { }
+			: readWriteFlags((TextureReadWriteFlags)flags), textureFormat(textureFormat), temporary(false) { }
+        
+        TextureSpecifications(uint32_t flags, TextureFormat textureFormat,
+                              bool temporary)
+            : readWriteFlags((TextureReadWriteFlags)c_readWriteFlags), textureFormat(textureFormat), temporary(temporary) { }
 	};
 
 	class Texture
