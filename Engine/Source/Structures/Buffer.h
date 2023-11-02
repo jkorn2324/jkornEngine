@@ -150,7 +150,7 @@ namespace Engine
 	template<typename TAllocator = DefaultAllocator>
 	class FixedRuntimeBuffer
 	{
-	private:
+	public:
 		using Byte = uint8_t;
 
 	public:
@@ -162,6 +162,12 @@ namespace Engine
 
 		FixedRuntimeBuffer(const size_t bufLength)
 			: m_bufferBytes(nullptr), m_bufferLength(bufLength), m_allocator()
+		{
+			Allocate(bufLength);
+		}
+
+		FixedRuntimeBuffer(const size_t bufLength, TAllocator& allocator)
+			: m_bufferBytes(nullptr), m_bufferLength(bufLength), m_allocator(allocator)
 		{
 			Allocate(bufLength);
 		}
@@ -299,7 +305,7 @@ namespace Engine
 	template<size_t BufferSize>
 	class FixedBuffer
 	{
-	private:
+	public:
 		using Byte = uint8_t;
 
 	public:

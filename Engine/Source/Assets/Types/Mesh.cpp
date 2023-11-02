@@ -15,7 +15,6 @@
 namespace Engine
 {
 
-	static const uint32_t c_maxUVsCount = 8;
 
 	namespace
 	{
@@ -40,10 +39,8 @@ namespace Engine
 		m_vertexCount(0),
 		m_indexCount(0),
 		m_skinned(false),
-		m_vertexArray(nullptr),
-		m_uvs(nullptr)
+		m_vertexArray(nullptr)
 	{
-		m_uvs = new MeshBuffer<MathLib::Vector2>[c_maxUVsCount];
 		VertexArray::Create(m_vertexArray);
 	}
 
@@ -63,10 +60,8 @@ namespace Engine
 			uvsCount.Release();
 		}
 
-		delete[] m_uvs;
 		delete[] m_indices;
 
-		m_uvs = nullptr;
 		m_indices = nullptr;
 	}
 
@@ -269,7 +264,7 @@ namespace Engine
 		const auto& buffer = m_normals.GetVertexBuffer();
 		buffer->SetBufferLayoutParameters({
 			BufferLayoutParam::Normal0
-			});
+		});
 	}
 
 	void Mesh::RecalculateNormals()

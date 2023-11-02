@@ -6,6 +6,9 @@
 #include "GUID.h"
 #include "VertexBuffer.h"
 
+#include "Allocator.h"
+#include "Buffer.h"
+
 #include <string>
 
 namespace Engine
@@ -26,7 +29,7 @@ namespace Engine
 			: m_vertexBuffer(nullptr), m_vertices(nullptr)
 		{
 			m_vertices = new char[numVertices * sizeof(T)];
-			memset(m_vertices, 0, sizeof(T) * numVertices);
+			Memory::Memset(m_vertices, 0, sizeof(T) * numVertices);
 			VertexBuffer::Create(m_vertexBuffer, m_vertices, numVertices,
 				sizeof(T));
 		}
@@ -85,7 +88,7 @@ namespace Engine
 
 			size_t size = vertexCount * sizeof(T);
 			m_vertices = new char[size];
-			memset(m_vertices, 0, size);
+			Memory::Memset(m_vertices, 0, size);
 			VertexBuffer::Create(m_vertexBuffer,
 				m_vertices, vertexCount, sizeof(T));
 		}
@@ -161,6 +164,10 @@ namespace Engine
 	class Mesh
 	{
 	public:
+		static const BufferLayout c_defaultLayout;
+		static const uint32_t c_maxUVsCount = 8;
+
+	public:
 		explicit Mesh();
 		~Mesh();
 
@@ -221,15 +228,12 @@ namespace Engine
 		MeshBuffer<MathLib::Vector3> m_binormals;
 		MeshBuffer<MathLib::Vector3> m_tangents;
 		MeshBuffer<MathLib::Vector4> m_vertexColors;
-		MeshBuffer<MathLib::Vector2>* m_uvs;
+		MeshBuffer<MathLib::Vector2> m_uvs[c_maxUVsCount];
 
 		BufferLayout m_bufferLayout;
 		uint32_t m_vertexCount;
 		uint32_t m_indexCount;
 
 		bool m_skinned;
-
-	public:
-		static const BufferLayout c_defaultLayout;
 	};
 }
