@@ -1,18 +1,9 @@
 #pragma once
 
-struct ID3D11Buffer;
-struct ID3D11ShaderResourceView;
-struct ID3D11UnorderedAccessView;
-struct ID3D11ComputeShader;
-struct ID3D11DepthStencilState;
-struct ID3D11Device;
-struct ID3D11DeviceContext;
-struct ID3D11Resource;
-struct ID3D11Texture2D;
+#include "DirectX11FwdDecl.h"
+#include "GraphicsFormat.h"
 
-enum D3D11_COMPARISON_FUNC;
-
-struct ID3D10Blob;
+#include <dxgiformat.h>
 
 namespace Engine
 {
@@ -30,6 +21,102 @@ namespace Engine
 		Type_RWStructuredBuffer,
 		Type_StructuredBuffer
 	};
+
+	namespace Utility::DirectX11
+	{
+		constexpr DXGI_FORMAT ToDXGIFormat(GraphicsFormat graphicsFormat)
+		{
+			switch (graphicsFormat)
+			{
+				case GraphicsFormat_RGBA8_Typeless:
+					return DXGI_FORMAT_R8G8B8A8_TYPELESS;
+				case GraphicsFormat_RGBA8_SInt:
+					return DXGI_FORMAT_R8G8B8A8_SINT;
+				case GraphicsFormat_RGBA8_UInt:
+					return DXGI_FORMAT_R8G8B8A8_UINT;
+
+				case GraphicsFormat_RGBA32_Float:
+					return DXGI_FORMAT_R32G32B32A32_FLOAT;
+				case GraphicsFormat_RGBA32_Typeless:
+					return DXGI_FORMAT_R32G32B32A32_TYPELESS;
+				case GraphicsFormat_RGBA32_SInt:
+					return DXGI_FORMAT_R32G32B32A32_SINT;
+				case GraphicsFormat_RGBA32_UInt:
+					return DXGI_FORMAT_R32G32B32A32_UINT;
+
+				case GraphicsFormat_SInt32:
+					return DXGI_FORMAT_R32_SINT;
+				case GraphicsFormat_UInt32:
+					return DXGI_FORMAT_R32_UINT;
+				case GraphicsFormat_Float32:
+					return DXGI_FORMAT_R32_FLOAT;
+				case GraphicsFormat_Typeless32:
+					return DXGI_FORMAT_R32_TYPELESS;
+
+				case GraphicsFormat_SInt16:
+					return DXGI_FORMAT_R16_SINT;
+				case GraphicsFormat_UInt16:
+					return DXGI_FORMAT_R16_UINT;
+				case GraphicsFormat_Typeless16:
+					return DXGI_FORMAT_R16_TYPELESS;
+					
+				case GraphicsFormat_SInt8:
+					return DXGI_FORMAT_R8_SINT;
+				case GraphicsFormat_UInt8:
+					return DXGI_FORMAT_R8_UINT;
+				case GraphicsFormat_Typeless8:
+					return DXGI_FORMAT_R8_TYPELESS;
+
+				case GraphicsFormat_D24UNorm_S8UInt:
+					return DXGI_FORMAT_D24_UNORM_S8_UINT;
+				case GraphicsFormat_D32Float_S8UInt:
+					return DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+				case GraphicsFormat_D32Float:
+					return DXGI_FORMAT_D32_FLOAT;
+			}
+			JKORN_ENGINE_ASSERT(false, "Invalid Graphics Format.");
+			return DXGI_FORMAT_UNKNOWN;
+		}
+
+		constexpr GraphicsFormat FromDXGIFormat(DXGI_FORMAT dxgiFormat)
+		{
+			switch (dxgiFormat)
+			{
+				case DXGI_FORMAT_R8G8B8A8_TYPELESS:
+					return GraphicsFormat_RGBA8_Typeless;
+				case DXGI_FORMAT_R8G8B8A8_SINT:
+					return GraphicsFormat_RGBA8_SInt;
+				case DXGI_FORMAT_R8G8B8A8_UINT:
+					return GraphicsFormat_RGBA8_UInt;
+
+				case DXGI_FORMAT_R32G32B32A32_FLOAT:
+					return GraphicsFormat_RGBA32_Float;
+				case DXGI_FORMAT_R32G32B32A32_TYPELESS:
+					return GraphicsFormat_RGBA32_Typeless;
+				case DXGI_FORMAT_R32G32B32A32_SINT:
+					return GraphicsFormat_RGBA32_SInt;
+				case DXGI_FORMAT_R32G32B32A32_UINT:
+					return GraphicsFormat_RGBA32_UInt;
+
+				case DXGI_FORMAT_R32_SINT:
+					return GraphicsFormat_SInt32;
+				case DXGI_FORMAT_R32_UINT:
+					return GraphicsFormat_UInt32;
+				case DXGI_FORMAT_R32_FLOAT:
+					return GraphicsFormat_Float32;
+				case DXGI_FORMAT_R32_TYPELESS:
+					return GraphicsFormat_Typeless32;
+
+				case DXGI_FORMAT_D24_UNORM_S8_UINT:
+					return GraphicsFormat_D24UNorm_S8UInt;
+				case DXGI_FORMAT_D32_FLOAT_S8X24_UINT:
+					return GraphicsFormat_D32Float_S8UInt;
+				case DXGI_FORMAT_D32_FLOAT:
+					return GraphicsFormat_D32Float;
+			}
+			return GraphicsFormat_Unknown;
+		}
+	}
 
 	class DirectX11Utils
 	{

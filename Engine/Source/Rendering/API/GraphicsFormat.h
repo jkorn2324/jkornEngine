@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <sys/_types/_int16_t.h>
 
 namespace Engine
 {
@@ -112,6 +111,13 @@ namespace Engine
                 }
             }
             return 0;
+        }
+
+        constexpr bool IsDepthFormat(GraphicsFormat format)
+        {
+            return format == GraphicsFormat_D24UNorm_S8UInt
+                || format == GraphicsFormat_D32Float_S8UInt
+                || format == GraphicsFormat_D32Float;
         }
     }
 }

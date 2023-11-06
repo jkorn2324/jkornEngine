@@ -5,6 +5,7 @@
 
 namespace Engine
 {
+	class Texture;
 
 	enum FrameBufferAttachmentType
 	{
@@ -79,8 +80,8 @@ namespace Engine
 
 		const FrameBufferSpecification& GetSpecification() const { return m_frameBufferSpecification; }
 
-		virtual class Texture* GetDepthTexture() const =0;
-		virtual class Texture* GetRenderTargetTexture(uint32_t index) const =0;
+		virtual Texture* GetDepthTexture() const =0;
+		virtual Texture* GetRenderTargetTexture(uint32_t index) const =0;
 
 		size_t GetNumRenderTargets() const { return m_renderTargetSpecifications.size(); }
 

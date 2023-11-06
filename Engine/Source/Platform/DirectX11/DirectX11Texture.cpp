@@ -28,80 +28,6 @@ namespace Engine
 		}
 	}
 
-	static TextureFormat FromD3D11Format(DXGI_FORMAT format)
-	{
-		switch (format)
-		{
-			case DXGI_FORMAT_R32G32B32A32_FLOAT: 
-				return TextureFormat_RGBA32_Float;
-			case DXGI_FORMAT_R32G32B32A32_SINT:
-				return TextureFormat_RGBA32_SInt;
-			case DXGI_FORMAT_R32G32B32A32_UINT:
-				return TextureFormat_RGBA32_UInt;
-			case DXGI_FORMAT_R32G32B32A32_TYPELESS:	
-				return TextureFormat_RGBA32_Typeless;
-
-			case DXGI_FORMAT_R8G8B8A8_SINT:
-				return TextureFormat_RGBA8_SInt;
-			case DXGI_FORMAT_R8G8B8A8_UINT:
-				return TextureFormat_RGBA8_UInt;
-			case DXGI_FORMAT_R8G8B8A8_SNORM:
-			case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
-			case DXGI_FORMAT_R8G8B8A8_TYPELESS:
-				return TextureFormat_RGBA8_Typeless;
-
-			case DXGI_FORMAT_R32_SINT:
-			case DXGI_FORMAT_R32_UINT:
-			case DXGI_FORMAT_R32_TYPELESS:
-				return TextureFormat_Int32;
-			case DXGI_FORMAT_R32_FLOAT:
-				return TextureFormat_Float32;
-			case DXGI_FORMAT_R16_UNORM:
-			case DXGI_FORMAT_R16_TYPELESS:
-			case DXGI_FORMAT_R16_UINT:
-			case DXGI_FORMAT_R16_SINT:
-				return TextureFormat_Int16;
-			case DXGI_FORMAT_R8_UNORM:
-			case DXGI_FORMAT_R8_TYPELESS:
-			case DXGI_FORMAT_R8_UINT:
-			case DXGI_FORMAT_R8_SINT:
-				return TextureFormat_Int8;
-		}
-		return TextureFormat_Unknown;
-	}
-
-	static DXGI_FORMAT ToD3D11Format(TextureFormat format)
-	{
-		switch (format)
-		{
-			case TextureFormat_Float32:
-				return DXGI_FORMAT_R32_FLOAT;
-			case TextureFormat_Int32:
-				return DXGI_FORMAT_R32_SINT;
-			case TextureFormat_Int16:
-				return DXGI_FORMAT_R16_TYPELESS;
-			case TextureFormat_Int8:
-				return DXGI_FORMAT_R8_TYPELESS;
-
-			case TextureFormat_RGBA32_Float:
-				return DXGI_FORMAT_R32G32B32A32_FLOAT;
-			case TextureFormat_RGBA32_SInt:
-				return DXGI_FORMAT_R32G32B32A32_SINT;
-			case TextureFormat_RGBA32_UInt:
-				return DXGI_FORMAT_R32G32B32A32_UINT;
-			case TextureFormat_RGBA32_Typeless:
-				return DXGI_FORMAT_R32G32B32A32_TYPELESS;
-
-			case TextureFormat_RGBA8_Typeless:
-				return DXGI_FORMAT_R8G8B8A8_TYPELESS;
-			case TextureFormat_RGBA8_UInt:
-				return DXGI_FORMAT_R8G8B8A8_UINT;
-			case TextureFormat_RGBA8_SInt:
-				return DXGI_FORMAT_R8G8B8A8_SINT;
-		}
-		return DXGI_FORMAT_UNKNOWN;
-	}
-
 	DirectX11Texture::DirectX11Texture() : Texture(),
 		m_shaderResourceView(nullptr),
 		m_texture(nullptr),
@@ -120,7 +46,7 @@ namespace Engine
 		m_texture = DirectX11Utils::CreateTexture2D(
 			GetRenderingAPI().m_device, m_width, m_height,
 			D3D11_BIND_SHADER_RESOURCE,
-			ToD3D11Format(specifications.textureFormat), 0, specifications.readWriteFlags);
+			Utility::DirectX11::ToDXGIFormat(specifications.textureFormat), 0, specifications.readWriteFlags);
 		m_shaderResourceView = DirectX11Utils::CreateTextureShaderResourceView(
 			GetRenderingAPI().m_device, (ID3D11Texture2D*)m_texture);
 		m_pixels = new uint32_t[m_width * m_height];
@@ -158,7 +84,7 @@ namespace Engine
 				readWriteFlags |= Flag_GPU_ReadTexture | Flag_GPU_WriteTexture;
 			}
 			m_specifications.readWriteFlags = (TextureReadWriteFlags)readWriteFlags;
-			m_specifications.textureFormat = FromD3D11Format(textureDesc.Format);
+			m_specifications.textureFormat = Utility::DirectX11::FromDXGIFormat(textureDesc.Format);
 
 			m_pixels = new uint32_t[m_width * m_height];
 		}
@@ -286,8 +212,8 @@ namespace Engine
 			return;
 		}
 
-		TextureFormat textureFormat = GetTextureFormat();
-		if (textureFormat == TextureFormat_Unknown)
+		GraphicsFormat textureFormat = GetTextureFormat();
+		if (textureFormat == GraphicsFormat_Unknown)
 		{
 			GetRenderingAPI().m_deviceContext->Unmap(
 				texture, 0);
@@ -295,7 +221,7 @@ namespace Engine
 			return;
 		}
 
-		size_t formatSize = SizeOfFormat(textureFormat);
+		size_t formatSize = Graphics::SizeOfFormat(textureFormat);
 		if (resourceDesc.pData)
 		{
 			size_t h = (size_t)m_height;
