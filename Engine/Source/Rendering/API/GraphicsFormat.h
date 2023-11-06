@@ -113,11 +113,37 @@ namespace Engine
             return 0;
         }
 
-        constexpr bool IsDepthFormat(GraphicsFormat format)
+        constexpr bool IsTypeless(GraphicsFormat format)
+        {
+            switch (format)
+            {
+                case GraphicsFormat_RGBA32_Typeless:
+                case GraphicsFormat_RGBA8_Typeless:
+                case GraphicsFormat_Typeless32:
+                case GraphicsFormat_Typeless16:
+                case GraphicsFormat_Typeless8:
+                    return true;
+            }
+            return false;
+        }
+
+        constexpr bool IsValidDepthFormat(GraphicsFormat format)
         {
             return format == GraphicsFormat_D24UNorm_S8UInt
                 || format == GraphicsFormat_D32Float_S8UInt
                 || format == GraphicsFormat_D32Float;
+        }
+
+        constexpr bool IsValidStencilFormat(GraphicsFormat format)
+        {
+            return format == GraphicsFormat_D24UNorm_S8UInt
+                || format == GraphicsFormat_D32Float_S8UInt;
+        }
+
+        constexpr GraphicsFormat GetDefaultDepthStencilFormat()
+        {
+            // TODO: Implementation for multiple platforms.
+            return GraphicsFormat_D24UNorm_S8UInt;
         }
     }
 }
