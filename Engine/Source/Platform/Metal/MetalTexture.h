@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Texture.h"
-#include "MetalFwdDecl.h"
-
-#include <Metal/Metal.h>
+#include "MetalUtility.h"
 
 namespace Engine
 {
@@ -56,38 +54,6 @@ namespace Engine
                 return MTLStorageModeShared;
             }
             return temporary ? MTLResourceStorageModeMemoryless : MTLResourceStorageModePrivate;
-        }
-    
-        static MTLPixelFormat ToMTLTextureFormat(TextureFormat textureFormat)
-        {
-            switch (textureFormat)
-            {
-                case TextureFormat_Int8:
-                    return MTLPixelFormatR8Sint;
-                case TextureFormat_Int16:
-                    return MTLPixelFormatR16Sint;
-                case TextureFormat_Int32:
-                    return MTLPixelFormatR32Sint;
-                case TextureFormat_Float32:
-                    return MTLPixelFormatR32Float;
-                    
-                case TextureFormat_RGBA32_SInt:
-                    return MTLPixelFormatRGBA32Sint;
-                case TextureFormat_RGBA32_UInt:
-                case TextureFormat_RGBA32_Typeless:
-                    return MTLPixelFormatRGBA32Uint;
-                case TextureFormat_RGBA32_Float:
-                    return MTLPixelFormatRGBA32Float;
-                    
-                case TextureFormat_RGBA8_UInt:
-                case TextureFormat_RGBA8_Typeless:
-                    return MTLPixelFormatRGBA8Uint;
-                case TextureFormat_RGBA8_SInt:
-                    return MTLPixelFormatRGBA8Sint;
-                default: break;
-            }
-            JKORN_ENGINE_ASSERT(false, "Invalid Texture Format.");
-            return MTLPixelFormatInvalid;
         }
     }
 

@@ -3,6 +3,7 @@
 
 #include "GraphicsRenderer.h"
 #include "MetalRenderingAPI.h"
+#include "MetalUtility.h"
 
 namespace Engine
 {
@@ -19,7 +20,7 @@ namespace Engine
         MTLTextureDescriptor* textureDescriptor = [[MTLTextureDescriptor alloc] init];
         textureDescriptor.width = (NSUInteger)width;
         textureDescriptor.height = (NSUInteger)height;
-        textureDescriptor.pixelFormat = Utilities::Metal::ToMTLTextureFormat(specifications.textureFormat);
+        textureDescriptor.pixelFormat = Utility::Metal::ToMTLPixelFormat(specifications.textureFormat);
         textureDescriptor.mipmapLevelCount = 1;
         textureDescriptor.resourceOptions = Utilities::Metal::GetTextureResourceOptions(specifications.readWriteFlags, specifications.temporary);
         textureDescriptor.usage = Utilities::Metal::GetTextureUsage(specifications.readWriteFlags, false, false);
