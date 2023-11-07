@@ -184,22 +184,34 @@ namespace Engine
 
 		friend bool operator==(const BufferLayout& a, const BufferLayout& b)
 		{
-			if (a.parameters.size() != b.parameters.size()) return false;
+			if (a.parameters.size() != b.parameters.size())
+			{
+				return false;
+			}
 
 			for (size_t i = 0; i < a.parameters.size(); ++i)
 			{
-				if (a.parameters[i] != b.parameters[i]) return false;
+				if (a.parameters[i] != b.parameters[i]) 
+				{
+					return false;
+				}
 			}
 			return true;
 		}
 
 		friend bool operator!=(const BufferLayout& a, const BufferLayout& b)
 		{
-			if (a.parameters.size() != b.parameters.size()) return true;
+			if (a.parameters.size() != b.parameters.size()) 
+			{
+				return true;
+			}
 
 			for (size_t i = 0; i < a.parameters.size(); ++i)
 			{
-				if (a.parameters[i] != b.parameters[i]) return true;
+				if (a.parameters[i] != b.parameters[i]) 
+				{
+					return true;
+				}
 			}
 			return false;
 		}

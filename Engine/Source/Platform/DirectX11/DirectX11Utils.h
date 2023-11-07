@@ -74,7 +74,6 @@ namespace Engine
 				case GraphicsFormat_D32Float:
 					return DXGI_FORMAT_D32_FLOAT;
 			}
-			JKORN_ENGINE_ASSERT(false, "Invalid Graphics Format.");
 			return DXGI_FORMAT_UNKNOWN;
 		}
 
@@ -115,6 +114,16 @@ namespace Engine
 					return GraphicsFormat_D32Float;
 			}
 			return GraphicsFormat_Unknown;
+		}
+
+		constexpr DXGI_FORMAT ToDXGIFormat(DepthFormat depthFormat)
+		{
+			return ToDXGIFormat(Graphics::ToGraphicsFormat(depthFormat));
+		}
+
+		constexpr DXGI_FORMAT ToDXGIFormat(ColorFormat colorFormat)
+		{
+			return ToDXGIFormat(Graphics::ToGraphicsFormat(colorFormat));
 		}
 	}
 

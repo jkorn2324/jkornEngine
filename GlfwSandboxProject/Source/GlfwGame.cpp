@@ -95,9 +95,10 @@ namespace GlfwSandbox
 		// Creates a constant buffer.
 		Engine::ConstantBuffer::Create(&m_entityConstantBuffer, &m_entityConstants, sizeof(m_entityConstants));
 
+		Engine::FrameBufferDepthStencilContext depthStencilContext = { Engine::DepthFormat_D24UNorm_S8UInt };
 		Engine::FrameBufferSpecification frameBufferSpecification({
-			Engine::FrameBufferAttachment{ Engine::FrameBufferAttachmentType::DEPTH_STENCIL }
-			});
+			Engine::FrameBufferAttachment{ depthStencilContext }
+		});
 		frameBufferSpecification.width = Engine::GraphicsRenderer::GetRenderingAPI().GetWidth();
 		frameBufferSpecification.height = Engine::GraphicsRenderer::GetRenderingAPI().GetHeight();
 		m_frameBuffer = Engine::FrameBuffer::Create(frameBufferSpecification);

@@ -27,14 +27,16 @@ namespace Editor
 	{
 		m_transformationWidget.SetEnabled(false);
 
-		Engine::FrameBufferSpecification editorSpecifications(
-			{
-				Engine::FrameBufferAttachmentType::DEPTH_STENCIL,
+		Engine::FrameBufferDepthStencilContext depthStencil = { Engine::DepthFormat_D24UNorm_S8UInt };
+		Engine::FrameBufferSpecification editorSpecifications ({
+			{ depthStencil },
+			{ 				
 				// The Main Color Texture
-				Engine::FrameBufferAttachmentType::RENDER_TARGET,
+				Engine::FrameBufferAttachment { Engine::ColorFormat_RGBA32_Float },
 				// The Entity ID Texture
-				Engine::FrameBufferAttachmentType::ENTITY_VIEW_ID
-			});
+				Engine::FrameBufferAttachment { Engine::ColorFormat_SInt32 }
+			}
+		});
 
 		Engine::Application& app = Engine::Application::Get();
 		editorSpecifications.width = app.GetWindow().GetWidth();

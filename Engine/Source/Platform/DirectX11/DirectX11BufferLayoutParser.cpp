@@ -6,183 +6,206 @@
 
 namespace Engine
 {
-
-	static bool GetSemanticNameFromType(std::string& out, BufferLayoutSemanticType semanticType)
+	namespace
 	{
-		switch (semanticType)
+		bool GetSemanticNameFromType(char* outPtr, BufferLayoutSemanticType semanticType)
 		{
-		case BufferLayoutSemanticType::Type_Binormal:
-		{
-			out = "BINORMAL";
-			return true;
+			switch (semanticType)
+			{
+			case BufferLayoutSemanticType::Type_Binormal:
+			{
+				const char semantic[] = "BINORMAL";
+				Memory::Memcpy(outPtr, semantic, sizeof(semantic));
+				return true;
+			}
+			case BufferLayoutSemanticType::Type_Color:
+			{
+				const char semantic[] = "COLOR";
+				Memory::Memcpy(outPtr, semantic, sizeof(semantic));
+				return true;
+			}
+			case BufferLayoutSemanticType::Type_Normal:
+			{
+				const char semantic[] = "NORMAL";
+				Memory::Memcpy(outPtr, semantic, sizeof(semantic));
+				return true;
+			}
+			case BufferLayoutSemanticType::Type_Position:
+			{
+				const char semantic[] = "POSITION";
+				Memory::Memcpy(outPtr, semantic, sizeof(semantic));
+				return true;
+			}
+			case BufferLayoutSemanticType::Type_Tangent:
+			{
+				const char semantic[] = "TANGENT";
+				Memory::Memcpy(outPtr, semantic, sizeof(semantic));
+				return true;
+			}
+			case BufferLayoutSemanticType::Type_TexCoord:
+			{
+				const char semantic[] = "TEXCOORD";
+				Memory::Memcpy(outPtr, semantic, sizeof(semantic));
+				return true;
+			}
+			}
+			return false;
 		}
-		case BufferLayoutSemanticType::Type_Color:
-		{
-			out = "COLOR";
-			return true;
-		}
-		case BufferLayoutSemanticType::Type_Normal:
-		{
-			out = "NORMAL";
-			return true;
-		}
-		case BufferLayoutSemanticType::Type_Position:
-		{
-			out = "POSITION";
-			return true;
-		}
-		case BufferLayoutSemanticType::Type_Tangent:
-		{
-			out = "TANGENT";
-			return true;
-		}
-		case BufferLayoutSemanticType::Type_TexCoord:
-		{
-			out = "TEXCOORD";
-			return true;
-		}
-		}
-		return false;
-	}
 
-	static DXGI_FORMAT GetFormatFromParam(const BufferLayoutParam& param)
-	{
-		switch (param.layoutType)
+		DXGI_FORMAT GetFormatFromParam(const BufferLayoutParam& param)
 		{
-		case BufferLayoutType::Float16:
-		{
-			switch (param.numValues)
+			switch (param.layoutType)
 			{
-			case 1: return DXGI_FORMAT_R16_FLOAT;
-			case 2: return DXGI_FORMAT_R16G16_FLOAT;
-			default: return DXGI_FORMAT_R16G16B16A16_FLOAT;
-			}
-			return DXGI_FORMAT_R16G16B16A16_FLOAT;
-		}
-		case BufferLayoutType::Float32:
-		{
-			switch (param.numValues)
+			case BufferLayoutType::Float16:
 			{
-			case 1: return DXGI_FORMAT_R32_FLOAT;
-			case 2: return DXGI_FORMAT_R32G32_FLOAT;
-			case 3: return DXGI_FORMAT_R32G32B32_FLOAT;
-			default: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R16_FLOAT;
+				case 2: return DXGI_FORMAT_R16G16_FLOAT;
+				default: return DXGI_FORMAT_R16G16B16A16_FLOAT;
+				}
+				return DXGI_FORMAT_R16G16B16A16_FLOAT;
 			}
-			return DXGI_FORMAT_R32G32B32A32_FLOAT;
-		}
-		case BufferLayoutType::Int8:
-		{
-			switch (param.numValues)
+			case BufferLayoutType::Float32:
 			{
-			case 1: return DXGI_FORMAT_R8_SINT;
-			case 2: return DXGI_FORMAT_R8G8_SINT;
-			default: return DXGI_FORMAT_R8G8B8A8_SINT;
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R32_FLOAT;
+				case 2: return DXGI_FORMAT_R32G32_FLOAT;
+				case 3: return DXGI_FORMAT_R32G32B32_FLOAT;
+				default: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+				}
+				return DXGI_FORMAT_R32G32B32A32_FLOAT;
 			}
-			return DXGI_FORMAT_R8G8B8A8_SINT;
-		}
-		case BufferLayoutType::Int16:
-		{
-			switch (param.numValues)
+			case BufferLayoutType::Int8:
 			{
-			case 1: return DXGI_FORMAT_R16_SINT;
-			case 2: return DXGI_FORMAT_R16G16_SINT;
-			default: return DXGI_FORMAT_R16G16B16A16_SINT;
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R8_SINT;
+				case 2: return DXGI_FORMAT_R8G8_SINT;
+				default: return DXGI_FORMAT_R8G8B8A8_SINT;
+				}
+				return DXGI_FORMAT_R8G8B8A8_SINT;
 			}
-			return DXGI_FORMAT_R16G16B16A16_SINT;
-		}
-		case BufferLayoutType::Int32:
-		{
-			switch (param.numValues)
+			case BufferLayoutType::Int16:
 			{
-			case 1: return DXGI_FORMAT_R32_SINT;
-			case 2: return DXGI_FORMAT_R32G32_SINT;
-			case 3: return DXGI_FORMAT_R32G32B32_SINT;
-			default: return DXGI_FORMAT_R32G32B32A32_SINT;
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R16_SINT;
+				case 2: return DXGI_FORMAT_R16G16_SINT;
+				default: return DXGI_FORMAT_R16G16B16A16_SINT;
+				}
+				return DXGI_FORMAT_R16G16B16A16_SINT;
 			}
-			return DXGI_FORMAT_R32G32B32A32_SINT;
-		}
-		case BufferLayoutType::Uint8:
-		{
-			switch (param.numValues)
+			case BufferLayoutType::Int32:
 			{
-			case 1: return DXGI_FORMAT_R8_UINT;
-			case 2: return DXGI_FORMAT_R8G8_UINT;
-			default: return DXGI_FORMAT_R8G8B8A8_UINT;
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R32_SINT;
+				case 2: return DXGI_FORMAT_R32G32_SINT;
+				case 3: return DXGI_FORMAT_R32G32B32_SINT;
+				default: return DXGI_FORMAT_R32G32B32A32_SINT;
+				}
+				return DXGI_FORMAT_R32G32B32A32_SINT;
 			}
-			return DXGI_FORMAT_R8G8B8A8_UINT;
-		}
-		case BufferLayoutType::Uint16:
-		{
-			switch (param.numValues)
+			case BufferLayoutType::Uint8:
 			{
-			case 1: return DXGI_FORMAT_R16_UINT;
-			case 2: return DXGI_FORMAT_R16G16_UINT;
-			default: return DXGI_FORMAT_R16G16B16A16_UINT;
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R8_UINT;
+				case 2: return DXGI_FORMAT_R8G8_UINT;
+				default: return DXGI_FORMAT_R8G8B8A8_UINT;
+				}
+				return DXGI_FORMAT_R8G8B8A8_UINT;
 			}
-			return DXGI_FORMAT_R16G16B16A16_UINT;
-		}
-		case BufferLayoutType::Uint32:
-		{
-			switch (param.numValues)
+			case BufferLayoutType::Uint16:
 			{
-			case 1: return DXGI_FORMAT_R32_UINT;
-			case 2: return DXGI_FORMAT_R32G32_UINT;
-			case 3: return DXGI_FORMAT_R32G32B32_UINT;
-			default: return DXGI_FORMAT_R32G32B32A32_UINT;
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R16_UINT;
+				case 2: return DXGI_FORMAT_R16G16_UINT;
+				default: return DXGI_FORMAT_R16G16B16A16_UINT;
+				}
+				return DXGI_FORMAT_R16G16B16A16_UINT;
 			}
-			return DXGI_FORMAT_R32G32B32A32_UINT;
-		}
-		case BufferLayoutType::SNorm8:
-		{
-			switch (param.numValues)
+			case BufferLayoutType::Uint32:
 			{
-			case 1: return DXGI_FORMAT_R8_SNORM;
-			case 2: return DXGI_FORMAT_R8G8_SNORM;
-			default: return DXGI_FORMAT_R8G8B8A8_SNORM;
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R32_UINT;
+				case 2: return DXGI_FORMAT_R32G32_UINT;
+				case 3: return DXGI_FORMAT_R32G32B32_UINT;
+				default: return DXGI_FORMAT_R32G32B32A32_UINT;
+				}
+				return DXGI_FORMAT_R32G32B32A32_UINT;
 			}
-			return DXGI_FORMAT_R8G8B8A8_SNORM;
-		}
-		case BufferLayoutType::SNorm16:
-		{
-			switch (param.numValues)
+			case BufferLayoutType::SNorm8:
 			{
-			case 1: return DXGI_FORMAT_R16_SNORM;
-			case 2: return DXGI_FORMAT_R16G16_SNORM;
-			default: return DXGI_FORMAT_R16G16B16A16_SNORM;
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R8_SNORM;
+				case 2: return DXGI_FORMAT_R8G8_SNORM;
+				default: return DXGI_FORMAT_R8G8B8A8_SNORM;
+				}
+				return DXGI_FORMAT_R8G8B8A8_SNORM;
 			}
-			return DXGI_FORMAT_R16G16B16A16_SNORM;
-		}
-		case BufferLayoutType::UNorm8:
-		{
-			switch (param.numValues)
+			case BufferLayoutType::SNorm16:
 			{
-			case 1: return DXGI_FORMAT_R8_UNORM;
-			case 2: return DXGI_FORMAT_R8G8_UNORM;
-			default: return DXGI_FORMAT_R8G8B8A8_UNORM;
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R16_SNORM;
+				case 2: return DXGI_FORMAT_R16G16_SNORM;
+				default: return DXGI_FORMAT_R16G16B16A16_SNORM;
+				}
+				return DXGI_FORMAT_R16G16B16A16_SNORM;
 			}
-			return DXGI_FORMAT_R8G8B8A8_UNORM;
-		}
-		case BufferLayoutType::UNorm16:
-		{
-			switch (param.numValues)
+			case BufferLayoutType::UNorm8:
 			{
-			case 1: return DXGI_FORMAT_R16_UNORM;
-			case 2: return DXGI_FORMAT_R16G16_UNORM;
-			default: return DXGI_FORMAT_R16G16B16A16_UNORM;
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R8_UNORM;
+				case 2: return DXGI_FORMAT_R8G8_UNORM;
+				default: return DXGI_FORMAT_R8G8B8A8_UNORM;
+				}
+				return DXGI_FORMAT_R8G8B8A8_UNORM;
 			}
-			return DXGI_FORMAT_R16G16B16A16_UNORM;
+			case BufferLayoutType::UNorm16:
+			{
+				switch (param.numValues)
+				{
+				case 1: return DXGI_FORMAT_R16_UNORM;
+				case 2: return DXGI_FORMAT_R16G16_UNORM;
+				default: return DXGI_FORMAT_R16G16B16A16_UNORM;
+				}
+				return DXGI_FORMAT_R16G16B16A16_UNORM;
+			}
+			}
+			return DXGI_FORMAT_UNKNOWN;
 		}
+
+		const size_t c_MaxStringLength = 100;
+		const size_t c_MaxSlots = DirectX11BufferLayoutParser::MaxSlots * 16;
+
+		constexpr size_t ClampLength(size_t size)
+		{
+			return size >= c_MaxStringLength ? c_MaxStringLength : size + 1;
 		}
-		return DXGI_FORMAT_UNKNOWN;
+
+		char* GetSemanticPtr(size_t index)
+		{
+			if (index >= c_MaxSlots)
+			{
+				return nullptr;
+			}
+			static char semantic[c_MaxSlots][c_MaxStringLength];
+			return semantic[index];
+		}
 	}
 
 	DirectX11BufferLayoutParser::DirectX11BufferLayoutParser(const BufferLayout& bufferLayout)
-		: m_numElements(bufferLayout.GetTotalParamSize()),
-		m_inputElementDesc(nullptr)
+		: m_numElements(bufferLayout.GetTotalParamSize()), m_inputElementDesc()
 	{
-		m_inputElementDesc = new D3D11_INPUT_ELEMENT_DESC[m_numElements];
 		uint32_t numInputSlots = bufferLayout.GetNumElements();
-
 		uint32_t descSlot = 0;
 		for (uint32_t inputSlot = 0; inputSlot < numInputSlots; ++inputSlot)
 		{
@@ -190,24 +213,24 @@ namespace Engine
 			uint32_t currentOffset = 0;
 			for (size_t paramIndex = 0; paramIndex < params.parameters.size(); ++paramIndex)
 			{
-				if (descSlot >= m_numElements) return;
+				if (descSlot >= m_numElements)
+				{
+					return;
+				}
 				const BufferLayoutParam& param = params.parameters[paramIndex];
 				D3D11_INPUT_ELEMENT_DESC description;
 				ZeroMemory(&description, sizeof(description));
+				
+				// Temporary semantic 
+				char* semanticName = GetSemanticPtr(descSlot);
+				ZeroMemory(semanticName, c_MaxStringLength);
 
-				std::string outSemanticName;
-				if (GetSemanticNameFromType(outSemanticName, param.semanticType))
+				if (GetSemanticNameFromType(semanticName, param.semanticType))
 				{
-					char* semanticName = new char[outSemanticName.size() + 1];
-					semanticName[outSemanticName.size()] = 0;
-					Memory::Memcpy(semanticName,
-						outSemanticName.c_str(), outSemanticName.size());
 					description.SemanticName = semanticName;
 				}
 				else
 				{
-					char* semanticName = new char[param.name.size() + 1];
-					semanticName[param.name.size()] = 0;
 					Memory::Memcpy(semanticName,
 						param.name.c_str(), param.name.size());
 					description.SemanticName = semanticName;
@@ -229,12 +252,6 @@ namespace Engine
 
 	DirectX11BufferLayoutParser::~DirectX11BufferLayoutParser()
 	{
-		for (std::uint32_t i = 0; i < m_numElements; i++)
-		{
-			D3D11_INPUT_ELEMENT_DESC desc = m_inputElementDesc[i];
-			delete[] desc.SemanticName;
-		}
-		delete[] m_inputElementDesc;
 	}
 
 	const D3D11_INPUT_ELEMENT_DESC* DirectX11BufferLayoutParser::GetD3D11InputElementDesc() const

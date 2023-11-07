@@ -2,7 +2,7 @@
 
 #include "BufferLayout.h"
 
-struct D3D11_INPUT_ELEMENT_DESC;
+#include <d3d11.h>
 
 namespace Engine
 {
@@ -10,6 +10,8 @@ namespace Engine
 	class DirectX11BufferLayoutParser
 	{
 	public:
+		static const uint32_t MaxSlots = D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT;
+
 		explicit DirectX11BufferLayoutParser(const BufferLayout& bufferlayout);
 		~DirectX11BufferLayoutParser();
 		
@@ -17,7 +19,7 @@ namespace Engine
 		const D3D11_INPUT_ELEMENT_DESC* GetD3D11InputElementDesc() const;
 
 	private:
-		D3D11_INPUT_ELEMENT_DESC* m_inputElementDesc;
+		D3D11_INPUT_ELEMENT_DESC m_inputElementDesc[MaxSlots];
 		uint32_t m_numElements;
 	};
 }

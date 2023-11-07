@@ -8,10 +8,86 @@
 
 namespace Engine
 {
+	namespace
+	{
+		void CreateTextureWithShaderResource(DirectX11RenderingAPI* api, UINT bindFlags,
+			DXGI_FORMAT textureFormat, UINT quality, ID3D11Texture2D** outTexture, ID3D11ShaderResourceView** outShaderResource, DXGI_FORMAT shaderResourceFormat, UINT width, UINT height)
+		{
+			*outTexture = DirectX11Utils::CreateTexture2D(api->GetDevice(), width,
+				height, bindFlags, textureFormat, quality);
+			*outShaderResource = DirectX11Utils::CreateTextureShaderResourceView(
+				api->GetDevice(), *outTexture, shaderResourceFormat);
+		}
+
+		template<typename T>
+		void CreateViewTexture(DirectX11ViewTexture* outViewTexture, DirectX11RenderingAPI* api, const FrameBufferAttachment<T>& attachment,
+			UINT width, UINT height)
+		{
+			static_assert(false);
+		}
+
+		template<>
+		void CreateViewTexture<FrameBufferDepthStencilContext>(DirectX11ViewTexture* outViewTexture, DirectX11RenderingAPI* api, 
+			const FrameBufferAttachment<FrameBufferDepthStencilContext>& attachment, UINT width, UINT height)
+		{
+			ID3D11Texture2D* texture;
+			ID3D11ShaderResourceView* shaderResourceView = nullptr;
+			DXGI_FORMAT depthStencilFormat{};
+
+			// If we are reading a texture, make sure that the format is like so.
+			if (attachment.format.readTexture)
+			{
+				CreateTextureWithShaderResource(api,
+					D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT_R32_TYPELESS,
+					0, &texture, &shaderResourceView, DXGI_FORMAT_R32_FLOAT, width, height);
+				depthStencilFormat = DXGI_FORMAT_D32_FLOAT;
+			}
+			else
+			{
+				DXGI_FORMAT graphicsFormat = Utility::DirectX11::ToDXGIFormat(attachment.format.format);
+				texture = DirectX11Utils::CreateTexture2D(api->GetDevice(),
+					width, height, D3D11_BIND_DEPTH_STENCIL,
+					graphicsFormat, 0);
+				depthStencilFormat = graphicsFormat;
+			}
+
+			D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilDesc;
+			ZeroMemory(&depthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+			depthStencilDesc.Format = depthStencilFormat;
+			depthStencilDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+			depthStencilDesc.Texture2D.MipSlice = 0;
+
+			ID3D11DepthStencilView* depthStencilView;
+			HRESULT result = api->GetDevice()->CreateDepthStencilView(
+				texture, &depthStencilDesc, &depthStencilView);
+			JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create the depth stencil view.");
+
+			outViewTexture->m_view = depthStencilView;
+			outViewTexture->texture = new DirectX11Texture(texture, shaderResourceView);
+		}
+
+		template<>
+		void CreateViewTexture<ColorFormat>(DirectX11ViewTexture* outViewTexture, DirectX11RenderingAPI* api,
+			const FrameBufferAttachment<ColorFormat>& attachment, UINT width, UINT height)
+		{
+			DXGI_FORMAT format = Utility::DirectX11::ToDXGIFormat(attachment.format);
+			ID3D11Texture2D* texture;
+			ID3D11ShaderResourceView* shaderResource;
+			CreateTextureWithShaderResource(api,
+				D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
+				format, 0, &texture, &shaderResource, format, width, height);
+			ID3D11RenderTargetView* renderTargetView;
+			HRESULT result = api->GetDevice()->CreateRenderTargetView(texture,
+				nullptr, &renderTargetView);
+			JKORN_ENGINE_ASSERT(result == S_OK, "Render target view was unsuccessfully created.");
+			outViewTexture->m_view = renderTargetView;
+			outViewTexture->texture = new DirectX11Texture(texture, shaderResource);
+		}
+	}
+
 	DirectX11FrameBuffer::DirectX11FrameBuffer(const FrameBufferSpecification& specification)
 		: FrameBuffer(specification),
 		m_depthTexture(),
-		m_renderTargetTextures(nullptr),
 		m_depthStencilState(nullptr)
 	{
 		CreateBuffers();
@@ -24,11 +100,9 @@ namespace Engine
 		uint32_t numRenderTargets = (uint32_t)GetNumRenderTargets();
 		for (uint32_t i = 0; i < numRenderTargets; i++)
 		{
-			auto& viewTexture = m_renderTargetTextures[i];
+			Engine::DirectX11ViewTexture& viewTexture = m_renderTargetTextures[i];
 			viewTexture.Deallocate();
 		}
-		delete[] m_renderTargetTextures;
-
 		if (m_depthStencilState != nullptr)
 		{
 			m_depthStencilState->Release();
@@ -40,8 +114,10 @@ namespace Engine
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)(
 			GraphicsRenderer::GetRenderingAPI());
 
-		// Creates the depth stencil buffer.
-		if (m_depthStencilSpecification.textureType != FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE)
+		// Creates the depth stencil buffer if the format is not none.
+		Engine::FrameBufferAttachment<Engine::FrameBufferDepthStencilContext>& depthStencil = 
+			m_frameBufferSpecification.attachments.depthStencilAttachment;
+		if (depthStencil.format.format != DepthFormat_None)
 		{
 			{
 				m_depthStencilState = DirectX11Utils::CreateDepthStencilState(
@@ -49,107 +125,26 @@ namespace Engine
 				renderingAPI.m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 0);
 			}
 			// Creates the view texture for the frame buffer.
-			CreateViewTexture(&m_depthTexture, &renderingAPI, m_depthStencilSpecification);
+			CreateViewTexture(&m_depthTexture, &renderingAPI, m_frameBufferSpecification.attachments.depthStencilAttachment,
+				m_frameBufferSpecification.width, m_frameBufferSpecification.height);
 		}
 
-		uint32_t numRenderTargets = (uint32_t)GetNumRenderTargets();
+		// The number of render targets.
+		size_t numRenderTargets = (size_t)m_frameBufferSpecification.attachments.colorAttachments.size();
 		if (numRenderTargets > 0)
 		{
-			m_renderTargetTextures = new DirectX11ViewTexture[numRenderTargets];
-
 			for (uint32_t i = 0; i < numRenderTargets; i++)
 			{
-				auto& renderTargetTexture = m_renderTargetTextures[i];
-				CreateViewTexture(&renderTargetTexture, &renderingAPI, m_renderTargetSpecifications[i]);
+				Engine::DirectX11ViewTexture& renderTargetTexture = m_renderTargetTextures[i];
+				CreateViewTexture(&renderTargetTexture, &renderingAPI, m_frameBufferSpecification.attachments.colorAttachments[i],
+					m_frameBufferSpecification.width, m_frameBufferSpecification.height);
 			}
 		}
-	}
-
-	void DirectX11FrameBuffer::CreateViewTexture(DirectX11ViewTexture* outViewTexture, DirectX11RenderingAPI* api, const FrameBufferAttachment& attachment)
-	{
-		switch (attachment.textureType)
-		{
-			case FrameBufferAttachmentType::DEPTH_STENCIL:
-			{
-				ID3D11Texture2D* texture;
-				ID3D11ShaderResourceView* shaderResourceView = nullptr;
-				DXGI_FORMAT depthStencilFormat{};
-
-				if (attachment.exportAsTexture)
-				{
-					CreateTextureWithShaderResource(api,
-						D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT_R32_TYPELESS,
-						0, &texture, &shaderResourceView, DXGI_FORMAT_R32_FLOAT);
-					depthStencilFormat = DXGI_FORMAT_D32_FLOAT;
-				}
-				else
-				{
-					texture = DirectX11Utils::CreateTexture2D(api->m_device,
-						m_frameBufferSpecification.width, m_frameBufferSpecification.height, D3D11_BIND_DEPTH_STENCIL,
-						DXGI_FORMAT_D24_UNORM_S8_UINT, 0);
-					depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-				}
-
-				D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilDesc;
-				ZeroMemory(&depthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
-				depthStencilDesc.Format = depthStencilFormat;
-				depthStencilDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-				depthStencilDesc.Texture2D.MipSlice = 0;
-
-				ID3D11DepthStencilView* depthStencilView;
-				HRESULT result = api->m_device->CreateDepthStencilView(
-					texture, &depthStencilDesc, &depthStencilView);
-                JKORN_ENGINE_ASSERT(result == S_OK, "Failed to create the depth stencil view.");
-
-				outViewTexture->m_view = depthStencilView;
-				outViewTexture->texture = new DirectX11Texture(texture, shaderResourceView);
-				break;
-			}
-			case FrameBufferAttachmentType::TYPE_RGBA_32:
-			{
-				ID3D11Texture2D* texture;
-				ID3D11ShaderResourceView* shaderResource;
-				CreateTextureWithShaderResource(api,
-					D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
-					DXGI_FORMAT_R32G32B32A32_FLOAT, 0, &texture, &shaderResource);
-				ID3D11RenderTargetView* renderTargetView;
-				HRESULT result = api->m_device->CreateRenderTargetView(texture,
-					nullptr, &renderTargetView);
-                JKORN_ENGINE_ASSERT(result == S_OK, "Render target view was unsuccessfully created.");
-				outViewTexture->m_view = renderTargetView;
-				outViewTexture->texture = new DirectX11Texture(texture, shaderResource);
-				break;
-			}
-			case FrameBufferAttachmentType::TYPE_INT:
-			{
-				ID3D11Texture2D* texture;
-				ID3D11ShaderResourceView* shaderResource;
-				CreateTextureWithShaderResource(api,
-					D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
-					DXGI_FORMAT_R32_SINT, 0, &texture, &shaderResource, DXGI_FORMAT_R32_SINT);
-				ID3D11RenderTargetView* renderTargetView;
-				HRESULT result = api->m_device->CreateRenderTargetView(texture,
-					nullptr, &renderTargetView);
-                JKORN_ENGINE_ASSERT(result == S_OK, "Render target view was unsuccessfully created.");
-				outViewTexture->m_view = renderTargetView;
-				outViewTexture->texture = new DirectX11Texture(texture, shaderResource);
-				break;
-			}
-		}
-	}
-
-	void DirectX11FrameBuffer::CreateTextureWithShaderResource(DirectX11RenderingAPI* api, UINT bindFlags, 
-		DXGI_FORMAT textureFormat, UINT quality, ID3D11Texture2D** outTexture, ID3D11ShaderResourceView** outShaderResource, DXGI_FORMAT shaderResourceFormat)
-	{
-		*outTexture = DirectX11Utils::CreateTexture2D(api->m_device, m_frameBufferSpecification.width, 
-			m_frameBufferSpecification.height, bindFlags, textureFormat, quality);
-		*outShaderResource = DirectX11Utils::CreateTextureShaderResourceView(
-			api->m_device, *outTexture, shaderResourceFormat);
 	}
 
 	void DirectX11FrameBuffer::Bind() const
 	{
-		static ID3D11RenderTargetView* s_renderTargetViews[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
+		static ID3D11RenderTargetView* s_renderTargetViews[DirectX11FrameBuffer::MaxRenderTextures];
 
 		DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)
 			GraphicsRenderer::GetRenderingAPI();
@@ -161,10 +156,9 @@ namespace Engine
 			// Updates the render targets.
 			for (uint32_t i = 0; i < numRenderTextures; i++)
 			{
-				DirectX11ViewTexture& texture = m_renderTargetTextures[i];
+				const DirectX11ViewTexture& texture = m_renderTargetTextures[i];
 				s_renderTargetViews[i] = reinterpret_cast<ID3D11RenderTargetView*>(texture.m_view);
 			}
-
 			renderingAPI.SetRenderTargets(numRenderTextures,
 				s_renderTargetViews, (ID3D11DepthStencilView*)m_depthTexture.m_view);
 		}
@@ -204,17 +198,21 @@ namespace Engine
 		FrameBuffer::Resize(width, height);
 
 		bool shouldRegenerate = false;
-		auto numRenderTargets = GetNumRenderTargets();
+		size_t numRenderTargets = GetNumRenderTargets();
 		if (numRenderTargets > 0)
 		{
 			for (size_t i = 0; i < numRenderTargets; i++)
 			{
 				const auto& renderTargetTexture = m_renderTargetTextures[i];
-				if (renderTargetTexture)
+				if (!renderTargetTexture)
 				{
-					shouldRegenerate |= height > renderTargetTexture.texture->GetHeight()
-						|| width > renderTargetTexture.texture->GetHeight();
-					if (shouldRegenerate) break;
+					continue;
+				}
+				shouldRegenerate |= height > renderTargetTexture.texture->GetHeight()
+					|| width > renderTargetTexture.texture->GetHeight();
+				if (shouldRegenerate)
+				{
+					break;
 				}
 			}
 		}
@@ -240,20 +238,21 @@ namespace Engine
 			{
 				for (size_t i = 0; i < numRenderTargets; i++)
 				{
-					auto& renderTarget = m_renderTargetTextures[i];
+					Engine::DirectX11ViewTexture& renderTarget = m_renderTargetTextures[i];
 					renderTarget.Deallocate();
 				}
 			}
 
 			DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
-			for (uint16_t i = 0; i < m_renderTargetSpecifications.size(); i++)
+			for (uint16_t i = 0; i < m_frameBufferSpecification.attachments.colorAttachments.size(); i++)
 			{
-				const auto& renderTargetSpecification = m_renderTargetSpecifications[i];
-				if (renderTargetSpecification.textureType 
-					!= FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE)
+				const Engine::FrameBufferAttachment<ColorFormat>& renderTargetSpecification 
+					= m_frameBufferSpecification.attachments.colorAttachments[i];
+				if (renderTargetSpecification.format != ColorFormat_None)
 				{
 					DirectX11ViewTexture& viewTexture = m_renderTargetTextures[i];
-					CreateViewTexture(&viewTexture, &renderingAPI, renderTargetSpecification);
+					CreateViewTexture(&viewTexture, &renderingAPI, renderTargetSpecification, 
+						m_frameBufferSpecification.width, m_frameBufferSpecification.height);
 				}
 			}
 		}
@@ -263,10 +262,12 @@ namespace Engine
 			m_depthTexture.Deallocate();
 
 			DirectX11RenderingAPI& renderingAPI = (DirectX11RenderingAPI&)GraphicsRenderer::GetRenderingAPI();
-			if (m_depthStencilSpecification.textureType
-				!= FrameBufferAttachmentType::FRAME_BUFFER_ATTACHMENT_TYPE_NONE)
+			const Engine::FrameBufferAttachment<FrameBufferDepthStencilContext>& depthStencil
+				= m_frameBufferSpecification.attachments.depthStencilAttachment;
+			if (depthStencil.format.format != DepthFormat_None)
 			{
-				CreateViewTexture(&m_depthTexture, &renderingAPI, m_depthStencilSpecification);
+				CreateViewTexture(&m_depthTexture, &renderingAPI, depthStencil, 
+					m_frameBufferSpecification.width, m_frameBufferSpecification.height);
 			}
 		}
 	}

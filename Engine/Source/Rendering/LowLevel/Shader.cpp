@@ -57,8 +57,8 @@ namespace Engine
 	bool Shader::Create(std::shared_ptr<Shader>& shader, const BufferLayout& bufferLayout)
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
-			shader = std::make_shared<DirectX11Shader>(bufferLayout);
-			return true;
+		shader = std::make_shared<DirectX11Shader>(bufferLayout);
+		return true;
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported shader type.");
         return false;

@@ -35,6 +35,8 @@ namespace Engine
 	class DirectX11FrameBuffer : public FrameBuffer
 	{
 	public:
+		static const size_t MaxRenderTextures = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
+
 		explicit DirectX11FrameBuffer(const FrameBufferSpecification& specification);
 		~DirectX11FrameBuffer();
 
@@ -50,14 +52,9 @@ namespace Engine
 	private:
 		void CreateBuffers();
 
-		void CreateViewTexture(DirectX11ViewTexture* viewTexture,
-			class DirectX11RenderingAPI* api, const FrameBufferAttachment& attachment);
-		void CreateTextureWithShaderResource(class DirectX11RenderingAPI* api, UINT bindFlags, DXGI_FORMAT format,
-			UINT quality, ID3D11Texture2D** texture2D, ID3D11ShaderResourceView** shaderResource, DXGI_FORMAT shaderResourceFormat = DXGI_FORMAT_UNKNOWN);
-
 	private:
 		DirectX11ViewTexture m_depthTexture;
-		DirectX11ViewTexture* m_renderTargetTextures;
+		DirectX11ViewTexture m_renderTargetTextures[MaxRenderTextures];
 		ID3D11DepthStencilState* m_depthStencilState;
 	};
 }

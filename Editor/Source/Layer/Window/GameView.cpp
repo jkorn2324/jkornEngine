@@ -41,11 +41,13 @@ namespace Editor
 	{
 
 		const auto& window = Engine::Application::Get().GetWindow();
-		Engine::FrameBufferSpecification frameBufferSpecification(
+		Engine::FrameBufferDepthStencilContext depthStencil = { Engine::DepthFormat_D24UNorm_S8UInt };
+		Engine::FrameBufferSpecification frameBufferSpecification({
+			{ depthStencil },
 			{
-				Engine::DEPTH_STENCIL,
-				Engine::RENDER_TARGET
-			});
+				Engine::FrameBufferAttachment{ Engine::ColorFormat_RGBA32_Float }
+			}
+		});
 		frameBufferSpecification.width = window.GetWidth();
 		frameBufferSpecification.height = window.GetHeight();
 		m_frameBuffer = Engine::FrameBuffer::Create(frameBufferSpecification);

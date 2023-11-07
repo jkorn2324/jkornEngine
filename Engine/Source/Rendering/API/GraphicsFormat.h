@@ -54,8 +54,105 @@ namespace Engine
         GraphicsFormat_D32Float
     };
 
+    /**
+     * The Graphics Color Format. 
+     */
+    enum ColorFormat
+    {
+        ColorFormat_Unknown,
+        ColorFormat_None = ColorFormat_Unknown,
+
+        ColorFormat_RGBA32_Float,
+        ColorFormat_RGBA32_UInt,
+        ColorFormat_RGBA32_SInt,
+
+        ColorFormat_ARGB32_Float = ColorFormat_RGBA32_Float,
+        ColorFormat_ARGB32_UInt = ColorFormat_RGBA32_UInt,
+        ColorFormat_ARGB32_SInt = ColorFormat_RGBA32_SInt,
+
+        ColorFormat_RGBA8_UInt,
+        ColorFormat_RGBA8_SInt,
+
+        ColorFormat_UInt32,
+        ColorFormat_SInt32,
+        ColorFormat_Float32,
+
+        ColorFormat_UInt16,
+        ColorFormat_SInt16,
+
+        ColorFormat_UInt8,
+        ColorFormat_SInt8
+    };
+
+    enum DepthFormat
+    {
+        DepthFormat_Unknown,
+        DepthFormat_None = DepthFormat_Unknown,
+
+        DepthFormat_D24UNorm_S8UInt,
+        DepthFormat_D32Float_S8UInt,
+        DepthFormat_D32Float
+    };
+
     namespace Graphics
     {
+
+        constexpr GraphicsFormat ToGraphicsFormat(ColorFormat colorFormat)
+        {
+            switch (colorFormat)
+            {
+                case ColorFormat_RGBA32_Float:
+                    return GraphicsFormat_RGBA32_Float;
+                case ColorFormat_RGBA32_UInt:
+                    return GraphicsFormat_RGBA32_UInt;
+                case ColorFormat_RGBA32_SInt:
+                    return GraphicsFormat_RGBA32_SInt;
+
+                case ColorFormat_RGBA8_UInt:
+                    return GraphicsFormat_RGBA8_UInt;
+                case ColorFormat_RGBA8_SInt:
+                    return GraphicsFormat_RGBA8_SInt;
+
+                case ColorFormat_UInt32:
+                    return GraphicsFormat_UInt32;
+                case ColorFormat_SInt32:
+                    return GraphicsFormat_SInt32;
+                case ColorFormat_Float32:
+                    return GraphicsFormat_Float32;
+
+                case ColorFormat_UInt16:
+                    return GraphicsFormat_UInt16;
+                case ColorFormat_SInt16:
+                    return GraphicsFormat_SInt16;
+
+                case ColorFormat_UInt8:
+                    return GraphicsFormat_UInt8;
+                case ColorFormat_SInt8:
+                    return GraphicsFormat_SInt8;
+            }
+            return GraphicsFormat_Unknown;
+        }
+
+        constexpr GraphicsFormat ToGraphicsFormat(DepthFormat depthFormat)
+        {
+            switch (depthFormat)
+            {
+                case DepthFormat_D24UNorm_S8UInt:
+                    return GraphicsFormat_D24UNorm_S8UInt;
+                case DepthFormat_D32Float_S8UInt:
+                    return GraphicsFormat_D32Float_S8UInt;
+                case DepthFormat_D32Float:
+                    return GraphicsFormat_D32Float;
+            }
+            return GraphicsFormat_Unknown;
+        }
+
+        constexpr DepthFormat GetSystemDefaultDepthFormat()
+        {
+            // Gets the system default depth format.
+            return DepthFormat_D24UNorm_S8UInt;
+        }
+
         constexpr size_t SizeOfFormat(GraphicsFormat format)
         {
             switch (format)
