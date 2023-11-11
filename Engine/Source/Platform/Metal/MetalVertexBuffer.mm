@@ -16,7 +16,7 @@ MetalVertexBuffer::MetalVertexBuffer(const void* buffer, uint32_t numVertices, u
     MetalRenderingAPI& renderingAPI = (MetalRenderingAPI&)GraphicsRenderer::GetRenderingAPI();
     MTLResourceOptions metalResourceOptions = MTLResourceCPUCacheModeWriteCombined;
     NSInteger len = (NSInteger)(numVertices * stride);
-    m_bufferPtr = [renderingAPI.m_device newBufferWithBytes:buffer length:len options: metalResourceOptions];
+    m_bufferPtr = [renderingAPI.GetDevice() newBufferWithBytes:buffer length:len options: metalResourceOptions];
     JKORN_ENGINE_ASSERT(m_bufferPtr, "Failed to create a metal buffer");
 }
 
@@ -53,8 +53,9 @@ void MetalVertexBuffer::Bind() const
         return;
     }
     MetalRenderingAPI& renderingAPI = (MetalRenderingAPI&)GraphicsRenderer::GetRenderingAPI();
-    JKORN_ENGINE_ASSERT(renderingAPI.m_renderEncoder != nil, "The render encoder must exist.");
-    [renderingAPI.m_renderEncoder setVertexBuffer:m_bufferPtr offset:0 atIndex:0];
+    MTLRenderCommandEncoderPtr commandEncoder = renderingAPI.GetRenderCommandEncoder();
+    JKORN_ENGINE_ASSERT(commandEncoder != nil, "The render encoder must exist.");
+    [commandEncoder setVertexBuffer:m_bufferPtr offset:0 atIndex:0];
 }
 
 }

@@ -40,9 +40,8 @@ void Platform::Internals::BeginFrameImpl<RenderingAPIType, RenderingAPIType::MET
 template<>
 void Platform::Internals::EndFrameImpl<RenderingAPIType, RenderingAPIType::METAL>()
 {
-    // TODO: Implementation
     MetalRenderingAPI& renderingAPI = (MetalRenderingAPI&)GraphicsRenderer::GetRenderingAPI();
-    // ImGui_ImplMetal_RenderDrawData(ImGui::GetDrawData(), renderingAPI.m_commandQueue);
+    ImGui_ImplMetal_RenderDrawData(ImGui::GetDrawData(), renderingAPI.GetActiveCommandBuffer(), renderingAPI.GetRenderCommandEncoder());
 }
 
 }

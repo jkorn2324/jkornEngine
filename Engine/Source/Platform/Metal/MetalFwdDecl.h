@@ -8,6 +8,9 @@ typedef CAMetalLayer* CAMetalLayerPtr;
 @protocol MTLDevice;
 typedef id<MTLDevice> MTLDevicePtr;
 
+@protocol MTLDepthStencilState;
+typedef id<MTLDepthStencilState> MTLDepthStencilStatePtr;
+
 @protocol MTLCommandQueue;
 typedef id<MTLCommandQueue> MTLCommandQueuePtr;
 
@@ -29,6 +32,7 @@ typedef id<MTLTexture> MTLTexturePtr;
 #else
 
 using MTLDevicePtr = void*;
+using MTLDepthStencilStatePtr = void*:
 using CAMetalLayerPtr = void*;
 using MTLCommandQueuePtr = void*;
 using MTLRenderPassDescriptorPtr = void*;
@@ -36,5 +40,6 @@ using MTLCommandBufferPtr = void*;
 using MTLBufferPtr = void*;
 using MTLRenderCommandEncoderPtr = void*;
 using MTLTexturePtr = void*;
+
 
 #endif

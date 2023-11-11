@@ -9,6 +9,10 @@
 #include "DirectX11FrameBuffer.h"
 #endif
 
+#if defined(GRAPHICS_API_METAL)
+#include "MetalFrameBuffer.h"
+#endif
+
 namespace Engine
 {
 
@@ -30,6 +34,8 @@ namespace Engine
 
 #if defined(GRAPHICS_API_DIRECTX11)
         return new DirectX11FrameBuffer(specification);
+#elif defined(GRAPHICS_API_METAL)
+        return new MetalFrameBuffer(specification);
 #else
         JKORN_ENGINE_ASSERT(false, "Unsupported Frame Buffer Type.");
         return nullptr;

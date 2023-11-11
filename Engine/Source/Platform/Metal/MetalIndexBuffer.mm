@@ -37,7 +37,7 @@ MetalIndexBuffer::MetalIndexBuffer(const void* buffer, uint32_t numIndices, uint
     MetalRenderingAPI& renderingAPI = (MetalRenderingAPI&)GraphicsRenderer::GetRenderingAPI();
     MTLResourceOptions metalResourceOptions =  MTLResourceCPUCacheModeWriteCombined;
     NSInteger len = (NSInteger)(numIndices * stride);
-    m_bufferPtr = [renderingAPI.m_device newBufferWithBytes:buffer length:len options:metalResourceOptions];
+    m_bufferPtr = [renderingAPI.GetDevice() newBufferWithBytes:buffer length:len options:metalResourceOptions];
     JKORN_ENGINE_ASSERT(m_bufferPtr, "Failed to create a metal buffer");
 }
 

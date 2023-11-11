@@ -21,22 +21,28 @@ namespace Engine
 		Flag_GPU_WriteTexture = 1 << 3
 	};
 
+    enum TextureFlags
+    {
+        TextureFlags_None = 0,
+        TextureFlags_Temporary = 1 << 0,
+        TextureFlags_IsRenderTarget = 1 << 1
+    };
+
 	static const int c_readWriteFlags = (int)(Flag_GPU_ReadTexture | Flag_GPU_WriteTexture);
 
 	struct TextureSpecifications
 	{
 		TextureReadWriteFlags readWriteFlags;
 		GraphicsFormat textureFormat;
-        bool temporary;
+        TextureFlags textureFlags;
 
 		TextureSpecifications()
-			: readWriteFlags((TextureReadWriteFlags)c_readWriteFlags), textureFormat(GraphicsFormat_RGBA32_Float), temporary(false) { }
+			: readWriteFlags((TextureReadWriteFlags)c_readWriteFlags), textureFormat(GraphicsFormat_RGBA32_Float), textureFlags(TextureFlags_IsRenderTarget) { }
 		TextureSpecifications(uint32_t flags, GraphicsFormat textureFormat)
-			: readWriteFlags((TextureReadWriteFlags)flags), textureFormat(textureFormat), temporary(false) { }
+			: readWriteFlags((TextureReadWriteFlags)flags), textureFormat(textureFormat), textureFlags(TextureFlags_IsRenderTarget) { }
         
-        TextureSpecifications(uint32_t flags, GraphicsFormat textureFormat,
-                              bool temporary)
-            : readWriteFlags((TextureReadWriteFlags)c_readWriteFlags), textureFormat(textureFormat), temporary(temporary) { }
+        TextureSpecifications(uint32_t readWriteFlags, GraphicsFormat textureFormat, uint32_t textureFlags)
+            : readWriteFlags((TextureReadWriteFlags)readWriteFlags), textureFormat(textureFormat), textureFlags((TextureFlags)textureFlags) { }
 	};
 
 	class Texture
@@ -57,6 +63,8 @@ namespace Engine
 
 		bool IsReadable() const { return m_specifications.readWriteFlags & Flag_CPU_ReadTexture; }
 		bool IsWritable() const { return m_specifications.readWriteFlags & Flag_CPU_WriteTexture; }
+        
+        bool IsRenderTarget() const { return m_specifications.textureFlags & TextureFlags_IsRenderTarget; }
 
 		virtual bool GetPixel(uint32_t x, uint32_t y, MathLib::Vector4& pixel) const =0;
 		virtual void SetPixel(uint32_t x, uint32_t y, const MathLib::Vector4& pixel) =0;

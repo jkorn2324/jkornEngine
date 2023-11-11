@@ -18,9 +18,9 @@ MetalRenderingAPI::MetalRenderingAPI()
     : m_device(nullptr),
     m_swapChain(nullptr),
     m_commandQueue(nullptr),
-    m_renderDescriptor(nullptr),
-    m_activeCommandBuf(nullptr),
-    m_renderEncoder(nullptr),
+    m_activeCommandBuffer(nullptr),
+    m_renderCommandEncoder(nullptr),
+    m_renderPassDescriptor(nullptr),
     m_clearColor(MathLib::Vector4::One),
     m_width(0), m_height(0)
 {
@@ -32,12 +32,10 @@ MetalRenderingAPI::~MetalRenderingAPI()
     // TODO: Implementation
     [m_swapChain release];
     [m_commandQueue release];
-    [m_renderDescriptor release];
 
-    m_swapChain = nullptr;
     m_commandQueue = nullptr;
+    m_swapChain = nullptr;
     m_device = nullptr;
-    m_renderDescriptor = nullptr;
 }
 
 bool MetalRenderingAPI::Initialize(Window *windowPtr)
@@ -80,14 +78,6 @@ bool MetalRenderingAPI::Initialize(Window *windowPtr)
         window.contentView.wantsLayer = YES;
         m_swapChain = swapChain;
     }
-    
-    // Initialize the render pass descriptor.
-    m_renderDescriptor = [MTLRenderPassDescriptor new];
-    if (!m_renderDescriptor)
-    {
-        JKORN_ENGINE_ASSERT(false, "Failed to create the render pass descriptor.");
-        return false;
-    }
     // TODO: More Implementation, If Necessary
     return true;
 }
@@ -115,40 +105,42 @@ void MetalRenderingAPI::SetResolution(uint32_t width, uint32_t height)
 void MetalRenderingAPI::SetClearColor(const MathLib::Vector4 &color)
 {
     m_clearColor = color;
-
-#if false
-    // The render descriptor.
-    if (m_renderDescriptor)
-    {
-        m_renderDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(color.x, color.y, color.z, color.w);
-    }
-#endif
 }
 
 
-void MetalRenderingAPI::OnBeginRender()
+void MetalRenderingAPI::OnBeginRender(MTLRenderPassDescriptorPtr descriptor)
 {
-    JKORN_ENGINE_ASSERT(!m_activeCommandBuf && m_commandQueue && !m_renderEncoder, "Failed to begin rendering.");
+    // The current render pass descriptor.
+    m_renderPassDescriptor = descriptor;
     
-    // The active command buffer.
-    m_activeCommandBuf = [m_commandQueue commandBuffer];
-    m_renderEncoder = [m_activeCommandBuf renderCommandEncoderWithDescriptor: m_renderDescriptor];
+    // Applies the clear color to the metal rendering descriptor.
+    {
+        size_t length = (size_t)descriptor.renderTargetArrayLength;
+        for (size_t index = 0; index < length; ++index)
+        {
+            MTLRenderPassColorAttachmentDescriptor* desc = descriptor.colorAttachments[index];
+            desc.clearColor = MTLClearColorMake(m_clearColor.x, m_clearColor.y, m_clearColor.z, m_clearColor.w);
+        }
+    }
+
+    m_activeCommandBuffer = [m_commandQueue commandBuffer];
+    m_renderCommandEncoder = [m_activeCommandBuffer renderCommandEncoderWithDescriptor:descriptor];
 }
 
 void MetalRenderingAPI::OnEndRender()
 {
-    // Called to present to the active render target.
+    // Called to stop encoding.
+    [m_renderCommandEncoder endEncoding];
+    [m_activeCommandBuffer commit];
 }
 
 void MetalRenderingAPI::Present()
 {
-    // TODO: Implementation
-    JKORN_ENGINE_ASSERT(false, "Not Implemented Yet.");
+    JKORN_ENGINE_ASSERT(m_activeCommandBuffer, "The command buffer must exist for metal.");
     
-    // TODO: Change the current drawable to a cached CA Metal Layer.
     id<MTLDrawable> drawable = [m_swapChain nextDrawable];
-    [m_activeCommandBuf presentDrawable: drawable];
-    [m_activeCommandBuf commit];
+    [m_activeCommandBuffer presentDrawable: drawable];
+    [m_activeCommandBuffer commit];
 }
 
 void MetalRenderingAPI::Draw(VertexArray* vertexArray)
@@ -158,7 +150,7 @@ void MetalRenderingAPI::Draw(VertexArray* vertexArray)
 
 void MetalRenderingAPI::Draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer)
 {
-    JKORN_ENGINE_ASSERT(m_renderEncoder != nil, "The render encoder doesn't exist.");
+    JKORN_ENGINE_ASSERT(m_renderCommandEncoder != nil, "The render encoder doesn't exist.");
     
     MetalVertexBuffer* mtlVtxBuf = dynamic_cast<MetalVertexBuffer*>(vertexBuffer);
     MetalIndexBuffer* mtlIdxBuf = dynamic_cast<MetalIndexBuffer*>(indexBuffer);
@@ -169,12 +161,12 @@ void MetalRenderingAPI::Draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
     if (mtlIdxBuf != nullptr && mtlIdxBuf->IsValid())
     {
         MTLIndexType indexType = mtlIdxBuf->GetIndexType<MTLIndexType>();
-        [m_renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:mtlIdxBuf->GetNumIndices() indexType:indexType indexBuffer:mtlIdxBuf->GetMTLBufferPtr() indexBufferOffset:0];
+        [m_renderCommandEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:mtlIdxBuf->GetNumIndices() indexType:indexType indexBuffer:mtlIdxBuf->GetMTLBufferPtr() indexBufferOffset:0];
     }
     else
     {
         // Draws the primitives.
-        [m_renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:mtlVtxBuf->GetNumVerts()];
+        [m_renderCommandEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:mtlVtxBuf->GetNumVerts()];
     }
 }
 
@@ -193,8 +185,9 @@ bool MetalRenderingAPI::IsWireframe() const
 
 void MetalRenderingAPI::ClearTexture(uint32_t slot)
 {
-    JKORN_ENGINE_ASSERT(m_renderDescriptor, "The render pass descriptor is null.");
-    // TODO: Sets the current texture.
+    JKORN_ENGINE_ASSERT(m_renderCommandEncoder, "The render pass descriptor is null.");
+    // Sets the current fragment texture.
+    [m_renderCommandEncoder setFragmentTexture:nullptr atIndex:(NSInteger)slot];
 }
 
 uint32_t MetalRenderingAPI::GetWidth() const

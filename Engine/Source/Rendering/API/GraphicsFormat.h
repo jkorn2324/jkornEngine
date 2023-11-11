@@ -4,6 +4,9 @@
 
 namespace Engine
 {
+    // Reference Documents
+    // https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf
+
     /**
      * @brief Creates a graphics format type that can be used.
      */
@@ -147,12 +150,6 @@ namespace Engine
             return GraphicsFormat_Unknown;
         }
 
-        constexpr DepthFormat GetSystemDefaultDepthFormat()
-        {
-            // Gets the system default depth format.
-            return DepthFormat_D24UNorm_S8UInt;
-        }
-
         constexpr size_t SizeOfFormat(GraphicsFormat format)
         {
             switch (format)
@@ -236,11 +233,12 @@ namespace Engine
             return format == GraphicsFormat_D24UNorm_S8UInt
                 || format == GraphicsFormat_D32Float_S8UInt;
         }
-
-        constexpr GraphicsFormat GetDefaultDepthStencilFormat()
-        {
-            // TODO: Implementation for multiple platforms.
-            return GraphicsFormat_D24UNorm_S8UInt;
-        }
+    
+        constexpr GraphicsFormat GetDefaultDepthStencilFormat();
+    
+        /**
+         * Gets the maximum render targets.
+         */
+        constexpr size_t GetMaxRenderTargets();
     }
 }
