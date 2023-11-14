@@ -112,7 +112,6 @@ void MetalRenderingAPI::OnBeginRender(MTLRenderPassDescriptorPtr descriptor)
 {
     // The current render pass descriptor.
     m_renderPassDescriptor = descriptor;
-    
     // Applies the clear color to the metal rendering descriptor.
     {
         size_t length = (size_t)descriptor.renderTargetArrayLength;

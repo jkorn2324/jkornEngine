@@ -4,7 +4,7 @@
 #include "MetalRenderingAPI.h"
 #include "GraphicsRenderer.h"
 
-#include <memory>
+#include "Memory.h"
 #include <Metal/Metal.h>
 
 namespace Engine
@@ -43,7 +43,8 @@ void MetalVertexBuffer::SetData(const void *buffer, uint32_t numVertices, uint32
     }
     // Sets the data for the vertex buffer.
     void* contentPtr = [m_bufferPtr contents];
-    std::memcpy(contentPtr, buffer, numVertices * stride);
+    size_t memorySize = (size_t)numVertices * stride;
+    Memory::Memcpy(contentPtr, buffer, memorySize);
 }
     
 void MetalVertexBuffer::Bind() const
