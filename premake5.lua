@@ -143,7 +143,7 @@ workspace "jkornEngine"
 	filter { "action:xcode4" }
 		xcodebuildsettings 
 		{ 
-			["ALWAYS_SEARCH_USER_PATHS"] = "YES" 
+			["ALWAYS_SEARCH_USER_PATHS"] = "YES"
 		}
 	filter { }
 

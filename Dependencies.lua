@@ -101,16 +101,6 @@ function include_metal_frameworks()
 			"Foundation.framework"
         }
 
-		externalincludedirs
-		{
-			-- "%{IncludeDirectories.metalcpp_macos12_ios15}"
-		}
-
-		frameworkdirs
-		{
-			-- "%{IncludeDirectories}"
-		}
-
         buildoptions
         {
             "-framework Metal",

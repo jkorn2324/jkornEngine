@@ -7,6 +7,7 @@
 
 namespace Engine
 {
+	class Texture;
 
 	struct DirectX11ViewTexture
 	{
@@ -43,8 +44,8 @@ namespace Engine
 		void Bind() const override;
 		void UnBind() const override;
 
-		class Texture* GetDepthTexture() const override;
-		class Texture* GetRenderTargetTexture(uint32_t index) const override;
+		Texture* GetDepthTexture() const override;
+		Texture* GetRenderTargetTexture(uint32_t index) const override;
 
 		void ReGenerateTextures() override;
 		void Resize(uint32_t width, uint32_t height) override;

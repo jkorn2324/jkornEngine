@@ -51,6 +51,9 @@
 # Visual Studio Code Files
 .vscode/
 
+# Python File
+__pycache__
+
 # More Files
 */Engine.log
 */Profile.json
@@ -64,3 +67,6 @@ DerivedData/
 .DS_Store
 
 Editor/imgui.ini
+
+# Other Dependencies
+Engine/Libraries/DirectXShaderCompiler/
