@@ -21,72 +21,29 @@ namespace Engine
 		return LoadFromFile_Internal(filePath);
 	}
 
-	bool Shader::Create(Shader** asset)
+	Shader* Shader::Create(const BufferLayout& bufferLayout, bool empty)
 	{
 #if defined(GRAPHICS_API_DIRECTX11)
-        *asset = new DirectX11Shader();
-        return true;
+		return empty ? new DirectX11Shader()
+			: new DirectX11Shader(bufferLayout);
 #else
-        JKORN_ENGINE_ASSERT(false, "Unsupported shader type.");
-		return false;
+		JKORN_ENGINE_ASSERT(false, "Unsupported shader type.");
+		return nullptr;
 #endif
 	}
 
-	bool Shader::Create(std::shared_ptr<Shader>& shader)
+	Shader* Shader::LoadFromFile(const wchar_t* fileName, const BufferLayout& bufferLayout)
 	{
-#if defined(GRAPHICS_API_DIRECTX11)
-        shader = std::make_shared<DirectX11Shader>();
-        return true;
-#else
-        JKORN_ENGINE_ASSERT(false, "Unsupported shader type.");
-        return false;
-#endif
-	}
-
-	bool Shader::Create(Shader** shader, const BufferLayout& bufferLayout)
-	{
-#if defined(GRAPHICS_API_DIRECTX11)
-		*shader = new DirectX11Shader(bufferLayout);
-        return true;
-#else
-        JKORN_ENGINE_ASSERT(false, "Unsupported shader type.");
-        return false;
-#endif
-	}
-
-	bool Shader::Create(std::shared_ptr<Shader>& shader, const BufferLayout& bufferLayout)
-	{
-#if defined(GRAPHICS_API_DIRECTX11)
-		shader = std::make_shared<DirectX11Shader>(bufferLayout);
-		return true;
-#else
-        JKORN_ENGINE_ASSERT(false, "Unsupported shader type.");
-        return false;
-#endif
-	}
-
-	bool Shader::LoadFromFile(Shader** shader, const wchar_t* fileName, const BufferLayout& bufferLayout)
-	{
-		if (!Shader::Create(shader, bufferLayout)) return false;
-		
-		Shader* shaderRef = *shader;
-		if (!shaderRef->LoadFromFile_Internal(fileName))
+		Shader* createdShader = Create(bufferLayout);
+		if (!createdShader)
 		{
-			delete shaderRef;
-			*shader = nullptr;
+			return nullptr;
+		}
+		if (!createdShader->LoadFromFile_Internal(fileName))
+		{
+			delete createdShader;
 			return false;
 		}
-		return true;
-	}
-
-	bool Shader::LoadFromFile(std::shared_ptr<Shader>& shader, const wchar_t* fileName, const BufferLayout& bufferLayout)
-	{
-		if (!Shader::Create(shader, bufferLayout)) return false;
-		if (!shader->LoadFromFile_Internal(fileName))
-		{
-			shader.reset();
-			return false;
-		}
-		return true;
+		return createdShader;
 	}
 }

@@ -43,8 +43,8 @@ namespace Editor
 
 		if (s_numProjectMenus <= 0)
 		{
-			Engine::Texture::LoadFromFile(&s_fileIconTexture, g_fileIconPath);
-			Engine::Texture::LoadFromFile(&s_folderIconTexture, g_folderIconPath);
+			s_fileIconTexture = Engine::Texture::LoadFromFile(g_fileIconPath);
+			s_folderIconTexture = Engine::Texture::LoadFromFile(g_folderIconPath);
 		}
 		s_numProjectMenus++;
 	}

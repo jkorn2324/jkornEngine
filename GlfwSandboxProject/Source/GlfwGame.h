@@ -41,7 +41,7 @@ namespace GlfwSandbox
 		Engine::VertexBuffer* m_vertexBuffer;
 		Engine::IndexBuffer* m_indexBuffer;
 
-		Engine::SubTexture* m_subTexture;
+		Engine::SubTexture m_subTexture;
 
 		Engine::ConstantBuffer* m_entityConstantBuffer;
 		EntityConstants m_entityConstants;

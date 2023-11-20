@@ -12,13 +12,12 @@ namespace Engine
 
 	class Texture;
 
-	class SubTexture
+	class SubTextureContext
 	{
 	public:
-		explicit SubTexture(Texture* texture);
-		explicit SubTexture(Texture* texture, const Vec2& minUV,
+		SubTextureContext(float width, float height);
+		SubTextureContext(float width, float height, const Vec2& minUV,
 			const Vec2& maxUV);
-		~SubTexture();
 
 		bool HasDefaultUVS() const;
 		const Vec2* GetUVS() const;
@@ -27,19 +26,29 @@ namespace Engine
 
 		const Vec2& GetSize() const;
 
-		const Texture* GetTexture() const;
-
-		static SubTexture* CreateFromTexCoords(Texture* texture,
+		static SubTextureContext CreateFromTexCoords(Texture* texture,
 			const Vec2& minTextureCoord, const Vec2& maxTextureCoord);
-		static SubTexture* CreateFromSizeAndTexCoord(Texture* texture,
+		static SubTextureContext CreateFromSizeAndTexCoord(Texture* texture,
 			const Vec2& texturePos, const Vec2& size);
-		static SubTexture* CreateFromTextureAtlas(Texture* texture,
+		static SubTextureContext CreateFromTextureAtlas(Texture* texture,
 			const Vec2& cellSize, const Vec2Int& atlasRowCol, const Vec2& scale = Vec2::One);
 
 	private:
-		Texture* m_texture;
 		Vec2 m_uvs[UV_COUNT];
 		Vec2 m_size;
-		bool m_defaultUVs;
+	};
+
+	/**
+	 * The sub texture context. 
+	 */
+	struct SubTexture
+	{
+		SubTextureContext subTextureContext;
+		Texture* texture = nullptr;
+
+		SubTexture()
+			: texture(nullptr), subTextureContext(0.0f, 0.0f) { }
+		SubTexture(Texture* texture, const SubTextureContext& context)
+			: texture(texture), subTextureContext(context) { }
 	};
 }

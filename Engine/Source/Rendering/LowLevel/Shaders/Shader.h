@@ -26,14 +26,27 @@ namespace Engine
 		BufferLayout m_bufferLayout;
 
 	public:
-		static bool Create(Shader** shader);
-		static bool Create(std::shared_ptr<Shader>& shader);
-		static bool Create(Shader** shader, const BufferLayout& bufferLayout);
-		static bool Create(std::shared_ptr<Shader>& shader, const BufferLayout& bufferLayout);
 
-		static bool LoadFromFile(Shader** shader, 
-			const wchar_t* fileName, const BufferLayout& bufferLayout);
-		static bool LoadFromFile(std::shared_ptr<Shader>& shader,
-			const wchar_t* fileName, const BufferLayout& bufferLayout);
+		static Shader* Create()
+		{
+			BufferLayout layout;
+			return Create(layout, true);
+		}
+
+		/**
+		 * Creates a shader with a buffer layout. 
+		 */
+		static Shader* Create(const BufferLayout& bufferLayout)
+		{
+			return Create(bufferLayout, false);
+		}
+
+		/**
+		 * Loads a shader with a buffer layout from a file. 
+		 */
+		static Shader* LoadFromFile(const wchar_t* fileName, const BufferLayout& layout);
+
+	private:
+		static Shader* Create(const BufferLayout& bufferLayout, bool empty);
 	};
 }

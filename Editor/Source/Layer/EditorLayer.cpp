@@ -104,7 +104,7 @@ namespace Editor
 			
 			// TODO: Temporary, makes sure that it gets deleted when program ends.
 			static std::shared_ptr<Engine::Texture> texture;
-			Engine::Texture::LoadFromFile(texture, L"Assets/brick-texture.png");
+			texture.reset(Engine::Texture::LoadFromFile(L"Assets/brick-texture.png"));
 			meshComponent.material->SetTexture(0, texture.get());
 
 			{
@@ -123,8 +123,8 @@ namespace Editor
 
 				// TODO: Temporary, makes sure that it gets deleted when program ends.
 				static std::shared_ptr<Engine::Shader> shader;
-				Engine::Shader::LoadFromFile(shader,
-					L"Shaders/LitShader.hlsl", bufferLayout);
+				shader.reset(Engine::Shader::LoadFromFile(
+					L"Shaders/LitShader.hlsl", bufferLayout));
 				meshComponent.material->SetShader(shader.get());
 			}
 			meshComponent.mesh = &Engine::GraphicsRenderer3D::GetCubeMesh();

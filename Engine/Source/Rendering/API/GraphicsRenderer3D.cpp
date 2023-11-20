@@ -251,8 +251,8 @@ namespace Engine
 
 			// TODO: Temporary, should be loaded from an asset.
 			static std::shared_ptr<Shader> shader;
-			Shader::LoadFromFile(shader,
-				L"Shaders/Unlit-VertUvPosShader.hlsl", Mesh::c_defaultLayout);
+			shader.reset(Shader::LoadFromFile(
+				L"Shaders/Unlit-VertUvPosShader.hlsl", Mesh::c_defaultLayout));
 			s_defaultMaterial->SetShader(shader.get());
 		}
 

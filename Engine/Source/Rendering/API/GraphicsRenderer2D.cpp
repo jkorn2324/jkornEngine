@@ -122,7 +122,7 @@ namespace Engine
 		// Loads the Sprite Shader.
 		{
 			// TODO: Replace with Asset Caching, but for now this will due.
-			Engine::Shader::LoadFromFile(&s_spriteShader,
+			s_spriteShader = Engine::Shader::LoadFromFile(
 				L"Shaders/SpriteShader.hlsl",
 				{ s_spriteVertexBuffer->GetBufferLayoutParameters() });
 			s_spriteMaterial = new Material({ { "c_spriteColor", LayoutType_Vector4 } });
@@ -134,11 +134,11 @@ namespace Engine
 
 	void GraphicsRenderer2D::Release()
 	{
+		delete s_spriteVertexBuffer;
+		delete s_spriteIndexBuffer;
 		delete s_spriteShader;
 		delete s_spriteMaterial;
 		delete s_spriteObjectConstantBuffer;
-		delete s_spriteVertexBuffer;
-		delete s_spriteIndexBuffer;
 	}
 
 	void GraphicsRenderer2D::DrawRect(const MathLib::Vector2& pos, const MathLib::Vector2& scale, 
@@ -168,21 +168,27 @@ namespace Engine
 		DrawRectInternal(mat, color, texture, entityID);
 	}
 
+	void GraphicsRenderer2D::DrawRect(const MathLib::Vector2& pos, const MathLib::Vector2& scale,
+		const SubTexture& subTexture, int32_t entityID)
+	{
+		DrawRect(pos, scale, subTexture.texture, subTexture.subTextureContext, entityID);
+	}
+
 	void GraphicsRenderer2D::DrawRect(const MathLib::Vector2& pos, const MathLib::Vector2 &scale, 
-		SubTexture* texture, int32_t entityID)
+		Texture* texture, const SubTextureContext& context, int32_t entityID)
 	{
 		Mat4x4 mat = Mat4x4::CreateScale(scale.x, scale.y, 1.0f)
 			* Mat4x4::CreateTranslation(pos.x, pos.y, 0.0f);
-		DrawRect(mat, Vec4::One, texture, entityID);
+		DrawRect(mat, Vec4::One, texture, context, entityID);
 	}
 	
 	void GraphicsRenderer2D::DrawRect(const MathLib::Matrix4x4& transformMat, const MathLib::Vector4& color, 
-		SubTexture* texture, int32_t entityID)
+		Texture* texture, const SubTextureContext& context, int32_t entityID)
 	{
 		// Only changes UVs if it doesn't have defaults.
-		if (texture->HasDefaultUVS())
+		if (context.HasDefaultUVS())
 		{
-			DrawRect(transformMat, color, (Texture*)texture->GetTexture(), entityID);
+			DrawRect(transformMat, color, texture, entityID);
 			return;
 		}
 		// TODO: Create Bounds so that it can be rendered in its specific aspect ratio
@@ -190,17 +196,17 @@ namespace Engine
 		// Changes the UVs so that is based on the sub texture.
 		GraphicsSpriteVertex verts[4];
 		Memory::Memcpy(&verts[0], &vertices[0], sizeof(vertices));
-		verts[0].uv = texture->GetUVS()[0];
-		verts[1].uv = texture->GetUVS()[1];
-		verts[2].uv = texture->GetUVS()[2];
-		verts[3].uv = texture->GetUVS()[3];
+		verts[0].uv = context.GetUVS()[0];
+		verts[1].uv = context.GetUVS()[1];
+		verts[2].uv = context.GetUVS()[2];
+		verts[3].uv = context.GetUVS()[3];
 
 		s_spriteVertexBuffer->SetData(&verts, 4, sizeof(GraphicsSpriteVertex));
 		s_spriteVertexBufferDefault = false;
 
 		Mat4x4 cpy = transformMat;
-		ApplySizeToMatrix(cpy, texture->GetSize());
-		DrawRectInternal(cpy, color, (Texture*)texture->GetTexture(), entityID);
+		ApplySizeToMatrix(cpy, context.GetSize());
+		DrawRectInternal(cpy, color, texture, entityID);
 	}
 
 }

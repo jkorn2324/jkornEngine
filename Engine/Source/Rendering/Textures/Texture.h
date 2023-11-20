@@ -94,23 +94,41 @@ namespace Engine
 		uint32_t m_width, m_height;
 
 	public:
-		static bool Create(Texture** texture);
-		static bool Create(Texture** texture, uint32_t width, uint32_t height, 
-			const TextureSpecifications& specifications);
-		static bool Create(std::shared_ptr<Texture>& texture);
-		static bool Create(std::shared_ptr<Texture>& texture, uint32_t width, uint32_t height, 
-			const TextureSpecifications& specifications);
+		/**
+		 * Creates a new texture w/ default settings. 
+		 */
+		static Texture* Create()
+		{
+			TextureSpecifications emptySpecifications;
+			return Create(0, 0, emptySpecifications, true);
+		}
+		/**
+		 * Creates a new Texture. 
+		 */
+		static Texture* Create(uint32_t width, uint32_t height,
+			const TextureSpecifications& specifications)
+		{
+			return Create(width, height, specifications, false);
+		}
 
-		static bool LoadFromFile(Texture** texture,
-			const wchar_t* texturePath);
-		static bool LoadFromFile(Texture** texture,
-			const wchar_t* texturePath,
-			const TextureSpecifications& specifications);
-		
-		static bool LoadFromFile(std::shared_ptr<Texture>& texture,
-			const wchar_t* texturePath);
-		static bool LoadFromFile(std::shared_ptr<Texture>& texture,
-			const wchar_t* texturePath,
+	private:
+		static Texture* Create(uint32_t width, uint32_t height,
+			const TextureSpecifications& specifications, bool empty);
+
+	public:
+		/**
+		 * Loads a texture from a file. 
+		 */
+		static Texture* LoadFromFile(const wchar_t* texturePath)
+		{
+			TextureSpecifications specifications;
+			return LoadFromFile(texturePath, specifications);
+		}
+
+		/**
+		 * Loads a texture from a file path. 
+		 */
+		static Texture* LoadFromFile(const wchar_t* texturePath,
 			const TextureSpecifications& specifications);
 
 		friend class GraphicsRenderer;

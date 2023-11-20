@@ -11,6 +11,8 @@ namespace GlfwSandbox
 
 	static float s_rotation = 0.0f;
 
+	static Engine::Texture* s_happyFaceTexture = nullptr;
+
 	namespace
 	{
 		void InitializeSystems()
@@ -64,7 +66,7 @@ namespace GlfwSandbox
 		m_vertexBuffer(nullptr),
 		m_indexBuffer(nullptr),
 		m_entityConstantBuffer(nullptr),
-		m_subTexture(nullptr),
+		m_subTexture(),
 		m_frameBuffer(nullptr)
 	{
 		InitializeRenderBuffers();
@@ -75,7 +77,8 @@ namespace GlfwSandbox
 	GlfwGame::~GlfwGame()
 	{
 		delete m_frameBuffer;
-		delete m_subTexture;
+		delete s_happyFaceTexture;
+		delete m_subTexture.texture;
 		delete m_entityConstantBuffer;
 		delete m_vertexBuffer;
 		delete m_indexBuffer;
@@ -84,12 +87,10 @@ namespace GlfwSandbox
 	void GlfwGame::InitializeRenderBuffers()
 	{
 		{
-			Engine::Texture* texture;
-			if (Engine::Texture::LoadFromFile(&texture, CARDS_LARGE_TILEMAP))
-			{
-				m_subTexture = Engine::SubTexture::CreateFromTexCoords(texture,
-					MathLib::Vector2(11.0f, 2.0f), MathLib::Vector2(51.0f, 61.0f));
-			}
+			m_subTexture.texture = Engine::Texture::LoadFromFile(CARDS_LARGE_TILEMAP);
+			m_subTexture.subTextureContext = Engine::SubTextureContext::CreateFromTexCoords(
+				m_subTexture.texture,
+				MathLib::Vector2(11.0f, 2.0f), MathLib::Vector2(51.0f, 61.0f));
 		}
 
 		// Creates a constant buffer.
@@ -118,8 +119,7 @@ namespace GlfwSandbox
 			component.SetLocalScale(1.0f, 1.0f, 1.0f);
 			Engine::SpriteComponent& sprite
 				= entity.AddComponent<Engine::SpriteComponent>();
-
-			Engine::Texture::LoadFromFile(&sprite.texture, L"Assets/Textures/happy-face.png");
+			s_happyFaceTexture = sprite.texture = Engine::Texture::LoadFromFile(L"Assets/Textures/happy-face.png");
 		}
 	}
 

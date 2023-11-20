@@ -42,63 +42,6 @@ namespace Engine
 		return LoadFromFile_Internal(texturePath);
 	}
 
-	bool Texture::Create(Texture** texture)
-	{
-#if defined(GRAPHICS_API_DIRECTX11)
-        *texture = new DirectX11Texture();
-        return true;
-#elif defined(GRAPHICS_API_METAL)
-        *texture = (Texture*)(new MetalTexture());
-        return true;
-#else
-        JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");
-        return false;
-#endif
-	}
-
-	bool Texture::Create(Texture** texture, uint32_t width, uint32_t height, const TextureSpecifications& specifications)
-	{
-#if defined(GRAPHICS_API_DIRECTX11)
-		*texture = new DirectX11Texture(width, height, specifications);
-        return true;
-#elif defined(GRAPHICS_API_METAL)
-        *texture = new MetalTexture(width, height, specifications);
-        return true;
-#else
-        JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");
-        return false;
-#endif
-	}
-
-	bool Texture::Create(std::shared_ptr<Texture>& texture)
-	{
-#if defined(GRAPHICS_API_DIRECTX11)
-        texture = std::make_shared<DirectX11Texture>();
-        return true;
-#elif defined(GRAPHICS_API_METAL)
-        texture = std::make_shared<MetalTexture>();
-        return true;
-#else
-        JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");
-        return false;
-#endif
-	}
-
-	bool Texture::Create(std::shared_ptr<Texture>& texture, uint32_t width, uint32_t height,
-		const TextureSpecifications& specifications)
-	{
-#if defined(GRAPHICS_API_DIRECTX11)
-        texture = std::make_shared<DirectX11Texture>(width, height, specifications);
-        return true;
-#elif defined(GRAPHICS_API_METAL)
-        texture = std::make_shared<MetalTexture>(width, height, specifications);
-        return true;
-#else
-        JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");
-        return false;
-#endif
-	}
-
 	bool Texture::CopyTexture(Texture& a, Texture& b)
 	{
 		return a.CopyTo(b);
@@ -109,40 +52,32 @@ namespace Engine
 		return a.CopyTo(b);
 	}
 
-	bool Texture::LoadFromFile(Texture** texture, const wchar_t* texturePath)
+	Texture* Texture::Create(uint32_t width, uint32_t height, const TextureSpecifications& specifications, bool empty)
 	{
-		return LoadFromFile(texture, texturePath, c_defaultSpecification);
+#if defined(GRAPHICS_API_DIRECTX11)
+		return empty ? new DirectX11Texture()
+				: new DirectX11Texture(width, height, specifications);
+#elif defined(GRAPHICS_API_METAL)
+		return empty ? new MetalTexture()
+				: new MetalTexture(width, height, specifications);
+#else
+		JKORN_ENGINE_ASSERT(false, "Unsupported rendering API type.");
+		return nullptr;
+#endif
 	}
 
-	bool Texture::LoadFromFile(Texture** texture, const wchar_t* texturePath,
-		const TextureSpecifications& specifications)
+	Texture* Texture::LoadFromFile(const wchar_t* texturePath, const TextureSpecifications& specifications)
 	{
-		if (!Create(texture)) return false;
-		Texture* textureReference = *texture;
-		if (!textureReference->LoadFromFile_Internal(texturePath, specifications))
+		Texture* texturePtr = Create();
+		if (!texturePtr)
 		{
-			delete textureReference;
-			*texture = nullptr;
-			return false;
+			return nullptr;
 		}
-		return true;
-	}
-
-	bool Texture::LoadFromFile(std::shared_ptr<Texture>& texture,
-		const wchar_t* texturePath)
-	{
-		return LoadFromFile(texture, texturePath, c_defaultSpecification);
-	}
-
-	bool Texture::LoadFromFile(std::shared_ptr<Texture>& texture,
-		const wchar_t* texturePath, const TextureSpecifications& specifications)
-	{
-		if (!Create(texture)) return false;
-		if (!texture->LoadFromFile_Internal(texturePath, specifications))
+		if (!texturePtr->LoadFromFile_Internal(texturePath))
 		{
-			texture.reset();
-			return false;
+			delete texturePtr;
+			return nullptr;
 		}
-		return false;
+		return texturePtr;
 	}
 }
