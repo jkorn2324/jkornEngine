@@ -42,7 +42,7 @@ namespace Engine
 		if (!createdShader->LoadFromFile_Internal(fileName))
 		{
 			delete createdShader;
-			return false;
+			return nullptr;
 		}
 		return createdShader;
 	}
