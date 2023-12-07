@@ -3,12 +3,20 @@ import sys
 import time
 from zipfile import ZipFile
 from tarfile import TarFile
-import requests
 
+# Try to import requests
+try:
+    import requests
+except:
+    requests = None
 
 # Downloads a file from an url and a path
 # Returns True if we successfully downloaded a file, false otherwise
 def download_file(url: str, file_path: str) -> bool:
+
+    if requests is None:
+        return False
+
     file_path = os.path.abspath(file_path)
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
@@ -70,9 +78,10 @@ def unzip_zip_file(file_path, delete_zip: bool = True):
     zip_file_location = zip_file_path.replace('.zip', '')
 
     # Extract Zip file to folder path & then remove zip file
-    with ZipFile(zip_file_path, 'r') as z_obj:
+    z_obj = ZipFile.open(zip_file_path, mode='r')
+    if z_obj is not None:
         z_obj.extractall(path=zip_file_location)
-    z_obj.close()
+        z_obj.close()
 
     # Delete the zip file from the file path.
     if delete_zip:
@@ -82,13 +91,15 @@ def unzip_zip_file(file_path, delete_zip: bool = True):
 
 # Unzips the tar.gz file at the file path
 def unzip_tar_gz_file(file_path, delete_zip: bool = True):
+    file_path = str(file_path)
     tar_file_path = os.path.abspath(file_path)
-    tar_location = os.path.dirname(tar_file_path)
+    tar_file_location = tar_file_path.replace('.tar.gz', '')
 
     # Extract the TarGz file to folder path & then remove the tar.gz file.
-    with TarFile(tar_file_path, 'r') as t_obj:
-        t_obj.extractall(path=tar_location)
-    t_obj.close()
+    t_obj = TarFile.open(tar_file_path, mode='r')
+    if t_obj is not None:
+        t_obj.extractall(path=tar_file_location)
+        t_obj.close()
 
     # Delete the tar.gz at the location.
     if delete_zip:
@@ -99,7 +110,7 @@ def unzip_tar_gz_file(file_path, delete_zip: bool = True):
 # Unzips the file based on the file extension
 def unzip_file(file_path, delete_zip: bool = True):
     file_ext = get_file_ext(file_path)
-    print(f"Unzipping file at '{file_path}'")
+    print(f"Unzipping file at '{os.path.abspath(file_path)}'")
     if file_ext == 'zip':
         unzip_zip_file(file_path=file_path, delete_zip=delete_zip)
     elif file_ext == 'tar.gz':

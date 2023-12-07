@@ -22,6 +22,14 @@ def has_valid_python_version(min_version_major: int = 3, min_version_minor: int 
         return False
     return True
 
+def try_import_package(package: str) -> bool: 
+    try:
+        __import__(package)
+        return True
+    except ImportError:
+        print("Failed to import package.")
+        return False
+
 
 def is_package_installed(package_name: str) -> bool:
     """
@@ -42,15 +50,15 @@ def install_package(package_name: str) -> bool:
     """
     print(f"Installing python dependency package '{package_name}.")
     if importlib.util.find_spec(package_name) is None:
-        permission_granted = platform_utilities.get_user_permission(f"Would you like to install the python package '{package_name}'")
+        permission_granted = Utils.platform_utilities.get_user_permission(f"Would you like to install the python package '{package_name}'")
         if not permission_granted:
             return False
 
-        platform_name = platform_utilities.get_platform_type()
-        if platform_name == platform_utilities.PlatformType.Windows:
+        platform_name = Utils.platform_utilities.get_platform_type()
+        if platform_name == Utils.platform_utilities.PlatformType.Windows:
             completed = subprocess.run(['py', '-m', 'pip', 'install', '--user', package_name], capture_output=True)
-        elif platform_name == platform_utilities.PlatformType.Linux \
-                or platform_name == platform_utilities.PlatformType.MacOS:
+        elif platform_name == Utils.platform_utilities.PlatformType.Linux \
+                or platform_name == Utils.platform_utilities.PlatformType.MacOS:
             completed = subprocess.run(['python3', '-m', 'pip', 'install', '--user', package_name], capture_output=True)
         else:
             completed = None

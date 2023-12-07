@@ -15,9 +15,9 @@ def get_premake_executable_path(premake_root_dir: str):
     if platform_name is None:
         return None
     if platform_name == Utils.platform_utilities.PlatformType.MacOS:
-        return create_premake_path(premake_root_dir=premake_root_dir) + os.sep + 'premake'
+        return os.path.abspath(create_premake_path(premake_root_dir=premake_root_dir) + os.sep + 'premake5')
     elif platform_name == Utils.platform_utilities.PlatformType.Windows:
-        return create_premake_path(premake_root_dir=premake_root_dir) + os.sep + 'premake5.exe'
+        return os.path.abspath(create_premake_path(premake_root_dir=premake_root_dir) + os.sep + 'premake5.exe')
     return None
 
 
@@ -44,12 +44,12 @@ def install_premake(premake_path: str, premake_version: str, override: bool = Fa
     abs_premake_dir = create_premake_path(premake_root_dir=premake_dir)
     os.makedirs(abs_premake_dir, exist_ok=True)
 
-    system = Utils.platform_utilities.get_platform_name()
-    if system == 'Windows':
+    system = Utils.platform_utilities.get_platform_type()
+    if system == Utils.platform_utilities.PlatformType.Windows:
         git_release_file = 'premake-' + premake_version + '-windows.zip'
-    elif system == 'Linux':
+    elif system == Utils.platform_utilities.PlatformType.Linux:
         git_release_file = 'premake-' + premake_version + '-linux.tar.gz'
-    elif system == 'MacOS':
+    elif system == Utils.platform_utilities.PlatformType.MacOS:
         git_release_file = 'premake-' + premake_version + '-macosx.tar.gz'
     else:
         git_release_file = None

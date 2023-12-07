@@ -95,6 +95,7 @@ workspace "jkornEngine"
 	filter { "platforms:MacOS" }
 		system "MacOSx"
 		architecture "x86_64"
+		systemversion "10.15:latest"
 
 		defines
 		{

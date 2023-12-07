@@ -32,7 +32,7 @@ def get_platform_name():
 def get_user_permission(prompt: str) -> bool:
     permission_granted = False
     while not permission_granted:
-        reply = str(input(f"{prompt} '{0:s}'? [Y/N]")).lower().strip()[:1]
+        reply = str(input(f"{prompt}? [Y/N] ")).lower().strip()[:1]
         if reply == 'n':
             return False
         permission_granted = (reply == 'y')
