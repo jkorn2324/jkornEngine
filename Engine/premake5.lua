@@ -474,6 +474,12 @@ project "Engine"
 
 	--================================= END METAL + QUARTZCORE DEPENDENCY ====================--
 
+	--================================ BEGIN DXC DEPENDENCY ==================================--
+
+	include_shadertool_dependencies()
+
+	--================================ END DXC DEPENDENCY ==================================--
+
 	-- Ensures that all of the files outside of the source file don't have precompiled headers associated with them.
 	filter { "files:not %{prj.location}/Source/**.h", "files:not %{prj.location}/Source/**.cpp", "files:not %{prj.location}/Source/**.hpp" }
 		flags { "NoPCH" }
