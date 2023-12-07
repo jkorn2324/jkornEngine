@@ -68,5 +68,5 @@ DerivedData/
 
 Editor/imgui.ini
 
-# Other Dependencies
-Engine/Libraries/DirectXShaderCompiler/
+# Generated Files
+External/**

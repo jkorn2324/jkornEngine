@@ -1,9 +1,10 @@
 import subprocess
 import json
 from enum import Enum
-from Utils import file_utilities 
+from Utils import file_utilities
 
-class git_url_type(Enum):
+
+class GitUrlType(Enum):
     url_type_git_api_latest_release = 0,
     url_type_git = 1
 
@@ -14,10 +15,10 @@ def get_git_release_download_url(repo_owner: str, repo_name: str, version: str, 
 
 
 # Gets the url from the repository owner + repository name.
-def build_git_url(repo_owner, repo_name, api: git_url_type = git_url_type.url_type_git_api_latest_release):
-    if api == git_url_type.url_type_git_api_latest_release:
+def build_git_url(repo_owner, repo_name, api: GitUrlType = GitUrlType.url_type_git_api_latest_release):
+    if api == GitUrlType.url_type_git_api_latest_release:
         return "https://api.github.com/repos/" + repo_owner + "/" + repo_name + "/releases/latest"
-    if api == git_url_type.url_type_git:
+    if api == GitUrlType.url_type_git:
         return "https://github.com/" + repo_owner + "/" + repo_name + ".git"
     return ""
 
@@ -36,17 +37,17 @@ def get_git_browser_dl_url(asset_json_map, asset_index):
 # Gets the latest release download url.
 def get_latest_git_release_browser_dl_url(repo_owner, repo_name, asset_index):
     asset_index = int(asset_index)
-    url = build_git_url(repo_owner, repo_name, git_url_type.url_type_git_api_latest_release)
+    url = build_git_url(repo_owner, repo_name, GitUrlType.url_type_git_api_latest_release)
     print(url)
-    curlOutput = subprocess.run(["curl", "-s", url], capture_output=True, text=True)
-    jsonLoad = json.loads(curlOutput.stdout)
+    curl_output = subprocess.run(["curl", "-s", url], capture_output=True, text=True)
+    json_load = json.loads(curl_output.stdout)
     # Determine if the assets exist.
-    if not 'assets' in jsonLoad:
-        return [None, jsonLoad['message']]
-    
-    assets = jsonLoad['assets']
-    dlUrl = get_git_browser_dl_url(assets, asset_index=asset_index)
-    return [dlUrl, None]
+    if 'assets' not in json_load:
+        return [None, json_load['message']]
+
+    assets = json_load['assets']
+    dl_url = get_git_browser_dl_url(assets, asset_index=asset_index)
+    return [dl_url, None]
 
 
 # Downloads the git release and unzips the file
@@ -55,7 +56,7 @@ def dl_release_unzip(release_url: str, output_path: str) -> int:
     # Get the file path + extension
     file_ext = file_utilities.get_file_ext(release_url)
     file_path = folder_path + '.' + file_ext
-        
+
     if not file_utilities.download_file(release_url, file_path=file_path):
         print("Failed to download the file at url.")
         return 1
