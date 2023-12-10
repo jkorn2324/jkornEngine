@@ -1,13 +1,11 @@
 import Utils.platform_utilities
 import Utils.git_utilities
+import Project.project_constants as project_constants
 import os
 import sys
 
-
-# Creates the premake path for the root directory
-def create_premake_path(premake_root_dir: str):
-    return premake_root_dir + os.sep + 'premake'
-
+def create_premake_path(root_path: str) -> str:
+    return project_constants.create_path(root_path, 'premake')
 
 # Gets the executable path based on the root directory.
 def get_premake_executable_path(premake_root_dir: str):
@@ -15,9 +13,9 @@ def get_premake_executable_path(premake_root_dir: str):
     if platform_name is None:
         return None
     if platform_name == Utils.platform_utilities.PlatformType.MacOS:
-        return os.path.abspath(create_premake_path(premake_root_dir=premake_root_dir) + os.sep + 'premake5')
+        return os.path.abspath(create_premake_path(premake_root_dir) + os.sep + 'premake5')
     elif platform_name == Utils.platform_utilities.PlatformType.Windows:
-        return os.path.abspath(create_premake_path(premake_root_dir=premake_root_dir) + os.sep + 'premake5.exe')
+        return os.path.abspath(create_premake_path(premake_root_dir) + os.sep + 'premake5.exe')
     return None
 
 
@@ -37,7 +35,7 @@ def install_premake(premake_path: str, premake_version: str, override: bool = Fa
     premake_dir = premake_path
     print("Installing Premake to Directory: " + os.path.abspath(premake_dir))
     if premake_exists(premake_dir) and not override:
-        print("Premake already is installed & set up!")
+        print("Premake already is installed & set up!\n")
         return False
 
     # Makes the premake directories.
