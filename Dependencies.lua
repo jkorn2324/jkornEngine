@@ -65,25 +65,65 @@ BuildDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/"
 ProjectDirectories["DirectXTK"] = "%{LibrariesLocation}/DirectXTK/"
 LibraryNames["DirectXTK"] = "DirectXTK.lib"
 
+-- VulkanSDK
+BuildDirectories["vulkansdk_win64"] = "%{VulkanSDKLocation}/Lib/"
+BuildDirectories["vulkansdk_win32"] = "%{VulkanSDKLocation}/Lib32/"
+
+-- DXC
+IncludeDirectories["dxc_windows"] = "%{VulkanSDKLocation}/Include/dxc/"
+LibraryNames["dxc_win64_release"] = "%{BuildDirectories.vulkansdk_win64}dxcompiler.lib"
+LibraryNames["dxc_win64_debug"] = "%{BuildDirectories.vulkansdk_win64}dxcompilerd.lib"
+LibraryNames["dxc_win32_release"] = "%{BuildDirectories.vulkansdk_win32}dxcompiler.lib"
+LibraryNames["dxc_win32_debug"] = "%{BuildDirectories.vulkansdk_win32}dxcompilerd.lib"
+
+-- SPIR-V Cross Core
+IncludeDirectories["spirvcross_windows"] = "%{VulkanSDKLocation}/Include/spirv_cross/"
+LibraryNames["spirvcross_win64_release_core"] = "%{BuildDirectories.vulkansdk_win64}spirv-cross-core.lib"
+LibraryNames["spirvcross_win64_debug_core"] = "%{BuildDirectories.vulkansdk_win64}spirv-cross-cored.lib"
+LibraryNames["spirvcross_win32_release_core"] = "%{BuildDirectories.vulkansdk_win32}spirv-cross-core.lib"
+LibraryNames["spirvcross_win32_debug_core"] = "%{BuildDirectories.vulkansdk_win32}spirv-cross-cored.lib"
+
+-- SPIR-V Cross Msl
+LibraryNames["spirvcross_win64_release_msl"] = "%{BuildDirectories.vulkansdk_win64}spirv-cross-msl.lib"
+LibraryNames["spirvcross_win64_debug_msl"] = "%{BuildDirectories.vulkansdk_win64}spirv-cross-msld.lib"
+LibraryNames["spirvcross_win32_release_msl"] = "%{BuildDirectories.vulkansdk_win32}spirv-cross-msl.lib"
+LibraryNames["spirvcross_win32_debug_msl"] = "%{BuildDirectories.vulkansdk_win32}spirv-cross-msld.lib"
+
+-- SPIR-V Cross Hlsl
+LibraryNames["spirvcross_win64_release_hlsl"] = "%{BuildDirectories.vulkansdk_win64}spirv-cross-hlsl.lib"
+LibraryNames["spirvcross_win64_debug_hlsl"] = "%{BuildDirectories.vulkansdk_win64}spirv-cross-hlsld.lib"
+LibraryNames["spirvcross_win32_release_hlsl"] = "%{BuildDirectories.vulkansdk_win32}spirv-cross-hlsl.lib"
+LibraryNames["spirvcross_win32_debug_hlsl"] = "%{BuildDirectories.vulkansdk_win32}spirv-cross-hlsld.lib"
+
+-- ShaderC
+IncludeDirectories["shaderc_windows"] = "%{VulkanSDKLocation}/Include/shaderc/"
+LibraryNames["shaderc_win64_release"] = "%{BuildDirectories.vulkansdk_win64}shaderc_shared.lib"
+LibraryNames["shaderc_win64_debug"] = "%{BuildDirectories.vulkansdk_win64}shaderc_sharedd.lib"
+LibraryNames["shaderc_win32_release"] = "%{BuildDirectories.vulkansdk_win32}shaderc_shared.lib"
+LibraryNames["shaderc_win32_debug"] = "%{BuildDirectories.vulkansdk_win32}shaderc_sharedd.lib"
+
 -- ================================== MAC DEPENDENCIES =============================--
+
+-- VulkanSDK
+BuildDirectories["vulkansdk_macos"] = "%{VulkanSDKLocation}/lib/"
 
 -- DXC
 IncludeDirectories["dxc_macos"] = "%{VulkanSDKLocation}/include/dxc/"
-BuildDirectories["dxc_macos"] = "%{VulkanSDKLocation}/lib/"
-LibraryNames["dxc_macos"] = "%{BuildDirectories.dxc_macos}libdxcompiler.dylib"
+LibraryNames["dxc_macos"] = "%{BuildDirectories.vulkansdk_macos}libdxcompiler.dylib"
 
--- SPIR-V Cross
+-- SPIR-V Cross Core
 IncludeDirectories["spirvcross_macos"] = "%{VulkanSDKLocation}/include/spirv_cross/"
-BuildDirectories["spirvcross_macos"] = "%{VulkanSDKLocation}/lib/"
+LibraryNames["spirvcross_macos_core"] = "%{BuildDirectories.vulkansdk_macos}libspirv-cross-core.a"
 
-LibraryNames["spirvcross_macos_core"] = "%{BuildDirectories.spirvcross_macos}libspirv-cross-core.a"
-LibraryNames["spirvcross_macos_msl"] = "%{BuildDirectories.spirvcross_macos}libspirv-cross-msl.a" -- Mlsl
-LibraryNames["spirvcross_macos_hlsl"] = "%{BuildDirectories.spirvcross_macos}libspirv-cross-hlsl.a" -- Hlsl
+-- SPIR-V Cross Msl
+LibraryNames["spirvcross_macos_msl"] = "%{BuildDirectories.vulkansdk_macos}libspirv-cross-msl.a" -- Mlsl
+
+-- SPIR-V Cross Hlsl
+LibraryNames["spirvcross_macos_hlsl"] = "%{BuildDirectories.vulkansdk_macos}libspirv-cross-hlsl.a" -- Hlsl
 
 -- ShaderC
 IncludeDirectories["shaderc_macos"] = "%{VulkanSDKLocation}/include/shaderc/"
-BuildDirectories["shaderc_macos"] = "%{VulkanSDKLocation}/lib/"
-LibraryNames["shaderc_macos"] = "%{BuildDirectories.shaderc_macos}libshaderc_shared.a"
+LibraryNames["shaderc_macos"] = "%{BuildDirectories.vulkansdk_macos}libshaderc_shared.a"
 
 
 -- Includes the dxc compiler dependencies
@@ -101,9 +141,7 @@ function include_shadertool_dependencies()
 
         libdirs
         {
-            "%{BuildDirectories.dxc_macos}",
-            "%{BuildDirectories.spirvcross_macos}",
-            "%{BuildDirectories.shaderc_macos}"
+            "%{BuildDirectories.vulkansdk_macos}"
         }
 
         -- Emulate UUID must be defined on linux/macos platforms
@@ -112,6 +150,71 @@ function include_shadertool_dependencies()
             "__EMULATE_UUID"
         }
 
+    -- If Platform is Windows, just include dxc
+    filter { "action:vs*", "platforms:Win64 or Win32" }
+        includedirs
+        {
+            "%{IncludeDirectories.dxc_windows}",
+            "%{IncludeDirectories.spirvcross_windows}",
+            "%{IncludeDirectories.shaderc_windows}"
+        }
+    filter { }
+
+    -- If platform is Windows x64
+    filter { "action:vs*", "platforms:Win64" }
+        libdirs
+        {
+            "%{BuildDirectories.vulkansdk_win64}"
+        }
+    -- If platform is Windows x86
+    filter { "action:vs*", "platforms:Win32" }
+        libdirs
+        {
+            "%{BuildDirectories.vulkansdk_win32}"
+        }
+    filter { }
+
+    -- If platform is Windows x64, Debug
+    filter { "action:vs*", "platforms:Win64", "configurations:Debug" }
+        links
+        {
+            "%{LibraryNames.dxc_win64_debug}",
+            "%{LibraryNames.spirvcross_win64_debug_core}",
+            "%{LibraryNames.spirvcross_win64_debug_msl}",
+            "%{LibraryNames.spirvcross_win64_debug_hlsl}",
+            "%{LibraryNames.shaderc_win64_debug}"
+        }
+
+    -- If platform is Windows x64, Release
+    filter { "action:vs*", "platforms:Win32", "configurations:Release" }
+        links
+        {
+            "%{LibraryNames.dxc_win64_release}",
+            "%{LibraryNames.spirvcross_win64_release_core}",
+            "%{LibraryNames.spirvcross_win64_release_msl}",
+            "%{LibraryNames.spirvcross_win64_release_hlsl}",
+            "%{LibraryNames.shaderc_win64_release}"
+        }
+    -- If platform is Windows x86 (32 Bit), Debug
+    filter { "action:vs*", "platforms:Win64", "configurations:Debug" }
+        links
+        {
+            "%{LibraryNames.dxc_win32_debug}",
+            "%{LibraryNames.spirvcross_win32_debug_core}",
+            "%{LibraryNames.spirvcross_win32_debug_msl}",
+            "%{LibraryNames.spirvcross_win32_debug_hlsl}",
+            "%{LibraryNames.shaderc_win32_debug}"
+        }
+    -- If platform is Windows x86 (32 Bit), Release
+    filter { "action:vs*", "platforms:Win32", "configurations:Release" }
+        links
+        {
+            "%{LibraryNames.dxc_win32_release}",
+            "%{LibraryNames.spirvcross_win32_release_core}",
+            "%{LibraryNames.spirvcross_win32_release_msl}",
+            "%{LibraryNames.spirvcross_win32_release_hlsl}",
+            "%{LibraryNames.shaderc_win32_release}"
+        }
     filter { }
 end
 

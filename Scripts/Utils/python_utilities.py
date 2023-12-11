@@ -18,11 +18,13 @@ def has_valid_python_version(min_version_major: int = 3, min_version_minor: int 
     version_info = sys.version_info
     print(f"Detected python version: v{version_info.major}.{version_info.minor}.{version_info.micro}")
     if version_info.major < min_version_major and version_info.minor < min_version_minor:
-        print(f"Invalid python version, the version must be greater than at least v{min_version_major}.{min_version_minor}")
+        print(
+            f"Invalid python version, the version must be greater than at least v{min_version_major}.{min_version_minor}")
         return False
     return True
 
-def try_import_package(package: str) -> bool: 
+
+def try_import_package(package: str) -> bool:
     try:
         __import__(package)
         return True
@@ -50,7 +52,8 @@ def install_package(package_name: str) -> bool:
     """
     print(f"Installing python dependency package '{package_name}.")
     if importlib.util.find_spec(package_name) is None:
-        permission_granted = Utils.platform_utilities.get_user_permission(f"Would you like to install the python package '{package_name}'")
+        permission_granted = Utils.platform_utilities.get_user_permission(
+            f"Would you like to install the python package '{package_name}'")
         if not permission_granted:
             return False
 

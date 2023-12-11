@@ -25,7 +25,7 @@
 #include <tchar.h>
 
 #ifdef GetObject
-	#undef GetObject
+#undef GetObject
 #endif
 
 #ifndef COINITIALIZE
@@ -63,3 +63,7 @@
 #include "EngineAssert.h"
 #include "Logger.h"
 #include "EngineMacros.h"
+
+#if defined(_WIN32) && USE_ATL_SUPPORT
+#include <atlbase.h>
+#endif

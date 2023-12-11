@@ -6,6 +6,7 @@ import Project.project_constants as project_constants
 
 from enum import Enum
 
+
 # Install VulkanSDK
 # MacOS: https://sdk.lunarg.com/sdk/download/1.3.268.0/mac/vulkansdk-macos-1.3.268.0.dmg
 # Windows: https://sdk.lunarg.com/sdk/download/1.3.268.0/windows/VulkanSDK-1.3.268.0-Installer.exe
@@ -24,12 +25,16 @@ class VulkanSDKInstallStatus(Enum):
 # Gets the vulkan operating system install path
 # On Mac it is in the ~/VulkanSDK/{version}
 # On Windows it is where the environment variable is
-def get_vulkan_os_install_path(major_version: int, minor_version: int, patch_version: int, revision_version: int) -> str or None:
-    vulkan_version = get_vulkan_version(major_version=major_version, minor_version=minor_version, patch_version=patch_version, revision=revision_version)
+def get_vulkan_os_install_path(major_version: int, minor_version: int, patch_version: int,
+                               revision_version: int) -> str or None:
+    vulkan_version = get_vulkan_version(major_version=major_version, minor_version=minor_version,
+                                        patch_version=patch_version, revision=revision_version)
     platform_type = platform_utilities.get_platform_type()
     if platform_type == platform_utilities.PlatformType.MacOS:
         return os.path.expanduser(f"~/VulkanSDK/{vulkan_version}")
-    # TODO:
+    if platform_type == platform_utilities.PlatformType.Windows:
+        return os.path.abspath(f"C:\\VulkanSDK\\{vulkan_version}")
+    # TODO: the vulkan os install path for linux
     return None
 
 
@@ -37,7 +42,8 @@ def get_vulkan_os_install_path(major_version: int, minor_version: int, patch_ver
 # 0 = Doesn't have executable, doesn't have sdk installed at path
 # 1 = Has executable, doesn't have sdk installed at path
 # 2 = Has executable, has sdk installed
-def get_vulkan_sdk_status(vulkan_root_path: str, major_version: int, minor_version: int, patch_version: int, revision: int) -> VulkanSDKInstallStatus:
+def get_vulkan_sdk_status(vulkan_root_path: str, major_version: int, minor_version: int, patch_version: int,
+                          revision: int) -> VulkanSDKInstallStatus:
     platform_type = platform_utilities.get_platform_type()
     vulkan_path = get_vulkan_path(vulkan_root_path)
 
@@ -45,12 +51,13 @@ def get_vulkan_sdk_status(vulkan_root_path: str, major_version: int, minor_versi
     status_installed = os.path.exists(vulkan_installation_path)
     if status_installed:
         return VulkanSDKInstallStatus.FullInstalled
-    
-    vulkan_install_path = get_vulkan_os_install_path(major_version=major_version, minor_version=minor_version, patch_version=patch_version, revision_version=revision)
-    status_setup = os.path.exists(vulkan_install_path)
+
+    vulkan_install_path = get_vulkan_os_install_path(major_version=major_version, minor_version=minor_version,
+                                                     patch_version=patch_version, revision_version=revision)
+    status_setup = vulkan_install_path is not None and os.path.exists(vulkan_install_path)
     if status_setup:
         return VulkanSDKInstallStatus.Setup
-    
+
     if platform_type == platform_utilities.PlatformType.MacOS:
         executable_path = os.path.abspath(vulkan_path + os.sep + 'vulkan-sdk-installer.dmg')
         status_downloaded = os.path.exists(executable_path)
@@ -79,7 +86,8 @@ def get_vulkan_version(major_version: int, minor_version: int, patch_version: in
 
 
 # Gets the vulkan sdk url.
-def get_vulkan_sdk_url(platform_type: platform_utilities.PlatformType, major_version: int, minor_version: int, patch_version: int, revision: int) -> str or None:
+def get_vulkan_sdk_url(platform_type: platform_utilities.PlatformType, major_version: int, minor_version: int,
+                       patch_version: int, revision: int) -> str or None:
     version = get_vulkan_version(major_version, minor_version, patch_version, revision)
     if platform_type == platform_utilities.PlatformType.MacOS:
         return f"https://sdk.lunarg.com/sdk/download/{version}/mac/vulkansdk-macos-{version}.dmg"
@@ -89,7 +97,8 @@ def get_vulkan_sdk_url(platform_type: platform_utilities.PlatformType, major_ver
 
 
 # Downloads teh vulkan setup executable file.
-def download_vulkan_setup_executable(vulkan_root_path: str, major_version: int, minor_version, patch_version: int, revision_number: int) -> bool:
+def download_vulkan_setup_executable(vulkan_root_path: str, major_version: int, minor_version, patch_version: int,
+                                     revision_number: int) -> bool:
     print("Downloading VulkanSDK Setup Executable!")
     vulkan_path = get_vulkan_path(vulkan_root_path)
     platform_type = platform_utilities.get_platform_type()
@@ -98,15 +107,13 @@ def download_vulkan_setup_executable(vulkan_root_path: str, major_version: int, 
     if sdk_url is None:
         print("Failed to Download VulkanSDK Setup Executable: Invalid URL!")
         return False
-    
+
     file_ext = file_utilities.get_file_ext(sdk_url)
     executable_path = vulkan_path + os.sep + 'vulkan-sdk-installer.' + file_ext
     # Download the sdk to the executable path
     if not file_utilities.download_file(sdk_url, executable_path):
         print("Failed to Download VulkanSDK Setup Executable: Invalid SDK!")
         return False
-    
-    ## TODO: Check if vulkan sdk path exists
     if platform_type == platform_utilities.PlatformType.Windows:
         os.startfile(os.path.abspath(executable_path))
     elif platform_type == platform_utilities.PlatformType.MacOS or platform_type == platform_utilities.PlatformType.Linux:
@@ -118,9 +125,12 @@ def download_vulkan_setup_executable(vulkan_root_path: str, major_version: int, 
 
 
 # Installs vulkan at the root path
-def install_vulkan(vulkan_root_path: str, major_version: int = 1, minor_version = 3, patch_version = 268, revision_number: int = 0, override: bool = False) -> bool:
+def install_vulkan(vulkan_root_path: str, major_version: int = 1, minor_version=3, patch_version=268,
+                   revision_number: int = 0, override: bool = False) -> bool:
     # TODO: Check if the vulkan sdk exists
-    vulkan_sdk_status = get_vulkan_sdk_status(vulkan_root_path=vulkan_root_path, major_version=major_version, minor_version=minor_version, patch_version=patch_version, revision=revision_number)
+    vulkan_sdk_status = get_vulkan_sdk_status(vulkan_root_path=vulkan_root_path, major_version=major_version,
+                                              minor_version=minor_version, patch_version=patch_version,
+                                              revision=revision_number)
     install_path = get_vulkan_install_path(vulkan_root_path)
     abs_install_path = os.path.abspath(install_path)
 
@@ -132,11 +142,21 @@ def install_vulkan(vulkan_root_path: str, major_version: int = 1, minor_version 
         return True
     elif vulkan_sdk_status == VulkanSDKInstallStatus.Setup:
         print(f"VulkanSDK has been detected!")
-        print(f"Copying VulkanSDK from directory '{get_vulkan_os_install_path(major_version, minor_version, patch_version, revision_number)}' to Install Path")
-        
-        os_path = str(get_vulkan_os_install_path(major_version=major_version, minor_version=minor_version, patch_version=patch_version, revision_version=revision_number))
+        print(
+            f"Copying VulkanSDK from directory '{get_vulkan_os_install_path(major_version, minor_version, patch_version, revision_number)}' to Install Path")
+
+        os_path = str(get_vulkan_os_install_path(major_version=major_version, minor_version=minor_version,
+                                                 patch_version=patch_version, revision_version=revision_number))
         if platform == platform_utilities.PlatformType.MacOS:
             subprocess.run(['cp', '-R', os_path + os.sep + 'MacOS', abs_install_path], capture_output=True)
+        elif platform == platform_utilities.PlatformType.Windows:
+            # Copies the Bin, Bin32, Include, Lib, Lib32, Share, & Source files to install path
+            subprocess.run(['robocopy', '/e', '/mt', os_path + os.sep + 'Include',
+                            abs_install_path + os.sep + 'Include'], capture_output=True)
+            subprocess.run(['robocopy', '/e', '/mt', os_path + os.sep + 'Lib',
+                            abs_install_path + os.sep + 'Lib'], capture_output=True)
+            subprocess.run(['robocopy', '/e', '/mt', os_path + os.sep + 'Lib32',
+                            abs_install_path + os.sep + 'Lib32'], capture_output=True)
 
         # TODO: Install VulkanSDK at Path.
         print(f"Finished Copying VulkanSDK to '{abs_install_path}'")
@@ -147,6 +167,7 @@ def install_vulkan(vulkan_root_path: str, major_version: int = 1, minor_version 
         return False
 
     # download the vulkan setup executable and open
-    download_vulkan_setup_executable(vulkan_root_path=vulkan_root_path, major_version=major_version, 
-                                            minor_version=minor_version, patch_version=patch_version, revision_number=revision_number)
+    download_vulkan_setup_executable(vulkan_root_path=vulkan_root_path, major_version=major_version,
+                                     minor_version=minor_version, patch_version=patch_version,
+                                     revision_number=revision_number)
     return True

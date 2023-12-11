@@ -4,8 +4,7 @@ import subprocess
 
 # Import platform utilities
 from Utils import platform_utilities
-if platform_utilities is None:
-    import platform_utilities
+
 
 # Generates project files.
 def generate_project_files() -> bool:
