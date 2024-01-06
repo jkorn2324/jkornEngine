@@ -79,7 +79,10 @@ workspace "jkornEngine"
 		defines 
 		{
 			"PLATFORM_WINDOWS",
-			"PLATFORM_WINDOWS_X64"
+			"PLATFORM_WINDOWS_X64",
+			
+			-- Disable if we want to remove atl
+			"USE_ATL_SUPPORT"
 		}
 
 	filter { "platforms:Win32"}

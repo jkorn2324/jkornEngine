@@ -96,7 +96,7 @@ LibraryNames["spirvcross_win32_release_hlsl"] = "%{BuildDirectories.vulkansdk_wi
 LibraryNames["spirvcross_win32_debug_hlsl"] = "%{BuildDirectories.vulkansdk_win32}spirv-cross-hlsld.lib"
 
 -- ShaderC
-IncludeDirectories["shaderc_windows"] = "%{VulkanSDKLocation}/Include/shaderc/"
+IncludeDirectories["shaderc_windows"] = "%{VulkanSDKLocation}/Include/"
 LibraryNames["shaderc_win64_release"] = "%{BuildDirectories.vulkansdk_win64}shaderc_shared.lib"
 LibraryNames["shaderc_win64_debug"] = "%{BuildDirectories.vulkansdk_win64}shaderc_sharedd.lib"
 LibraryNames["shaderc_win32_release"] = "%{BuildDirectories.vulkansdk_win32}shaderc_shared.lib"

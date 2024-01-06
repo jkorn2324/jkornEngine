@@ -51,7 +51,7 @@ namespace Engine
 			&& m_vertexShader != nullptr
 			&& m_inputLayout != nullptr;
 	}
-	
+
 	void DirectX11Shader::Bind() const
 	{
 		if (!IsValid())
@@ -64,9 +64,12 @@ namespace Engine
 		renderingAPI.m_deviceContext->PSSetShader(m_pixelShader, nullptr, 0);
 		renderingAPI.m_deviceContext->IASetInputLayout(m_inputLayout);
 	}
-	
+
 	bool DirectX11Shader::LoadFromFile_Internal(const wchar_t* fileName)
 	{
+		// TODO: This has to go because of the new compilation system we are writing
+		// it includes ability to save shader stages to a particular file & then cache them
+		// later
 		ID3DBlob* vertexShader = nullptr;
 		if (DirectX11Utils::CompileShader(fileName, "VS", "vs_4_0", vertexShader))
 		{
@@ -78,10 +81,10 @@ namespace Engine
 
 				HRESULT result = renderingAPI.m_device->CreateVertexShader(
 					vertexShader->GetBufferPointer(), vertexShader->GetBufferSize(), nullptr, &m_vertexShader);
-                JKORN_ENGINE_ASSERT(result == S_OK, "Failed to load vertex shader.");
+				JKORN_ENGINE_ASSERT(result == S_OK, "Failed to load vertex shader.");
 				result = renderingAPI.m_device->CreatePixelShader(
 					pixelShader->GetBufferPointer(), pixelShader->GetBufferSize(), nullptr, &m_pixelShader);
-                JKORN_ENGINE_ASSERT(result == S_OK, "Failed to load pixel shader.");
+				JKORN_ENGINE_ASSERT(result == S_OK, "Failed to load pixel shader.");
 				if (m_vertexShader != nullptr
 					&& m_pixelShader != nullptr)
 				{
@@ -89,7 +92,7 @@ namespace Engine
 					result = renderingAPI.m_device->CreateInputLayout(
 						parsedBufferLayout.GetD3D11InputElementDesc(), parsedBufferLayout.GetNumElements(),
 						vertexShader->GetBufferPointer(), vertexShader->GetBufferSize(), &m_inputLayout);
-                    JKORN_ENGINE_ASSERT(result == S_OK, "Failed to load input layout.");
+					JKORN_ENGINE_ASSERT(result == S_OK, "Failed to load input layout.");
 					if (result == S_OK)
 					{
 						return true;
@@ -98,7 +101,7 @@ namespace Engine
 				return false;
 			}
 		}
-        JKORN_ENGINE_ASSERT(false, "Failed to create Shader.");
+		JKORN_ENGINE_ASSERT(false, "Failed to create Shader.");
 		return false;
 	}
 }
