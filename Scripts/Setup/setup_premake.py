@@ -39,7 +39,7 @@ def install_premake(premake_path: str, premake_version: str, override: bool = Fa
         return False
 
     # Makes the premake directories.
-    abs_premake_dir = create_premake_path(premake_root_dir=premake_dir)
+    abs_premake_dir = create_premake_path(premake_dir)
     os.makedirs(abs_premake_dir, exist_ok=True)
 
     system = Utils.platform_utilities.get_platform_type()

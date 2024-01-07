@@ -148,7 +148,11 @@ def install_vulkan(vulkan_root_path: str, major_version: int = 1, minor_version=
         os_path = str(get_vulkan_os_install_path(major_version=major_version, minor_version=minor_version,
                                                  patch_version=patch_version, revision_version=revision_number))
         if platform == platform_utilities.PlatformType.MacOS:
-            subprocess.run(['cp', '-R', os_path + os.sep + 'MacOS', abs_install_path], capture_output=True)
+            # Create the directory at the path.
+            if not os.path.exists(abs_install_path):
+                os.makedirs(abs_install_path, exist_ok=False)
+            # Copies the files over to the install directory
+            subprocess.run(['cp', '-R', os_path + os.sep + 'macOS' + os.sep, abs_install_path], capture_output=True)
         elif platform == platform_utilities.PlatformType.Windows:
             # Copies the Bin, Bin32, Include, Lib, Lib32, Share, & Source files to install path
             subprocess.run(['robocopy', '/e', '/mt', os_path + os.sep + 'Include',
