@@ -28,15 +28,15 @@ namespace Editor
 		m_transformationWidget.SetEnabled(false);
 
 		Engine::FrameBufferDepthStencilContext depthStencil = { Engine::DepthFormat_D24UNorm_S8UInt };
-		Engine::FrameBufferSpecification editorSpecifications ({
+		Engine::FrameBufferSpecification editorSpecifications({
 			{ depthStencil },
-			{ 				
+			{
 				// The Main Color Texture
 				Engine::FrameBufferAttachment { Engine::ColorFormat_RGBA32_Float },
 				// The Entity ID Texture
 				Engine::FrameBufferAttachment { Engine::ColorFormat_SInt32 }
 			}
-		});
+			});
 
 		Engine::Application& app = Engine::Application::Get();
 		editorSpecifications.width = app.GetWindow().GetWidth();
@@ -78,7 +78,7 @@ namespace Editor
 
 	void SceneView::UpdateMousePosition(const Engine::Timestep& ts)
 	{
-        ImVec2 mousePos = ImGui::GetMousePos();
+		ImVec2 mousePos = ImGui::GetMousePos();
 		MathLib::Vector2 currentPos = *reinterpret_cast<MathLib::Vector2*>(
 			&mousePos);
 		m_prevMousePos = m_currMousePos;
@@ -89,12 +89,11 @@ namespace Editor
 	{
 		// Resets the camera.
 		ImGuiIO& io = ImGui::GetIO();
-
 		Engine::PlatformInput& platformInput = Engine::Input::GetPlatformInput();
 		EditorCamera& editorCamera = EditorSceneManager::GetEditorCamera();
+		const ImGuiKey fKey = platformInput.KeyCodeToImGuiKey(Engine::InputKeyCode::KEY_CODE_F);
 		// Focuses the camera.
-		if (ImGui::IsKeyPressed(
-			platformInput.FromKeyCode<ImGuiKey>(Engine::InputKeyCode::KEY_CODE_F)))
+		if (ImGui::IsKeyPressed(fKey))
 		{
 			editorCamera.FocusCamera();
 			return;
@@ -109,15 +108,14 @@ namespace Editor
 			editorCamera.MoveCamera(dir * MOUSE_CAMERA_MULTIPLIER, true);
 		}
 
-		bool isLeftAltPressed = ImGui::IsKeyDown(
-			platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_LEFT_ALT));
+		const ImGuiKey leftAltKey = platformInput.KeyCodeToImGuiKey(Engine::KEY_CODE_LEFT_ALT);
+		bool isLeftAltPressed = ImGui::IsKeyDown(leftAltKey);
 		m_transformationWidget.SetMovable(!isLeftAltPressed);
 
 		bool handledZoom = false;
 		if (isLeftAltPressed)
 		{
-			float altKeyHeld = io.KeysData[
-				platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_LEFT_ALT)].DownDuration;
+			float altKeyHeld = io.KeysData[leftAltKey].DownDuration;
 			// Only updates the rotation if the left mouse button is held.
 			if (ImGui::IsMouseDown(
 				platformInput.FromMouseButton(Engine::InputMouseButton::MOUSE_BUTTON_LEFT)))
@@ -166,10 +164,11 @@ namespace Editor
 	{
 		if (m_entityWidgetChanged || m_transformationWidget.IsMouseOver()) return;
 
+		ImGuiIO& io = ImGui::GetIO();
 		// If an alt key is pressed, don't do anything.
 		const auto& platformInput = Engine::Input::GetPlatformInput();
-		ImGuiKey lAltKey = platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_LEFT_ALT);
-		ImGuiKey rAltKey = platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_RIGHT_ALT);
+		const ImGuiKey lAltKey = platformInput.KeyCodeToImGuiKey(Engine::KEY_CODE_LEFT_ALT);
+		const ImGuiKey rAltKey = platformInput.KeyCodeToImGuiKey(Engine::KEY_CODE_RIGHT_ALT);
 		if (ImGui::IsKeyDown(lAltKey) || ImGui::IsKeyDown(rAltKey)) return;
 
 		MathLib::Vector2 windowSize = GetResizedWindow();
@@ -277,44 +276,51 @@ namespace Editor
 	bool SceneView::GetCameraDirection(MathLib::Vector3& outputDirection,
 		const EditorCamera& editorCamera, const Engine::PlatformInput& platformInput) const
 	{
-		bool hasInput = false;
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_W))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_S)))
+		const ImGuiKey wKey = platformInput.KeyCodeToImGuiKey(Engine::KEY_CODE_W);
+		const ImGuiKey aKey = platformInput.KeyCodeToImGuiKey(Engine::KEY_CODE_A);
+		const ImGuiKey sKey = platformInput.KeyCodeToImGuiKey(Engine::KEY_CODE_S);
+		const ImGuiKey dKey = platformInput.KeyCodeToImGuiKey(Engine::KEY_CODE_D);
+		const ImGuiKey qKey = platformInput.KeyCodeToImGuiKey(Engine::KEY_CODE_Q);
+		const ImGuiKey eKey = platformInput.KeyCodeToImGuiKey(Engine::KEY_CODE_E);
+
+		MathLib::Vector2 rawMovement;
+		if (ImGui::IsKeyDown(wKey))
 		{
-			hasInput = true;
-			outputDirection += editorCamera.GetForward();
+			rawMovement.y += 1.0f;
 		}
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_S))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_W)))
+		if (ImGui::IsKeyDown(sKey))
 		{
-			hasInput = true;
-			outputDirection += -editorCamera.GetForward();
+			rawMovement.y -= 1.0f;
 		}
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_A))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_D)))
+		if (ImGui::IsKeyDown(aKey))
 		{
-			hasInput = true;
-			outputDirection += -editorCamera.GetRight();
+			rawMovement.x -= 1.0f;
 		}
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_D))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_A)))
+		if (ImGui::IsKeyDown(dKey))
 		{
-			hasInput = true;
-			outputDirection += editorCamera.GetRight();
+			rawMovement.x += 1.0f;
 		}
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_Q))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_E)))
+		if (rawMovement != MathLib::Vector2::Zero)
 		{
-			hasInput = true;
-			outputDirection += -MathLib::Vector3::UnitY;
+			outputDirection = rawMovement.x * editorCamera.GetRight() + rawMovement.y * editorCamera.GetForward();
+			outputDirection.Normalize();
+			return true;
 		}
-		if (ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_E))
-			&& !ImGui::IsKeyDown(platformInput.FromKeyCode<ImGuiKey>(Engine::KEY_CODE_Q)))
+		if (ImGui::IsKeyDown(qKey))
 		{
-			hasInput = true;
-			outputDirection += MathLib::Vector3::UnitY;
+			rawMovement.y += 1.0f;
 		}
-		return hasInput;
+		if (ImGui::IsKeyDown(eKey))
+		{
+			rawMovement.y -= 1.0f;
+		}
+		if (rawMovement != MathLib::Vector2::Zero)
+		{
+			outputDirection = rawMovement.y * MathLib::Vector3::UnitY;
+			outputDirection.Normalize();
+			return true;
+		}
+		return false;
 	}
 
 	const MathLib::Vector2 SceneView::GetResizedWindow() const
@@ -368,7 +374,7 @@ namespace Editor
 		// Updates scene view attributes.
 		{
 			ImGuiIO& io = ImGui::GetIO();
-            ImVec2 windowSize = ImGui::GetWindowSize();
+			ImVec2 windowSize = ImGui::GetWindowSize();
 			m_windowSize = *reinterpret_cast<MathLib::Vector2*>(&windowSize);
 			m_focused = ImGui::IsWindowFocused();
 			m_mouseScroll = MathLib::Vector2{ io.MouseWheelH, io.MouseWheel };
@@ -385,7 +391,7 @@ namespace Editor
 		// Adjusts the window position so that the transformation widget fits in the middle
 		// of the corresponding transform.
 		{
-            ImVec2 windowPos = ImGui::GetWindowPos();
+			ImVec2 windowPos = ImGui::GetWindowPos();
 			m_windowPosition = *reinterpret_cast<MathLib::Vector2*>(&windowPos);
 			m_windowPosition.x += (m_windowSize.x - ImGui::GetContentRegionAvail().x) * 0.5f;
 			m_windowPosition.y += ImGui::GetTextLineHeight() * 2.0f;
